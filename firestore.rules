@@ -1,0 +1,100 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isChurchMember(churchId) {
+      return isAuthenticated() &&
+             request.auth.token.churches != null &&
+             request.auth.token.churches[churchId] != null;
+    }
+
+    function getChurchRole(churchId) {
+      return request.auth.token.churches[churchId].role;
+    }
+
+    function isChurchAdmin(churchId) {
+      return isChurchMember(churchId) && getChurchRole(churchId) == 'admin';
+    }
+
+    function isChurchLeader(churchId) {
+      return isChurchMember(churchId) &&
+             (getChurchRole(churchId) == 'admin' || getChurchRole(churchId) == 'leader');
+    }
+
+    // User can access their own data
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Church-level access
+    match /churches/{churchId} {
+      // Anyone can read church basic info (for join requests)
+      allow read: if isAuthenticated();
+
+      // Only admins can update church info
+      allow update, delete: if isChurchAdmin(churchId);
+
+      // Any authenticated user can create a church
+      allow create: if isAuthenticated();
+
+      // Church members subcollection
+      match /members/{memberId} {
+        allow read: if isChurchMember(churchId);
+        allow write: if isChurchAdmin(churchId);
+      }
+
+      // Events subcollection
+      match /events/{eventId} {
+        allow read: if isChurchMember(churchId);
+        allow create, update: if isChurchLeader(churchId);
+        allow delete: if isChurchAdmin(churchId);
+
+        // Event responses/assignments
+        match /responses/{responseId} {
+          allow read: if isChurchMember(churchId);
+          allow write: if isChurchMember(churchId);
+        }
+      }
+
+      // Volunteers/Schedules
+      match /schedules/{scheduleId} {
+        allow read: if isChurchMember(churchId);
+        allow write: if isChurchLeader(churchId);
+      }
+
+      // Songs
+      match /songs/{songId} {
+        allow read: if isChurchMember(churchId);
+        allow write: if isChurchLeader(churchId);
+      }
+
+      // Notifications
+      match /notifications/{notificationId} {
+        allow read: if isAuthenticated() &&
+                       resource.data.userId == request.auth.uid;
+        allow write: if isChurchLeader(churchId);
+      }
+
+      // Ministries
+      match /ministries/{ministryId} {
+        allow read: if isChurchMember(churchId);
+        allow write: if isChurchAdmin(churchId);
+      }
+    }
+
+    // Church invitations
+    match /invitations/{invitationId} {
+      allow read: if isAuthenticated() &&
+                     (resource.data.email == request.auth.token.email ||
+                      isChurchAdmin(resource.data.churchId));
+      allow create: if isAuthenticated() && isChurchAdmin(request.resource.data.churchId);
+      allow update: if isAuthenticated() && resource.data.email == request.auth.token.email;
+      allow delete: if isAuthenticated() && isChurchAdmin(resource.data.churchId);
+    }
+  }
+}

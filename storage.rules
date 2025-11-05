@@ -1,0 +1,62 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isChurchMember(churchId) {
+      return isAuthenticated() &&
+             request.auth.token.churches != null &&
+             request.auth.token.churches[churchId] != null;
+    }
+
+    function isChurchAdmin(churchId) {
+      return isChurchMember(churchId) &&
+             request.auth.token.churches[churchId].role == 'admin';
+    }
+
+    function isChurchLeader(churchId) {
+      return isChurchMember(churchId) &&
+             (request.auth.token.churches[churchId].role == 'admin' ||
+              request.auth.token.churches[churchId].role == 'leader');
+    }
+
+    function isValidImageUpload() {
+      return request.resource.size < 5 * 1024 * 1024 && // 5MB max
+             request.resource.contentType.matches('image/.*');
+    }
+
+    function isValidFileUpload() {
+      return request.resource.size < 10 * 1024 * 1024; // 10MB max for general files
+    }
+
+    // Church logos - public read, admin write
+    match /churches/{churchId}/logo/{fileName} {
+      allow read: if true;
+      allow write: if isChurchAdmin(churchId) && isValidImageUpload();
+    }
+
+    // User avatars - public read, user write their own
+    match /users/{userId}/avatar/{fileName} {
+      allow read: if true;
+      allow write: if isAuthenticated() &&
+                      request.auth.uid == userId &&
+                      isValidImageUpload();
+    }
+
+    // Event attachments - church members read, leaders write
+    match /churches/{churchId}/events/{eventId}/attachments/{fileName} {
+      allow read: if isChurchMember(churchId);
+      allow write: if isChurchLeader(churchId) && isValidFileUpload();
+    }
+
+    // Song resources (sheet music, audio, etc.)
+    match /churches/{churchId}/songs/{songId}/{fileName} {
+      allow read: if isChurchMember(churchId);
+      allow write: if isChurchLeader(churchId) && isValidFileUpload();
+    }
+  }
+}
