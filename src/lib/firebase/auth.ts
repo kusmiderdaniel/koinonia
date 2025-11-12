@@ -11,7 +11,8 @@ import {
   UserCredential,
   onAuthStateChanged,
 } from 'firebase/auth';
-import { auth } from './config';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from './config';
 
 /**
  * Authentication utilities using Firebase Auth
@@ -39,8 +40,35 @@ export const signUpWithEmail = async (
     await updateProfile(userCredential.user, { displayName });
   }
 
-  // Send email verification
+  // Create user document in Firestore
   if (userCredential.user) {
+    const nameParts = displayName?.split(' ') || ['', ''];
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
+
+    const userDoc = {
+      email: userCredential.user.email,
+      profile: {
+        firstName,
+        lastName,
+        phone: '',
+        avatar: '',
+        bio: '',
+      },
+      churchMemberships: {},
+      preferences: {
+        emailNotifications: true,
+        smsNotifications: false,
+        pushNotifications: true,
+        timezone: 'Europe/Warsaw',
+      },
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    await setDoc(doc(db, 'users', userCredential.user.uid), userDoc);
+
+    // Send email verification
     await sendEmailVerification(userCredential.user);
   }
 
@@ -61,7 +89,44 @@ export const signInWithEmail = async (
  * Sign in with Google OAuth
  */
 export const signInWithGoogle = async (): Promise<UserCredential> => {
-  return signInWithPopup(auth, googleProvider);
+  const userCredential = await signInWithPopup(auth, googleProvider);
+
+  // Create user document in Firestore if it doesn't exist
+  if (userCredential.user) {
+    const userDocRef = doc(db, 'users', userCredential.user.uid);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (!userDocSnap.exists()) {
+      const displayName = userCredential.user.displayName || '';
+      const nameParts = displayName.split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      const userDoc = {
+        email: userCredential.user.email,
+        profile: {
+          firstName,
+          lastName,
+          phone: '',
+          avatar: userCredential.user.photoURL || '',
+          bio: '',
+        },
+        churchMemberships: {},
+        preferences: {
+          emailNotifications: true,
+          smsNotifications: false,
+          pushNotifications: true,
+          timezone: 'Europe/Warsaw',
+        },
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      };
+
+      await setDoc(userDocRef, userDoc);
+    }
+  }
+
+  return userCredential;
 };
 
 /**

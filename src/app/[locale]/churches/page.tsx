@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import { useChurch } from '@/hooks';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +9,9 @@ import { Church, Plus, Users, MapPin, Mail } from 'lucide-react';
 
 export default function ChurchesPage() {
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations('church');
+  const tCommon = useTranslations('common');
   const { churches, currentChurch, loading, error, setCurrentChurch } = useChurch();
 
   if (loading) {
@@ -16,7 +20,9 @@ export default function ChurchesPage() {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading churches...</p>
+            <p className="text-muted-foreground">
+              {locale === 'pl' ? 'Ładowanie kościołów...' : 'Loading churches...'}
+            </p>
           </div>
         </div>
       </div>
@@ -27,7 +33,9 @@ export default function ChurchesPage() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="rounded-md bg-destructive/10 p-4 text-destructive">
-          <p className="font-medium">Error loading churches</p>
+          <p className="font-medium">
+            {locale === 'pl' ? 'Błąd ładowania kościołów' : 'Error loading churches'}
+          </p>
           <p className="text-sm mt-1">{error}</p>
         </div>
       </div>
@@ -38,24 +46,26 @@ export default function ChurchesPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">My Churches</h1>
+          <h1 className="text-3xl font-bold mb-2">{t('myChurches')}</h1>
           <p className="text-muted-foreground">
             {churches.length === 0
-              ? 'You are not a member of any churches yet'
-              : `You are a member of ${churches.length} ${churches.length === 1 ? 'church' : 'churches'}`}
+              ? (locale === 'pl' ? 'Nie jesteś jeszcze członkiem żadnego kościoła' : 'You are not a member of any churches yet')
+              : locale === 'pl'
+                ? `Jesteś członkiem ${churches.length} ${churches.length === 1 ? 'kościoła' : 'kościołów'}`
+                : `You are a member of ${churches.length} ${churches.length === 1 ? 'church' : 'churches'}`}
           </p>
         </div>
         <div className="flex gap-3">
           <Button
             variant="outline"
-            onClick={() => router.push('/churches/join')}
+            onClick={() => router.push(`/${locale}/churches/join`)}
           >
             <Users className="mr-2 h-4 w-4" />
-            Join Church
+            {t('joinChurch')}
           </Button>
-          <Button onClick={() => router.push('/churches/new')}>
+          <Button onClick={() => router.push(`/${locale}/churches/new`)}>
             <Plus className="mr-2 h-4 w-4" />
-            Create Church
+            {t('createChurch')}
           </Button>
         </div>
       </div>
@@ -64,21 +74,23 @@ export default function ChurchesPage() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Church className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">No Churches Yet</h3>
+            <h3 className="text-xl font-semibold mb-2">
+              {locale === 'pl' ? 'Jeszcze brak kościołów' : 'No Churches Yet'}
+            </h3>
             <p className="text-muted-foreground text-center mb-6 max-w-md">
-              Get started by creating your own church or joining an existing one with an invite code.
+              {t('noChurchesDescription')}
             </p>
             <div className="flex gap-3">
               <Button
                 variant="outline"
-                onClick={() => router.push('/churches/join')}
+                onClick={() => router.push(`/${locale}/churches/join`)}
               >
                 <Users className="mr-2 h-4 w-4" />
-                Join Church
+                {t('joinChurch')}
               </Button>
-              <Button onClick={() => router.push('/churches/new')}>
+              <Button onClick={() => router.push(`/${locale}/churches/new`)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Create Church
+                {t('createChurch')}
               </Button>
             </div>
           </CardContent>
@@ -93,7 +105,7 @@ export default function ChurchesPage() {
               }`}
               onClick={() => {
                 setCurrentChurch(church);
-                router.push(`/churches/${church.id}`);
+                router.push(`/${locale}/churches/${church.id}`);
               }}
             >
               <CardHeader>
@@ -111,7 +123,7 @@ export default function ChurchesPage() {
                   </div>
                   {currentChurch?.id === church.id && (
                     <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
-                      Active
+                      {locale === 'pl' ? 'Aktywny' : 'Active'}
                     </span>
                   )}
                 </div>

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { signInSchema, SignInFormData } from '@/lib/validations';
 import { signInWithEmail, signInWithGoogle } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,8 @@ import {
 
 export function SignInForm() {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = pathname?.match(/^\/(pl|en)\//)?.[1] || 'pl';
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -37,7 +39,7 @@ export function SignInForm() {
 
     try {
       await signInWithEmail(data.email, data.password);
-      router.push('/dashboard');
+      router.push(`/${locale}/dashboard`);
     } catch (err: any) {
       console.error('Sign in error:', err);
 
@@ -66,7 +68,7 @@ export function SignInForm() {
 
     try {
       await signInWithGoogle();
-      router.push('/dashboard');
+      router.push(`/${locale}/dashboard`);
     } catch (err: any) {
       console.error('Google sign in error:', err);
 
@@ -128,7 +130,7 @@ export function SignInForm() {
                 <div className="flex items-center justify-between">
                   <FormLabel>Password</FormLabel>
                   <a
-                    href="/auth/forgot-password"
+                    href={`/${locale}/auth/forgot-password`}
                     className="text-sm text-primary hover:underline"
                   >
                     Forgot password?
@@ -194,7 +196,7 @@ export function SignInForm() {
 
       <div className="text-center text-sm">
         Don&apos;t have an account?{' '}
-        <a href="/auth/signup" className="text-primary hover:underline">
+        <a href={`/${locale}/auth/signup`} className="text-primary hover:underline">
           Sign up
         </a>
       </div>

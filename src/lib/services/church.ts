@@ -12,7 +12,7 @@ import {
   arrayRemove,
 } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase/config';
-import type { Church, ChurchMembership } from '@/types/church';
+import type { Church, ChurchMembership, ChurchMembershipWithUser } from '@/types/church';
 import type { CreateChurchFormData, UpdateChurchFormData } from '@/lib/validations/church';
 
 /**
@@ -103,7 +103,9 @@ export async function createChurch(data: CreateChurchFormData): Promise<Church> 
     await setDoc(churchRef, churchData);
 
     // Create membership for the creator (admin role)
-    const membershipRef = doc(collection(db, 'churchMemberships'));
+    // Use composite key: userId_churchId for efficient lookups
+    const membershipId = `${user.uid}_${churchRef.id}`;
+    const membershipRef = doc(db, 'churchMemberships', membershipId);
     const membershipData: Omit<ChurchMembership, 'id'> = {
       userId: user.uid,
       churchId: churchRef.id,
@@ -163,8 +165,39 @@ export async function joinChurchWithCode(inviteCode: string): Promise<Church> {
       throw new Error('You are already a member of this church');
     }
 
-    // Create membership for the user (member role by default)
-    const membershipRef = doc(collection(db, 'churchMemberships'));
+    // ACCOUNT LINKING: Check if there's an existing person record with matching email
+    // This handles the scenario where an admin added a person before they created an account
+    const userEmail = user.email?.toLowerCase();
+    if (userEmail) {
+      const emailQuery = query(
+        membershipsRef,
+        where('churchId', '==', church.id),
+        where('email', '==', userEmail),
+        where('userId', '==', null),
+        where('status', '==', 'active')
+      );
+      const emailSnapshot = await getDocs(emailQuery);
+
+      // If we found a matching person record without a userId, link it
+      if (!emailSnapshot.empty) {
+        const existingMembershipDoc = emailSnapshot.docs[0];
+        const existingMembership = existingMembershipDoc.data();
+
+        // Update the existing membership with the userId
+        await updateDoc(existingMembershipDoc.ref, {
+          userId: user.uid,
+          updatedAt: serverTimestamp(),
+        });
+
+        // Return the church - account has been linked
+        return church;
+      }
+    }
+
+    // No existing person record found - create new membership
+    // Use composite key: userId_churchId for efficient lookups
+    const membershipId = `${user.uid}_${church.id}`;
+    const membershipRef = doc(db, 'churchMemberships', membershipId);
     const membershipData: Omit<ChurchMembership, 'id'> = {
       userId: user.uid,
       churchId: church.id,
@@ -315,19 +348,15 @@ export async function getChurchMembership(churchId: string): Promise<ChurchMembe
   }
 
   try {
-    const membershipsRef = collection(db, 'churchMemberships');
-    const q = query(
-      membershipsRef,
-      where('userId', '==', user.uid),
-      where('churchId', '==', churchId)
-    );
-    const snapshot = await getDocs(q);
+    // Use composite key for direct document access (more efficient than query)
+    const membershipId = `${user.uid}_${churchId}`;
+    const membershipRef = doc(db, 'churchMemberships', membershipId);
+    const membershipDoc = await getDoc(membershipRef);
 
-    if (snapshot.empty) {
+    if (!membershipDoc.exists()) {
       return null;
     }
 
-    const membershipDoc = snapshot.docs[0];
     return {
       id: membershipDoc.id,
       ...membershipDoc.data(),
@@ -359,12 +388,83 @@ export async function getChurchMembers(churchId: string): Promise<ChurchMembersh
     const q = query(membershipsRef, where('churchId', '==', churchId));
     const snapshot = await getDocs(q);
 
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as ChurchMembership[];
+    return snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        joinedAt: data.joinedAt?.toDate ? data.joinedAt.toDate() : new Date(data.joinedAt),
+      };
+    }) as ChurchMembership[];
   } catch (error: any) {
     console.error('Error fetching church members:', error);
+    throw new Error(error.message || 'Failed to fetch members');
+  }
+}
+
+/**
+ * Get all members of a church with user information
+ */
+export async function getChurchMembersWithUsers(
+  churchId: string
+): Promise<ChurchMembershipWithUser[]> {
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error('You must be logged in');
+  }
+
+  try {
+    // Verify user has access to this church
+    const userMembership = await getChurchMembership(churchId);
+    if (!userMembership) {
+      throw new Error('You do not have access to this church');
+    }
+
+    // Get all members
+    const membershipsRef = collection(db, 'churchMemberships');
+    const q = query(membershipsRef, where('churchId', '==', churchId));
+    const snapshot = await getDocs(q);
+
+    // Fetch user data for each membership
+    const membersWithUsers = await Promise.all(
+      snapshot.docs.map(async (memberDoc) => {
+        const memberData = memberDoc.data();
+
+        let userName = 'Unknown User';
+        let userEmail = '';
+
+        // Check if member has a linked user account
+        if (memberData.userId) {
+          // Fetch user data from users collection
+          const userDoc = await getDoc(doc(db, 'users', memberData.userId));
+
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            userName = `${userData.profile?.firstName || ''} ${userData.profile?.lastName || ''}`.trim();
+            userEmail = userData.email || '';
+          } else {
+            // Fallback to Firebase Auth user data
+            userEmail = memberData.userId;
+          }
+        } else {
+          // Member doesn't have an account yet - use firstName/lastName
+          userName = `${memberData.firstName || ''} ${memberData.lastName || ''}`.trim() || 'Unnamed Person';
+          userEmail = memberData.email || '';
+        }
+
+        return {
+          id: memberDoc.id,
+          ...memberData,
+          joinedAt: memberData.joinedAt?.toDate ? memberData.joinedAt.toDate() : new Date(memberData.joinedAt),
+          userName: userName || userEmail || 'Unnamed',
+          userEmail,
+        } as ChurchMembershipWithUser;
+      })
+    );
+
+    return membersWithUsers;
+  } catch (error: any) {
+    console.error('Error fetching church members with users:', error);
     throw new Error(error.message || 'Failed to fetch members');
   }
 }
@@ -382,7 +482,49 @@ export async function updateMemberRole(
   }
 
   try {
+    // Get the membership to find out which church it belongs to
     const membershipRef = doc(db, 'churchMemberships', membershipId);
+    const membershipDoc = await getDoc(membershipRef);
+
+    if (!membershipDoc.exists()) {
+      throw new Error('Membership not found');
+    }
+
+    const membership = membershipDoc.data();
+    const churchId = membership.churchId;
+    const targetUserId = membership.userId;
+
+    // Verify that the current user is a leader or admin of this church
+    const userMembership = await getChurchMembership(churchId);
+    if (!userMembership) {
+      throw new Error('You do not have access to this church');
+    }
+
+    const isAdmin = userMembership.role === 'admin';
+    const isLeader = userMembership.role === 'leader' || isAdmin;
+
+    if (!isLeader) {
+      throw new Error('You must be a leader or admin to update member roles');
+    }
+
+    // Rule 1: Users cannot change their own role
+    if (targetUserId === user.uid) {
+      throw new Error('You cannot change your own role');
+    }
+
+    // Rule 3: Leaders can only change roles of members and volunteers
+    const targetRole = membership.role;
+    if (!isAdmin && (targetRole === 'admin' || targetRole === 'leader')) {
+      throw new Error('Leaders can only change roles of members and volunteers');
+    }
+
+    // Leaders can only assign member or volunteer roles
+    // Only admins can assign leader or admin roles
+    if (!isAdmin && (newRole === 'admin' || newRole === 'leader')) {
+      throw new Error('Only admins can assign leader or admin roles');
+    }
+
+    // Update the role
     await updateDoc(membershipRef, {
       role: newRole,
     });
@@ -444,5 +586,106 @@ export async function leaveChurch(churchId: string): Promise<void> {
   } catch (error: any) {
     console.error('Error leaving church:', error);
     throw new Error(error.message || 'Failed to leave church');
+  }
+}
+
+/**
+ * Update custom field values for a member
+ */
+export async function updateMemberCustomFields(
+  membershipId: string,
+  customFieldValues: Record<string, any>
+): Promise<void> {
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error('You must be logged in');
+  }
+
+  try {
+    // Filter out undefined values - Firestore doesn't support them
+    const sanitizedValues: Record<string, any> = {};
+    for (const [key, value] of Object.entries(customFieldValues)) {
+      if (value !== undefined) {
+        sanitizedValues[key] = value;
+      }
+    }
+
+    const membershipRef = doc(db, 'churchMemberships', membershipId);
+    await updateDoc(membershipRef, {
+      customFieldValues: sanitizedValues,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error: any) {
+    console.error('Error updating custom fields:', error);
+    throw new Error(error.message || 'Failed to update custom fields');
+  }
+}
+
+/**
+ * Create a new person/member without an account
+ */
+export async function createPersonWithoutAccount(
+  churchId: string,
+  data: {
+    firstName: string;
+    lastName: string;
+    email?: string;
+    role?: 'admin' | 'leader' | 'volunteer' | 'member';
+    customFieldValues?: Record<string, any>;
+  }
+): Promise<ChurchMembership> {
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error('You must be logged in');
+  }
+
+  try {
+    // Verify user has permission to add members (admin or leader)
+    const userMembership = await getChurchMembership(churchId);
+    if (!userMembership || (userMembership.role !== 'admin' && userMembership.role !== 'leader')) {
+      throw new Error('You do not have permission to add members');
+    }
+
+    // Check if email already exists in this church (if email provided)
+    if (data.email) {
+      const membershipsRef = collection(db, 'churchMemberships');
+      const emailQuery = query(
+        membershipsRef,
+        where('churchId', '==', churchId),
+        where('email', '==', data.email.toLowerCase()),
+        where('status', '==', 'active')
+      );
+      const emailSnapshot = await getDocs(emailQuery);
+
+      if (!emailSnapshot.empty) {
+        throw new Error('A person with this email already exists in this church');
+      }
+    }
+
+    // Create membership without userId
+    const membershipRef = doc(collection(db, 'churchMemberships'));
+    const membershipData: any = {
+      churchId,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email?.toLowerCase() || null,
+      userId: null,
+      role: data.role || 'member',
+      permissions: [],
+      customFieldValues: data.customFieldValues || {},
+      status: 'active',
+      joinedAt: serverTimestamp(),
+    };
+
+    await setDoc(membershipRef, membershipData);
+
+    return {
+      id: membershipRef.id,
+      ...membershipData,
+      joinedAt: new Date(),
+    } as ChurchMembership;
+  } catch (error: any) {
+    console.error('Error creating person:', error);
+    throw new Error(error.message || 'Failed to create person');
   }
 }

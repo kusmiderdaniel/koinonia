@@ -1,9 +1,12 @@
 import { SignInForm } from '@/components/auth';
+import { Metadata } from 'next';
 
-export const metadata = {
-  title: 'Sign In - Koinonia',
-  description: 'Sign in to your Koinonia account',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Sign In - Koinonia',
+    description: 'Sign in to your Koinonia account',
+  };
+}
 
 export default function SignInPage() {
   return (

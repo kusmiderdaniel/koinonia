@@ -1,6 +1,17 @@
 import { z } from 'zod';
 
 /**
+ * Validation schema for church rooms
+ */
+export const churchRoomSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, 'Room name is required'),
+  capacity: z.number().positive('Capacity must be positive').optional(),
+  description: z.string().optional(),
+  isDefault: z.boolean().optional(),
+});
+
+/**
  * Validation schema for creating a new church
  */
 export const createChurchSchema = z.object({
@@ -16,21 +27,22 @@ export const createChurchSchema = z.object({
   address: z.object({
     street: z.string().min(1, 'Street address is required'),
     city: z.string().min(1, 'City is required'),
-    state: z.string().min(2, 'State is required').max(2, 'Use 2-letter state code'),
-    zipCode: z.string().regex(/^\d{5}(-\d{4})?$/, 'Invalid ZIP code format'),
-    country: z.string().default('US'),
+    state: z.string().min(2, 'State/Province is required'),
+    zipCode: z.string().regex(/^\d{2}-\d{3}$/, 'Invalid postal code format (use XX-XXX for Poland)'),
+    country: z.string(),
   }),
   contactInfo: z.object({
     email: z.string().email('Invalid email address'),
     phone: z
       .string()
-      .regex(/^\+?1?\s*\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/, 'Invalid phone number format'),
+      .regex(/^(\+48)?\s?\d{3}\s?\d{3}\s?\d{3}$/, 'Invalid phone number format (use +48 XXX XXX XXX for Poland)'),
     website: z.string().url('Invalid website URL').optional().or(z.literal('')),
   }),
   description: z
     .string()
     .max(500, 'Description must be less than 500 characters')
     .optional(),
+  rooms: z.array(churchRoomSchema).optional(),
 });
 
 export type CreateChurchFormData = z.infer<typeof createChurchSchema>;

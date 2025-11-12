@@ -56,17 +56,30 @@ export interface EventSettings {
   maxVolunteers?: number;
 }
 
+export interface EventAgendaItem {
+  id: string;
+  title: string;
+  description?: string;
+  duration?: number; // Duration in seconds
+  order: number;
+  // Song-specific fields
+  songId?: string; // Reference to a song from the church's library
+  songKey?: string; // Override song's default key for this event
+  songTempo?: 'slow' | 'medium' | 'fast'; // Override song's default tempo
+  songLeader?: string; // Person leading this song
+}
+
 export interface Event {
   id: string;
   churchId: string;
   title: string;
-  description: string;
+  description?: string;
   type: EventType;
-  category: string;
   location: EventLocation;
   datetime: EventDateTime;
   recurrence?: EventRecurrence;
   roles: EventRole[];
+  agenda?: EventAgendaItem[];
   status: EventStatus;
   settings: EventSettings;
   createdBy: string;

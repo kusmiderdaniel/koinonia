@@ -1,9 +1,12 @@
 import { ForgotPasswordForm } from '@/components/auth';
+import { Metadata } from 'next';
 
-export const metadata = {
-  title: 'Forgot Password - Koinonia',
-  description: 'Reset your Koinonia account password',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Forgot Password - Koinonia',
+    description: 'Reset your Koinonia account password',
+  };
+}
 
 export default function ForgotPasswordPage() {
   return (

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { signUpSchema, SignUpFormData } from '@/lib/validations';
 import { signUpWithEmail, signInWithGoogle } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,8 @@ import {
 
 export function SignUpForm() {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = pathname?.match(/^\/(pl|en)\//)?.[1] || 'pl';
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,7 +46,7 @@ export function SignUpForm() {
       await signUpWithEmail(data.email, data.password, displayName);
 
       // Redirect to dashboard after successful sign up
-      router.push('/dashboard');
+      router.push(`/${locale}/dashboard`);
     } catch (err: any) {
       console.error('Sign up error:', err);
 
@@ -69,7 +71,7 @@ export function SignUpForm() {
 
     try {
       await signInWithGoogle();
-      router.push('/dashboard');
+      router.push(`/${locale}/dashboard`);
     } catch (err: any) {
       console.error('Google sign up error:', err);
 
@@ -242,7 +244,7 @@ export function SignUpForm() {
 
       <div className="text-center text-sm">
         Already have an account?{' '}
-        <a href="/auth/signin" className="text-primary hover:underline">
+        <a href={`/${locale}/auth/signin`} className="text-primary hover:underline">
           Sign in
         </a>
       </div>

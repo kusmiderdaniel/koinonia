@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useAuth, useChurch } from '@/hooks';
 import { signOut } from '@/lib/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -15,16 +16,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { User, Settings, LogOut, Church, ChevronDown, Check } from 'lucide-react';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 export function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
+  const t = useTranslations('auth');
   const { user, isAuthenticated } = useAuth();
   const { churches, currentChurch, setCurrentChurch } = useChurch();
+
+  // Extract locale from pathname (e.g., /pl/dashboard -> pl)
+  const locale = pathname?.match(/^\/(pl|en)\//)?.[1] || 'pl';
 
   const handleLogout = async () => {
     try {
       await signOut();
-      router.push('/');
+      router.push(`/${locale}`);
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -43,12 +50,12 @@ export function Navbar() {
   };
 
   return (
-    <nav className="border-b">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-6">
             {/* Logo/Brand */}
-            <Link href={isAuthenticated ? "/dashboard" : "/"} className="flex items-center space-x-2">
+            <Link href={isAuthenticated ? `/${locale}/dashboard` : `/${locale}`} className="flex items-center space-x-2">
               <Church className="h-6 w-6" />
               <span className="text-xl font-bold">Koinonia</span>
             </Link>
@@ -60,20 +67,20 @@ export function Navbar() {
                   <Button variant="outline" className="gap-2">
                     <Church className="h-4 w-4" />
                     <span className="max-w-[150px] truncate">
-                      {currentChurch?.name || 'Select Church'}
+                      {currentChurch?.name || (locale === 'pl' ? 'Wybierz kościół' : 'Select Church')}
                     </span>
                     <ChevronDown className="h-4 w-4 opacity-50" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-[250px]">
-                  <DropdownMenuLabel>My Churches</DropdownMenuLabel>
+                  <DropdownMenuLabel>{locale === 'pl' ? 'Moje kościoły' : 'My Churches'}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {churches.map((church) => (
                     <DropdownMenuItem
                       key={church.id}
                       onClick={() => {
                         setCurrentChurch(church);
-                        router.push(`/churches/${church.id}`);
+                        router.push(`/${locale}/churches/${church.id}`);
                       }}
                       className="cursor-pointer"
                     >
@@ -94,48 +101,19 @@ export function Navbar() {
                   ))}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onClick={() => router.push('/churches')}
+                    onClick={() => router.push(`/${locale}/churches`)}
                     className="cursor-pointer"
                   >
-                    View All Churches
+                    {locale === 'pl' ? 'Zobacz wszystkie kościoły' : 'View All Churches'}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
           </div>
 
-          {/* Navigation Links */}
-          {isAuthenticated && (
-            <div className="hidden md:flex items-center space-x-6">
-              <Link
-                href="/dashboard"
-                className="text-sm font-medium hover:text-primary transition-colors"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/churches"
-                className="text-sm font-medium hover:text-primary transition-colors"
-              >
-                Churches
-              </Link>
-              <Link
-                href="/events"
-                className="text-sm font-medium hover:text-primary transition-colors"
-              >
-                Events
-              </Link>
-              <Link
-                href="/volunteers"
-                className="text-sm font-medium hover:text-primary transition-colors"
-              >
-                Volunteers
-              </Link>
-            </div>
-          )}
-
           {/* User Menu or Auth Buttons */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <LanguageSwitcher />
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -165,18 +143,18 @@ export function Navbar() {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onClick={() => router.push('/dashboard')}
+                    onClick={() => router.push(`/${locale}/dashboard`)}
                     className="cursor-pointer"
                   >
                     <User className="mr-2 h-4 w-4" />
-                    <span>Dashboard</span>
+                    <span>{locale === 'pl' ? 'Panel' : 'Dashboard'}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => router.push('/settings')}
+                    onClick={() => router.push(`/${locale}/settings`)}
                     className="cursor-pointer"
                   >
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
+                    <span>{locale === 'pl' ? 'Ustawienia' : 'Settings'}</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -184,7 +162,7 @@ export function Navbar() {
                     className="cursor-pointer text-red-600 focus:text-red-600"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
+                    <span>{t('signOut')}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -192,12 +170,12 @@ export function Navbar() {
               <div className="flex items-center space-x-2">
                 <Button
                   variant="ghost"
-                  onClick={() => router.push('/auth/signin')}
+                  onClick={() => router.push(`/${locale}/auth/signin`)}
                 >
-                  Sign In
+                  {t('signIn')}
                 </Button>
-                <Button onClick={() => router.push('/auth/signup')}>
-                  Sign Up
+                <Button onClick={() => router.push(`/${locale}/auth/signup`)}>
+                  {t('signUp')}
                 </Button>
               </div>
             )}

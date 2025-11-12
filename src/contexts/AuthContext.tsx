@@ -2,7 +2,9 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from 'firebase/auth';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { onAuthStateChange, getCurrentUser } from '@/lib/firebase';
+import { db } from '@/lib/firebase/config';
 import { User as AppUser, CustomClaims } from '@/types';
 
 interface AuthContextType {
@@ -56,10 +58,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setClaims(null);
           }
 
-          // TODO: Fetch full user profile from Firestore
-          // This would be implemented when we have the user service
-          // const userProfile = await getUserProfile(firebaseUser.uid);
-          // setAppUser(userProfile);
+          // Check if user profile exists in Firestore
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          const userDocSnap = await getDoc(userDocRef);
+
+          if (!userDocSnap.exists()) {
+            // Create user profile if it doesn't exist
+            console.log('Creating user profile for existing user');
+            const displayName = firebaseUser.displayName || '';
+            const nameParts = displayName.split(' ');
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
+
+            const userDoc = {
+              email: firebaseUser.email,
+              profile: {
+                firstName,
+                lastName,
+                phone: '',
+                avatar: firebaseUser.photoURL || '',
+                bio: '',
+              },
+              churchMemberships: {},
+              preferences: {
+                emailNotifications: true,
+                smsNotifications: false,
+                pushNotifications: true,
+                timezone: 'Europe/Warsaw',
+              },
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+            };
+
+            await setDoc(userDocRef, userDoc);
+          }
         } catch (error) {
           console.error('Error fetching user data:', error);
         }

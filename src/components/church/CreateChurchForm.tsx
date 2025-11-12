@@ -1,19 +1,31 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useLocale, useTranslations } from 'next-intl';
 import { Church, MapPin, Mail, Phone, Globe, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { createChurchSchema, type CreateChurchFormData } from '@/lib/validations/church';
 import { createChurch } from '@/lib/services/church';
 
 export function CreateChurchForm() {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = useLocale();
+  const t = useTranslations('church');
+  const tCommon = useTranslations('common');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,11 +33,12 @@ export function CreateChurchForm() {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<CreateChurchFormData>({
     resolver: zodResolver(createChurchSchema),
     defaultValues: {
       address: {
-        country: 'US',
+        country: 'PL',
       },
     },
   });
@@ -36,9 +49,9 @@ export function CreateChurchForm() {
 
     try {
       const church = await createChurch(data);
-      router.push(`/churches/${church.id}`);
+      router.push(`/${locale}/churches/${church.id}`);
     } catch (err: any) {
-      setError(err.message || 'Failed to create church. Please try again.');
+      setError(err.message || (locale === 'pl' ? 'Nie udało się utworzyć kościoła. Spróbuj ponownie.' : 'Failed to create church. Please try again.'));
     } finally {
       setIsLoading(false);
     }
@@ -57,18 +70,18 @@ export function CreateChurchForm() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Church className="h-5 w-5" />
-            Basic Information
+            {t('basicInformation')}
           </CardTitle>
           <CardDescription>
-            Tell us about your church
+            {t('basicInformationDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Church Name *</Label>
+            <Label htmlFor="name">{t('name')} *</Label>
             <Input
               id="name"
-              placeholder="First Baptist Church"
+              placeholder={locale === 'pl' ? 'Kościół Baptystyczny' : 'First Baptist Church'}
               {...register('name')}
               disabled={isLoading}
             />
@@ -78,23 +91,33 @@ export function CreateChurchForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="denomination">Denomination</Label>
-            <Input
-              id="denomination"
-              placeholder="e.g., Baptist, Methodist, Non-denominational"
-              {...register('denomination')}
+            <Label htmlFor="denomination">{t('denomination')}</Label>
+            <Select
+              onValueChange={(value) => setValue('denomination', value)}
               disabled={isLoading}
-            />
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={locale === 'pl' ? 'Wybierz denominację...' : 'Select denomination...'} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="kościół baptystyczny">Kościół baptystyczny</SelectItem>
+                <SelectItem value="kościół zielonoświątkowy">Kościół zielonoświątkowy</SelectItem>
+                <SelectItem value="kościół katolicki">Kościół katolicki</SelectItem>
+                <SelectItem value="kościół metodystyczny">Kościół metodystyczny</SelectItem>
+                <SelectItem value="kościół niedenominacyjny">Kościół niedenominacyjny</SelectItem>
+                <SelectItem value="inny">Inny</SelectItem>
+              </SelectContent>
+            </Select>
             {errors.denomination && (
               <p className="text-sm text-destructive">{errors.denomination.message}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t('description')}</Label>
             <textarea
               id="description"
-              placeholder="Brief description of your church..."
+              placeholder={locale === 'pl' ? 'Krótki opis Twojego kościoła...' : 'Brief description of your church...'}
               className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               {...register('description')}
               disabled={isLoading}
@@ -111,18 +134,18 @@ export function CreateChurchForm() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <MapPin className="h-5 w-5" />
-            Address
+            {t('address')}
           </CardTitle>
           <CardDescription>
-            Where is your church located?
+            {t('addressInformationDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="street">Street Address *</Label>
+            <Label htmlFor="street">{t('street')} *</Label>
             <Input
               id="street"
-              placeholder="123 Main Street"
+              placeholder="ul. Marszałkowska 1"
               {...register('address.street')}
               disabled={isLoading}
             />
@@ -133,10 +156,10 @@ export function CreateChurchForm() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="city">City *</Label>
+              <Label htmlFor="city">{t('city')} *</Label>
               <Input
                 id="city"
-                placeholder="Springfield"
+                placeholder="Warszawa"
                 {...register('address.city')}
                 disabled={isLoading}
               />
@@ -146,24 +169,43 @@ export function CreateChurchForm() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="state">State *</Label>
-              <Input
-                id="state"
-                placeholder="IL"
-                maxLength={2}
-                {...register('address.state')}
+              <Label htmlFor="state">{t('state')} *</Label>
+              <Select
+                onValueChange={(value) => setValue('address.state', value)}
                 disabled={isLoading}
-              />
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={locale === 'pl' ? 'Wybierz województwo...' : 'Select voivodeship...'} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Dolnośląskie">Dolnośląskie</SelectItem>
+                  <SelectItem value="Kujawsko-pomorskie">Kujawsko-pomorskie</SelectItem>
+                  <SelectItem value="Lubelskie">Lubelskie</SelectItem>
+                  <SelectItem value="Lubuskie">Lubuskie</SelectItem>
+                  <SelectItem value="Łódzkie">Łódzkie</SelectItem>
+                  <SelectItem value="Małopolskie">Małopolskie</SelectItem>
+                  <SelectItem value="Mazowieckie">Mazowieckie</SelectItem>
+                  <SelectItem value="Opolskie">Opolskie</SelectItem>
+                  <SelectItem value="Podkarpackie">Podkarpackie</SelectItem>
+                  <SelectItem value="Podlaskie">Podlaskie</SelectItem>
+                  <SelectItem value="Pomorskie">Pomorskie</SelectItem>
+                  <SelectItem value="Śląskie">Śląskie</SelectItem>
+                  <SelectItem value="Świętokrzyskie">Świętokrzyskie</SelectItem>
+                  <SelectItem value="Warmińsko-mazurskie">Warmińsko-mazurskie</SelectItem>
+                  <SelectItem value="Wielkopolskie">Wielkopolskie</SelectItem>
+                  <SelectItem value="Zachodniopomorskie">Zachodniopomorskie</SelectItem>
+                </SelectContent>
+              </Select>
               {errors.address?.state && (
                 <p className="text-sm text-destructive">{errors.address.state.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="zipCode">ZIP Code *</Label>
+              <Label htmlFor="zipCode">{t('zipCode')} *</Label>
               <Input
                 id="zipCode"
-                placeholder="62701"
+                placeholder="00-001"
                 {...register('address.zipCode')}
                 disabled={isLoading}
               />
@@ -180,15 +222,15 @@ export function CreateChurchForm() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Mail className="h-5 w-5" />
-            Contact Information
+            {t('contactInformation')}
           </CardTitle>
           <CardDescription>
-            How can people reach your church?
+            {t('contactInformationDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email *</Label>
+            <Label htmlFor="email">{t('email')} *</Label>
             <div className="relative">
               <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -206,13 +248,13 @@ export function CreateChurchForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone *</Label>
+            <Label htmlFor="phone">{t('phone')} *</Label>
             <div className="relative">
               <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 id="phone"
                 type="tel"
-                placeholder="(555) 123-4567"
+                placeholder="+48 123 456 789"
                 className="pl-10"
                 {...register('contactInfo.phone')}
                 disabled={isLoading}
@@ -224,7 +266,7 @@ export function CreateChurchForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="website">Website</Label>
+            <Label htmlFor="website">{t('website')}</Label>
             <div className="relative">
               <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -250,10 +292,10 @@ export function CreateChurchForm() {
           onClick={() => router.back()}
           disabled={isLoading}
         >
-          Cancel
+          {tCommon('cancel')}
         </Button>
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Creating...' : 'Create Church'}
+          {isLoading ? t('creating') : t('createChurch')}
         </Button>
       </div>
     </form>

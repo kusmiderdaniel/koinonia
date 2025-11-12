@@ -12,9 +12,8 @@ export interface Song {
   album?: string;
   key: string; // e.g., "G", "Am", "D#"
   tempo: SongTempo;
+  duration?: number; // Duration in seconds
   themes: string[]; // e.g., ["Worship", "Easter", "Christmas"]
-  lyrics: string;
-  chords?: string;
   notes?: string;
   ccliNumber?: string; // CCLI licensing number
   lastUsed?: Date;
