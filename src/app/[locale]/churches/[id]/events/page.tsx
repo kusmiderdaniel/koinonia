@@ -195,15 +195,6 @@ export default function EventsPage() {
     };
   }, [churchId, authLoading, user, locale, router]);
 
-  // Auto-select first event when events are loaded
-  useEffect(() => {
-    if (events.length > 0 && !selectedEvent) {
-      const upcomingEvents = events.filter(
-        (event) => new Date(event.datetime.start) >= new Date() && event.status !== 'canceled'
-      );
-      setSelectedEvent(upcomingEvents.length > 0 ? upcomingEvents[0] : events[0]);
-    }
-  }, [events, selectedEvent]);
 
   const isLeader = userRole === 'admin' || userRole === 'leader';
 
@@ -827,7 +818,7 @@ export default function EventsPage() {
 
         {/* Event Details - Right Side */}
         <div className="flex-1 overflow-hidden">
-          {selectedEvent ? (
+          {selectedEvent && (
             <Card className="h-full flex flex-col overflow-hidden">
               <CardHeader className="flex-shrink-0">
                 <div className="flex items-start justify-between">
@@ -1115,20 +1106,6 @@ export default function EventsPage() {
                   )}
                 </TabsContent>
               </Tabs>
-            </Card>
-          ) : (
-            <Card className="h-full flex items-center justify-center">
-              <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                <Calendar className="h-16 w-16 text-muted-foreground mb-4 opacity-50" />
-                <h3 className="text-lg font-semibold mb-2">
-                  {locale === 'pl' ? 'Wybierz wydarzenie' : 'Select an Event'}
-                </h3>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  {locale === 'pl'
-                    ? 'Wybierz wydarzenie z listy, aby zobaczyć szczegóły'
-                    : 'Select an event from the list to view details'}
-                </p>
-              </CardContent>
             </Card>
           )}
         </div>
