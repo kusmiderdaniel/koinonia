@@ -65,24 +65,10 @@ export default function NewEventPage() {
     locationAddress: '',
     locationRoom: '',
     startDate: getNextSunday(),
-    startTime: '',
+    startTime: '10:00',
     endDate: getNextSunday(),
-    endTime: '',
+    endTime: '12:00',
   });
-
-  // Generate time options in 5-minute intervals
-  const generateTimeOptions = (): string[] => {
-    const times: string[] = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 5) {
-        const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-        times.push(timeString);
-      }
-    }
-    return times;
-  };
-
-  const timeOptions = generateTimeOptions();
 
   useEffect(() => {
     const loadChurch = async () => {
@@ -319,22 +305,13 @@ export default function NewEventPage() {
                 <Label htmlFor="startTime">
                   {locale === 'pl' ? 'Godzina rozpoczęcia' : 'Start Time'} <span className="text-destructive">*</span>
                 </Label>
-                <Select
+                <Input
+                  id="startTime"
+                  type="time"
                   value={formData.startTime}
-                  onValueChange={(value) => setFormData({ ...formData, startTime: value })}
+                  onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
                   disabled={loading}
-                >
-                  <SelectTrigger id="startTime">
-                    <SelectValue placeholder={locale === 'pl' ? 'Wybierz godzinę' : 'Select time'} />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {timeOptions.map((time) => (
-                      <SelectItem key={time} value={time}>
-                        {time}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                />
               </div>
             </div>
 
@@ -355,22 +332,13 @@ export default function NewEventPage() {
                 <Label htmlFor="endTime">
                   {locale === 'pl' ? 'Godzina zakończenia' : 'End Time'} <span className="text-destructive">*</span>
                 </Label>
-                <Select
+                <Input
+                  id="endTime"
+                  type="time"
                   value={formData.endTime}
-                  onValueChange={(value) => setFormData({ ...formData, endTime: value })}
+                  onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
                   disabled={loading}
-                >
-                  <SelectTrigger id="endTime">
-                    <SelectValue placeholder={locale === 'pl' ? 'Wybierz godzinę' : 'Select time'} />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {timeOptions.map((time) => (
-                      <SelectItem key={time} value={time}>
-                        {time}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                />
               </div>
             </div>
           </div>
