@@ -27,7 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { ArrowLeft, Save, Send } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 import Link from 'next/link';
 import type { EventType } from '@/types/event';
 import type { Church } from '@/types/church';
@@ -95,7 +95,7 @@ export default function NewEventPage() {
     loadChurch();
   }, [churchId]);
 
-  const handleSubmit = async (status: 'draft' | 'published') => {
+  const handleSubmit = async () => {
     try {
       setLoading(true);
       setError(null);
@@ -159,7 +159,7 @@ export default function NewEventPage() {
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
         roles: [],
-        status,
+        status: 'published',
         settings: {
           requireApproval: false,
           allowSelfSignup: true,
@@ -464,19 +464,13 @@ export default function NewEventPage() {
               {locale === 'pl' ? 'Anuluj' : 'Cancel'}
             </Button>
             <Button
-              variant="outline"
-              onClick={() => handleSubmit('draft')}
+              onClick={handleSubmit}
               disabled={loading}
             >
               <Save className="mr-2 h-4 w-4" />
-              {locale === 'pl' ? 'Zapisz jako szkic' : 'Save as Draft'}
-            </Button>
-            <Button
-              onClick={() => handleSubmit('published')}
-              disabled={loading}
-            >
-              <Send className="mr-2 h-4 w-4" />
-              {locale === 'pl' ? 'Opublikuj wydarzenie' : 'Publish Event'}
+              {loading
+                ? (locale === 'pl' ? 'Tworzenie...' : 'Creating...')
+                : (locale === 'pl' ? 'Utwórz wydarzenie' : 'Create Event')}
             </Button>
           </div>
         </CardContent>

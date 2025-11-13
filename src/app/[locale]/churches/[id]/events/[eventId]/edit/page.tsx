@@ -60,7 +60,6 @@ export default function EditEventPage() {
     startTime: '10:00',
     endDate: '',
     endTime: '12:00',
-    status: 'published' as 'draft' | 'published' | 'canceled',
   });
 
   useEffect(() => {
@@ -113,7 +112,6 @@ export default function EditEventPage() {
           startTime: formatTime(startDate),
           endDate: formatDate(endDate),
           endTime: formatTime(endDate),
-          status: eventData.status,
         });
 
         if (matchedRoom) {
@@ -199,7 +197,6 @@ export default function EditEventPage() {
           end: endDateTime,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
-        status: formData.status,
       });
 
       // Navigate back to events page
@@ -331,27 +328,6 @@ export default function EditEventPage() {
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          {/* Status */}
-          <div className="space-y-2">
-            <Label htmlFor="status">
-              {locale === 'pl' ? 'Status' : 'Status'} <span className="text-destructive">*</span>
-            </Label>
-            <Select
-              value={formData.status}
-              onValueChange={(value: 'draft' | 'published' | 'canceled') => setFormData({ ...formData, status: value })}
-              disabled={loading}
-            >
-              <SelectTrigger id="status">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="draft">{locale === 'pl' ? 'Szkic' : 'Draft'}</SelectItem>
-                <SelectItem value="published">{locale === 'pl' ? 'Opublikowane' : 'Published'}</SelectItem>
-                <SelectItem value="canceled">{locale === 'pl' ? 'Anulowane' : 'Canceled'}</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           {/* Description */}

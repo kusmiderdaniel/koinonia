@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks';
 import { getChurch, getChurchMembership, getChurchMembersWithUsers } from '@/lib/services/church';
 import {
   getChurchEvents,
+  deleteEvent,
   addAgendaItem,
   updateAgendaItem,
   deleteAgendaItem,
@@ -144,6 +145,9 @@ export default function EventsPage() {
   const [selectedRoleForAssignment, setSelectedRoleForAssignment] = useState<string | null>(null);
   const [selectedVolunteerId, setSelectedVolunteerId] = useState<string>('');
 
+  // Event deletion
+  const [showDeleteEventDialog, setShowDeleteEventDialog] = useState(false);
+
   useEffect(() => {
     if (authLoading) return;
 
@@ -200,10 +204,10 @@ export default function EventsPage() {
 
   const now = new Date();
   const upcomingEvents = events.filter(
-    (event) => new Date(event.datetime.start) >= now && event.status !== 'canceled'
+    (event) => new Date(event.datetime.start) >= now
   );
   const pastEvents = events.filter(
-    (event) => new Date(event.datetime.start) < now || event.status === 'canceled'
+    (event) => new Date(event.datetime.start) < now
   );
 
   const getEventTypeLabel = (type: string) => {
@@ -554,6 +558,29 @@ export default function EventsPage() {
     }
   };
 
+  // Event deletion handler
+  const handleDeleteEvent = () => {
+    setShowDeleteEventDialog(true);
+  };
+
+  const confirmDeleteEvent = async () => {
+    if (!selectedEvent) return;
+    try {
+      setActionLoading(true);
+      await deleteEvent(churchId, selectedEvent.id);
+      setShowDeleteEventDialog(false);
+      setSelectedEvent(null);
+      // Reload events list
+      const updatedEvents = await getChurchEvents(churchId);
+      setEvents(updatedEvents);
+    } catch (err: any) {
+      console.error('Error deleting event:', err);
+      setError(err.message || 'Failed to delete event');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   // Sortable Agenda Item Component
   const SortableAgendaItem = ({ item, index }: { item: EventAgendaItem; index: number }) => {
     const itemSong = item.songId ? churchSongs.find((s) => s.id === item.songId) : null;
@@ -780,18 +807,13 @@ export default function EventsPage() {
                       selectedEvent?.id === event.id
                         ? 'bg-accent border-primary'
                         : 'hover:bg-accent/50 border-transparent'
-                    } ${event.status === 'canceled' ? 'opacity-60' : ''}`}
+                    }`}
                     onClick={() => setSelectedEvent(event)}
                   >
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <h3 className="font-semibold text-sm line-clamp-2">{event.title}</h3>
                       <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                     </div>
-                    {event.status === 'canceled' && (
-                      <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 mb-1">
-                        {locale === 'pl' ? 'Anulowane' : 'Canceled'}
-                      </span>
-                    )}
                     <div className="space-y-1 text-xs text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
@@ -830,20 +852,27 @@ export default function EventsPage() {
                       >
                         {getEventTypeLabel(selectedEvent.type)}
                       </span>
-                      {selectedEvent.status === 'canceled' && (
-                        <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
-                          {locale === 'pl' ? 'Anulowane' : 'Canceled'}
-                        </span>
-                      )}
                     </div>
                   </div>
                   {isLeader && (
-                    <Link href={`/${locale}/churches/${churchId}/events/${selectedEvent.id}/edit`}>
-                      <Button variant="outline" size="sm">
-                        <Edit className="mr-1 h-3 w-3" />
-                        {locale === 'pl' ? 'Edytuj' : 'Edit'}
+                    <div className="flex gap-2">
+                      <Link href={`/${locale}/churches/${churchId}/events/${selectedEvent.id}/edit`}>
+                        <Button variant="outline" size="sm">
+                          <Edit className="mr-1 h-3 w-3" />
+                          {locale === 'pl' ? 'Edytuj' : 'Edit'}
+                        </Button>
+                      </Link>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleDeleteEvent}
+                        disabled={actionLoading}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="mr-1 h-3 w-3" />
+                        {locale === 'pl' ? 'Usuń' : 'Delete'}
                       </Button>
-                    </Link>
+                    </div>
                   )}
                 </div>
               </CardHeader>
@@ -1480,7 +1509,7 @@ export default function EventsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Alert Dialog */}
+      {/* Delete Agenda Item Confirmation Alert Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -1503,6 +1532,34 @@ export default function EventsPage() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {actionLoading ? (locale === 'pl' ? 'Usuwanie...' : 'Deleting...') : (locale === 'pl' ? 'Usuń' : 'Delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Event Confirmation Alert Dialog */}
+      <AlertDialog open={showDeleteEventDialog} onOpenChange={setShowDeleteEventDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {locale === 'pl' ? 'Usuń wydarzenie?' : 'Delete Event?'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {locale === 'pl'
+                ? 'Czy na pewno chcesz usunąć to wydarzenie? Ta akcja jest nieodwracalna i wydarzenie zostanie trwale usunięte wraz z całą agendą i przypisaniami wolontariuszy.'
+                : 'Are you sure you want to delete this event? This action cannot be undone and will permanently delete the event along with all agenda items and volunteer assignments.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={actionLoading}>
+              {locale === 'pl' ? 'Anuluj' : 'Cancel'}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteEvent}
+              disabled={actionLoading}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {actionLoading ? (locale === 'pl' ? 'Usuwanie...' : 'Deleting...') : (locale === 'pl' ? 'Usuń wydarzenie' : 'Delete Event')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
