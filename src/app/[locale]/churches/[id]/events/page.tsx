@@ -9,7 +9,7 @@ import { getChurchEvents } from '@/lib/services/event';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, Plus, ArrowLeft, MapPin, Clock, Users } from 'lucide-react';
+import { Calendar, Plus, MapPin, Clock, Users, FileText, ChevronRight } from 'lucide-react';
 import type { Church } from '@/types/church';
 import type { Event } from '@/types/event';
 import Link from 'next/link';
@@ -28,6 +28,7 @@ export default function EventsPage() {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -73,6 +74,16 @@ export default function EventsPage() {
       isMounted = false;
     };
   }, [churchId, authLoading, user, locale, router]);
+
+  // Auto-select first event when events are loaded
+  useEffect(() => {
+    if (events.length > 0 && !selectedEvent) {
+      const upcomingEvents = events.filter(
+        (event) => new Date(event.datetime.start) >= new Date() && event.status !== 'canceled'
+      );
+      setSelectedEvent(upcomingEvents.length > 0 ? upcomingEvents[0] : events[0]);
+    }
+  }, [events, selectedEvent]);
 
   const isLeader = userRole === 'admin' || userRole === 'leader';
 
@@ -144,191 +155,302 @@ export default function EventsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-6">
-        <Link
-          href={`/${locale}/churches/${churchId}`}
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {locale === 'pl' ? 'Powrót do kościoła' : 'Back to Church'}
-        </Link>
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <Calendar className="h-8 w-8" />
-              {locale === 'pl' ? 'Wydarzenia' : 'Events'}
-            </h1>
-            {church && (
-              <p className="text-muted-foreground mt-1">{church.name}</p>
-            )}
-          </div>
-          {isLeader && (
-            <Link href={`/${locale}/churches/${churchId}/events/new`}>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                {locale === 'pl' ? 'Nowe wydarzenie' : 'New Event'}
-              </Button>
-            </Link>
-          )}
-        </div>
+      <div className="mb-6 flex items-start justify-between">
+        <h1 className="text-3xl font-bold flex items-center gap-2">
+          <Calendar className="h-8 w-8" />
+          {locale === 'pl' ? 'Wydarzenia' : 'Events'}
+        </h1>
+        {isLeader && (
+          <Link href={`/${locale}/churches/${churchId}/events/new`}>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              {locale === 'pl' ? 'Nowe wydarzenie' : 'New Event'}
+            </Button>
+          </Link>
+        )}
       </div>
 
-      <Tabs defaultValue="upcoming" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="upcoming">
-            {locale === 'pl' ? `Nadchodzące (${upcomingEvents.length})` : `Upcoming (${upcomingEvents.length})`}
-          </TabsTrigger>
-          <TabsTrigger value="past">
-            {locale === 'pl' ? `Przeszłe (${pastEvents.length})` : `Past (${pastEvents.length})`}
-          </TabsTrigger>
-        </TabsList>
+      <div className="flex gap-6 h-[calc(100vh-200px)]">
+        {/* Events List - Left Side */}
+        <div className="w-96 flex flex-col">
+          <Tabs defaultValue="upcoming" className="flex flex-col h-full">
+            <TabsList className="w-full">
+              <TabsTrigger value="upcoming" className="flex-1">
+                {locale === 'pl' ? `Nadchodzące (${upcomingEvents.length})` : `Upcoming (${upcomingEvents.length})`}
+              </TabsTrigger>
+              <TabsTrigger value="past" className="flex-1">
+                {locale === 'pl' ? `Przeszłe (${pastEvents.length})` : `Past (${pastEvents.length})`}
+              </TabsTrigger>
+            </TabsList>
 
-        <TabsContent value="upcoming" className="space-y-4">
-          {upcomingEvents.length === 0 ? (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Calendar className="h-16 w-16 text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold mb-2">
-                  {locale === 'pl' ? 'Brak nadchodzących wydarzeń' : 'No Upcoming Events'}
-                </h3>
-                <p className="text-muted-foreground text-center mb-6 max-w-md">
-                  {locale === 'pl'
-                    ? 'Nie ma zaplanowanych wydarzeń. Sprawdź później.'
-                    : 'There are no scheduled events. Check back later.'}
-                </p>
-                {isLeader && (
-                  <Link href={`/${locale}/churches/${churchId}/events/new`}>
-                    <Button>
-                      <Plus className="mr-2 h-4 w-4" />
-                      {locale === 'pl' ? 'Utwórz pierwsze wydarzenie' : 'Create First Event'}
+            <TabsContent value="upcoming" className="flex-1 overflow-y-auto mt-4 space-y-2">
+              {upcomingEvents.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Calendar className="h-12 w-12 text-muted-foreground mb-3 opacity-50" />
+                  <p className="text-sm text-muted-foreground">
+                    {locale === 'pl'
+                      ? 'Brak nadchodzących wydarzeń'
+                      : 'No upcoming events'}
+                  </p>
+                </div>
+              ) : (
+                upcomingEvents.map((event) => (
+                  <div
+                    key={event.id}
+                    className={`p-4 rounded-lg cursor-pointer transition-colors border ${
+                      selectedEvent?.id === event.id
+                        ? 'bg-accent border-primary'
+                        : 'hover:bg-accent/50 border-transparent'
+                    }`}
+                    onClick={() => setSelectedEvent(event)}
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="font-semibold text-sm line-clamp-2">{event.title}</h3>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    </div>
+                    <div className="space-y-1 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        <span className="truncate">
+                          {format(new Date(event.datetime.start), 'PPP', {
+                            locale: locale === 'pl' ? pl : enUS,
+                          })}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        <span className="truncate">{event.location.name}</span>
+                      </div>
+                    </div>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium mt-2 ${getEventTypeBadge(event.type)}`}
+                    >
+                      {getEventTypeLabel(event.type)}
+                    </span>
+                  </div>
+                ))
+              )}
+            </TabsContent>
+
+            <TabsContent value="past" className="flex-1 overflow-y-auto mt-4 space-y-2">
+              {pastEvents.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Calendar className="h-12 w-12 text-muted-foreground mb-3 opacity-50" />
+                  <p className="text-sm text-muted-foreground">
+                    {locale === 'pl'
+                      ? 'Brak przeszłych wydarzeń'
+                      : 'No past events'}
+                  </p>
+                </div>
+              ) : (
+                pastEvents.map((event) => (
+                  <div
+                    key={event.id}
+                    className={`p-4 rounded-lg cursor-pointer transition-colors border ${
+                      selectedEvent?.id === event.id
+                        ? 'bg-accent border-primary'
+                        : 'hover:bg-accent/50 border-transparent'
+                    } ${event.status === 'canceled' ? 'opacity-60' : ''}`}
+                    onClick={() => setSelectedEvent(event)}
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="font-semibold text-sm line-clamp-2">{event.title}</h3>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    </div>
+                    {event.status === 'canceled' && (
+                      <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 mb-1">
+                        {locale === 'pl' ? 'Anulowane' : 'Canceled'}
+                      </span>
+                    )}
+                    <div className="space-y-1 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        <span className="truncate">
+                          {format(new Date(event.datetime.start), 'PPP', {
+                            locale: locale === 'pl' ? pl : enUS,
+                          })}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        <span className="truncate">{event.location.name}</span>
+                      </div>
+                    </div>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium mt-2 ${getEventTypeBadge(event.type)}`}
+                    >
+                      {getEventTypeLabel(event.type)}
+                    </span>
+                  </div>
+                ))
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* Event Details - Right Side */}
+        <div className="flex-1 overflow-hidden">
+          {selectedEvent ? (
+            <Card className="h-full overflow-y-auto">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="text-2xl mb-2">{selectedEvent.title}</CardTitle>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getEventTypeBadge(selectedEvent.type)}`}
+                      >
+                        {getEventTypeLabel(selectedEvent.type)}
+                      </span>
+                      {selectedEvent.status === 'canceled' && (
+                        <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
+                          {locale === 'pl' ? 'Anulowane' : 'Canceled'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <Link href={`/${locale}/churches/${churchId}/events/${selectedEvent.id}`}>
+                    <Button variant="outline" size="sm">
+                      {locale === 'pl' ? 'Szczegóły' : 'Details'}
+                      <ChevronRight className="ml-1 h-4 w-4" />
                     </Button>
                   </Link>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {selectedEvent.description && (
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                      {locale === 'pl' ? 'Opis' : 'Description'}
+                    </h3>
+                    <p className="text-sm">{selectedEvent.description}</p>
+                  </div>
+                )}
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="flex items-start gap-3">
+                    <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground">
+                        {locale === 'pl' ? 'Data' : 'Date'}
+                      </h3>
+                      <p className="text-sm">
+                        {format(new Date(selectedEvent.datetime.start), 'PPP', {
+                          locale: locale === 'pl' ? pl : enUS,
+                        })}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground">
+                        {locale === 'pl' ? 'Godzina' : 'Time'}
+                      </h3>
+                      <p className="text-sm">
+                        {format(new Date(selectedEvent.datetime.start), 'p', {
+                          locale: locale === 'pl' ? pl : enUS,
+                        })}
+                        {' - '}
+                        {format(new Date(selectedEvent.datetime.end), 'p', {
+                          locale: locale === 'pl' ? pl : enUS,
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground">
+                      {locale === 'pl' ? 'Lokalizacja' : 'Location'}
+                    </h3>
+                    <p className="text-sm">{selectedEvent.location.name}</p>
+                    {selectedEvent.location.address && (
+                      <p className="text-sm text-muted-foreground">{selectedEvent.location.address}</p>
+                    )}
+                    {selectedEvent.location.room && (
+                      <p className="text-sm text-muted-foreground">
+                        {locale === 'pl' ? 'Sala' : 'Room'}: {selectedEvent.location.room}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {selectedEvent.agenda && selectedEvent.agenda.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <FileText className="h-5 w-5 text-muted-foreground" />
+                      <h3 className="text-sm font-medium text-muted-foreground">
+                        {locale === 'pl' ? 'Agenda' : 'Agenda'}
+                      </h3>
+                    </div>
+                    <div className="space-y-2">
+                      {selectedEvent.agenda
+                        .sort((a, b) => a.order - b.order)
+                        .map((item, index) => (
+                          <div key={item.id} className="flex items-start gap-3 text-sm p-2 rounded bg-muted/30">
+                            <span className="text-xs text-muted-foreground font-medium w-6 text-right mt-0.5">
+                              {index + 1}.
+                            </span>
+                            <div className="flex-1">
+                              <div className="font-medium">{item.title}</div>
+                              {item.description && (
+                                <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {selectedEvent.roles && selectedEvent.roles.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Users className="h-5 w-5 text-muted-foreground" />
+                      <h3 className="text-sm font-medium text-muted-foreground">
+                        {locale === 'pl' ? 'Role wolontariuszy' : 'Volunteer Roles'}
+                      </h3>
+                    </div>
+                    <div className="space-y-2">
+                      {selectedEvent.roles.map((role) => (
+                        <div key={role.id} className="p-3 rounded border">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h4 className="font-medium text-sm">{role.name}</h4>
+                              <p className="text-xs text-muted-foreground">{role.description}</p>
+                            </div>
+                            <span className="text-xs text-muted-foreground whitespace-nowrap ml-4">
+                              {role.assignments.length} / {role.requiredCount}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4">
-              {upcomingEvents.map((event) => (
-                <Card
-                  key={event.id}
-                  className="cursor-pointer hover:shadow-lg transition-shadow"
-                  onClick={() => router.push(`/${locale}/churches/${churchId}/events/${event.id}`)}
-                >
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="flex items-center gap-2">
-                          {event.title}
-                          <span
-                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getEventTypeBadge(event.type)}`}
-                          >
-                            {getEventTypeLabel(event.type)}
-                          </span>
-                        </CardTitle>
-                        {event.description && (
-                          <CardDescription className="mt-2 line-clamp-2">
-                            {event.description}
-                          </CardDescription>
-                        )}
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Clock className="h-4 w-4" />
-                        <span>
-                          {format(new Date(event.datetime.start), 'PPP p', {
-                            locale: locale === 'pl' ? pl : enUS,
-                          })}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <MapPin className="h-4 w-4" />
-                        <span>{event.location.name}</span>
-                      </div>
-                      {event.roles && event.roles.length > 0 && (
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <Users className="h-4 w-4" />
-                          <span>
-                            {`${event.roles.length} ${event.roles.length === 1 ? 'role' : 'roles'}`}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="past" className="space-y-4">
-          {pastEvents.length === 0 ? (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Calendar className="h-16 w-16 text-muted-foreground mb-4" />
-                <h3 className="text-xl font-semibold mb-2">
-                  {locale === 'pl' ? 'Brak przeszłych wydarzeń' : 'No Past Events'}
+            <Card className="h-full flex items-center justify-center">
+              <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                <Calendar className="h-16 w-16 text-muted-foreground mb-4 opacity-50" />
+                <h3 className="text-lg font-semibold mb-2">
+                  {locale === 'pl' ? 'Wybierz wydarzenie' : 'Select an Event'}
                 </h3>
-                <p className="text-muted-foreground text-center mb-6 max-w-md">
+                <p className="text-sm text-muted-foreground max-w-md">
                   {locale === 'pl'
-                    ? 'Historia wydarzeń jest pusta.'
-                    : 'Event history is empty.'}
+                    ? 'Wybierz wydarzenie z listy, aby zobaczyć szczegóły'
+                    : 'Select an event from the list to view details'}
                 </p>
               </CardContent>
             </Card>
-          ) : (
-            <div className="grid gap-4">
-              {pastEvents.map((event) => (
-                <Card
-                  key={event.id}
-                  className={`cursor-pointer hover:shadow-lg transition-shadow ${
-                    event.status === 'canceled' ? 'opacity-60' : ''
-                  }`}
-                  onClick={() => router.push(`/${locale}/churches/${churchId}/events/${event.id}`)}
-                >
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="flex items-center gap-2">
-                          {event.title}
-                          {event.status === 'canceled' && (
-                            <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
-                              {locale === 'pl' ? 'Anulowane' : 'Canceled'}
-                            </span>
-                          )}
-                          <span
-                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getEventTypeBadge(event.type)}`}
-                          >
-                            {getEventTypeLabel(event.type)}
-                          </span>
-                        </CardTitle>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Clock className="h-4 w-4" />
-                        <span>
-                          {format(new Date(event.datetime.start), 'PPP p', {
-                            locale: locale === 'pl' ? pl : enUS,
-                          })}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <MapPin className="h-4 w-4" />
-                        <span>{event.location.name}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
           )}
-        </TabsContent>
-      </Tabs>
+        </div>
+      </div>
     </div>
   );
 }
