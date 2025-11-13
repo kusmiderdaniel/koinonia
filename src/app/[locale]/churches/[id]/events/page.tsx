@@ -117,6 +117,20 @@ export default function EventsPage() {
     return colors[type] || colors.other;
   };
 
+  const safeFormatDate = (date: Date | string, formatStr: string) => {
+    try {
+      const dateObj = date instanceof Date ? date : new Date(date);
+      if (isNaN(dateObj.getTime())) {
+        return locale === 'pl' ? 'Nieprawidłowa data' : 'Invalid date';
+      }
+      return format(dateObj, formatStr, {
+        locale: locale === 'pl' ? pl : enUS,
+      });
+    } catch (error) {
+      return locale === 'pl' ? 'Nieprawidłowa data' : 'Invalid date';
+    }
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -212,9 +226,7 @@ export default function EventsPage() {
                       <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         <span className="truncate">
-                          {format(new Date(event.datetime.start), 'PPP', {
-                            locale: locale === 'pl' ? pl : enUS,
-                          })}
+                          {safeFormatDate(event.datetime.start, 'PPP')}
                         </span>
                       </div>
                       <div className="flex items-center gap-1">
@@ -266,9 +278,7 @@ export default function EventsPage() {
                       <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         <span className="truncate">
-                          {format(new Date(event.datetime.start), 'PPP', {
-                            locale: locale === 'pl' ? pl : enUS,
-                          })}
+                          {safeFormatDate(event.datetime.start, 'PPP')}
                         </span>
                       </div>
                       <div className="flex items-center gap-1">
@@ -335,9 +345,7 @@ export default function EventsPage() {
                         {locale === 'pl' ? 'Data' : 'Date'}
                       </h3>
                       <p className="text-sm">
-                        {format(new Date(selectedEvent.datetime.start), 'PPP', {
-                          locale: locale === 'pl' ? pl : enUS,
-                        })}
+                        {safeFormatDate(selectedEvent.datetime.start, 'PPP')}
                       </p>
                     </div>
                   </div>
@@ -349,13 +357,9 @@ export default function EventsPage() {
                         {locale === 'pl' ? 'Godzina' : 'Time'}
                       </h3>
                       <p className="text-sm">
-                        {format(new Date(selectedEvent.datetime.start), 'p', {
-                          locale: locale === 'pl' ? pl : enUS,
-                        })}
+                        {safeFormatDate(selectedEvent.datetime.start, 'p')}
                         {' - '}
-                        {format(new Date(selectedEvent.datetime.end), 'p', {
-                          locale: locale === 'pl' ? pl : enUS,
-                        })}
+                        {safeFormatDate(selectedEvent.datetime.end, 'p')}
                       </p>
                     </div>
                   </div>
