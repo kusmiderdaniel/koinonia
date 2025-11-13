@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -60,6 +61,7 @@ export default function EditEventPage() {
     startTime: '10:00',
     endDate: '',
     endTime: '12:00',
+    isTemplate: false,
   });
 
   useEffect(() => {
@@ -112,6 +114,7 @@ export default function EditEventPage() {
           startTime: formatTime(startDate),
           endDate: formatDate(endDate),
           endTime: formatTime(endDate),
+          isTemplate: eventData.isTemplate || false,
         });
 
         if (matchedRoom) {
@@ -142,7 +145,7 @@ export default function EditEventPage() {
       // Validate required fields
       const missingTitle = !formData.title;
       const missingLocation = locationMode === 'room' ? !selectedRoomId : !formData.locationName;
-      const missingDates = !formData.startDate || !formData.startTime || !formData.endDate || !formData.endTime;
+      const missingDates = !formData.isTemplate && (!formData.startDate || !formData.startTime || !formData.endDate || !formData.endTime);
 
       if (missingTitle || missingLocation || missingDates) {
         setError(locale === 'pl' ? 'Wypełnij wszystkie wymagane pola' : 'Please fill in all required fields');
@@ -150,15 +153,18 @@ export default function EditEventPage() {
         return;
       }
 
-      // Construct datetime objects
-      const startDateTime = new Date(`${formData.startDate}T${formData.startTime}`);
-      const endDateTime = new Date(`${formData.endDate}T${formData.endTime}`);
+      // Construct datetime objects (only for non-templates)
+      let startDateTime, endDateTime;
+      if (!formData.isTemplate) {
+        startDateTime = new Date(`${formData.startDate}T${formData.startTime}`);
+        endDateTime = new Date(`${formData.endDate}T${formData.endTime}`);
 
-      // Validate dates
-      if (endDateTime <= startDateTime) {
-        setError(locale === 'pl' ? 'Data/godzina zakończenia musi być po dacie/godzinie rozpoczęcia' : 'End date/time must be after start date/time');
-        setShowErrorDialog(true);
-        return;
+        // Validate dates
+        if (endDateTime <= startDateTime) {
+          setError(locale === 'pl' ? 'Data/godzina zakończenia musi być po dacie/godzinie rozpoczęcia' : 'End date/time must be after start date/time');
+          setShowErrorDialog(true);
+          return;
+        }
       }
 
       // Determine location based on mode
@@ -193,10 +199,11 @@ export default function EditEventPage() {
         type: formData.type,
         location,
         datetime: {
-          start: startDateTime,
-          end: endDateTime,
+          start: formData.isTemplate ? new Date('1970-01-01T00:00:00') : startDateTime!,
+          end: formData.isTemplate ? new Date('1970-01-01T00:00:00') : endDateTime!,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
+        isTemplate: formData.isTemplate,
       });
 
       // Navigate back to events page
@@ -347,11 +354,30 @@ export default function EditEventPage() {
             />
           </div>
 
-          {/* Date and Time */}
-          <div className="space-y-4">
-            <Label className="text-base font-semibold">
-              {locale === 'pl' ? 'Data i godzina' : 'Date & Time'}
+          {/* Template Checkbox */}
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="isTemplate"
+              checked={formData.isTemplate}
+              onCheckedChange={(checked) => setFormData({ ...formData, isTemplate: checked as boolean })}
+              disabled={loading}
+            />
+            <Label
+              htmlFor="isTemplate"
+              className="text-sm font-normal cursor-pointer"
+            >
+              {locale === 'pl'
+                ? 'Zapisz jako szablon (szablon nie będzie miał daty i będzie służył jako wzór dla przyszłych wydarzeń)'
+                : 'Save as template (template will not have a date and will serve as a blueprint for future events)'}
             </Label>
+          </div>
+
+          {/* Date and Time - Hidden for templates */}
+          {!formData.isTemplate && (
+            <div className="space-y-4">
+              <Label className="text-base font-semibold">
+                {locale === 'pl' ? 'Data i godzina' : 'Date & Time'}
+              </Label>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
@@ -406,7 +432,8 @@ export default function EditEventPage() {
                 />
               </div>
             </div>
-          </div>
+            </div>
+          )}
 
           {/* Location */}
           <div className="space-y-4">

@@ -204,10 +204,13 @@ export default function EventsPage() {
 
   const now = new Date();
   const upcomingEvents = events.filter(
-    (event) => new Date(event.datetime.start) >= now
+    (event) => new Date(event.datetime.start) >= now && !event.isTemplate
   );
   const pastEvents = events.filter(
-    (event) => new Date(event.datetime.start) < now
+    (event) => new Date(event.datetime.start) < now && !event.isTemplate
+  );
+  const templateEvents = events.filter(
+    (event) => event.isTemplate
   );
 
   const getEventTypeLabel = (type: string) => {
@@ -733,12 +736,15 @@ export default function EventsPage() {
         {/* Events List - Left Side */}
         <div className="w-96 flex flex-col">
           <Tabs defaultValue="upcoming" className="flex flex-col h-full">
-            <TabsList className="w-full">
-              <TabsTrigger value="upcoming" className="flex-1">
+            <TabsList className="w-full grid grid-cols-3">
+              <TabsTrigger value="upcoming">
                 {locale === 'pl' ? `Nadchodzące (${upcomingEvents.length})` : `Upcoming (${upcomingEvents.length})`}
               </TabsTrigger>
-              <TabsTrigger value="past" className="flex-1">
+              <TabsTrigger value="past">
                 {locale === 'pl' ? `Przeszłe (${pastEvents.length})` : `Past (${pastEvents.length})`}
+              </TabsTrigger>
+              <TabsTrigger value="templates">
+                {locale === 'pl' ? `Szablony (${templateEvents.length})` : `Templates (${templateEvents.length})`}
               </TabsTrigger>
             </TabsList>
 
@@ -819,6 +825,60 @@ export default function EventsPage() {
                         <Clock className="h-3 w-3" />
                         <span className="truncate">
                           {safeFormatDate(event.datetime.start, 'PPP')}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        <span className="truncate">{event.location.name}</span>
+                      </div>
+                    </div>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium mt-2 ${getEventTypeBadge(event.type)}`}
+                    >
+                      {getEventTypeLabel(event.type)}
+                    </span>
+                  </div>
+                ))
+              )}
+            </TabsContent>
+
+            <TabsContent value="templates" className="flex-1 overflow-y-auto mt-4 space-y-2">
+              {templateEvents.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <FileText className="h-12 w-12 text-muted-foreground mb-3 opacity-50" />
+                  <p className="text-sm text-muted-foreground">
+                    {locale === 'pl'
+                      ? 'Brak szablonów wydarzeń'
+                      : 'No event templates'}
+                  </p>
+                  {isLeader && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {locale === 'pl'
+                        ? 'Utwórz wydarzenie i zaznacz "Zapisz jako szablon"'
+                        : 'Create an event and check "Save as template"'}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                templateEvents.map((event) => (
+                  <div
+                    key={event.id}
+                    className={`p-4 rounded-lg cursor-pointer transition-colors border ${
+                      selectedEvent?.id === event.id
+                        ? 'bg-accent border-primary'
+                        : 'hover:bg-accent/50 border-transparent'
+                    }`}
+                    onClick={() => setSelectedEvent(event)}
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="font-semibold text-sm line-clamp-2">{event.title}</h3>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    </div>
+                    <div className="space-y-1 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <FileText className="h-3 w-3" />
+                        <span className="truncate">
+                          {locale === 'pl' ? 'Szablon wydarzenia' : 'Event template'}
                         </span>
                       </div>
                       <div className="flex items-center gap-1">

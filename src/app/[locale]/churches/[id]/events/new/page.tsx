@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -68,6 +69,7 @@ export default function NewEventPage() {
     startTime: '10:00',
     endDate: getNextSunday(),
     endTime: '12:00',
+    isTemplate: false,
   });
 
   useEffect(() => {
@@ -103,7 +105,7 @@ export default function NewEventPage() {
       // Validate required fields
       const missingTitle = !formData.title;
       const missingLocation = locationMode === 'room' ? !selectedRoomId : !formData.locationName;
-      const missingDates = !formData.startDate || !formData.startTime || !formData.endDate || !formData.endTime;
+      const missingDates = !formData.isTemplate && (!formData.startDate || !formData.startTime || !formData.endDate || !formData.endTime);
 
       if (missingTitle || missingLocation || missingDates) {
         setError(locale === 'pl' ? 'Wypełnij wszystkie wymagane pola' : 'Please fill in all required fields');
@@ -111,15 +113,18 @@ export default function NewEventPage() {
         return;
       }
 
-      // Construct datetime objects
-      const startDateTime = new Date(`${formData.startDate}T${formData.startTime}`);
-      const endDateTime = new Date(`${formData.endDate}T${formData.endTime}`);
+      // Construct datetime objects (only for non-templates)
+      let startDateTime, endDateTime;
+      if (!formData.isTemplate) {
+        startDateTime = new Date(`${formData.startDate}T${formData.startTime}`);
+        endDateTime = new Date(`${formData.endDate}T${formData.endTime}`);
 
-      // Validate dates
-      if (endDateTime <= startDateTime) {
-        setError(locale === 'pl' ? 'Data/godzina zakończenia musi być po dacie/godzinie rozpoczęcia' : 'End date/time must be after start date/time');
-        setShowErrorDialog(true);
-        return;
+        // Validate dates
+        if (endDateTime <= startDateTime) {
+          setError(locale === 'pl' ? 'Data/godzina zakończenia musi być po dacie/godzinie rozpoczęcia' : 'End date/time must be after start date/time');
+          setShowErrorDialog(true);
+          return;
+        }
       }
 
       // Determine location based on mode
@@ -154,12 +159,13 @@ export default function NewEventPage() {
         type: formData.type,
         location,
         datetime: {
-          start: startDateTime,
-          end: endDateTime,
+          start: formData.isTemplate ? new Date('1970-01-01T00:00:00') : startDateTime!,
+          end: formData.isTemplate ? new Date('1970-01-01T00:00:00') : endDateTime!,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
         roles: [],
         status: 'published',
+        isTemplate: formData.isTemplate,
         settings: {
           requireApproval: false,
           allowSelfSignup: true,
@@ -282,66 +288,86 @@ export default function NewEventPage() {
             />
           </div>
 
-          {/* Date and Time */}
-          <div className="space-y-4">
-            <Label className="text-base font-semibold">
-              {locale === 'pl' ? 'Data i godzina' : 'Date & Time'}
+          {/* Template Checkbox */}
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="isTemplate"
+              checked={formData.isTemplate}
+              onCheckedChange={(checked) => setFormData({ ...formData, isTemplate: checked as boolean })}
+              disabled={loading}
+            />
+            <Label
+              htmlFor="isTemplate"
+              className="text-sm font-normal cursor-pointer"
+            >
+              {locale === 'pl'
+                ? 'Zapisz jako szablon (szablon nie będzie miał daty i będzie służył jako wzór dla przyszłych wydarzeń)'
+                : 'Save as template (template will not have a date and will serve as a blueprint for future events)'}
             </Label>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="startDate">
-                  {locale === 'pl' ? 'Data rozpoczęcia' : 'Start Date'} <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="startDate"
-                  type="date"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  disabled={loading}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="startTime">
-                  {locale === 'pl' ? 'Godzina rozpoczęcia' : 'Start Time'} <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="startTime"
-                  type="time"
-                  value={formData.startTime}
-                  onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                  disabled={loading}
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="endDate">
-                  {locale === 'pl' ? 'Data zakończenia' : 'End Date'} <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  disabled={loading}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="endTime">
-                  {locale === 'pl' ? 'Godzina zakończenia' : 'End Time'} <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="endTime"
-                  type="time"
-                  value={formData.endTime}
-                  onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                  disabled={loading}
-                />
-              </div>
-            </div>
           </div>
+
+          {/* Date and Time - Hidden for templates */}
+          {!formData.isTemplate && (
+            <div className="space-y-4">
+              <Label className="text-base font-semibold">
+                {locale === 'pl' ? 'Data i godzina' : 'Date & Time'}
+              </Label>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="startDate">
+                    {locale === 'pl' ? 'Data rozpoczęcia' : 'Start Date'} <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="startDate"
+                    type="date"
+                    value={formData.startDate}
+                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="startTime">
+                    {locale === 'pl' ? 'Godzina rozpoczęcia' : 'Start Time'} <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="startTime"
+                    type="time"
+                    value={formData.startTime}
+                    onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="endDate">
+                    {locale === 'pl' ? 'Data zakończenia' : 'End Date'} <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="endDate"
+                    type="date"
+                    value={formData.endDate}
+                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="endTime">
+                    {locale === 'pl' ? 'Godzina zakończenia' : 'End Time'} <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="endTime"
+                    type="time"
+                    value={formData.endTime}
+                    onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Location */}
           <div className="space-y-4">
