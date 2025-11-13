@@ -861,59 +861,65 @@ export default function EventsPage() {
                   </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="details" className="flex-1 overflow-y-auto mx-6 mb-6 space-y-4">
+                <TabsContent value="details" className="flex-1 overflow-y-auto mx-6 mb-6 space-y-6 mt-6">
                   {selectedEvent.description && (
-                    <div>
-                      <h3 className="text-sm font-medium text-muted-foreground mb-2">
+                    <div className="space-y-3">
+                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
                         {locale === 'pl' ? 'Opis' : 'Description'}
                       </h3>
-                      <p className="text-sm">{selectedEvent.description}</p>
+                      <p className="text-sm leading-relaxed">{selectedEvent.description}</p>
                     </div>
                   )}
 
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="flex items-start gap-3">
-                      <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
-                      <div>
-                        <h3 className="text-sm font-medium text-muted-foreground">
+                  <div className="space-y-5">
+                    <div className="flex items-start gap-4 pb-5 border-b">
+                      <div className="p-2 rounded-lg bg-primary/10">
+                        <Calendar className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">
                           {locale === 'pl' ? 'Data' : 'Date'}
                         </h3>
-                        <p className="text-sm">
+                        <p className="text-base font-medium">
                           {safeFormatDate(selectedEvent.datetime.start, 'PPP')}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-3">
-                      <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
-                      <div>
-                        <h3 className="text-sm font-medium text-muted-foreground">
+                    <div className="flex items-start gap-4 pb-5 border-b">
+                      <div className="p-2 rounded-lg bg-primary/10">
+                        <Clock className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">
                           {locale === 'pl' ? 'Godzina' : 'Time'}
                         </h3>
-                        <p className="text-sm">
+                        <p className="text-base font-medium">
                           {safeFormatDate(selectedEvent.datetime.start, 'p')}
                           {' - '}
                           {safeFormatDate(selectedEvent.datetime.end, 'p')}
                         </p>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-muted-foreground mt-0.5" />
-                    <div>
-                      <h3 className="text-sm font-medium text-muted-foreground">
-                        {locale === 'pl' ? 'Lokalizacja' : 'Location'}
-                      </h3>
-                      <p className="text-sm">{selectedEvent.location.name}</p>
-                      {selectedEvent.location.address && (
-                        <p className="text-sm text-muted-foreground">{selectedEvent.location.address}</p>
-                      )}
-                      {selectedEvent.location.room && (
-                        <p className="text-sm text-muted-foreground">
-                          {locale === 'pl' ? 'Sala' : 'Room'}: {selectedEvent.location.room}
-                        </p>
-                      )}
+                    <div className="flex items-start gap-4 pb-5 border-b">
+                      <div className="p-2 rounded-lg bg-primary/10">
+                        <MapPin className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                          {locale === 'pl' ? 'Lokalizacja' : 'Location'}
+                        </h3>
+                        <p className="text-base font-medium">{selectedEvent.location.name}</p>
+                        {selectedEvent.location.address && (
+                          <p className="text-sm text-muted-foreground mt-1">{selectedEvent.location.address}</p>
+                        )}
+                        {selectedEvent.location.room && (
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {locale === 'pl' ? 'Sala' : 'Room'}: {selectedEvent.location.room}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </TabsContent>
