@@ -1,16 +1,25 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 
 export function SignInForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    const msg = searchParams.get('message')
+    if (msg) {
+      setMessage(msg)
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -71,9 +80,23 @@ export function SignInForm() {
         </div>
       </div>
 
+      <div className="flex items-center justify-end">
+        <div className="text-sm">
+          <Link href="/auth/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
+            Forgot your password?
+          </Link>
+        </div>
+      </div>
+
       {error && (
         <div className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">{error}</p>
+        </div>
+      )}
+
+      {message && (
+        <div className="rounded-md bg-green-50 p-4">
+          <p className="text-sm text-green-800">{message}</p>
         </div>
       )}
 

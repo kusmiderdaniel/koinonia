@@ -3,13 +3,11 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import Link from 'next/link'
 
-export function SignUpForm() {
+export function ResetPasswordForm() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [fullName, setFullName] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -18,17 +16,22 @@ export function SignUpForm() {
     setIsLoading(true)
     setError(null)
 
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      setIsLoading(false)
+      return
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters')
+      setIsLoading(false)
+      return
+    }
+
     const supabase = createClient()
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-        },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
+    const { error } = await supabase.auth.updateUser({
+      password: password,
     })
 
     if (error) {
@@ -37,47 +40,16 @@ export function SignUpForm() {
       return
     }
 
-    // Redirect to sign-in page
-    router.push('/auth/signin?message=Account created successfully! Please sign in.')
+    // Redirect to sign-in page with success message
+    router.push('/auth/signin?message=Password updated successfully')
   }
 
   return (
     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
       <div className="-space-y-px rounded-md shadow-sm">
         <div>
-          <label htmlFor="full-name" className="sr-only">
-            Full name
-          </label>
-          <input
-            id="full-name"
-            name="fullName"
-            type="text"
-            required
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="relative block w-full rounded-t-md border-0 px-3 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-            placeholder="Full name"
-          />
-        </div>
-        <div>
-          <label htmlFor="email-address" className="sr-only">
-            Email address
-          </label>
-          <input
-            id="email-address"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="relative block w-full border-0 px-3 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-            placeholder="Email address"
-          />
-        </div>
-        <div>
           <label htmlFor="password" className="sr-only">
-            Password
+            New password
           </label>
           <input
             id="password"
@@ -87,8 +59,25 @@ export function SignUpForm() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="relative block w-full rounded-t-md border-0 px-3 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+            placeholder="New password (min. 6 characters)"
+            minLength={6}
+          />
+        </div>
+        <div>
+          <label htmlFor="confirm-password" className="sr-only">
+            Confirm new password
+          </label>
+          <input
+            id="confirm-password"
+            name="confirmPassword"
+            type="password"
+            autoComplete="new-password"
+            required
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
             className="relative block w-full rounded-b-md border-0 px-3 py-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-            placeholder="Password (min. 6 characters)"
+            placeholder="Confirm new password"
             minLength={6}
           />
         </div>
@@ -106,15 +95,8 @@ export function SignUpForm() {
           disabled={isLoading}
           className="group relative flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? 'Creating account...' : 'Sign up'}
+          {isLoading ? 'Updating password...' : 'Update password'}
         </button>
-      </div>
-
-      <div className="text-center text-sm">
-        <span className="text-gray-600">Already have an account? </span>
-        <Link href="/auth/signin" className="font-medium text-blue-600 hover:text-blue-500">
-          Sign in
-        </Link>
       </div>
     </form>
   )
