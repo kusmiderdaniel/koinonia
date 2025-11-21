@@ -28,24 +28,10 @@ export default async function SettingsPage() {
           {/* Account Information */}
           <div className="rounded-lg bg-white p-6 shadow">
             <h2 className="text-lg font-medium text-gray-900">Account Information</h2>
-            <div className="mt-4 space-y-3">
+            <div className="mt-4">
               <div>
                 <p className="text-sm font-medium text-gray-500">Email</p>
                 <p className="mt-1 text-sm text-gray-900">{user.email}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">User ID</p>
-                <p className="mt-1 text-sm font-mono text-gray-900">{user.id}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Account Created</p>
-                <p className="mt-1 text-sm text-gray-900">
-                  {new Date(user.created_at).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </p>
               </div>
             </div>
           </div>
