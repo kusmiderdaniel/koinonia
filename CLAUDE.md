@@ -25,15 +25,25 @@ Koinonia is a multi-tenant SaaS platform for church operations, volunteer manage
 
 **CRITICAL: All significant changes MUST be pushed to git.**
 
+**For detailed workflow, see `docs/DEVELOPMENT_WORKFLOW.md`**
+
 1. **Feature Branch Strategy**: Each feature must be created on a separate branch
    - Branch naming: `feature/feature-name`, `fix/bug-name`, `refactor/scope-name`
    - Never commit directly to `main`
    - Create PR for review before merging
+   - Use "Squash and merge" to keep history clean
 
 2. **Commit Guidelines**:
    - Write clear, descriptive commit messages
    - Commit frequently with logical changesets
    - Push changes regularly to backup work
+   - Include migration files in commits
+
+3. **CI/CD Pipeline**:
+   - GitHub Actions runs on all PRs (type-check, lint, build)
+   - All checks must pass before merging
+   - Vercel creates preview deployment for each PR
+   - Production auto-deploys on merge to main
 
 ## Code Standards
 
@@ -234,20 +244,78 @@ export default async function ProtectedPage() {
 
 ## Database Migrations
 
+**CRITICAL: Always include RLS policies with every table creation!**
+
+### Migration Workflow
+
 ```bash
-# Create new migration
+# 1. Create migration
 supabase migration new migration_name
 
-# Apply locally
-supabase db reset
-supabase db push
+# 2. Write SQL in supabase/migrations/XXXXXX_migration_name.sql
+# MUST include:
+# - Table creation
+# - RLS policies for multi-tenant isolation
+# - Indexes for performance
+# - church_id column on all tenant-scoped tables
 
-# Generate TypeScript types
+# 3. Apply locally
+supabase db reset
+
+# 4. Generate TypeScript types (ALWAYS after schema changes)
 supabase gen types typescript --local > types/supabase.ts
 
-# Apply to production
+# 5. Test locally
+npm run type-check
+npm run build
+
+# 6. Commit migration + types
+git add supabase/migrations/ types/supabase.ts
+git commit -m "Add migration for feature"
+
+# 7. Apply to production (after creating PR)
 supabase db push --linked
 ```
+
+### RLS Policy Pattern (REQUIRED)
+
+Every tenant-scoped table MUST have:
+
+```sql
+-- Enable RLS
+ALTER TABLE table_name ENABLE ROW LEVEL SECURITY;
+
+-- Policy for viewing data (SELECT)
+CREATE POLICY "Users can view data from their church"
+  ON table_name FOR SELECT
+  USING (church_id = (SELECT church_id FROM profiles WHERE id = auth.uid()));
+
+-- Policy for inserting data (INSERT)
+CREATE POLICY "Users can insert data for their church"
+  ON table_name FOR INSERT
+  WITH CHECK (church_id = (SELECT church_id FROM profiles WHERE id = auth.uid()));
+
+-- Policy for updating data (UPDATE)
+CREATE POLICY "Users can update data from their church"
+  ON table_name FOR UPDATE
+  USING (church_id = (SELECT church_id FROM profiles WHERE id = auth.uid()))
+  WITH CHECK (church_id = (SELECT church_id FROM profiles WHERE id = auth.uid()));
+
+-- Policy for deleting data (DELETE)
+CREATE POLICY "Users can delete data from their church"
+  ON table_name FOR DELETE
+  USING (church_id = (SELECT church_id FROM profiles WHERE id = auth.uid()));
+```
+
+### Best Practices
+
+- ✅ One logical change per migration
+- ✅ Test locally before production (`supabase db reset`)
+- ✅ Always regenerate types after schema changes
+- ✅ Include indexes on foreign keys and query columns
+- ✅ Document complex migrations with comments
+- ❌ Never skip RLS policies on tenant-scoped tables
+- ❌ Never apply migrations directly to production without testing
 
 ## Real-time Features
 
@@ -291,9 +359,53 @@ useEffect(() => {
 - `availability` - Volunteer availability schedules
 - `songs` + `setlists` - Worship planning
 
+## Development Environment
+
+### Local Development Setup
+
+**Local Supabase** (runs in Docker):
+- API: `http://127.0.0.1:54321`
+- Database: `postgresql://postgres:postgres@127.0.0.1:54322/postgres`
+- Studio: `http://127.0.0.1:54323`
+- Mailpit (email testing): `http://127.0.0.1:54324`
+
+**Commands**:
+```bash
+supabase start          # Start local Supabase
+supabase stop           # Stop local Supabase
+supabase status         # Check service status
+npm run dev             # Start Next.js (uses local Supabase)
+```
+
+### Environment Variables
+
+**Local** (`.env.local`):
+```bash
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<local_key>
+SUPABASE_SERVICE_ROLE_KEY=<local_key>
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+**Production** (Vercel Environment Variables):
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<production_key>
+SUPABASE_SERVICE_ROLE_KEY=<production_key>
+NEXT_PUBLIC_SITE_URL=https://koinonia.vercel.app
+```
+
+### Deployment Pipeline
+
+| Environment | Database | Code | Trigger | URL |
+|-------------|----------|------|---------|-----|
+| **Local** | Local Supabase | Your machine | `npm run dev` | localhost:3000 |
+| **Preview** | Production Supabase | Feature branch | Push to PR | `<branch>-xyz.vercel.app` |
+| **Production** | Production Supabase | main branch | Merge to main | `koinonia.vercel.app` |
+
 ## Development Phases
 
-**Current Phase**: Pre-development (documentation complete, ready to build)
+**Current Phase**: Development setup complete, ready to build features
 
 **Phase 1 MVP** (Months 1-3):
 1. Database schema + RLS policies
@@ -341,8 +453,39 @@ Always create reusable components for:
 ## Security Checklist
 
 - [ ] All queries filtered by `church_id` (RLS enforces but double-check)
+- [ ] RLS policies created for every tenant-scoped table
 - [ ] Input validated with Zod schemas
 - [ ] File uploads restricted by size and type
 - [ ] Rate limiting on public endpoints
 - [ ] Sensitive operations logged for audit trail
 - [ ] No secrets in client-side code
+- [ ] Migrations tested locally before production
+
+## Workflow Reference
+
+**For complete development workflow**, including:
+- Step-by-step feature implementation
+- Database migration procedures
+- Testing and deployment process
+- Troubleshooting guide
+
+**See**: `docs/DEVELOPMENT_WORKFLOW.md`
+
+**Quick Commands**:
+```bash
+# Development
+git checkout -b feature/name          # Start new feature
+supabase start                        # Start local services
+npm run dev                           # Start Next.js
+
+# Database
+supabase migration new name           # Create migration
+supabase db reset                     # Apply locally
+supabase gen types typescript --local > types/supabase.ts  # Generate types
+
+# Deployment
+git add . && git commit -m "msg"      # Commit changes
+git push -u origin feature/name       # Push to GitHub
+gh pr create                          # Create PR
+supabase db push --linked             # Apply migration to production
+```
