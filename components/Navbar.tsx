@@ -82,11 +82,16 @@ export function Navbar({ user, profile }: NavbarProps) {
               >
                 {avatarUrl ? (
                   <Image
-                    className="h-10 w-10 rounded-full"
+                    key={avatarUrl}
+                    className="h-10 w-10 rounded-full object-cover"
                     src={avatarUrl}
                     alt={displayName}
                     width={40}
                     height={40}
+                    unoptimized
+                    onError={(e) => {
+                      console.error('Failed to load avatar in navbar:', avatarUrl)
+                    }}
                   />
                 ) : (
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-sm font-medium text-white">
@@ -98,11 +103,11 @@ export function Navbar({ user, profile }: NavbarProps) {
               {/* Dropdown menu */}
               {isDropdownOpen && (
                 <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
-                  <div className="px-4 py-2 border-b border-gray-100">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                  <div className="px-4 py-2 border-b border-gray-200 bg-gray-50">
+                    <p className="text-sm font-semibold text-gray-900 truncate">
                       {displayName}
                     </p>
-                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                    <p className="text-xs text-gray-600 truncate">{user.email}</p>
                   </div>
 
                   <Link

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { AvatarUpload } from '@/components/AvatarUpload'
 
 interface ProfileFormProps {
   profile: {
@@ -57,8 +58,23 @@ export function ProfileForm({ profile }: ProfileFormProps) {
     router.refresh()
   }
 
+  const handleAvatarUpload = (url: string) => {
+    setFormData({ ...formData, avatar_url: url })
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Profile Picture
+        </label>
+        <AvatarUpload
+          userId={profile.id}
+          currentAvatarUrl={formData.avatar_url || undefined}
+          onUploadComplete={handleAvatarUpload}
+        />
+      </div>
+
       <div>
         <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">
           Full Name
@@ -68,7 +84,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           id="full_name"
           value={formData.full_name}
           onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
           placeholder="John Doe"
         />
       </div>
@@ -82,7 +98,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           id="phone"
           value={formData.phone}
           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
           placeholder="+1 (555) 123-4567"
         />
       </div>
@@ -96,22 +112,8 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           rows={4}
           value={formData.bio}
           onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
           placeholder="Tell us about yourself..."
-        />
-      </div>
-
-      <div>
-        <label htmlFor="avatar_url" className="block text-sm font-medium text-gray-700">
-          Avatar URL
-        </label>
-        <input
-          type="url"
-          id="avatar_url"
-          value={formData.avatar_url}
-          onChange={(e) => setFormData({ ...formData, avatar_url: e.target.value })}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-          placeholder="https://example.com/avatar.jpg"
         />
       </div>
 
