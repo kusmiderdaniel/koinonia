@@ -105,25 +105,27 @@ export function Navbar({ user, profile }: NavbarProps) {
                     <p className="text-xs text-gray-500 truncate">{user.email}</p>
                   </div>
 
-                  <button
-                    onClick={() => {
+                  <Link
+                    href="/profile"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={(e) => {
+                      e.stopPropagation()
                       setIsDropdownOpen(false)
-                      router.push('/profile')
                     }}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     Profile
-                  </button>
+                  </Link>
 
-                  <button
-                    onClick={() => {
+                  <Link
+                    href="/settings"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={(e) => {
+                      e.stopPropagation()
                       setIsDropdownOpen(false)
-                      router.push('/settings')
                     }}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     Settings
-                  </button>
+                  </Link>
 
                   <button
                     onClick={handleLogout}
