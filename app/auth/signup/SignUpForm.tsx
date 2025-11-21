@@ -12,13 +12,11 @@ export function SignUpForm() {
   const [fullName, setFullName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [message, setMessage] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
-    setMessage(null)
 
     const supabase = createClient()
 
@@ -39,8 +37,8 @@ export function SignUpForm() {
       return
     }
 
-    setMessage('Check your email for a confirmation link!')
-    setIsLoading(false)
+    // Redirect to sign-in page
+    router.push('/auth/signin?message=Account created successfully! Please sign in.')
   }
 
   return (
@@ -99,12 +97,6 @@ export function SignUpForm() {
       {error && (
         <div className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">{error}</p>
-        </div>
-      )}
-
-      {message && (
-        <div className="rounded-md bg-green-50 p-4">
-          <p className="text-sm text-green-800">{message}</p>
         </div>
       )}
 
