@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { Navbar } from '@/components/Navbar'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -20,6 +21,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar user={user} profile={profile || undefined} />
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="rounded-lg bg-white p-6 shadow">
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
