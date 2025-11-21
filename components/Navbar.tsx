@@ -82,12 +82,14 @@ export function Navbar({ user, profile }: NavbarProps) {
               >
                 {avatarUrl ? (
                   <Image
+
                     key={avatarUrl}
                     className="h-10 w-10 rounded-full object-cover"
                     src={avatarUrl}
                     alt={displayName}
                     width={40}
                     height={40}
+
                     unoptimized
                     onError={(e) => {
                       console.error('Failed to load avatar in navbar:', avatarUrl)
