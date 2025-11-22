@@ -158,6 +158,7 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   className="hover:bg-gray-50"
                   data-state={row.getIsSelected() && 'selected'}
+                  style={{ height: '57px' }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td
@@ -167,9 +168,11 @@ export function DataTable<TData, TValue>({
                         width: cell.column.getSize(),
                         maxWidth: cell.column.getSize(),
                         minWidth: cell.column.getSize(),
+                        height: '57px',
+                        maxHeight: '57px',
                       }}
                     >
-                      <div className="overflow-hidden">
+                      <div className="flex h-full items-center overflow-hidden">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
