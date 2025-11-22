@@ -387,6 +387,12 @@ export type Database = {
       }
       generate_invite_code: { Args: never; Returns: string }
       generate_unique_invite_code: { Args: never; Returns: string }
+      get_user_church_ids: {
+        Args: { p_user_id: string }
+        Returns: {
+          church_id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
