@@ -1,40 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { PeopleDataTable } from './PeopleDataTable'
+import { DataTable } from '@/components/ui/data-table'
+import { createColumns, Member, CustomField, CustomFieldValue } from './columns'
 import { AddColumnDialog } from './AddColumnDialog'
 import { useRouter } from 'next/navigation'
-
-interface Member {
-  id: string
-  user_id: string
-  role: string
-  email: string | null
-  phone: string | null
-  full_name: string | null
-  notes: string | null
-  joined_at: string
-}
-
-interface CustomField {
-  id: string
-  church_id: string
-  name: string
-  field_type: 'text' | 'number' | 'date' | 'select' | 'multiselect'
-  options: string[]
-  position: number
-}
-
-interface CustomFieldValue {
-  id: string
-  church_member_id: string
-  custom_field_id: string
-  value_text: string | null
-  value_number: number | null
-  value_date: string | null
-  value_select: string | null
-  value_multiselect: string[] | null
-}
+import { updateMemberInfo, updateMemberRole, updateCustomFieldValue } from '@/app/actions/people'
 
 interface PeoplePageClientProps {
   members: Member[]
@@ -55,6 +26,45 @@ export function PeoplePageClient({
   const handleColumnAdded = () => {
     router.refresh()
   }
+
+  const handleUpdateMemberInfo = async (memberId: string, field: string, value: string) => {
+    const result = await updateMemberInfo(memberId, { [field]: value })
+    if (result.error) {
+      alert(result.error)
+    }
+  }
+
+  const handleUpdateRole = async (memberId: string, role: string) => {
+    const result = await updateMemberRole(memberId, role)
+    if (result.error) {
+      alert(result.error)
+    }
+  }
+
+  const handleUpdateCustomField = async (
+    memberId: string,
+    fieldId: string,
+    fieldType: string,
+    value: any
+  ) => {
+    const result = await updateCustomFieldValue(
+      memberId,
+      fieldId,
+      fieldType as 'text' | 'number' | 'date' | 'select' | 'multiselect',
+      value
+    )
+    if (result.error) {
+      alert(result.error)
+    }
+  }
+
+  const columns = createColumns(
+    customFields,
+    customFieldValues,
+    handleUpdateMemberInfo,
+    handleUpdateRole,
+    handleUpdateCustomField
+  )
 
   return (
     <>
@@ -87,12 +97,7 @@ export function PeoplePageClient({
 
       {/* Data Table */}
       <div className="mt-8">
-        <PeopleDataTable
-          members={members}
-          customFields={customFields}
-          customFieldValues={customFieldValues}
-          churchId={churchId}
-        />
+        <DataTable columns={columns} data={members} />
       </div>
 
       {/* Add Column Dialog */}
