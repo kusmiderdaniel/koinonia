@@ -25,10 +25,13 @@ interface CustomField {
 
 interface CustomFieldValue {
   id: string
-  member_id: string
-  field_id: string
-  church_id: string
-  value: any
+  church_member_id: string
+  custom_field_id: string
+  value_text: string | null
+  value_number: number | null
+  value_date: string | null
+  value_select: string | null
+  value_multiselect: string[] | null
 }
 
 interface PeopleDataTableProps {
@@ -53,34 +56,63 @@ export function PeopleDataTable({
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
   const [editingCell, setEditingCell] = useState<{ memberId: string; field: string } | null>(null)
 
-  const getCustomFieldValue = (memberId: string, fieldId: string) => {
-    const value = customFieldValues.find(
-      v => v.member_id === memberId && v.field_id === fieldId
+  const getCustomFieldValue = (memberId: string, fieldId: string, fieldType: string) => {
+    const valueRecord = customFieldValues.find(
+      v => v.church_member_id === memberId && v.custom_field_id === fieldId
     )
-    return value?.value || ''
+    if (!valueRecord) return ''
+
+    // Return the appropriate value based on field type
+    switch (fieldType) {
+      case 'text':
+        return valueRecord.value_text || ''
+      case 'number':
+        return valueRecord.value_number?.toString() || ''
+      case 'date':
+        return valueRecord.value_date || ''
+      case 'select':
+        return valueRecord.value_select || ''
+      case 'multiselect':
+        return valueRecord.value_multiselect || []
+      default:
+        return ''
+    }
   }
 
-  const handleCustomFieldUpdate = async (memberId: string, fieldId: string, value: any) => {
-    const result = await updateCustomFieldValue(memberId, fieldId, churchId, value)
+  const handleCustomFieldUpdate = async (
+    memberId: string,
+    fieldId: string,
+    fieldType: 'text' | 'number' | 'date' | 'select' | 'multiselect',
+    value: any
+  ) => {
+    const result = await updateCustomFieldValue(memberId, fieldId, fieldType, value)
     if (result.error) {
       alert(result.error)
     } else {
       setCustomFieldValues(prev => {
-        const existing = prev.find(v => v.member_id === memberId && v.field_id === fieldId)
+        const existing = prev.find(
+          v => v.church_member_id === memberId && v.custom_field_id === fieldId
+        )
+
+        const newValueRecord: CustomFieldValue = {
+          id: existing?.id || crypto.randomUUID(),
+          church_member_id: memberId,
+          custom_field_id: fieldId,
+          value_text: fieldType === 'text' ? value : null,
+          value_number: fieldType === 'number' ? parseFloat(value) : null,
+          value_date: fieldType === 'date' ? value : null,
+          value_select: fieldType === 'select' ? value : null,
+          value_multiselect: fieldType === 'multiselect' ? (Array.isArray(value) ? value : [value]) : null,
+        }
+
         if (existing) {
           return prev.map(v =>
-            v.member_id === memberId && v.field_id === fieldId
-              ? { ...v, value }
+            v.church_member_id === memberId && v.custom_field_id === fieldId
+              ? newValueRecord
               : v
           )
         } else {
-          return [...prev, {
-            id: crypto.randomUUID(),
-            member_id: memberId,
-            field_id: fieldId,
-            church_id: churchId,
-            value,
-          }]
+          return [...prev, newValueRecord]
         }
       })
     }
@@ -305,10 +337,10 @@ export function PeopleDataTable({
                     {editingCell?.memberId === member.id && editingCell?.field === `custom_${field.id}` ? (
                       field.field_type === 'select' || field.field_type === 'multiselect' ? (
                         <select
-                          value={getCustomFieldValue(member.id, field.id)}
+                          value={getCustomFieldValue(member.id, field.id, field.field_type) as string}
                           autoFocus
-                          onBlur={(e) => handleCustomFieldUpdate(member.id, field.id, e.target.value)}
-                          onChange={(e) => handleCustomFieldUpdate(member.id, field.id, e.target.value)}
+                          onBlur={(e) => handleCustomFieldUpdate(member.id, field.id, field.field_type, e.target.value)}
+                          onChange={(e) => handleCustomFieldUpdate(member.id, field.id, field.field_type, e.target.value)}
                           className="w-full rounded border border-blue-500 bg-white px-2 py-1 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option value="">Select...</option>
@@ -321,12 +353,12 @@ export function PeopleDataTable({
                       ) : (
                         <input
                           type={field.field_type === 'number' ? 'number' : field.field_type === 'date' ? 'date' : 'text'}
-                          defaultValue={getCustomFieldValue(member.id, field.id)}
+                          defaultValue={getCustomFieldValue(member.id, field.id, field.field_type) as string}
                           autoFocus
-                          onBlur={(e) => handleCustomFieldUpdate(member.id, field.id, e.target.value)}
+                          onBlur={(e) => handleCustomFieldUpdate(member.id, field.id, field.field_type, e.target.value)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
-                              handleCustomFieldUpdate(member.id, field.id, e.currentTarget.value)
+                              handleCustomFieldUpdate(member.id, field.id, field.field_type, e.currentTarget.value)
                             } else if (e.key === 'Escape') {
                               setEditingCell(null)
                             }
@@ -339,7 +371,7 @@ export function PeopleDataTable({
                         onClick={() => setEditingCell({ memberId: member.id, field: `custom_${field.id}` })}
                         className="cursor-pointer text-sm text-gray-600 hover:text-blue-600"
                       >
-                        {getCustomFieldValue(member.id, field.id) || '-'}
+                        {getCustomFieldValue(member.id, field.id, field.field_type) || '-'}
                       </div>
                     )}
                   </td>

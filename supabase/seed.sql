@@ -1,0 +1,43 @@
+-- =====================================================
+-- SEED DATA FOR DEVELOPMENT
+-- =====================================================
+-- This file runs after `supabase db reset` to populate test data
+-- Remove this file or make it empty in production!
+
+-- Note: This assumes you have a test user account
+-- The user must already exist in auth.users (created through signup)
+-- Replace the email below with your actual test account email
+
+-- Example: Uncomment and modify these lines once you have a test account
+--
+-- DO $$
+-- DECLARE
+--   test_user_id UUID;
+--   test_church_id UUID;
+--   test_invite_code TEXT;
+-- BEGIN
+--   -- Get the test user ID (replace with your email)
+--   SELECT id INTO test_user_id FROM auth.users WHERE email = 'kusmiderdaniel@gmail.com' LIMIT 1;
+--
+--   IF test_user_id IS NOT NULL THEN
+--     -- Create a test church using the function
+--     SELECT church_id, invite_code INTO test_church_id, test_invite_code
+--     FROM create_church_with_owner(
+--       'Test Church',
+--       'test-church',
+--       'test@church.com',
+--       '+1234567890',
+--       '123 Main St',
+--       'Springfield',
+--       'IL',
+--       '62701'
+--     );
+--
+--     RAISE NOTICE 'Created test church: % (invite code: %)', test_church_id, test_invite_code;
+--   ELSE
+--     RAISE NOTICE 'No test user found - create an account first';
+--   END IF;
+-- END $$;
+
+-- For now, just a placeholder
+SELECT 'Seed data placeholder - configure with your test account' as message;

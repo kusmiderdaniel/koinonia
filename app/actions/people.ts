@@ -235,10 +235,37 @@ export async function getCustomFieldValues(churchId: string) {
     return { error: 'Not authenticated', values: [] }
   }
 
+  // First, get all member IDs for this church
+  const { data: members, error: membersError } = await supabase
+    .from('church_members')
+    .select('id')
+    .eq('church_id', churchId)
+
+  if (membersError) {
+    console.error('Error fetching church members:', membersError)
+    return { error: membersError.message, values: [] }
+  }
+
+  if (!members || members.length === 0) {
+    return { values: [] }
+  }
+
+  const memberIds = members.map(m => m.id)
+
+  // Get all custom field values for these members
   const { data: values, error } = await supabase
     .from('custom_field_values')
-    .select('*')
-    .eq('church_id', churchId)
+    .select(`
+      id,
+      church_member_id,
+      custom_field_id,
+      value_text,
+      value_number,
+      value_date,
+      value_select,
+      value_multiselect
+    `)
+    .in('church_member_id', memberIds)
 
   if (error) {
     console.error('Error fetching custom field values:', error)
@@ -251,7 +278,7 @@ export async function getCustomFieldValues(churchId: string) {
 export async function updateCustomFieldValue(
   memberId: string,
   fieldId: string,
-  churchId: string,
+  fieldType: 'text' | 'number' | 'date' | 'select' | 'multiselect',
   value: any
 ) {
   const supabase = await createClient()
@@ -264,20 +291,44 @@ export async function updateCustomFieldValue(
     return { error: 'Not authenticated' }
   }
 
+  // Determine which column to update based on field type
+  const updateData: any = {
+    church_member_id: memberId,
+    custom_field_id: fieldId,
+  }
+
+  // Clear all value columns first
+  updateData.value_text = null
+  updateData.value_number = null
+  updateData.value_date = null
+  updateData.value_select = null
+  updateData.value_multiselect = null
+
+  // Set the appropriate column based on field type
+  switch (fieldType) {
+    case 'text':
+      updateData.value_text = value
+      break
+    case 'number':
+      updateData.value_number = value ? parseFloat(value) : null
+      break
+    case 'date':
+      updateData.value_date = value
+      break
+    case 'select':
+      updateData.value_select = value
+      break
+    case 'multiselect':
+      updateData.value_multiselect = Array.isArray(value) ? value : [value]
+      break
+  }
+
   // Upsert the custom field value
   const { error } = await supabase
     .from('custom_field_values')
-    .upsert(
-      {
-        member_id: memberId,
-        field_id: fieldId,
-        church_id: churchId,
-        value,
-      },
-      {
-        onConflict: 'member_id,field_id',
-      }
-    )
+    .upsert(updateData, {
+      onConflict: 'church_member_id,custom_field_id',
+    })
 
   if (error) {
     return { error: error.message }

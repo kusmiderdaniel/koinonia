@@ -27,10 +27,13 @@ interface CustomField {
 
 interface CustomFieldValue {
   id: string
-  member_id: string
-  field_id: string
-  church_id: string
-  value: any
+  church_member_id: string
+  custom_field_id: string
+  value_text: string | null
+  value_number: number | null
+  value_date: string | null
+  value_select: string | null
+  value_multiselect: string[] | null
 }
 
 interface PeoplePageClientProps {
