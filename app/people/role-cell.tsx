@@ -27,9 +27,10 @@ export function RoleCell({ value, onSave }: RoleCellProps) {
     <select
       value={value}
       onChange={handleChange}
-      className={`rounded-full px-3 py-1 text-xs font-semibold ${getRoleBadgeColor(
+      className={`rounded-full px-3 text-xs font-semibold ${getRoleBadgeColor(
         value
       )} cursor-pointer hover:opacity-80`}
+      style={{ height: '28px', padding: '4px 12px' }}
     >
       <option value="member">Member</option>
       <option value="leader">Leader</option>
