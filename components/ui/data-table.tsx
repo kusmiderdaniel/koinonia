@@ -3,6 +3,7 @@
 import {
   ColumnDef,
   ColumnFiltersState,
+  ColumnSizingState,
   SortingState,
   VisibilityState,
   flexRender,
@@ -11,21 +12,46 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  tableId?: string
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  tableId = 'default-table',
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
+  const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({})
+
+  // Load saved column sizes from localStorage on mount
+  useEffect(() => {
+    const savedSizes = localStorage.getItem(`table-column-sizing-${tableId}`)
+    if (savedSizes) {
+      try {
+        setColumnSizing(JSON.parse(savedSizes))
+      } catch (e) {
+        console.error('Failed to parse saved column sizes:', e)
+      }
+    }
+  }, [tableId])
+
+  // Save column sizes to localStorage when they change
+  useEffect(() => {
+    if (Object.keys(columnSizing).length > 0) {
+      localStorage.setItem(
+        `table-column-sizing-${tableId}`,
+        JSON.stringify(columnSizing)
+      )
+    }
+  }, [columnSizing, tableId])
 
   const table = useReactTable({
     data,
@@ -37,18 +63,31 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onColumnSizingChange: setColumnSizing,
+    columnResizeMode: 'onChange',
+    defaultColumn: {
+      minSize: 60,
+      maxSize: 800,
+      size: 150,
+    },
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
+      columnSizing,
     },
   })
 
   return (
     <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table
+          className="min-w-full divide-y divide-gray-200"
+          style={{
+            width: table.getCenterTotalSize(),
+          }}
+        >
           <thead className="bg-gray-50">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -56,7 +95,10 @@ export function DataTable<TData, TValue>({
                   <th
                     key={header.id}
                     scope="col"
-                    className="px-6 py-3 text-left"
+                    className="relative px-6 py-3 text-left"
+                    style={{
+                      width: header.getSize(),
+                    }}
                   >
                     {header.isPlaceholder ? null : (
                       <div
@@ -90,6 +132,18 @@ export function DataTable<TData, TValue>({
                         )}
                       </div>
                     )}
+                    {/* Column resize handle */}
+                    {header.column.getCanResize() && (
+                      <div
+                        onMouseDown={header.getResizeHandler()}
+                        onTouchStart={header.getResizeHandler()}
+                        className={`absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none ${
+                          header.column.getIsResizing()
+                            ? 'bg-blue-500 opacity-100'
+                            : 'bg-gray-300 opacity-0 hover:opacity-100'
+                        }`}
+                      />
+                    )}
                   </th>
                 ))}
               </tr>
@@ -104,11 +158,19 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="whitespace-nowrap px-6 py-4">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                    <td
+                      key={cell.id}
+                      className="px-6 py-4"
+                      style={{
+                        width: cell.column.getSize(),
+                      }}
+                    >
+                      <div className="overflow-hidden text-ellipsis">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </div>
                     </td>
                   ))}
                 </tr>

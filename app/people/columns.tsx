@@ -77,6 +77,9 @@ export function createColumns(
     {
       accessorKey: 'full_name',
       header: 'Name',
+      size: 200,
+      minSize: 100,
+      maxSize: 400,
       cell: ({ row }) => (
         <span className="text-sm font-medium text-gray-900">
           {row.original.full_name || '-'}
@@ -86,6 +89,9 @@ export function createColumns(
     {
       accessorKey: 'email',
       header: 'Email',
+      size: 250,
+      minSize: 150,
+      maxSize: 400,
       cell: ({ row }) => (
         <span className="text-sm text-gray-600">
           {row.original.email || '-'}
@@ -95,6 +101,9 @@ export function createColumns(
     {
       accessorKey: 'phone',
       header: 'Phone',
+      size: 150,
+      minSize: 100,
+      maxSize: 250,
       cell: ({ row }) => (
         <span className="text-sm text-gray-600">
           {row.original.phone || '-'}
@@ -105,6 +114,9 @@ export function createColumns(
     {
       accessorKey: 'role',
       header: 'Role',
+      size: 130,
+      minSize: 100,
+      maxSize: 200,
       cell: ({ row }) => (
         <RoleCell
           value={row.original.role}
@@ -115,6 +127,9 @@ export function createColumns(
     {
       accessorKey: 'joined_at',
       header: 'Joined',
+      size: 130,
+      minSize: 100,
+      maxSize: 200,
       cell: ({ row }) => (
         <span className="text-sm text-gray-600">
           {new Date(row.original.joined_at).toLocaleDateString('en-US', {
@@ -132,6 +147,9 @@ export function createColumns(
     id: `custom_${field.id}`,
     accessorFn: (row) => getCustomFieldValue(row.id, field.id, field.field_type),
     header: field.name,
+    size: 180,
+    minSize: 100,
+    maxSize: 400,
     cell: ({ row }) => {
       const value = getCustomFieldValue(row.id, field.id, field.field_type)
 

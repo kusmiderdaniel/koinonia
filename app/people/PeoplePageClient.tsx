@@ -97,7 +97,7 @@ export function PeoplePageClient({
 
       {/* Data Table */}
       <div className="mt-8">
-        <DataTable columns={columns} data={members} />
+        <DataTable columns={columns} data={members} tableId="people-table" />
       </div>
 
       {/* Add Column Dialog */}
