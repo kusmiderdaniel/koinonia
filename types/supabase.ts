@@ -34,6 +34,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      church_members: {
+        Row: {
+          church_id: string
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          joined_at: string | null
+          notes: string | null
+          phone: string | null
+          role: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          church_id: string
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          joined_at?: string | null
+          notes?: string | null
+          phone?: string | null
+          role?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          church_id?: string
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          joined_at?: string | null
+          notes?: string | null
+          phone?: string | null
+          role?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_members_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "church_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       churches: {
         Row: {
           address: string | null
@@ -43,6 +100,8 @@ export type Database = {
           description: string | null
           email: string | null
           id: string
+          invite_code: string | null
+          invite_code_generated_at: string | null
           logo_url: string | null
           name: string
           phone: string | null
@@ -63,6 +122,8 @@ export type Database = {
           description?: string | null
           email?: string | null
           id?: string
+          invite_code?: string | null
+          invite_code_generated_at?: string | null
           logo_url?: string | null
           name: string
           phone?: string | null
@@ -83,6 +144,8 @@ export type Database = {
           description?: string | null
           email?: string | null
           id?: string
+          invite_code?: string | null
+          invite_code_generated_at?: string | null
           logo_url?: string | null
           name?: string
           phone?: string | null
@@ -96,6 +159,101 @@ export type Database = {
           zip_code?: string | null
         }
         Relationships: []
+      }
+      custom_field_values: {
+        Row: {
+          church_member_id: string
+          created_at: string | null
+          custom_field_id: string
+          id: string
+          updated_at: string | null
+          value_date: string | null
+          value_multiselect: Json | null
+          value_number: number | null
+          value_select: string | null
+          value_text: string | null
+        }
+        Insert: {
+          church_member_id: string
+          created_at?: string | null
+          custom_field_id: string
+          id?: string
+          updated_at?: string | null
+          value_date?: string | null
+          value_multiselect?: Json | null
+          value_number?: number | null
+          value_select?: string | null
+          value_text?: string | null
+        }
+        Update: {
+          church_member_id?: string
+          created_at?: string | null
+          custom_field_id?: string
+          id?: string
+          updated_at?: string | null
+          value_date?: string | null
+          value_multiselect?: Json | null
+          value_number?: number | null
+          value_select?: string | null
+          value_text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_field_values_church_member_id_fkey"
+            columns: ["church_member_id"]
+            isOneToOne: false
+            referencedRelation: "church_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_field_values_custom_field_id_fkey"
+            columns: ["custom_field_id"]
+            isOneToOne: false
+            referencedRelation: "custom_fields"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_fields: {
+        Row: {
+          church_id: string
+          created_at: string | null
+          field_type: string
+          id: string
+          name: string
+          options: Json | null
+          position: number
+          updated_at: string | null
+        }
+        Insert: {
+          church_id: string
+          created_at?: string | null
+          field_type: string
+          id?: string
+          name: string
+          options?: Json | null
+          position?: number
+          updated_at?: string | null
+        }
+        Update: {
+          church_id?: string
+          created_at?: string | null
+          field_type?: string
+          id?: string
+          name?: string
+          options?: Json | null
+          position?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_fields_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -147,12 +305,88 @@ export type Database = {
           },
         ]
       }
+      table_views: {
+        Row: {
+          church_id: string
+          created_at: string | null
+          created_by: string
+          description: string | null
+          filters: Json | null
+          id: string
+          is_default: boolean | null
+          name: string
+          sorts: Json | null
+          updated_at: string | null
+          visible_columns: Json | null
+        }
+        Insert: {
+          church_id: string
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          filters?: Json | null
+          id?: string
+          is_default?: boolean | null
+          name: string
+          sorts?: Json | null
+          updated_at?: string | null
+          visible_columns?: Json | null
+        }
+        Update: {
+          church_id?: string
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          filters?: Json | null
+          id?: string
+          is_default?: boolean | null
+          name?: string
+          sorts?: Json | null
+          updated_at?: string | null
+          visible_columns?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "table_views_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "table_views_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_church_with_owner: {
+        Args: {
+          p_address?: string
+          p_city?: string
+          p_email?: string
+          p_name: string
+          p_phone?: string
+          p_slug: string
+          p_state?: string
+          p_zip_code?: string
+        }
+        Returns: {
+          church_id: string
+          church_name: string
+          church_slug: string
+          invite_code: string
+        }[]
+      }
+      generate_invite_code: { Args: never; Returns: string }
+      generate_unique_invite_code: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never

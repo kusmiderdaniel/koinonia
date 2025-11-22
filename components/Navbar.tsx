@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ChurchSwitcher } from './ChurchSwitcher'
 
 interface NavbarProps {
   user: {
@@ -18,6 +19,11 @@ interface NavbarProps {
   profile?: {
     full_name?: string
     avatar_url?: string
+    church_id?: string | null
+    church?: {
+      id: string
+      name: string
+    } | null
   }
 }
 
@@ -25,6 +31,10 @@ export function Navbar({ user, profile }: NavbarProps) {
   const router = useRouter()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+
+  console.log('Navbar - Profile:', profile)
+  console.log('Navbar - Church ID:', profile?.church_id)
+  console.log('Navbar - Church:', profile?.church)
 
   const displayName = profile?.full_name || user.user_metadata?.full_name || user.email || 'User'
   const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url
@@ -66,14 +76,34 @@ export function Navbar({ user, profile }: NavbarProps) {
     <nav className="bg-white shadow">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 justify-between">
-          <div className="flex items-center">
+          <div className="flex items-center gap-4">
             <Link href="/dashboard" className="text-xl font-bold text-gray-900">
               Koinonia
             </Link>
+
+            {/* Church Switcher */}
+            {profile?.church_id && (
+              <div className="hidden sm:block">
+                <ChurchSwitcher
+                  currentChurchId={profile.church_id}
+                  currentChurchName={profile.church?.name}
+                />
+              </div>
+            )}
           </div>
 
           {/* User menu */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-4">
+            {/* Mobile Church Switcher */}
+            {profile?.church_id && (
+              <div className="sm:hidden">
+                <ChurchSwitcher
+                  currentChurchId={profile.church_id}
+                  currentChurchName={profile.church?.name}
+                />
+              </div>
+            )}
+
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
+import { Sidebar } from '@/components/Sidebar'
 import { ChangePasswordForm } from './ChangePasswordForm'
 
 export default async function SettingsPage() {
@@ -16,14 +17,18 @@ export default async function SettingsPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('*')
+    .select('*, church:churches(*)')
     .eq('id', user.id)
     .single()
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar user={user} profile={profile || undefined} />
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="flex h-[calc(100vh-4rem)]">
+        <Sidebar className="w-64 flex-shrink-0" />
+
+        <main className="flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-6">
           {/* Account Information */}
           <div className="rounded-lg bg-white p-6 shadow">
@@ -72,7 +77,9 @@ export default async function SettingsPage() {
               </div>
             </div>
           </div>
-        </div>
+          </div>
+          </div>
+        </main>
       </div>
     </div>
   )
