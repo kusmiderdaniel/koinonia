@@ -98,6 +98,8 @@ export function DataTable<TData, TValue>({
                     className="relative px-6 py-3 text-left"
                     style={{
                       width: header.getSize(),
+                      maxWidth: header.getSize(),
+                      minWidth: header.getSize(),
                     }}
                   >
                     {header.isPlaceholder ? null : (
@@ -163,9 +165,11 @@ export function DataTable<TData, TValue>({
                       className="px-6 py-4"
                       style={{
                         width: cell.column.getSize(),
+                        maxWidth: cell.column.getSize(),
+                        minWidth: cell.column.getSize(),
                       }}
                     >
-                      <div className="overflow-hidden text-ellipsis">
+                      <div className="overflow-hidden">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()

@@ -57,7 +57,8 @@ export function EditableCell({
           onBlur={handleCancel}
           autoFocus
           disabled={isSaving}
-          className="w-full rounded border border-blue-500 bg-white px-2 py-1 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+          className="min-w-0 max-w-full rounded border border-blue-500 bg-white px-2 py-1 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+          style={{ width: '100%' }}
         >
           <option value="">Select...</option>
           {options.map((option) => (
@@ -78,7 +79,8 @@ export function EditableCell({
         onKeyDown={handleKeyDown}
         autoFocus
         disabled={isSaving}
-        className="w-full rounded border border-blue-500 bg-white px-2 py-1 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+        className="min-w-0 max-w-full rounded border border-blue-500 bg-white px-2 py-1 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+        style={{ width: '100%' }}
       />
     )
   }
