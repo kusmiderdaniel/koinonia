@@ -330,7 +330,11 @@ export function PeopleDataTable({
                   </select>
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
-                  {new Date(member.joined_at).toLocaleDateString()}
+                  {new Date(member.joined_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                  })}
                 </td>
                 {customFields.map((field) => (
                   <td key={field.id} className="whitespace-nowrap px-6 py-4">
