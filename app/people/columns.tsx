@@ -81,7 +81,7 @@ export function createColumns(
       minSize: 100,
       maxSize: 400,
       cell: ({ row }) => (
-        <span className="text-sm font-medium text-gray-900">
+        <span className="block overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-gray-900">
           {row.original.full_name || '-'}
         </span>
       ),
@@ -93,7 +93,7 @@ export function createColumns(
       minSize: 150,
       maxSize: 400,
       cell: ({ row }) => (
-        <span className="text-sm text-gray-600">
+        <span className="block overflow-hidden text-ellipsis whitespace-nowrap text-sm text-gray-600">
           {row.original.email || '-'}
         </span>
       ),
@@ -105,7 +105,7 @@ export function createColumns(
       minSize: 100,
       maxSize: 250,
       cell: ({ row }) => (
-        <span className="text-sm text-gray-600">
+        <span className="block overflow-hidden text-ellipsis whitespace-nowrap text-sm text-gray-600">
           {row.original.phone || '-'}
         </span>
       ),
@@ -131,7 +131,7 @@ export function createColumns(
       minSize: 100,
       maxSize: 200,
       cell: ({ row }) => (
-        <span className="text-sm text-gray-600">
+        <span className="block overflow-hidden text-ellipsis whitespace-nowrap text-sm text-gray-600">
           {new Date(row.original.joined_at).toLocaleDateString('en-US', {
             year: 'numeric',
             month: '2-digit',

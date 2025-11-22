@@ -106,8 +106,8 @@ export function DataTable<TData, TValue>({
                       <div
                         className={
                           header.column.getCanSort()
-                            ? 'flex cursor-pointer select-none items-center text-xs font-medium uppercase tracking-wider text-gray-700 hover:text-gray-900'
-                            : 'text-xs font-medium uppercase tracking-wider text-gray-700'
+                            ? 'flex cursor-pointer select-none items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium uppercase tracking-wider text-gray-700 hover:text-gray-900'
+                            : 'overflow-hidden text-ellipsis whitespace-nowrap text-xs font-medium uppercase tracking-wider text-gray-700'
                         }
                         onClick={header.column.getToggleSortingHandler()}
                       >
@@ -172,7 +172,7 @@ export function DataTable<TData, TValue>({
                         maxHeight: '57px',
                       }}
                     >
-                      <div className="flex h-full items-center overflow-hidden">
+                      <div className="flex h-full items-center overflow-hidden whitespace-nowrap text-ellipsis">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
