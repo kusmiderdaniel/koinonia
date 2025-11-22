@@ -14,7 +14,7 @@ export async function getChurchMembers(churchId: string) {
     return { error: 'Not authenticated', members: [] }
   }
 
-  // Fetch all members of the church
+  // Fetch all members of the church with profile data
   const { data: members, error } = await supabase
     .from('church_members')
     .select(`
@@ -22,11 +22,13 @@ export async function getChurchMembers(churchId: string) {
       user_id,
       church_id,
       role,
-      email,
-      phone,
-      full_name,
       notes,
-      joined_at
+      joined_at,
+      profiles!church_members_user_id_fkey (
+        email,
+        phone,
+        full_name
+      )
     `)
     .eq('church_id', churchId)
     .order('joined_at', { ascending: false })
@@ -36,7 +38,20 @@ export async function getChurchMembers(churchId: string) {
     return { error: error.message, members: [] }
   }
 
-  return { members: members || [] }
+  // Flatten the profile data into the member object
+  const formattedMembers = members?.map((member: any) => ({
+    id: member.id,
+    user_id: member.user_id,
+    church_id: member.church_id,
+    role: member.role,
+    email: member.profiles?.email || null,
+    phone: member.profiles?.phone || null,
+    full_name: member.profiles?.full_name || null,
+    notes: member.notes,
+    joined_at: member.joined_at,
+  })) || []
+
+  return { members: formattedMembers }
 }
 
 export async function updateMemberRole(memberId: string, role: string) {

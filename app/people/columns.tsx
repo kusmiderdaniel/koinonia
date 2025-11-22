@@ -78,36 +78,27 @@ export function createColumns(
       accessorKey: 'full_name',
       header: 'Name',
       cell: ({ row }) => (
-        <EditableCell
-          value={row.original.full_name || ''}
-          onSave={(value) => onUpdateMemberInfo(row.original.id, 'full_name', value)}
-          type="text"
-          className="font-medium text-gray-900"
-        />
+        <span className="text-sm font-medium text-gray-900">
+          {row.original.full_name || '-'}
+        </span>
       ),
     },
     {
       accessorKey: 'email',
       header: 'Email',
       cell: ({ row }) => (
-        <EditableCell
-          value={row.original.email || ''}
-          onSave={(value) => onUpdateMemberInfo(row.original.id, 'email', value)}
-          type="email"
-          className="text-gray-600"
-        />
+        <span className="text-sm text-gray-600">
+          {row.original.email || '-'}
+        </span>
       ),
     },
     {
       accessorKey: 'phone',
       header: 'Phone',
       cell: ({ row }) => (
-        <EditableCell
-          value={row.original.phone || ''}
-          onSave={(value) => onUpdateMemberInfo(row.original.id, 'phone', value)}
-          type="tel"
-          className="text-gray-600"
-        />
+        <span className="text-sm text-gray-600">
+          {row.original.phone || '-'}
+        </span>
       ),
       enableSorting: false,
     },
