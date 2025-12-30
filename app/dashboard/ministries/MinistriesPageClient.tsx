@@ -31,6 +31,7 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
   const isMobile = useIsMobile()
 
   // Use custom hooks for state management - pass initial data
+  // Hook checks viewport directly to avoid auto-selecting on mobile
   const list = useMinistryList(initialData)
   const detail = useMinistryDetail()
   const dialogs = useMinistryDialogs()
@@ -253,9 +254,9 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
           </p>
         </div>
         {canManage && (
-          <Button variant="outline-pill" onClick={dialogs.openCreateDialog}>
-            <Plus className="w-4 h-4 md:mr-2" />
-            <span className="hidden md:inline">New Ministry</span>
+          <Button variant="ghost" className="rounded-full !border !border-gray-300 dark:!border-gray-600" onClick={dialogs.openCreateDialog}>
+            <Plus className="w-4 h-4 mr-2" />
+            New Ministry
           </Button>
         )}
       </div>

@@ -5,7 +5,6 @@ import { useDebouncedValue } from '@/lib/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import {
   Dialog,
   DialogContent,
@@ -81,7 +80,6 @@ function getDefaultEndTime(): string {
 
 export const EventDialog = memo(function EventDialog({ open, onOpenChange, event, onSuccess }: EventDialogProps) {
   const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
   const [eventType, setEventType] = useState('service')
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
   const [locationPickerOpen, setLocationPickerOpen] = useState(false)
@@ -109,7 +107,6 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
 
       if (event) {
         setTitle(event.title)
-        setDescription(event.description || '')
         setEventType(event.event_type)
         setSelectedLocation(event.location || null)
         setSelectedResponsiblePerson(event.responsible_person || null)
@@ -119,7 +116,6 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
         setInvitedUsers(event.event_invitations?.map(inv => inv.profile_id) || [])
       } else {
         setTitle('')
-        setDescription('')
         setEventType('service')
         setSelectedLocation(null)
         setSelectedResponsiblePerson(null)
@@ -165,7 +161,6 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
 
     const data = {
       title,
-      description: description || undefined,
       eventType: eventType as 'service' | 'rehearsal' | 'meeting' | 'special_event' | 'other',
       locationId: selectedLocation?.id || null,
       responsiblePersonId: selectedResponsiblePerson?.id || null,
@@ -194,7 +189,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950">
+      <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950 max-h-[100dvh] sm:max-h-[90vh] flex flex-col w-full h-full sm:h-auto sm:w-auto fixed inset-0 sm:inset-auto sm:top-[50%] sm:left-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] rounded-none sm:rounded-lg">
         <DialogHeader>
           <DialogTitle>{isEditing ? 'Edit Event' : 'Create Event'}</DialogTitle>
           <DialogDescription>
@@ -204,7 +199,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 overflow-y-auto flex-1 pr-2">
           {error && (
             <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
               {error}
@@ -222,7 +217,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="eventType">Event Type *</Label>
               <Select value={eventType} onValueChange={setEventType}>
@@ -395,20 +390,9 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Event details..."
-              rows={3}
-            />
-          </div>
-
-          <div className="space-y-2">
             <Label>Location</Label>
             {selectedLocation ? (
-              <div className="flex items-center gap-2 p-3 border rounded-lg bg-muted/50">
+              <div className="flex items-center gap-2 p-3 border border-gray-300 dark:border-zinc-700 rounded-lg bg-muted/50">
                 <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate">{selectedLocation.name}</div>
@@ -432,7 +416,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
               <Button
                 type="button"
                 variant="outline"
-                className="w-full justify-start text-muted-foreground rounded-lg"
+                className="w-full justify-start text-muted-foreground rounded-lg !border !border-gray-300 dark:!border-zinc-700"
                 onClick={() => setLocationPickerOpen(true)}
               >
                 <MapPin className="w-4 h-4 mr-2" />
@@ -451,7 +435,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
           <div className="space-y-2">
             <Label>Responsible Person</Label>
             {selectedResponsiblePerson ? (
-              <div className="flex items-center gap-2 p-3 border rounded-lg bg-muted/50">
+              <div className="flex items-center gap-2 p-3 border border-gray-300 dark:border-zinc-700 rounded-lg bg-muted/50">
                 <User className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate">
@@ -477,7 +461,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
               <Button
                 type="button"
                 variant="outline"
-                className="w-full justify-start text-muted-foreground rounded-lg"
+                className="w-full justify-start text-muted-foreground rounded-lg !border !border-gray-300 dark:!border-zinc-700"
                 onClick={() => setResponsiblePersonPickerOpen(true)}
               >
                 <User className="w-4 h-4 mr-2" />
@@ -493,7 +477,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
             onSelect={setSelectedResponsiblePerson}
           />
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="startTime">Start Time *</Label>
               <Input

@@ -115,7 +115,7 @@ export function LocationPicker({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>{showNewForm ? 'New Location' : 'Choose Location'}</DialogTitle>
           <DialogDescription>

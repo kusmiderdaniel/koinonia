@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import Image from 'next/image'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -12,8 +11,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { LoadingState } from '@/components/LoadingState'
-import { Camera, Trash2, User, Eye, EyeOff } from 'lucide-react'
-import { getProfile, updateProfile, uploadAvatar, removeAvatar, changePassword } from './actions'
+import { Eye, EyeOff } from 'lucide-react'
+import { DatePicker } from '@/components/ui/date-picker'
+import { getProfile, updateProfile, changePassword } from './actions'
 
 const profileSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -31,9 +31,9 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingData, setIsLoadingData] = useState(true)
   const [email, setEmail] = useState('')
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
-  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
   const [sex, setSex] = useState<string | undefined>(undefined)
+  const [dateOfBirth, setDateOfBirth] = useState<string>('')
+  const [firstDayOfWeek, setFirstDayOfWeek] = useState<0 | 1 | 2 | 3 | 4 | 5 | 6>(0)
 
   // Password change state
   const [showPasswordForm, setShowPasswordForm] = useState(false)
@@ -45,8 +45,6 @@ export default function ProfilePage() {
   const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [passwordError, setPasswordError] = useState<string | null>(null)
   const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null)
-
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
     register,
@@ -65,8 +63,11 @@ export default function ProfilePage() {
         setError(result.error)
       } else if (result.data) {
         setEmail(result.data.email)
-        setAvatarUrl(result.data.avatar_url)
         setSex(result.data.sex || undefined)
+        setDateOfBirth(result.data.date_of_birth || '')
+        if (result.firstDayOfWeek !== undefined) {
+          setFirstDayOfWeek(result.firstDayOfWeek as 0 | 1 | 2 | 3 | 4 | 5 | 6)
+        }
         reset({
           firstName: result.data.first_name,
           lastName: result.data.last_name,
@@ -88,6 +89,7 @@ export default function ProfilePage() {
     try {
       const result = await updateProfile({
         ...data,
+        dateOfBirth,
         sex: sex as 'male' | 'female' | undefined,
       })
       if (result?.error) {
@@ -99,53 +101,6 @@ export default function ProfilePage() {
       setError('An unexpected error occurred')
     } finally {
       setIsLoading(false)
-    }
-  }
-
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setIsUploadingAvatar(true)
-    setError(null)
-
-    try {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const result = await uploadAvatar(formData)
-      if (result.error) {
-        setError(result.error)
-      } else if (result.data) {
-        setAvatarUrl(result.data.avatarUrl)
-        setSuccess('Photo updated successfully!')
-      }
-    } catch {
-      setError('Failed to upload photo')
-    } finally {
-      setIsUploadingAvatar(false)
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
-    }
-  }
-
-  const handleRemoveAvatar = async () => {
-    setIsUploadingAvatar(true)
-    setError(null)
-
-    try {
-      const result = await removeAvatar()
-      if (result.error) {
-        setError(result.error)
-      } else {
-        setAvatarUrl(null)
-        setSuccess('Photo removed successfully!')
-      }
-    } catch {
-      setError('Failed to remove photo')
-    } finally {
-      setIsUploadingAvatar(false)
     }
   }
 
@@ -193,7 +148,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-4 md:p-8 max-w-2xl">
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Your Profile</h1>
         <p className="text-muted-foreground">
@@ -214,77 +169,6 @@ export default function ProfilePage() {
       )}
 
       <div className="space-y-6">
-        {/* Photo Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile Photo</CardTitle>
-            <CardDescription>
-              Upload a photo to personalize your profile
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-6 p-4 border border-border rounded-lg">
-              <div className="relative flex-shrink-0">
-                <div className="w-24 h-24 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-border">
-                  {avatarUrl ? (
-                    <Image
-                      src={avatarUrl}
-                      alt="Profile photo"
-                      width={96}
-                      height={96}
-                      className="w-full h-full object-cover"
-                      unoptimized={avatarUrl.includes('127.0.0.1')}
-                    />
-                  ) : (
-                    <User className="w-12 h-12 text-muted-foreground" />
-                  )}
-                </div>
-                {isUploadingAvatar && (
-                  <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
-                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-col gap-2">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                  onChange={handleAvatarUpload}
-                  className="hidden"
-                  disabled={isUploadingAvatar}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploadingAvatar}
-                >
-                  <Camera className="w-4 h-4 mr-2" />
-                  {avatarUrl ? 'Change Photo' : 'Upload Photo'}
-                </Button>
-                {avatarUrl && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleRemoveAvatar}
-                    disabled={isUploadingAvatar}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Remove
-                  </Button>
-                )}
-                <p className="text-xs text-muted-foreground">
-                  JPEG, PNG, WebP or GIF. Max 5MB.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Personal Information */}
         <Card>
           <CardHeader>
@@ -346,14 +230,19 @@ export default function ProfilePage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                  <Input
+                  <DatePicker
                     id="dateOfBirth"
-                    type="date"
-                    {...register('dateOfBirth')}
+                    value={dateOfBirth}
+                    onChange={(value) => {
+                      setDateOfBirth(value)
+                      setValue('dateOfBirth', value)
+                    }}
+                    placeholder="Select date"
                     disabled={isLoading}
+                    weekStartsOn={firstDayOfWeek}
                   />
                 </div>
 

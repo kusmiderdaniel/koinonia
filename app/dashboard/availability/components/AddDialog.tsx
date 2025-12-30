@@ -76,10 +76,19 @@ export const AddDialog = memo(function AddDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onCancel} disabled={isSaving}>
+          <Button
+            variant="ghost"
+            className="!border !border-gray-300 dark:!border-gray-600"
+            onClick={onCancel}
+            disabled={isSaving}
+          >
             Cancel
           </Button>
-          <Button onClick={onSave} disabled={isSaving}>
+          <Button
+            className="!bg-brand hover:!bg-brand/90 !text-brand-foreground"
+            onClick={onSave}
+            disabled={isSaving}
+          >
             {isSaving ? 'Saving...' : 'Add'}
           </Button>
         </DialogFooter>

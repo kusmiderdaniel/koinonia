@@ -1,3 +1,12 @@
+// Generate unique ID (fallback for browsers without crypto.randomUUID)
+function generateId(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID()
+  }
+  // Fallback for older browsers
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`
+}
+
 // Sort field definitions
 export interface SortFieldDefinition {
   id: string
@@ -45,7 +54,7 @@ export function createSortRule(existingSorts: SortState): SortRule {
   const availableField = SORT_FIELDS.find(f => !usedFields.includes(f.id)) || SORT_FIELDS[0]
 
   return {
-    id: crypto.randomUUID(),
+    id: generateId(),
     field: availableField.id,
     direction: 'asc',
   }

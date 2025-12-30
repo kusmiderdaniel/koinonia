@@ -275,16 +275,14 @@ export const EventDetailPanel = memo(function EventDetailPanel({
 
         <TabsContent value="agenda" className="flex-1 overflow-y-auto p-6 pt-4 mt-0">
           <div className="flex items-center justify-between mb-4">
-            <div>
+            {sortedAgendaItems.length > 0 && (
               <p className="text-sm text-muted-foreground">
-                {sortedAgendaItems.length > 0
-                  ? `${sortedAgendaItems.length} items • Total: ${formatDuration(totalDuration)}`
-                  : 'Plan the schedule for this event'}
+                {sortedAgendaItems.length} items • Total: {formatDuration(totalDuration)}
               </p>
-            </div>
+            )}
             {canManage && (
-              <div className="flex gap-2">
-                <Button variant="outline-pill" size="sm" onClick={onAddAgendaItem}>
+              <div className="flex gap-2 ml-auto">
+                <Button variant="outline-pill" size="sm" className="!border !border-gray-300 dark:!border-zinc-600" onClick={onAddAgendaItem}>
                   <Plus className="w-4 h-4 mr-1" />
                   Add Item
                 </Button>
@@ -333,10 +331,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
         </TabsContent>
 
         <TabsContent value="positions" className="flex-1 overflow-y-auto p-6 pt-4 mt-0">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-muted-foreground">
-              Manage volunteer positions and assignments
-            </p>
+          <div className="flex items-center justify-end mb-4">
             {canManage && (
               <div className="flex gap-2">
                 {pendingInvitationsCount > 0 && (
@@ -350,7 +345,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
                     Send Invitations ({pendingInvitationsCount})
                   </Button>
                 )}
-                <Button variant="outline-pill" size="sm" onClick={onAddPosition}>
+                <Button variant="outline-pill" size="sm" className="!border !border-gray-300 dark:!border-zinc-600" onClick={onAddPosition}>
                   <Plus className="w-4 h-4 mr-1" />
                   Add Position
                 </Button>

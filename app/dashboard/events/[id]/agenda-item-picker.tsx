@@ -204,7 +204,7 @@ export function AgendaItemPicker({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white dark:bg-zinc-950 max-w-md">
+      <DialogContent className="bg-white dark:bg-zinc-950 max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>
             {isCreatingNew ? 'Create New Agenda Item' : 'Add Agenda Item'}
@@ -303,7 +303,6 @@ export function AgendaItemPicker({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9"
-                autoFocus
               />
             </div>
 

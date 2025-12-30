@@ -120,7 +120,7 @@ export const MemberPicker = memo(function MemberPicker({
 
   return (
     <>
-      <Button variant="outline-pill" size="sm" onClick={() => setOpen(true)}>
+      <Button variant="ghost" className="rounded-full !border !border-gray-300 dark:!border-gray-600" size="sm" onClick={() => setOpen(true)}>
         <UserPlus className="w-4 h-4 mr-1" />
         Add Member
       </Button>

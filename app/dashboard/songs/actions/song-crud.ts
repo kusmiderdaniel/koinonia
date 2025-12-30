@@ -120,7 +120,7 @@ export async function createSong(data: SongInput) {
   const auth = await getAuthenticatedUserWithProfile()
   if (isAuthError(auth)) return { error: auth.error }
 
-  const { user, profile, adminClient } = auth
+  const { profile, adminClient } = auth
 
   const permError = requireManagePermission(profile.role, 'create songs')
   if (permError) return { error: permError }
@@ -134,7 +134,7 @@ export async function createSong(data: SongInput) {
       artist: validated.data.artist || null,
       default_key: validated.data.defaultKey || null,
       duration_seconds: validated.data.durationSeconds || null,
-      created_by: user.id,
+      created_by: profile.id,
     })
     .select()
     .single()

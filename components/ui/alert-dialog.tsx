@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { AlertDialog as AlertDialogPrimitive } from "radix-ui"
+import { AlertDialog as AlertDialogPrimitive, VisuallyHidden } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -44,6 +44,7 @@ function AlertDialogOverlay({
 function AlertDialogContent({
   className,
   size = "default",
+  children,
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Content> & {
   size?: "default" | "sm"
@@ -59,7 +60,13 @@ function AlertDialogContent({
           className
         )}
         {...props}
-      />
+      >
+        {/* Fallback hidden title for accessibility */}
+        <VisuallyHidden.Root asChild>
+          <AlertDialogPrimitive.Title>Alert</AlertDialogPrimitive.Title>
+        </VisuallyHidden.Root>
+        {children}
+      </AlertDialogPrimitive.Content>
     </AlertDialogPortal>
   )
 }

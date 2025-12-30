@@ -36,10 +36,11 @@ export function useMinistryList(initialData?: MinistriesInitialData): UseMinistr
   const { invalidateMinistries } = useCacheInvalidation()
   const queryClient = useQueryClient()
 
-  // Local UI state - auto-select first ministry if initial data provided
-  const [selectedMinistryId, setSelectedMinistryId] = useState<string | null>(
-    initialData?.ministries?.[0]?.id ?? null
-  )
+  // Local UI state - start with null, let effect handle auto-selection based on viewport
+  const [selectedMinistryId, setSelectedMinistryId] = useState<string | null>(null)
+
+  // Track if initial auto-selection has been done
+  const [hasAutoSelected, setHasAutoSelected] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // React Query with initialData for instant render
@@ -68,12 +69,19 @@ export function useMinistryList(initialData?: MinistriesInitialData): UseMinistr
   const userRole = ministriesQuery.data?.role ?? ''
   const isLoading = ministriesQuery.isLoading
 
-  // Auto-select first ministry when data loads
+  // Auto-select first ministry when data loads (desktop only)
+  // Check viewport directly to avoid race condition with useIsMobile hook
   useEffect(() => {
-    if (!selectedMinistryId && ministries.length > 0) {
+    if (typeof window === 'undefined') return
+
+    const isMobileViewport = window.matchMedia('(max-width: 767px)').matches
+
+    // Only auto-select on desktop
+    if (!isMobileViewport && !hasAutoSelected && !selectedMinistryId && ministries.length > 0) {
       setSelectedMinistryId(ministries[0].id)
+      setHasAutoSelected(true)
     }
-  }, [ministries, selectedMinistryId])
+  }, [ministries, selectedMinistryId, hasAutoSelected])
 
   // Sync query errors to local error state
   useEffect(() => {

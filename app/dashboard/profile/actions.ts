@@ -34,7 +34,17 @@ export async function getProfile() {
     return { error: 'Failed to load profile' }
   }
 
-  return { data: profileData }
+  // Get church settings for first day of week
+  const { data: churchData } = await adminClient
+    .from('churches')
+    .select('first_day_of_week')
+    .eq('id', profile.church_id)
+    .single()
+
+  return {
+    data: profileData,
+    firstDayOfWeek: churchData?.first_day_of_week ?? 0 // Default to Sunday (0)
+  }
 }
 
 export async function updateProfile(data: ProfileInput) {

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { useIsMobile } from '@/lib/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -38,6 +39,7 @@ interface FilterBuilderProps {
 
 export function FilterBuilder({ filterState, onChange }: FilterBuilderProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const isMobile = useIsMobile()
   const activeFilterCount = countActiveFilters(filterState)
 
   const handleAddRule = useCallback(() => {
@@ -100,7 +102,7 @@ export function FilterBuilder({ filterState, onChange }: FilterBuilderProps) {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="sm" className="gap-2 w-full sm:w-auto justify-center">
           <Filter className="h-4 w-4" />
           {activeFilterCount > 0 ? (
             <span className="inline-flex items-center gap-1">
@@ -114,8 +116,8 @@ export function FilterBuilder({ filterState, onChange }: FilterBuilderProps) {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-[600px] p-0 bg-white dark:bg-zinc-950 border shadow-lg"
-        align="start"
+        className="w-[90vw] max-w-[600px] p-0 bg-white dark:bg-zinc-950 border shadow-lg"
+        align={isMobile ? "center" : "start"}
         sideOffset={8}
       >
         <div className="p-3 space-y-3 max-h-[500px] overflow-y-auto">
@@ -232,70 +234,84 @@ function FilterRuleRow({
   }
 
   return (
-    <div className="flex items-center gap-2">
-      {/* Conjunction */}
-      <div className="w-14 flex-shrink-0">
-        {showConjunction ? (
-          onConjunctionChange ? (
-            <Select value={conjunction} onValueChange={(v) => onConjunctionChange(v as 'and' | 'or')}>
-              <SelectTrigger className="h-8 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="and">And</SelectItem>
-                <SelectItem value="or">Or</SelectItem>
-              </SelectContent>
-            </Select>
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+      <div className="flex items-center gap-2">
+        {/* Conjunction */}
+        <div className="w-14 flex-shrink-0">
+          {showConjunction ? (
+            onConjunctionChange ? (
+              <Select value={conjunction} onValueChange={(v) => onConjunctionChange(v as 'and' | 'or')}>
+                <SelectTrigger className="h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="and">And</SelectItem>
+                  <SelectItem value="or">Or</SelectItem>
+                </SelectContent>
+              </Select>
+            ) : (
+              <span className="text-xs text-muted-foreground px-2">{conjunction === 'and' ? 'And' : 'Or'}</span>
+            )
           ) : (
-            <span className="text-xs text-muted-foreground px-2">{conjunction === 'and' ? 'And' : 'Or'}</span>
-          )
-        ) : (
-          <span className="text-xs text-muted-foreground px-2">Where</span>
-        )}
+            <span className="text-xs text-muted-foreground px-2">Where</span>
+          )}
+        </div>
+
+        {/* Field selector */}
+        <Select value={rule.field} onValueChange={handleFieldChange}>
+          <SelectTrigger className="flex-1 sm:w-[130px] h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {FILTER_FIELDS.map(f => (
+              <SelectItem key={f.id} value={f.id}>{f.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Remove button - visible on mobile in first row */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground flex-shrink-0 sm:hidden"
+          onClick={onRemove}
+        >
+          <X className="h-4 w-4" />
+        </Button>
       </div>
 
-      {/* Field selector */}
-      <Select value={rule.field} onValueChange={handleFieldChange}>
-        <SelectTrigger className="w-[130px] h-8 text-xs">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {FILTER_FIELDS.map(f => (
-            <SelectItem key={f.id} value={f.id}>{f.label}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="flex items-center gap-2 pl-16 sm:pl-0">
+        {/* Operator selector */}
+        <Select value={rule.operator} onValueChange={(v) => onUpdate({ operator: v })}>
+          <SelectTrigger className="w-[100px] sm:w-[120px] h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {operators.map(op => (
+              <SelectItem key={op.value} value={op.value}>{op.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-      {/* Operator selector */}
-      <Select value={rule.operator} onValueChange={(v) => onUpdate({ operator: v })}>
-        <SelectTrigger className="w-[120px] h-8 text-xs">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {operators.map(op => (
-            <SelectItem key={op.value} value={op.value}>{op.label}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        {/* Value input */}
+        {needsValue && (
+          <FilterValueInput
+            field={field}
+            rule={rule}
+            onUpdate={onUpdate}
+          />
+        )}
 
-      {/* Value input */}
-      {needsValue && (
-        <FilterValueInput
-          field={field}
-          rule={rule}
-          onUpdate={onUpdate}
-        />
-      )}
-
-      {/* Remove button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-8 w-8 text-muted-foreground hover:text-foreground flex-shrink-0"
-        onClick={onRemove}
-      >
-        <X className="h-4 w-4" />
-      </Button>
+        {/* Remove button - hidden on mobile, visible on desktop */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground flex-shrink-0 hidden sm:flex"
+          onClick={onRemove}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   )
 }

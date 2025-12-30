@@ -61,18 +61,12 @@ export function EventsListView({
             className="flex-1 rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
           >
             Upcoming
-            {upcomingEvents.length > 0 && (
-              <span className="ml-1.5 text-xs opacity-70">({upcomingEvents.length})</span>
-            )}
           </ToggleGroupItem>
           <ToggleGroupItem
             value="past"
             className="flex-1 rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
           >
             Past
-            {pastEvents.length > 0 && (
-              <span className="ml-1.5 text-xs opacity-70">({pastEvents.length})</span>
-            )}
           </ToggleGroupItem>
         </ToggleGroup>
       </div>

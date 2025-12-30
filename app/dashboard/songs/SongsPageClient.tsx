@@ -289,9 +289,9 @@ export function SongsPageClient({ initialData }: SongsPageClientProps) {
           <h1 className="text-xl font-semibold">Songs</h1>
         </div>
         {canManage && (
-          <Button size="sm" className="rounded-full" onClick={dialogs.openCreateDialog}>
-            <Plus className="w-4 h-4 md:mr-1" />
-            <span className="hidden md:inline">Add</span>
+          <Button variant="ghost" size="sm" className="rounded-full !border !border-gray-300 dark:!border-gray-600" onClick={dialogs.openCreateDialog}>
+            <Plus className="w-4 h-4 mr-1" />
+            Add
           </Button>
         )}
       </div>

@@ -225,6 +225,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
             <Button
               variant="outline-pill"
               size="sm"
+              className="!border !border-gray-300 dark:!border-zinc-600"
               onClick={() => setCreateEventDialogOpen(true)}
             >
               <CalendarPlus className="w-4 h-4 mr-2" />
@@ -282,6 +283,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
                       <Button
                         variant="outline-pill"
                         size="sm"
+                        className="!border !border-gray-300 dark:!border-zinc-600"
                         onClick={() => handleAddAgendaItem(false)}
                       >
                         <Plus className="w-4 h-4 mr-2" />
@@ -328,6 +330,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
                       <Button
                         variant="outline-pill"
                         size="sm"
+                        className="!border !border-gray-300 dark:!border-zinc-600"
                         onClick={() => handleAddAgendaItem(false)}
                       >
                         <Plus className="w-4 h-4 mr-2" />
@@ -359,7 +362,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="rounded-full"
+                      className="rounded-full !border !border-gray-300 dark:!border-zinc-600"
                       onClick={() => setPositionPickerOpen(true)}
                     >
                       <Plus className="w-4 h-4 mr-2" />
@@ -439,7 +442,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
                       <Button
                         variant="outline"
                         size="sm"
-                        className="rounded-full"
+                        className="rounded-full !border !border-gray-300 dark:!border-zinc-600"
                         onClick={() => setPositionPickerOpen(true)}
                       >
                         <Plus className="w-4 h-4 mr-2" />

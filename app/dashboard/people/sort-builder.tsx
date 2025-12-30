@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { useIsMobile } from '@/lib/hooks'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -41,6 +42,7 @@ const fieldIcons: Record<string, React.ReactNode> = {
 
 export function SortBuilder({ sortState, onChange }: SortBuilderProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const isMobile = useIsMobile()
   const activeSortCount = countActiveSorts(sortState)
 
   const handleAddSort = useCallback(() => {
@@ -74,7 +76,7 @@ export function SortBuilder({ sortState, onChange }: SortBuilderProps) {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="sm" className="gap-2 w-full sm:w-auto justify-center">
           <ArrowUpDown className="h-4 w-4" />
           {activeSortCount > 0 ? (
             <span className="inline-flex items-center gap-1">
@@ -88,8 +90,8 @@ export function SortBuilder({ sortState, onChange }: SortBuilderProps) {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-[400px] p-0 bg-white dark:bg-zinc-950 border shadow-lg"
-        align="start"
+        className="w-[90vw] max-w-[400px] p-0 bg-white dark:bg-zinc-950 border shadow-lg"
+        align={isMobile ? "center" : "start"}
         sideOffset={8}
       >
         <div className="p-3 space-y-2 max-h-[400px] overflow-y-auto">
@@ -162,13 +164,13 @@ function SortRuleRow({ sort, availableFields, onUpdate, onRemove }: SortRuleRowP
   return (
     <div className="flex items-center gap-2">
       {/* Drag handle */}
-      <div className="text-muted-foreground cursor-grab">
+      <div className="text-muted-foreground cursor-grab flex-shrink-0">
         <GripVertical className="h-4 w-4" />
       </div>
 
       {/* Field selector */}
       <Select value={sort.field} onValueChange={(v) => onUpdate({ field: v })}>
-        <SelectTrigger className="w-[140px] h-8 text-xs">
+        <SelectTrigger className="flex-1 sm:w-[140px] h-8 text-xs">
           <div className="flex items-center gap-2">
             {currentField && fieldIcons[currentField.icon]}
             <SelectValue />
@@ -191,7 +193,7 @@ function SortRuleRow({ sort, availableFields, onUpdate, onRemove }: SortRuleRowP
         value={sort.direction}
         onValueChange={(v) => onUpdate({ direction: v as SortDirection })}
       >
-        <SelectTrigger className="w-[120px] h-8 text-xs">
+        <SelectTrigger className="w-[90px] sm:w-[120px] h-8 text-xs flex-shrink-0">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

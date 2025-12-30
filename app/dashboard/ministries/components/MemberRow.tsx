@@ -50,24 +50,24 @@ export const MemberRow = memo(function MemberRow({
   }
 
   return (
-    <div className="flex items-center justify-between p-3 rounded-lg border">
-      <div className="flex items-center gap-3">
-        <div>
-          <p className="font-medium">
+    <div className="flex items-center justify-between p-3 rounded-lg border gap-2">
+      <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="min-w-0">
+          <p className="font-medium truncate">
             {member.profile.first_name} {member.profile.last_name}
           </p>
           {member.profile.email && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground truncate hidden md:block">
               {member.profile.email}
             </p>
           )}
         </div>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
         {canManage && allRoles.length > 0 ? (
           <Popover open={isOpen} onOpenChange={setIsOpen}>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="justify-between min-w-[140px]">
+              <Button variant="ghost" className="justify-between min-w-[80px] md:min-w-[140px] !border !border-gray-300 dark:!border-gray-600 text-sm">
                 {member.roles.length === 0 ? (
                   <span className="text-muted-foreground">No roles</span>
                 ) : member.roles.length === 1 ? (

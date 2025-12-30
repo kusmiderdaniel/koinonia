@@ -147,23 +147,20 @@ export function SidebarContent({ user, churchName, onNavigate }: SidebarContentP
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56 bg-white dark:bg-zinc-950">
             <DropdownMenuItem asChild>
-              <ProgressLink href="/dashboard/profile" onClick={handleNavClick} className="flex items-center gap-2">
-                <User className="w-4 h-4" />
+              <ProgressLink href="/dashboard/profile" onClick={handleNavClick}>
+                <User />
                 Profile
               </ProgressLink>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <ProgressLink href="/dashboard/availability" onClick={handleNavClick} className="flex items-center gap-2">
-                <CalendarOff className="w-4 h-4" />
+              <ProgressLink href="/dashboard/availability" onClick={handleNavClick}>
+                <CalendarOff />
                 Unavailability
               </ProgressLink>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={handleSignOut}
-              className="flex items-center gap-2 text-red-600 focus:text-red-600"
-            >
-              <LogOut className="w-4 h-4" />
+            <DropdownMenuItem variant="destructive" onClick={handleSignOut}>
+              <LogOut />
               Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>

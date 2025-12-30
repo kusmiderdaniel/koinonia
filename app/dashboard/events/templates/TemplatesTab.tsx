@@ -21,6 +21,8 @@ import { getEventTemplates, getEventTemplate, deleteEventTemplate } from './acti
 import { TemplateDialog } from './TemplateDialog'
 import { DetailPanelSkeleton } from '@/components/DynamicLoadingFallback'
 import { EventTypeBadge } from '@/components/EventTypeBadge'
+import { MobileBackHeader } from '@/components/MobileBackHeader'
+import { useIsMobile } from '@/lib/hooks'
 import { formatTimeString, formatDurationMinutes } from '@/lib/utils/format'
 
 // Dynamic import for heavy detail panel
@@ -94,6 +96,7 @@ interface TemplateDetail {
 }
 
 export const TemplatesTab = memo(function TemplatesTab() {
+  const isMobile = useIsMobile()
   const [templates, setTemplates] = useState<Template[]>([])
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateDetail | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -195,103 +198,92 @@ export const TemplatesTab = memo(function TemplatesTab() {
     )
   }, [templates, debouncedSearchQuery])
 
-  return (
-    <div className="flex gap-6 h-[calc(100vh-220px)]">
-      {/* Left Panel - Template List */}
-      <div className="w-80 flex-shrink-0 flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card">
-        {/* Search */}
-        <div className="p-3 border-b">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search templates..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-        </div>
-
-        {/* Template List */}
-        <div className="flex-1 overflow-y-auto p-2 space-y-2">
-          {isLoading ? (
-            <p className="text-sm text-muted-foreground text-center py-4">
-              Loading templates...
-            </p>
-          ) : filteredTemplates.length === 0 ? (
-            <div className="text-center py-8">
-              <FileText className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
-              <p className="text-sm text-muted-foreground">
-                {templates.length === 0
-                  ? 'No templates yet'
-                  : 'No templates found'}
-              </p>
-              {templates.length === 0 && canManage && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-3 rounded-full"
-                  onClick={handleCreateTemplate}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create your first template
-                </Button>
-              )}
-            </div>
-          ) : (
-            filteredTemplates.map((template) => {
-              const isSelected = selectedTemplate?.id === template.id
-              return (
-                <button
-                  key={template.id}
-                  onClick={() => handleSelectTemplate(template)}
-                  className={`w-full text-left p-3 rounded-lg transition-colors ${
-                    isSelected
-                      ? 'bg-gray-100 dark:bg-zinc-800 font-medium'
-                      : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <EventTypeBadge type={template.event_type} />
-                  </div>
-                  <p className="font-medium truncate">{template.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatTimeString(template.default_start_time)} • {formatDurationMinutes(template.default_duration_minutes)}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {template.agendaItemCount} items • {template.positionCount} positions
-                  </p>
-                </button>
-              )
-            })
-          )}
+  const templateListContent = (
+    <div className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card ${isMobile ? 'w-full h-full' : 'w-80 flex-shrink-0'}`}>
+      {/* Search */}
+      <div className="p-3 border-b">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Search templates..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
         </div>
       </div>
 
-      {/* Right Panel - Template Detail */}
-      <div className="flex-1 min-w-0">
-        {selectedTemplate ? (
-          <TemplateDetailPanel
-            template={selectedTemplate}
-            canManage={canManage}
-            canDelete={canDelete}
-            onEdit={handleEditTemplate}
-            onDelete={() => handleDeleteClick(selectedTemplate as unknown as Template)}
-            onClose={handleCloseDetail}
-            onTemplateUpdated={handleTemplateUpdated}
-          />
+      {/* Template List */}
+      <div className="flex-1 overflow-y-auto p-2 space-y-2">
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground text-center py-4">
+            Loading templates...
+          </p>
+        ) : filteredTemplates.length === 0 ? (
+          <div className="text-center py-8">
+            <FileText className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
+            <p className="text-sm text-muted-foreground">
+              {templates.length === 0
+                ? 'No templates yet'
+                : 'No templates found'}
+            </p>
+            {templates.length === 0 && canManage && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-3 rounded-full"
+                onClick={handleCreateTemplate}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create your first template
+              </Button>
+            )}
+          </div>
         ) : (
-          <Card className="h-full flex items-center justify-center">
-            <div className="text-center">
-              <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
-              <p className="text-muted-foreground">
-                Select a template to view details
-              </p>
-            </div>
-          </Card>
+          filteredTemplates.map((template) => {
+            const isSelected = selectedTemplate?.id === template.id
+            return (
+              <button
+                key={template.id}
+                onClick={() => handleSelectTemplate(template)}
+                className={`w-full text-left p-3 rounded-lg transition-colors ${
+                  isSelected
+                    ? 'bg-gray-100 dark:bg-zinc-800 font-medium'
+                    : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <EventTypeBadge type={template.event_type} />
+                </div>
+                <p className="font-medium truncate">{template.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {formatTimeString(template.default_start_time)} • {formatDurationMinutes(template.default_duration_minutes)}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {template.agendaItemCount} items • {template.positionCount} positions
+                </p>
+              </button>
+            )
+          })
         )}
       </div>
+    </div>
+  )
 
+  const detailContent = selectedTemplate ? (
+    <TemplateDetailPanel
+      template={selectedTemplate}
+      canManage={canManage}
+      canDelete={canDelete}
+      onEdit={handleEditTemplate}
+      onDelete={() => handleDeleteClick(selectedTemplate as unknown as Template)}
+      onClose={handleCloseDetail}
+      onTemplateUpdated={handleTemplateUpdated}
+    />
+  ) : null
+
+  const dialogs = (
+    <>
       {/* Template Dialog */}
       <TemplateDialog
         open={templateDialogOpen}
@@ -320,6 +312,54 @@ export const TemplatesTab = memo(function TemplatesTab() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </>
+  )
+
+  // Mobile: Show stacked view - list OR detail
+  if (isMobile) {
+    if (selectedTemplate) {
+      return (
+        <div className="h-[calc(100vh-140px)]">
+          <MobileBackHeader
+            title={selectedTemplate.name}
+            onBack={handleCloseDetail}
+          />
+          {detailContent}
+          {dialogs}
+        </div>
+      )
+    }
+
+    return (
+      <div className="h-[calc(100vh-140px)]">
+        {templateListContent}
+        {dialogs}
+      </div>
+    )
+  }
+
+  // Desktop: Side-by-side layout
+  return (
+    <div className="flex gap-6 h-[calc(100vh-220px)]">
+      {templateListContent}
+
+      {/* Right Panel - Template Detail */}
+      <div className="flex-1 min-w-0">
+        {selectedTemplate ? (
+          detailContent
+        ) : (
+          <Card className="h-full flex items-center justify-center">
+            <div className="text-center">
+              <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
+              <p className="text-muted-foreground">
+                Select a template to view details
+              </p>
+            </div>
+          </Card>
+        )}
+      </div>
+
+      {dialogs}
     </div>
   )
 })

@@ -1,3 +1,12 @@
+// Generate unique ID (fallback for browsers without crypto.randomUUID)
+function generateId(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID()
+  }
+  // Fallback for older browsers
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`
+}
+
 // Filter field definitions
 export type FilterFieldType = 'text' | 'select' | 'boolean' | 'date' | 'number' | 'multiSelect'
 
@@ -114,7 +123,7 @@ export function createEmptyFilterState(): FilterState {
 // Helper to create a new rule
 export function createFilterRule(): FilterRule {
   return {
-    id: crypto.randomUUID(),
+    id: generateId(),
     field: 'name',
     operator: 'contains',
     value: '',
@@ -124,7 +133,7 @@ export function createFilterRule(): FilterRule {
 // Helper to create a new group
 export function createFilterGroup(): FilterGroup {
   return {
-    id: crypto.randomUUID(),
+    id: generateId(),
     conjunction: 'and',
     rules: [createFilterRule()],
     groups: [],

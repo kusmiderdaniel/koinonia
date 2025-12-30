@@ -123,23 +123,17 @@ export function MinistryDetailPanel({
 
             <TabsContent value="roles">
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    Define the roles people can have in this ministry
-                  </p>
-                  {canManage && (
-                    <Button variant="outline-pill" size="sm" onClick={onAddRole}>
+                {canManage && (
+                  <div className="flex justify-end">
+                    <Button variant="ghost" className="rounded-full !border !border-gray-300 dark:!border-gray-600" size="sm" onClick={onAddRole}>
                       <Plus className="w-4 h-4 mr-1" />
                       Add Role
                     </Button>
-                  )}
-                </div>
+                  </div>
+                )}
                 {roles.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground border rounded-lg">
                     <p>No roles defined yet.</p>
-                    {canManage && (
-                      <p className="text-sm mt-1">Add roles like "Worship Leader", "Guitarist", "Vocalist", etc.</p>
-                    )}
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -183,11 +177,8 @@ export function MinistryDetailPanel({
 
             <TabsContent value="members">
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    People assigned to this ministry and their roles
-                  </p>
-                  {canManage && (
+                {canManage && (
+                  <div className="flex justify-end">
                     <MemberPicker
                       availableMembers={availableMembers}
                       ministryRoles={roles}
@@ -196,15 +187,12 @@ export function MinistryDetailPanel({
                       onAdd={onAddMember}
                       isAdding={isAddingMember}
                     />
-                  )}
-                </div>
+                  </div>
+                )}
                 {members.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground border rounded-lg">
                     <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
                     <p>No members assigned yet.</p>
-                    {canManage && (
-                      <p className="text-sm mt-1">Add church members to this ministry.</p>
-                    )}
                   </div>
                 ) : (
                   <div className="space-y-2">

@@ -78,7 +78,7 @@ export function ResponsiblePersonPicker({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Choose Responsible Person</DialogTitle>
           <DialogDescription>

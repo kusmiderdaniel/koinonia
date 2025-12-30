@@ -151,7 +151,7 @@ export const MembersTable = memo(function MembersTable({ members, currentUserId,
     <div className="space-y-4">
       {/* Filter and Sort toolbar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
           <SortBuilder sortState={sortState} onChange={setSortState} />
           <FilterBuilder filterState={filterState} onChange={setFilterState} />
         </div>

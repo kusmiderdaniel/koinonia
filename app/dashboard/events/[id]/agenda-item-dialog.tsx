@@ -199,7 +199,7 @@ export function AgendaItemDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white dark:bg-zinc-950">
+      <DialogContent className="bg-white dark:bg-zinc-950" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>{item ? 'Edit Agenda Item' : 'Add Agenda Item'}</DialogTitle>
           <DialogDescription>
