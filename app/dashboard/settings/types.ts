@@ -1,5 +1,3 @@
-'use client'
-
 import type { Location, Member } from '@/lib/types'
 
 export type { Location, Member }

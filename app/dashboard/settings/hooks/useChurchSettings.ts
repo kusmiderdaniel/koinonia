@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { getChurchSettings, updateChurchSettings, getChurchMembers, getLocations, regenerateJoinCode } from '../actions'
-import type { ChurchData, ChurchPreferences, Location, Member } from '../types'
+import { updateChurchSettings, regenerateJoinCode } from '../actions'
+import type { ChurchData, ChurchPreferences, ChurchSettingsData, Location, Member } from '../types'
 
 const churchSettingsSchema = z.object({
   name: z.string().min(2, 'Church name must be at least 2 characters'),
@@ -19,6 +19,12 @@ const churchSettingsSchema = z.object({
 })
 
 export type ChurchSettingsInput = z.infer<typeof churchSettingsSchema>
+
+export interface SettingsInitialData {
+  church: ChurchSettingsData
+  members: Member[]
+  locations: Location[]
+}
 
 interface UseChurchSettingsReturn {
   // Form
@@ -54,81 +60,49 @@ interface UseChurchSettingsReturn {
   setLocations: (locations: Location[]) => void
 }
 
-export function useChurchSettings(): UseChurchSettingsReturn {
+export function useChurchSettings(initialData?: SettingsInitialData): UseChurchSettingsReturn {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isLoadingData, setIsLoadingData] = useState(true)
-  const [churchData, setChurchData] = useState<ChurchData | null>(null)
+  const [isLoadingData] = useState(false) // No loading when initial data provided
+  const [churchData, setChurchData] = useState<ChurchData | null>(
+    initialData ? {
+      subdomain: initialData.church.subdomain,
+      join_code: initialData.church.join_code,
+      role: initialData.church.role,
+    } : null
+  )
   const [joinCodeCopied, setJoinCodeCopied] = useState(false)
   const [isRegeneratingCode, setIsRegeneratingCode] = useState(false)
-  const [members, setMembers] = useState<Member[]>([])
-  const [locations, setLocations] = useState<Location[]>([])
-  const [preferences, setPreferences] = useState<ChurchPreferences>({
-    timezone: 'America/New_York',
-    firstDayOfWeek: 1,
-    defaultEventVisibility: 'members',
-  })
+  const [members, setMembers] = useState<Member[]>(initialData?.members || [])
+  const [locations, setLocations] = useState<Location[]>(initialData?.locations || [])
+  const [preferences, setPreferences] = useState<ChurchPreferences>(
+    initialData ? {
+      timezone: initialData.church.timezone || 'America/New_York',
+      firstDayOfWeek: initialData.church.first_day_of_week ?? 1,
+      defaultEventVisibility:
+        (initialData.church.default_event_visibility as 'members' | 'volunteers' | 'leaders') ||
+        'members',
+    } : {
+      timezone: 'America/New_York',
+      firstDayOfWeek: 1,
+      defaultEventVisibility: 'members',
+    }
+  )
 
   const form = useForm<ChurchSettingsInput>({
     resolver: zodResolver(churchSettingsSchema),
+    defaultValues: initialData ? {
+      name: initialData.church.name,
+      address: initialData.church.address || '',
+      city: initialData.church.city || '',
+      country: initialData.church.country || '',
+      zipCode: initialData.church.zip_code || '',
+      phone: initialData.church.phone || '',
+      email: initialData.church.email || '',
+      website: initialData.church.website || '',
+    } : undefined,
   })
-
-  useEffect(() => {
-    async function loadSettings() {
-      const result = await getChurchSettings()
-      if (result.error) {
-        setError(result.error)
-        setIsLoadingData(false)
-        return
-      }
-
-      if (result.data) {
-        setChurchData({
-          subdomain: result.data.subdomain,
-          join_code: result.data.join_code,
-          role: result.data.role,
-        })
-        form.reset({
-          name: result.data.name,
-          address: result.data.address || '',
-          city: result.data.city || '',
-          country: result.data.country || '',
-          zipCode: result.data.zip_code || '',
-          phone: result.data.phone || '',
-          email: result.data.email || '',
-          website: result.data.website || '',
-        })
-
-        // Set preferences
-        setPreferences({
-          timezone: result.data.timezone || 'America/New_York',
-          firstDayOfWeek: result.data.first_day_of_week ?? 1,
-          defaultEventVisibility:
-            (result.data.default_event_visibility as 'members' | 'volunteers' | 'leaders') ||
-            'members',
-        })
-
-        // Parallel load: members (if owner) and locations (if can manage)
-        const isOwner = result.data.role === 'owner'
-        const canManageLocs = ['owner', 'admin', 'leader'].includes(result.data.role)
-
-        const [membersResult, locationsResult] = await Promise.all([
-          isOwner ? getChurchMembers() : Promise.resolve({ data: [] }),
-          canManageLocs ? getLocations() : Promise.resolve({ data: [] }),
-        ])
-
-        if (membersResult.data) {
-          setMembers(membersResult.data)
-        }
-        if (locationsResult.data) {
-          setLocations(locationsResult.data)
-        }
-      }
-      setIsLoadingData(false)
-    }
-    loadSettings()
-  }, [form])
 
   const onSubmit = useCallback(
     async (data: ChurchSettingsInput) => {
