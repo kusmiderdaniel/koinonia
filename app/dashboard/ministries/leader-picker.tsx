@@ -85,7 +85,7 @@ export const LeaderPicker = memo(function LeaderPicker({
             type="button"
             variant="outline"
             onClick={() => setOpen(true)}
-            className="shrink-0"
+            className="shrink-0 !border !border-gray-300 dark:!border-gray-600"
           >
             Change
           </Button>
@@ -95,7 +95,7 @@ export const LeaderPicker = memo(function LeaderPicker({
           type="button"
           variant="outline"
           onClick={() => setOpen(true)}
-          className="w-full justify-start text-muted-foreground"
+          className="w-full justify-start text-muted-foreground !border !border-gray-300 dark:!border-gray-600"
         >
           <User className="w-4 h-4 mr-2" />
           Choose a Leader

@@ -2,6 +2,7 @@
 
 // Song CRUD
 export {
+  getArtists,
   getSongs,
   getSong,
   createSong,

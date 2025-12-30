@@ -17,8 +17,9 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { ChevronDown } from 'lucide-react'
-import { createSong, updateSong, getTags } from './actions'
+import { createSong, updateSong, getTags, getArtists } from './actions'
 import { TagPicker } from './tag-picker'
+import { ArtistPicker } from './artist-picker'
 
 interface Tag {
   id: string
@@ -56,6 +57,7 @@ export const SongDialog = memo(function SongDialog({ open, onOpenChange, song, o
   const [durationSeconds, setDurationSeconds] = useState('')
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [availableTags, setAvailableTags] = useState<Tag[]>([])
+  const [availableArtists, setAvailableArtists] = useState<string[]>([])
 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -66,6 +68,7 @@ export const SongDialog = memo(function SongDialog({ open, onOpenChange, song, o
   useEffect(() => {
     if (open) {
       loadTags()
+      loadArtists()
       if (song) {
         setTitle(song.title)
         setArtist(song.artist || '')
@@ -96,6 +99,20 @@ export const SongDialog = memo(function SongDialog({ open, onOpenChange, song, o
     const result = await getTags()
     if (result.data) {
       setAvailableTags(result.data)
+    }
+  }
+
+  const loadArtists = async () => {
+    const result = await getArtists()
+    if (result.data) {
+      setAvailableArtists(result.data)
+    }
+  }
+
+  const handleArtistCreated = (newArtist: string) => {
+    // Add new artist to the list if not already present
+    if (!availableArtists.includes(newArtist)) {
+      setAvailableArtists(prev => [...prev, newArtist].sort())
     }
   }
 
@@ -198,12 +215,12 @@ export const SongDialog = memo(function SongDialog({ open, onOpenChange, song, o
 
           {/* Artist */}
           <div className="space-y-2">
-            <Label htmlFor="artist">Artist</Label>
-            <Input
-              id="artist"
+            <Label>Artist</Label>
+            <ArtistPicker
+              artists={availableArtists}
               value={artist}
-              onChange={(e) => setArtist(e.target.value)}
-              placeholder="Artist or band name"
+              onChange={setArtist}
+              onArtistCreated={handleArtistCreated}
             />
           </div>
 

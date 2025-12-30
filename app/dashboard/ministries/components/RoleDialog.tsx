@@ -69,15 +69,20 @@ export function RoleDialog({
             />
           </div>
         </div>
-        <DialogFooter>
+        <DialogFooter className="!bg-transparent !border-0 !p-0 !mx-0 !mb-0 !mt-6">
           <Button
-            variant="outline"
+            variant="outline-pill"
             onClick={onCancel}
             disabled={isSaving}
+            className="!border !border-gray-300 dark:!border-gray-600"
           >
             Cancel
           </Button>
-          <Button onClick={onSave} disabled={isSaving || !roleName.trim()}>
+          <Button
+            onClick={onSave}
+            disabled={isSaving || !roleName.trim()}
+            className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white"
+          >
             {isSaving ? 'Saving...' : editingRole ? 'Save Changes' : 'Add Role'}
           </Button>
         </DialogFooter>

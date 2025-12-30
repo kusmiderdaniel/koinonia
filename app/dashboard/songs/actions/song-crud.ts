@@ -9,6 +9,31 @@ import {
 } from './helpers'
 import type { SongInput } from './helpers'
 
+export async function getArtists() {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  // Get all unique non-null artists from songs in this church
+  const { data: songs, error } = await adminClient
+    .from('songs')
+    .select('artist')
+    .eq('church_id', profile.church_id)
+    .not('artist', 'is', null)
+    .order('artist', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching artists:', error)
+    return { error: 'Failed to load artists' }
+  }
+
+  // Extract unique artists
+  const uniqueArtists = [...new Set(songs?.map(s => s.artist).filter(Boolean) as string[])]
+
+  return { data: uniqueArtists }
+}
+
 export async function getSongs() {
   const auth = await getAuthenticatedUserWithProfile()
   if (isAuthError(auth)) return { error: auth.error }

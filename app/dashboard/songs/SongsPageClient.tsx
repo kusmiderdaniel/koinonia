@@ -123,37 +123,36 @@ export function SongsPageClient({ initialData }: SongsPageClientProps) {
 
   // Song Detail Component (reused in mobile and desktop)
   const SongDetailContent = () => (
-    <Card>
-      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-4">
-        <div className="flex-1 min-w-0">
-          <CardTitle className="text-xl md:text-2xl truncate">{selectedSong!.title}</CardTitle>
-          {selectedSong!.artist && (
-            <p className="text-muted-foreground mt-1 flex items-center gap-2">
-              <User className="w-4 h-4" />
-              {selectedSong!.artist}
-            </p>
+    <Card className="border border-black dark:border-zinc-700">
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between gap-4">
+          <CardTitle className="text-xl md:text-2xl truncate flex-1">{selectedSong!.title}</CardTitle>
+          {canManage && (
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => dialogs.openEditDialog(selectedSong!)}
+              >
+                <Pencil className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => dialogs.openDeleteDialog(selectedSong!)}
+                className="h-8 w-8 text-destructive hover:text-destructive hover:bg-red-50 dark:hover:bg-red-950"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
           )}
         </div>
-        {canManage && (
-          <div className="flex items-center gap-2 ml-4">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-full"
-              onClick={() => dialogs.openEditDialog(selectedSong!)}
-            >
-              <Pencil className="w-4 h-4 md:mr-1" />
-              <span className="hidden md:inline">Edit</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => dialogs.openDeleteDialog(selectedSong!)}
-              className="rounded-full text-destructive hover:text-destructive"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
+        {selectedSong!.artist && (
+          <p className="text-muted-foreground flex items-center gap-2">
+            <User className="w-4 h-4" />
+            {selectedSong!.artist}
+          </p>
         )}
       </CardHeader>
       <CardContent className="space-y-6">

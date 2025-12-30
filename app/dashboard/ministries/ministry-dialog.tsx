@@ -217,6 +217,7 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
               variant="outline-pill"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
+              className="!border !border-gray-300 dark:!border-gray-600"
             >
               Cancel
             </Button>
