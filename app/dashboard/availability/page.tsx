@@ -125,25 +125,28 @@ export default function AvailabilityPage() {
         an existing unavailable date to edit it.
       </p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 items-center lg:items-start">
         {/* Calendar Section */}
-        <CalendarSection
-          calendarMonth={calendar.calendarMonth}
-          firstDayOfWeek={data.firstDayOfWeek}
-          unavailableDates={data.unavailableDates}
-          selectedStart={calendar.selectedStart}
-          selectedEnd={calendar.selectedEnd}
-          selectedRange={calendar.selectedRange}
-          canGoPrevious={calendar.canGoPrevious}
-          disabledDays={calendar.disabledDays}
-          onDayClick={handleDayClick}
-          onPrevMonth={handlePrevMonth}
-          onNextMonth={handleNextMonth}
-          onClearSelection={handleClearSelection}
-          onAddSingleDay={handleAddSingleDay}
-        />
+        <div className="w-full max-w-md lg:max-w-none pb-8 lg:pb-0 lg:pr-8 border-b lg:border-b-0 lg:border-r border-border">
+          <CalendarSection
+            calendarMonth={calendar.calendarMonth}
+            firstDayOfWeek={data.firstDayOfWeek}
+            unavailableDates={data.unavailableDates}
+            selectedStart={calendar.selectedStart}
+            selectedEnd={calendar.selectedEnd}
+            selectedRange={calendar.selectedRange}
+            canGoPrevious={calendar.canGoPrevious}
+            disabledDays={calendar.disabledDays}
+            onDayClick={handleDayClick}
+            onPrevMonth={handlePrevMonth}
+            onNextMonth={handleNextMonth}
+            onClearSelection={handleClearSelection}
+            onAddSingleDay={handleAddSingleDay}
+          />
+        </div>
 
         {/* Unavailability List */}
+        <div className="w-full max-w-md lg:max-w-none">
         <UnavailabilityList
           isLoading={data.isLoading}
           unavailability={data.unavailability}
@@ -154,6 +157,7 @@ export default function AvailabilityPage() {
           onEdit={dialogs.openEditDialog}
           onDelete={handleDelete}
         />
+        </div>
       </div>
 
       {/* Add Unavailability Dialog */}

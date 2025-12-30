@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { format } from 'date-fns'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CalendarDays, ChevronRight, MapPin } from 'lucide-react'
 import type { DashboardEvent } from '@/app/dashboard/actions'
@@ -15,13 +16,7 @@ export function UpcomingEventsWidget({ events }: UpcomingEventsWidgetProps) {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-    })
+    return format(date, "EEE, MMM d 'at' h:mm a")
   }
 
   const getEventTypeIcon = (eventType: string) => {

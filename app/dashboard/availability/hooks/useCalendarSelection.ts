@@ -124,10 +124,11 @@ export function useCalendarSelection(): UseCalendarSelectionReturn {
     return dates
   }, [selectedStart, selectedEnd])
 
-  // Disable days before current month
+  // Disable past days (before today)
   const disabledDays = useMemo(() => {
-    const firstOfCurrentMonth = getFirstDayOfCurrentMonth()
-    return { before: firstOfCurrentMonth }
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return { before: today }
   }, [])
 
   return {

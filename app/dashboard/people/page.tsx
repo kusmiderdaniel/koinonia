@@ -53,19 +53,18 @@ export default async function PeoplePage() {
           .eq('church_id', profile.church_id)
           .eq('status', 'pending')
       : Promise.resolve({ count: 0 }),
-    // Fetch join code only for admins
-    isAdmin
-      ? adminClient
-          .from('churches')
-          .select('join_code')
-          .eq('id', profile.church_id)
-          .single()
-      : Promise.resolve({ data: null }),
+    // Fetch church data (join code for admins, first_day_of_week for all)
+    adminClient
+      .from('churches')
+      .select('join_code, first_day_of_week')
+      .eq('id', profile.church_id)
+      .single(),
   ])
 
   const { data: membersData, error: membersError } = membersResult
   const pendingCount = pendingResult.count || 0
   const joinCode = churchResult.data?.join_code || ''
+  const firstDayOfWeek = (churchResult.data?.first_day_of_week ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
 
   if (membersError) {
     console.error('Error fetching members:', membersError)
@@ -147,7 +146,7 @@ export default async function PeoplePage() {
                 </Link>
               </Button>
             )}
-            <OfflineMemberDialog />
+            <OfflineMemberDialog weekStartsOn={firstDayOfWeek} />
             {joinCode && <InvitePopover joinCode={joinCode} />}
           </div>
         )}

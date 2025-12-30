@@ -38,51 +38,59 @@ export const CalendarSection = memo(function CalendarSection({
   onClearSelection,
   onAddSingleDay,
 }: CalendarSectionProps) {
+  // Format month name
+  const monthName = calendarMonth.toLocaleString('default', { month: 'long', year: 'numeric' })
+
   return (
     <div>
       <Card>
         <CardContent className="p-4">
-          <div className="flex items-start gap-2">
-            <Calendar
-              mode="single"
-              month={calendarMonth}
-              onMonthChange={() => {}}
-              selected={undefined}
-              onSelect={(day) => day && onDayClick(day)}
-              disabled={disabledDays}
-              hideNavigation
-              weekStartsOn={firstDayOfWeek}
-              modifiers={{
-                unavailable: unavailableDates,
-                selectedStart: selectedStart ? [selectedStart] : [],
-                selectedRange: selectedRange,
-              }}
-              modifiersClassNames={{
-                unavailable:
-                  'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800/40',
-                selectedStart:
-                  'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
-                selectedRange:
-                  'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
-              }}
-              className="rounded-md"
-            />
-            {/* Custom month navigation */}
-            <div className="flex items-center gap-1">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-7 w-7"
-                onClick={onPrevMonth}
-                disabled={!canGoPrevious}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="icon" className="h-7 w-7" onClick={onNextMonth}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
+          {/* Month navigation - above calendar */}
+          <div className="flex items-center justify-between mb-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 !border !border-gray-300 dark:!border-gray-600"
+              onClick={onPrevMonth}
+              disabled={!canGoPrevious}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="font-medium text-sm">{monthName}</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 !border !border-gray-300 dark:!border-gray-600"
+              onClick={onNextMonth}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
+
+          <Calendar
+            mode="single"
+            month={calendarMonth}
+            onMonthChange={() => {}}
+            selected={undefined}
+            onSelect={(day) => day && onDayClick(day)}
+            disabled={disabledDays}
+            hideNavigation
+            weekStartsOn={firstDayOfWeek}
+            modifiers={{
+              unavailable: unavailableDates,
+              selectedStart: selectedStart ? [selectedStart] : [],
+              selectedRange: selectedRange,
+            }}
+            modifiersClassNames={{
+              unavailable:
+                'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800/40 rounded-lg',
+              selectedStart:
+                'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg',
+              selectedRange:
+                'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg',
+            }}
+            className="rounded-md w-full [&_table]:w-full"
+          />
 
           {/* Selection indicator */}
           {selectedStart && (

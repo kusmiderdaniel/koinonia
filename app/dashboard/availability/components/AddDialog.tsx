@@ -40,13 +40,13 @@ export const AddDialog = memo(function AddDialog({
 }: AddDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Add Unavailability</DialogTitle>
         </DialogHeader>
 
         <div className="py-4">
-          <div className="mb-4 p-3 bg-muted rounded-lg text-sm">
+          <div className="mb-4 p-3 bg-muted rounded-lg text-sm text-center">
             {selectedStart && selectedEnd && (
               <>
                 {toDateString(selectedStart) === toDateString(selectedEnd) ? (
@@ -69,6 +69,7 @@ export const AddDialog = memo(function AddDialog({
               value={reason}
               onChange={(e) => onReasonChange(e.target.value)}
               rows={2}
+              autoFocus={false}
             />
           </div>
 

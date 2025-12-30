@@ -29,7 +29,7 @@ export function InvitePopover({ joinCode }: InvitePopoverProps) {
           Invite Members
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-64 border border-black dark:border-zinc-700">
+      <PopoverContent align="end" className="w-64 bg-white dark:bg-zinc-950 border border-black dark:border-zinc-700 shadow-lg">
         <div className="space-y-3">
           <div className="text-sm font-medium">Church Join Code</div>
           <div className="flex items-center gap-2">

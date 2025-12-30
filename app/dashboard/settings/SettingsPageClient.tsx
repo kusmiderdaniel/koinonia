@@ -71,27 +71,25 @@ export function SettingsPageClient({ initialData }: SettingsPageClientProps) {
       )}
 
       <Tabs defaultValue="details" className="w-full">
-        <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6">
-          <TabsList
-            className={`inline-flex md:grid w-auto md:w-full border border-black dark:border-zinc-700 ${
-              settings.isOwner
-                ? 'md:grid-cols-5'
-                : settings.canManageLocations && settings.isAdmin
-                  ? 'md:grid-cols-4'
-                  : settings.canManageLocations
-                    ? 'md:grid-cols-3'
-                    : settings.isAdmin
-                      ? 'md:grid-cols-3'
-                      : 'md:grid-cols-2'
-            }`}
-          >
-            <TabsTrigger value="details" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground whitespace-nowrap">Church Details</TabsTrigger>
-            <TabsTrigger value="invite" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground whitespace-nowrap">Invite</TabsTrigger>
-            {settings.canManageLocations && <TabsTrigger value="locations" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground whitespace-nowrap">Locations</TabsTrigger>}
-            {settings.isAdmin && <TabsTrigger value="preferences" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground whitespace-nowrap">Preferences</TabsTrigger>}
-            {settings.isOwner && <TabsTrigger value="transfer" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground whitespace-nowrap">Transfer</TabsTrigger>}
-          </TabsList>
-        </div>
+        <TabsList
+          className={`grid w-full gap-1 h-auto p-1 border border-black dark:border-zinc-700 ${
+            settings.isOwner
+              ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-5'
+              : settings.canManageLocations && settings.isAdmin
+                ? 'grid-cols-2 md:grid-cols-4'
+                : settings.canManageLocations
+                  ? 'grid-cols-3'
+                  : settings.isAdmin
+                    ? 'grid-cols-3'
+                    : 'grid-cols-2'
+          } mb-6`}
+        >
+          <TabsTrigger value="details" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-xs sm:text-sm py-2">Details</TabsTrigger>
+          <TabsTrigger value="invite" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-xs sm:text-sm py-2">Invite</TabsTrigger>
+          {settings.canManageLocations && <TabsTrigger value="locations" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-xs sm:text-sm py-2">Locations</TabsTrigger>}
+          {settings.isAdmin && <TabsTrigger value="preferences" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-xs sm:text-sm py-2">Preferences</TabsTrigger>}
+          {settings.isOwner && <TabsTrigger value="transfer" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-xs sm:text-sm py-2">Transfer</TabsTrigger>}
+        </TabsList>
 
         {/* Church Details Tab */}
         <TabsContent value="details">

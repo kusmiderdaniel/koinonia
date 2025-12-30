@@ -22,14 +22,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { DatePicker } from '@/components/ui/date-picker'
 import { toast } from 'sonner'
 import { createOfflineMember } from './actions'
 
 interface OfflineMemberDialogProps {
   trigger?: React.ReactNode
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
 }
 
-export function OfflineMemberDialog({ trigger }: OfflineMemberDialogProps) {
+export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMemberDialogProps) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -139,14 +141,16 @@ export function OfflineMemberDialog({ trigger }: OfflineMemberDialogProps) {
                 placeholder="+1 (555) 123-4567"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                <Input
+                <DatePicker
                   id="dateOfBirth"
-                  type="date"
                   value={formData.dateOfBirth}
-                  onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                  onChange={(value) => setFormData({ ...formData, dateOfBirth: value })}
+                  placeholder="Select date"
+                  disabled={loading}
+                  weekStartsOn={weekStartsOn}
                 />
               </div>
               <div className="space-y-2">
@@ -155,7 +159,7 @@ export function OfflineMemberDialog({ trigger }: OfflineMemberDialogProps) {
                   value={formData.sex}
                   onValueChange={(value) => setFormData({ ...formData, sex: value })}
                 >
-                  <SelectTrigger id="sex">
+                  <SelectTrigger id="sex" className="w-full">
                     <SelectValue placeholder="Select..." />
                   </SelectTrigger>
                   <SelectContent>

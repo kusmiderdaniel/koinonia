@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { getMyAssignments, getUpcomingEvents } from './actions'
 import { MyAssignmentsWidget } from '@/components/dashboard/MyAssignmentsWidget'
 import { UpcomingEventsWidget } from '@/components/dashboard/UpcomingEventsWidget'
+import { UnavailabilityWidget } from '@/components/dashboard/UnavailabilityWidget'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -42,9 +43,10 @@ export default async function DashboardPage() {
       </div>
 
       {/* Widgets Grid */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
         <MyAssignmentsWidget assignments={assignments} />
         <UpcomingEventsWidget events={events} />
+        <UnavailabilityWidget />
       </div>
     </div>
   )
