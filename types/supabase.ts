@@ -1,0 +1,1462 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+  public: {
+    Tables: {
+      agenda_item_templates: {
+        Row: {
+          church_id: string
+          created_at: string | null
+          default_duration_minutes: number
+          id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          church_id: string
+          created_at?: string | null
+          default_duration_minutes?: number
+          id?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          church_id?: string
+          created_at?: string | null
+          default_duration_minutes?: number
+          id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agenda_item_templates_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      churches: {
+        Row: {
+          address: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          default_event_visibility: string
+          email: string | null
+          first_day_of_week: number
+          id: string
+          join_code: string
+          logo_url: string | null
+          name: string
+          phone: string | null
+          state: string | null
+          subdomain: string
+          timezone: string | null
+          updated_at: string
+          website: string | null
+          zip_code: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          default_event_visibility?: string
+          email?: string | null
+          first_day_of_week?: number
+          id?: string
+          join_code: string
+          logo_url?: string | null
+          name: string
+          phone?: string | null
+          state?: string | null
+          subdomain: string
+          timezone?: string | null
+          updated_at?: string
+          website?: string | null
+          zip_code?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          default_event_visibility?: string
+          email?: string | null
+          first_day_of_week?: number
+          id?: string
+          join_code?: string
+          logo_url?: string | null
+          name?: string
+          phone?: string | null
+          state?: string | null
+          subdomain?: string
+          timezone?: string | null
+          updated_at?: string
+          website?: string | null
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
+      event_agenda_items: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration_seconds: number
+          event_id: string
+          id: string
+          is_song_placeholder: boolean
+          leader_id: string | null
+          ministry_id: string | null
+          song_id: string | null
+          song_key: string | null
+          sort_order: number
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration_seconds?: number
+          event_id: string
+          id?: string
+          is_song_placeholder?: boolean
+          leader_id?: string | null
+          ministry_id?: string | null
+          song_id?: string | null
+          song_key?: string | null
+          sort_order?: number
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration_seconds?: number
+          event_id?: string
+          id?: string
+          is_song_placeholder?: boolean
+          leader_id?: string | null
+          ministry_id?: string | null
+          song_id?: string | null
+          song_key?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_agenda_items_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_agenda_items_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_agenda_items_ministry_id_fkey"
+            columns: ["ministry_id"]
+            isOneToOne: false
+            referencedRelation: "ministries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_agenda_items_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_assignments: {
+        Row: {
+          assigned_at: string | null
+          assigned_by: string | null
+          id: string
+          invited_at: string | null
+          notes: string | null
+          position_id: string
+          profile_id: string
+          responded_at: string | null
+          status: string | null
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          id?: string
+          invited_at?: string | null
+          notes?: string | null
+          position_id: string
+          profile_id: string
+          responded_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          id?: string
+          invited_at?: string | null
+          notes?: string | null
+          position_id?: string
+          profile_id?: string
+          responded_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_assignments_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_assignments_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "event_positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_assignments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_invitations: {
+        Row: {
+          created_at: string | null
+          event_id: string
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_id: string
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_invitations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_invitations_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_positions: {
+        Row: {
+          created_at: string | null
+          event_id: string
+          id: string
+          ministry_id: string
+          notes: string | null
+          quantity_needed: number
+          role_id: string | null
+          sort_order: number | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_id: string
+          id?: string
+          ministry_id: string
+          notes?: string | null
+          quantity_needed?: number
+          role_id?: string | null
+          sort_order?: number | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string
+          id?: string
+          ministry_id?: string
+          notes?: string | null
+          quantity_needed?: number
+          role_id?: string | null
+          sort_order?: number | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_positions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_positions_ministry_id_fkey"
+            columns: ["ministry_id"]
+            isOneToOne: false
+            referencedRelation: "ministries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_positions_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "ministry_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_template_agenda_items: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration_seconds: number
+          id: string
+          is_song_placeholder: boolean | null
+          ministry_id: string | null
+          sort_order: number
+          template_id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration_seconds?: number
+          id?: string
+          is_song_placeholder?: boolean | null
+          ministry_id?: string | null
+          sort_order?: number
+          template_id: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration_seconds?: number
+          id?: string
+          is_song_placeholder?: boolean | null
+          ministry_id?: string | null
+          sort_order?: number
+          template_id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_template_agenda_items_ministry_id_fkey"
+            columns: ["ministry_id"]
+            isOneToOne: false
+            referencedRelation: "ministries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_template_agenda_items_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "event_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_template_positions: {
+        Row: {
+          created_at: string | null
+          id: string
+          ministry_id: string
+          notes: string | null
+          quantity_needed: number
+          role_id: string | null
+          sort_order: number | null
+          template_id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          ministry_id: string
+          notes?: string | null
+          quantity_needed?: number
+          role_id?: string | null
+          sort_order?: number | null
+          template_id: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          ministry_id?: string
+          notes?: string | null
+          quantity_needed?: number
+          role_id?: string | null
+          sort_order?: number | null
+          template_id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_template_positions_ministry_id_fkey"
+            columns: ["ministry_id"]
+            isOneToOne: false
+            referencedRelation: "ministries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_template_positions_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "ministry_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_template_positions_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "event_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_templates: {
+        Row: {
+          church_id: string
+          created_at: string | null
+          created_by: string | null
+          default_duration_minutes: number
+          default_start_time: string
+          description: string | null
+          event_type: string
+          id: string
+          is_active: boolean | null
+          location_id: string | null
+          name: string
+          responsible_person_id: string | null
+          updated_at: string | null
+          visibility: string
+        }
+        Insert: {
+          church_id: string
+          created_at?: string | null
+          created_by?: string | null
+          default_duration_minutes?: number
+          default_start_time: string
+          description?: string | null
+          event_type: string
+          id?: string
+          is_active?: boolean | null
+          location_id?: string | null
+          name: string
+          responsible_person_id?: string | null
+          updated_at?: string | null
+          visibility?: string
+        }
+        Update: {
+          church_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          default_duration_minutes?: number
+          default_start_time?: string
+          description?: string | null
+          event_type?: string
+          id?: string
+          is_active?: boolean | null
+          location_id?: string | null
+          name?: string
+          responsible_person_id?: string | null
+          updated_at?: string | null
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_templates_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_templates_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_templates_responsible_person_id_fkey"
+            columns: ["responsible_person_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          church_id: string
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          end_time: string
+          event_type: string
+          id: string
+          is_all_day: boolean | null
+          location: string | null
+          location_id: string | null
+          responsible_person_id: string | null
+          start_time: string
+          status: string
+          title: string
+          updated_at: string | null
+          visibility: string
+        }
+        Insert: {
+          church_id: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          end_time: string
+          event_type: string
+          id?: string
+          is_all_day?: boolean | null
+          location?: string | null
+          location_id?: string | null
+          responsible_person_id?: string | null
+          start_time: string
+          status?: string
+          title: string
+          updated_at?: string | null
+          visibility?: string
+        }
+        Update: {
+          church_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          end_time?: string
+          event_type?: string
+          id?: string
+          is_all_day?: boolean | null
+          location?: string | null
+          location_id?: string | null
+          responsible_person_id?: string | null
+          start_time?: string
+          status?: string
+          title?: string
+          updated_at?: string | null
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_responsible_person_id_fkey"
+            columns: ["responsible_person_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locations: {
+        Row: {
+          address: string | null
+          church_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          church_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          church_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "locations_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ministries: {
+        Row: {
+          church_id: string
+          color: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_system: boolean | null
+          leader_id: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          church_id: string
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_system?: boolean | null
+          leader_id?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          church_id?: string
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_system?: boolean | null
+          leader_id?: string | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ministries_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ministries_leader_id_fkey"
+            columns: ["leader_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ministry_member_roles: {
+        Row: {
+          assigned_at: string | null
+          id: string
+          member_id: string
+          role_id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          id?: string
+          member_id: string
+          role_id: string
+        }
+        Update: {
+          assigned_at?: string | null
+          id?: string
+          member_id?: string
+          role_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ministry_member_roles_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "ministry_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ministry_member_roles_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "ministry_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ministry_members: {
+        Row: {
+          id: string
+          is_active: boolean | null
+          joined_at: string | null
+          ministry_id: string
+          notes: string | null
+          profile_id: string
+        }
+        Insert: {
+          id?: string
+          is_active?: boolean | null
+          joined_at?: string | null
+          ministry_id: string
+          notes?: string | null
+          profile_id: string
+        }
+        Update: {
+          id?: string
+          is_active?: boolean | null
+          joined_at?: string | null
+          ministry_id?: string
+          notes?: string | null
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ministry_members_ministry_id_fkey"
+            columns: ["ministry_id"]
+            isOneToOne: false
+            referencedRelation: "ministries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ministry_members_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ministry_roles: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          ministry_id: string
+          name: string
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          ministry_id: string
+          name: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          ministry_id?: string
+          name?: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ministry_roles_ministry_id_fkey"
+            columns: ["ministry_id"]
+            isOneToOne: false
+            referencedRelation: "ministries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          action_taken: string | null
+          actioned_at: string | null
+          assignment_id: string | null
+          church_id: string
+          created_at: string | null
+          event_id: string | null
+          expires_at: string | null
+          id: string
+          is_actioned: boolean | null
+          is_read: boolean | null
+          message: string | null
+          read_at: string | null
+          recipient_id: string
+          title: string
+          type: string
+        }
+        Insert: {
+          action_taken?: string | null
+          actioned_at?: string | null
+          assignment_id?: string | null
+          church_id: string
+          created_at?: string | null
+          event_id?: string | null
+          expires_at?: string | null
+          id?: string
+          is_actioned?: boolean | null
+          is_read?: boolean | null
+          message?: string | null
+          read_at?: string | null
+          recipient_id: string
+          title: string
+          type: string
+        }
+        Update: {
+          action_taken?: string | null
+          actioned_at?: string | null
+          assignment_id?: string | null
+          church_id?: string
+          created_at?: string | null
+          event_id?: string | null
+          expires_at?: string | null
+          id?: string
+          is_actioned?: boolean | null
+          is_read?: boolean | null
+          message?: string | null
+          read_at?: string | null
+          recipient_id?: string
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "event_assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pending_registrations: {
+        Row: {
+          church_id: string
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          linked_profile_id: string | null
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          church_id: string
+          created_at?: string
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          linked_profile_id?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          church_id?: string
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          linked_profile_id?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pending_registrations_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pending_registrations_linked_profile_id_fkey"
+            columns: ["linked_profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pending_registrations_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          active: boolean
+          avatar_url: string | null
+          baptism: boolean
+          baptism_date: string | null
+          bio: string | null
+          church_id: string
+          created_at: string
+          date_of_birth: string | null
+          date_of_departure: string | null
+          email: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          first_name: string
+          id: string
+          last_name: string
+          member_type: string
+          phone: string | null
+          reason_for_departure: string | null
+          receive_email_notifications: boolean | null
+          receive_push_notifications: boolean | null
+          role: string
+          sex: string | null
+          skills: string[] | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          avatar_url?: string | null
+          baptism?: boolean
+          baptism_date?: string | null
+          bio?: string | null
+          church_id: string
+          created_at?: string
+          date_of_birth?: string | null
+          date_of_departure?: string | null
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          first_name: string
+          id: string
+          last_name: string
+          member_type?: string
+          phone?: string | null
+          reason_for_departure?: string | null
+          receive_email_notifications?: boolean | null
+          receive_push_notifications?: boolean | null
+          role?: string
+          sex?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          avatar_url?: string | null
+          baptism?: boolean
+          baptism_date?: string | null
+          bio?: string | null
+          church_id?: string
+          created_at?: string
+          date_of_birth?: string | null
+          date_of_departure?: string | null
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          member_type?: string
+          phone?: string | null
+          reason_for_departure?: string | null
+          receive_email_notifications?: boolean | null
+          receive_push_notifications?: boolean | null
+          role?: string
+          sex?: string | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      song_attachments: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_path: string
+          file_size: number | null
+          id: string
+          song_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          id?: string
+          song_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          song_id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_attachments_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_attachments_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      song_tag_assignments: {
+        Row: {
+          id: string
+          song_id: string
+          tag_id: string
+        }
+        Insert: {
+          id?: string
+          song_id: string
+          tag_id: string
+        }
+        Update: {
+          id?: string
+          song_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_tag_assignments_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_tag_assignments_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "song_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      song_tags: {
+        Row: {
+          church_id: string
+          color: string | null
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          church_id: string
+          color?: string | null
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          church_id?: string
+          color?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_tags_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      songs: {
+        Row: {
+          artist: string | null
+          church_id: string
+          created_at: string
+          created_by: string | null
+          default_key: string | null
+          duration_seconds: number | null
+          id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          artist?: string | null
+          church_id: string
+          created_at?: string
+          created_by?: string | null
+          default_key?: string | null
+          duration_seconds?: number | null
+          id?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          artist?: string | null
+          church_id?: string
+          created_at?: string
+          created_by?: string | null
+          default_key?: string | null
+          duration_seconds?: number | null
+          id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "songs_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "songs_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      volunteer_unavailability: {
+        Row: {
+          church_id: string
+          created_at: string | null
+          end_date: string
+          id: string
+          profile_id: string
+          reason: string | null
+          start_date: string
+          updated_at: string | null
+        }
+        Insert: {
+          church_id: string
+          created_at?: string | null
+          end_date: string
+          id?: string
+          profile_id: string
+          reason?: string | null
+          start_date: string
+          updated_at?: string | null
+        }
+        Update: {
+          church_id?: string
+          created_at?: string | null
+          end_date?: string
+          id?: string
+          profile_id?: string
+          reason?: string | null
+          start_date?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "volunteer_unavailability_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "volunteer_unavailability_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      expire_past_event_invitations: { Args: never; Returns: undefined }
+      generate_alphanumeric_code: { Args: { length?: number }; Returns: string }
+      generate_unique_join_code: { Args: never; Returns: string }
+      get_user_church_id: { Args: never; Returns: string }
+      get_user_profile_id: { Args: never; Returns: string }
+      is_leader_or_above: { Args: never; Returns: boolean }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
+  public: {
+    Enums: {},
+  },
+} as const
+
