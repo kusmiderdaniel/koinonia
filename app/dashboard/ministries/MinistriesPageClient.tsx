@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Plus, Users, Pencil, Trash2 } from 'lucide-react'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { MobileBackHeader } from '@/components/MobileBackHeader'
+import { useIsMobile } from '@/lib/hooks'
 import { MinistryDetailPanel, RoleDialog } from './components'
 import { useMinistryList, useMinistryDetail, useMinistryDialogs } from './hooks'
 import type { Ministry } from './types'
@@ -26,6 +28,8 @@ interface MinistriesPageClientProps {
 }
 
 export function MinistriesPageClient({ initialData }: MinistriesPageClientProps) {
+  const isMobile = useIsMobile()
+
   // Use custom hooks for state management - pass initial data
   const list = useMinistryList(initialData)
   const detail = useMinistryDetail()
@@ -145,13 +149,103 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
     dialogs.setIsRemovingMember(false)
   }, [dialogs, list, detail])
 
+  const handleClearSelection = useCallback(() => {
+    list.setSelectedMinistryId(null)
+  }, [list])
+
   // Destructure commonly used values
   const { ministries, selectedMinistryId, selectedMinistry, error, canManage, canManageDetail } = list
   const { roles, members, availableMembers, allMinistries, isLoadingDetail } = detail
 
+  // Mobile: Show detail view with back button
+  if (isMobile && selectedMinistryId && selectedMinistry) {
+    return (
+      <div className="p-4">
+        <MobileBackHeader
+          title={selectedMinistry.name}
+          onBack={handleClearSelection}
+        />
+
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        <MinistryDetailPanel
+          ministry={selectedMinistry}
+          roles={roles}
+          members={members}
+          availableMembers={availableMembers}
+          allMinistries={allMinistries}
+          isLoading={isLoadingDetail}
+          canManage={canManageDetail}
+          isAddingMember={dialogs.isAddingMember}
+          onEditMinistry={handleEdit}
+          onAddRole={() => dialogs.openRoleDialog()}
+          onEditRole={(role) => dialogs.openRoleDialog(role)}
+          onDeleteRole={(role) => dialogs.openDeleteRoleDialog(role)}
+          onAddMember={handleAddMember}
+          onUpdateMemberRoles={handleUpdateMemberRoles}
+          onRemoveMember={(member) => dialogs.openRemoveMemberDialog(member)}
+        />
+
+        {/* Dialogs */}
+        <MinistryDialog
+          open={dialogs.dialogOpen}
+          onOpenChange={dialogs.setDialogOpen}
+          ministry={dialogs.editingMinistry}
+          onSuccess={handleDialogClose}
+        />
+        <ConfirmDialog
+          open={dialogs.deleteDialogOpen}
+          onOpenChange={(open) => !open && dialogs.closeDeleteDialog()}
+          title="Delete Ministry?"
+          description={<>Are you sure you want to delete <strong>{dialogs.deletingMinistry?.name}</strong>? This action cannot be undone.</>}
+          confirmLabel="Delete"
+          destructive
+          isLoading={dialogs.isDeleting}
+          onConfirm={handleDelete}
+        />
+        <RoleDialog
+          open={dialogs.roleDialogOpen}
+          onOpenChange={(open) => !open && dialogs.closeRoleDialog()}
+          editingRole={dialogs.editingRole}
+          roleName={dialogs.roleName}
+          roleDescription={dialogs.roleDescription}
+          isSaving={dialogs.isSavingRole}
+          onRoleNameChange={dialogs.setRoleName}
+          onRoleDescriptionChange={dialogs.setRoleDescription}
+          onSave={handleSaveRole}
+          onCancel={dialogs.closeRoleDialog}
+        />
+        <ConfirmDialog
+          open={dialogs.deleteRoleDialogOpen}
+          onOpenChange={(open) => !open && dialogs.closeDeleteRoleDialog()}
+          title="Delete Role?"
+          description={<>Are you sure you want to delete <strong>{dialogs.deletingRole?.name}</strong>? Members with this role will have their role unassigned.</>}
+          confirmLabel="Delete"
+          destructive
+          isLoading={dialogs.isDeletingRole}
+          onConfirm={handleDeleteRole}
+        />
+        <ConfirmDialog
+          open={dialogs.removeMemberDialogOpen}
+          onOpenChange={(open) => !open && dialogs.closeRemoveMemberDialog()}
+          title="Remove Member?"
+          description={<>Are you sure you want to remove <strong>{dialogs.removingMember?.profile.first_name} {dialogs.removingMember?.profile.last_name}</strong> from this ministry?</>}
+          confirmLabel="Remove"
+          destructive
+          isLoading={dialogs.isRemovingMember}
+          onConfirm={handleRemoveMember}
+        />
+      </div>
+    )
+  }
+
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 md:p-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold">Ministries</h1>
           <p className="text-muted-foreground">
@@ -160,8 +254,8 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
         </div>
         {canManage && (
           <Button variant="outline-pill" onClick={dialogs.openCreateDialog}>
-            <Plus className="w-4 h-4 mr-2" />
-            New Ministry
+            <Plus className="w-4 h-4 md:mr-2" />
+            <span className="hidden md:inline">New Ministry</span>
           </Button>
         )}
       </div>
@@ -189,11 +283,11 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
           </CardContent>
         </Card>
       ) : (
-        <div className="flex gap-6">
-          {/* Ministry List - Left Side */}
-          <div className="w-72 flex-shrink-0">
-            <ScrollArea className="h-[calc(100vh-220px)]">
-              <div className="space-y-2 pr-4">
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Ministry List */}
+          <div className="w-full md:w-72 md:flex-shrink-0">
+            <ScrollArea className="h-auto md:h-[calc(100vh-220px)]">
+              <div className="space-y-2 md:pr-4">
                 {ministries.map((ministry) => (
                   <div
                     key={ministry.id}
@@ -253,26 +347,28 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
             </ScrollArea>
           </div>
 
-          {/* Ministry Detail - Right Side */}
-          <div className="flex-1 min-w-0">
-            <MinistryDetailPanel
-              ministry={selectedMinistry}
-              roles={roles}
-              members={members}
-              availableMembers={availableMembers}
-              allMinistries={allMinistries}
-              isLoading={isLoadingDetail}
-              canManage={canManageDetail}
-              isAddingMember={dialogs.isAddingMember}
-              onEditMinistry={handleEdit}
-              onAddRole={() => dialogs.openRoleDialog()}
-              onEditRole={(role) => dialogs.openRoleDialog(role)}
-              onDeleteRole={(role) => dialogs.openDeleteRoleDialog(role)}
-              onAddMember={handleAddMember}
-              onUpdateMemberRoles={handleUpdateMemberRoles}
-              onRemoveMember={(member) => dialogs.openRemoveMemberDialog(member)}
-            />
-          </div>
+          {/* Ministry Detail - Right Side (Desktop only) */}
+          {!isMobile && (
+            <div className="flex-1 min-w-0">
+              <MinistryDetailPanel
+                ministry={selectedMinistry}
+                roles={roles}
+                members={members}
+                availableMembers={availableMembers}
+                allMinistries={allMinistries}
+                isLoading={isLoadingDetail}
+                canManage={canManageDetail}
+                isAddingMember={dialogs.isAddingMember}
+                onEditMinistry={handleEdit}
+                onAddRole={() => dialogs.openRoleDialog()}
+                onEditRole={(role) => dialogs.openRoleDialog(role)}
+                onDeleteRole={(role) => dialogs.openDeleteRoleDialog(role)}
+                onAddMember={handleAddMember}
+                onUpdateMemberRoles={handleUpdateMemberRoles}
+                onRemoveMember={(member) => dialogs.openRemoveMemberDialog(member)}
+              />
+            </div>
+          )}
         </div>
       )}
 

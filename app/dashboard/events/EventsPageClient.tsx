@@ -207,12 +207,12 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
 
   return (
     <div className="h-full p-6">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <Calendar className="w-6 h-6" />
           <h1 className="text-2xl font-bold">Events</h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <ToggleGroup
             type="single"
             value={viewMode}
@@ -243,13 +243,13 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
           </ToggleGroup>
           {canManage && (
             <div className="flex items-center gap-2">
-              <Button variant="outline" className="rounded-full !border !border-black dark:!border-white" onClick={() => dialogs.setTemplatePickerOpen(true)}>
+              <Button variant="outline" className="rounded-full !border !border-black dark:!border-white hidden md:flex" onClick={() => dialogs.setTemplatePickerOpen(true)}>
                 <FileText className="w-4 h-4 mr-2" />
                 From Template
               </Button>
               <Button variant="outline" className="rounded-full !border !border-black dark:!border-white" onClick={() => dialogs.openCreateDialog()}>
-                <Plus className="w-4 h-4 mr-2" />
-                Add
+                <Plus className="w-4 h-4 md:mr-2" />
+                <span className="hidden md:inline">Add</span>
               </Button>
             </div>
           )}
@@ -318,6 +318,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
           pastEvents={pastEvents}
           selectedEvent={selectedEvent}
           onSelectEvent={handleSelectEvent}
+          onClearSelection={eventDetail.closeEventDetail}
           detailContent={
             <EventDetailPanel
               selectedEvent={selectedEvent!}

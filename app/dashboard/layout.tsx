@@ -1,6 +1,8 @@
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Sidebar } from './sidebar'
+import { MobileHeader } from './MobileHeader'
+import { MobileSidebar } from './MobileSidebar'
 
 export default async function DashboardLayout({
   children,
@@ -26,18 +28,33 @@ export default async function DashboardLayout({
     redirect('/onboarding')
   }
 
+  const userProps = {
+    firstName: profile.first_name,
+    lastName: profile.last_name,
+    email: profile.email,
+    role: profile.role,
+  }
+
   return (
     <div className="min-h-screen bg-muted/30">
+      {/* Mobile Header - shown only on mobile */}
+      <MobileHeader churchName={profile.church.name} />
+
+      {/* Desktop Sidebar - hidden on mobile */}
       <Sidebar
-        user={{
-          firstName: profile.first_name,
-          lastName: profile.last_name,
-          email: profile.email,
-          role: profile.role,
-        }}
+        user={userProps}
+        churchName={profile.church.name}
+        className="hidden md:flex"
+      />
+
+      {/* Mobile Sidebar Drawer */}
+      <MobileSidebar
+        user={userProps}
         churchName={profile.church.name}
       />
-      <main className="pl-64">
+
+      {/* Main content - responsive padding */}
+      <main className="md:pl-64 pt-14 md:pt-0">
         {children}
       </main>
     </div>

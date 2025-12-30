@@ -42,8 +42,8 @@ export function SettingsPageClient({ initialData }: SettingsPageClientProps) {
   }, [settings.isLoadingData, settings.preferences]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="p-8 max-w-4xl">
-      <div className="mb-8">
+    <div className="p-4 md:p-8 max-w-4xl">
+      <div className="mb-6 md:mb-8">
         <h1 className="text-2xl font-bold">Church Settings</h1>
         <p className="text-muted-foreground">
           Manage your church details and invite new members
@@ -71,25 +71,27 @@ export function SettingsPageClient({ initialData }: SettingsPageClientProps) {
       )}
 
       <Tabs defaultValue="details" className="w-full">
-        <TabsList
-          className={`grid w-full mb-6 border border-black dark:border-zinc-700 ${
-            settings.isOwner
-              ? 'grid-cols-5'
-              : settings.canManageLocations && settings.isAdmin
-                ? 'grid-cols-4'
-                : settings.canManageLocations
-                  ? 'grid-cols-3'
-                  : settings.isAdmin
-                    ? 'grid-cols-3'
-                    : 'grid-cols-2'
-          }`}
-        >
-          <TabsTrigger value="details" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground">Church Details</TabsTrigger>
-          <TabsTrigger value="invite" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground">Invite Members</TabsTrigger>
-          {settings.canManageLocations && <TabsTrigger value="locations" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground">Locations</TabsTrigger>}
-          {settings.isAdmin && <TabsTrigger value="preferences" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground">Preferences</TabsTrigger>}
-          {settings.isOwner && <TabsTrigger value="transfer" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground">Transfer Ownership</TabsTrigger>}
-        </TabsList>
+        <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6">
+          <TabsList
+            className={`inline-flex md:grid w-auto md:w-full border border-black dark:border-zinc-700 ${
+              settings.isOwner
+                ? 'md:grid-cols-5'
+                : settings.canManageLocations && settings.isAdmin
+                  ? 'md:grid-cols-4'
+                  : settings.canManageLocations
+                    ? 'md:grid-cols-3'
+                    : settings.isAdmin
+                      ? 'md:grid-cols-3'
+                      : 'md:grid-cols-2'
+            }`}
+          >
+            <TabsTrigger value="details" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground whitespace-nowrap">Church Details</TabsTrigger>
+            <TabsTrigger value="invite" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground whitespace-nowrap">Invite</TabsTrigger>
+            {settings.canManageLocations && <TabsTrigger value="locations" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground whitespace-nowrap">Locations</TabsTrigger>}
+            {settings.isAdmin && <TabsTrigger value="preferences" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground whitespace-nowrap">Preferences</TabsTrigger>}
+            {settings.isOwner && <TabsTrigger value="transfer" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground whitespace-nowrap">Transfer</TabsTrigger>}
+          </TabsList>
+        </div>
 
         {/* Church Details Tab */}
         <TabsContent value="details">

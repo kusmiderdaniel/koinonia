@@ -126,8 +126,8 @@ export default async function PeoplePage() {
   }) || []
 
   return (
-    <div className="p-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-4 md:p-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8">
         <div>
           <h1 className="text-2xl font-bold">People</h1>
           <p className="text-muted-foreground">
@@ -135,13 +135,13 @@ export default async function PeoplePage() {
           </p>
         </div>
         {isAdmin && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {pendingCount > 0 && (
               <Button variant="outline" asChild className="!border !border-gray-300">
                 <Link href="/dashboard/people/pending" className="flex items-center gap-2">
                   <UserPlus className="h-4 w-4" />
-                  Pending
-                  <Badge variant="destructive" className="ml-1 bg-red-500 text-white rounded-full">
+                  <span className="hidden md:inline">Pending</span>
+                  <Badge variant="destructive" className="bg-red-500 text-white rounded-full">
                     {pendingCount}
                   </Badge>
                 </Link>

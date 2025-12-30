@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Calendar, Search } from 'lucide-react'
 import { EmptyState } from '@/components/EmptyState'
+import { MobileBackHeader } from '@/components/MobileBackHeader'
+import { useIsMobile } from '@/lib/hooks'
 import { EventCard } from './EventCard'
 import type { Event, EventDetail } from '../types'
 
@@ -17,6 +19,7 @@ interface EventsListViewProps {
   pastEvents: Event[]
   selectedEvent: EventDetail | null
   onSelectEvent: (event: Event) => void
+  className?: string
 }
 
 export function EventsListView({
@@ -28,9 +31,10 @@ export function EventsListView({
   pastEvents,
   selectedEvent,
   onSelectEvent,
+  className,
 }: EventsListViewProps) {
   return (
-    <div className="w-80 flex-shrink-0 flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card">
+    <div className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card ${className ?? 'w-full md:w-80 md:flex-shrink-0'}`}>
       {/* Search */}
       <div className="p-3 border-b">
         <div className="relative">
@@ -122,13 +126,39 @@ export function EventsListView({
 interface EventsListViewWithDetailProps extends EventsListViewProps {
   detailContent: React.ReactNode
   emptyDetailContent: React.ReactNode
+  onClearSelection?: () => void
 }
 
 export function EventsListViewWithDetail({
   detailContent,
   emptyDetailContent,
+  onClearSelection,
   ...listProps
 }: EventsListViewWithDetailProps) {
+  const isMobile = useIsMobile()
+
+  // Mobile: Show stacked view - list OR detail
+  if (isMobile) {
+    if (listProps.selectedEvent) {
+      return (
+        <div className="h-[calc(100vh-140px)]">
+          <MobileBackHeader
+            title={listProps.selectedEvent.title}
+            onBack={() => onClearSelection?.()}
+          />
+          {detailContent}
+        </div>
+      )
+    }
+
+    return (
+      <div className="h-[calc(100vh-140px)]">
+        <EventsListView {...listProps} className="w-full h-full" />
+      </div>
+    )
+  }
+
+  // Desktop: Side-by-side layout
   return (
     <div className="flex gap-6 h-[calc(100vh-200px)]">
       <EventsListView {...listProps} />

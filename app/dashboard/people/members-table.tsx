@@ -15,6 +15,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { Info } from 'lucide-react'
+import { useIsMobile } from '@/lib/hooks'
 import { updateMemberRole, updateMemberActive, updateMemberDeparture, updateMemberBaptism } from './actions'
 import { FilterBuilder } from './filter-builder'
 import { FilterState, createEmptyFilterState } from './filter-types'
@@ -22,7 +23,7 @@ import { applyFilters, countActiveFilters } from './filter-logic'
 import { SortBuilder } from './sort-builder'
 import { SortState, createEmptySortState } from './sort-types'
 import { applySorts, countActiveSorts } from './sort-logic'
-import { MemberRow } from './components'
+import { MemberRow, MemberCard } from './components'
 import {
   type Member,
   type Role,
@@ -37,6 +38,7 @@ interface MembersTableProps {
 }
 
 export const MembersTable = memo(function MembersTable({ members, currentUserId, currentUserRole }: MembersTableProps) {
+  const isMobile = useIsMobile()
   const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [updatingActiveId, setUpdatingActiveId] = useState<string | null>(null)
   const [updatingDepartureId, setUpdatingDepartureId] = useState<string | null>(null)
@@ -148,8 +150,8 @@ export const MembersTable = memo(function MembersTable({ members, currentUserId,
   return (
     <div className="space-y-4">
       {/* Filter and Sort toolbar */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <SortBuilder sortState={sortState} onChange={setSortState} />
           <FilterBuilder filterState={filterState} onChange={setFilterState} />
         </div>
@@ -160,64 +162,11 @@ export const MembersTable = memo(function MembersTable({ members, currentUserId,
         )}
       </div>
 
-      <TooltipProvider>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[60px]">Active</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>
-                <div className="flex items-center gap-1">
-                  Email
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Cannot be changed</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Ministry Roles</TableHead>
-              <TableHead>
-                <div className="flex items-center gap-1">
-                  Sex
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Can be changed in user&apos;s profile settings</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </TableHead>
-              <TableHead>
-                <div className="flex items-center gap-1">
-                  Date of Birth
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Can be changed in user&apos;s profile settings</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </TableHead>
-              <TableHead>Age</TableHead>
-              <TableHead className="w-[70px]">Baptized</TableHead>
-              <TableHead>Baptism Date</TableHead>
-              <TableHead>Departure Date</TableHead>
-              <TableHead>Departure Reason</TableHead>
-              <TableHead>Joined</TableHead>
-            </TableRow>
-          </TableHeader>
-        <TableBody>
+      {/* Mobile: Card view */}
+      {isMobile ? (
+        <div className="space-y-3">
           {filteredAndSortedMembers.map((member) => (
-            <MemberRow
+            <MemberCard
               key={member.id}
               member={member}
               currentUserId={currentUserId}
@@ -235,9 +184,88 @@ export const MembersTable = memo(function MembersTable({ members, currentUserId,
               onBaptismChange={handleBaptismChange}
             />
           ))}
-        </TableBody>
-        </Table>
-      </TooltipProvider>
+        </div>
+      ) : (
+        /* Desktop: Table view */
+        <TooltipProvider>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[60px]">Active</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-1">
+                    Email
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Cannot be changed</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Ministry Roles</TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-1">
+                    Sex
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Can be changed in user&apos;s profile settings</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-1">
+                    Date of Birth
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Can be changed in user&apos;s profile settings</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </TableHead>
+                <TableHead>Age</TableHead>
+                <TableHead className="w-[70px]">Baptized</TableHead>
+                <TableHead>Baptism Date</TableHead>
+                <TableHead>Departure Date</TableHead>
+                <TableHead>Departure Reason</TableHead>
+                <TableHead>Joined</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredAndSortedMembers.map((member) => (
+                <MemberRow
+                  key={member.id}
+                  member={member}
+                  currentUserId={currentUserId}
+                  canEditRole={canEditRole(member)}
+                  canEditActiveStatus={canEditActiveStatus(member)}
+                  canEditDeparture={canEditDeparture(member)}
+                  canEditFields={canEditFields}
+                  isUpdatingRole={updatingId === member.id}
+                  isUpdatingActive={updatingActiveId === member.id}
+                  isUpdatingDeparture={updatingDepartureId === member.id}
+                  isUpdatingBaptism={updatingBaptismId === member.id}
+                  onRoleChange={handleRoleChange}
+                  onActiveChange={handleActiveChange}
+                  onDepartureChange={handleDepartureChange}
+                  onBaptismChange={handleBaptismChange}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </TooltipProvider>
+      )}
     </div>
   )
 })

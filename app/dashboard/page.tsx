@@ -34,11 +34,11 @@ export default async function DashboardPage() {
   const events = eventsResult.data || []
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Welcome back, {profile.first_name}!</h1>
-        <p className="text-muted-foreground">Here's what's happening at {profile.church.name}</p>
+        <h1 className="text-xl md:text-2xl font-bold">Welcome back, {profile.first_name}!</h1>
+        <p className="text-muted-foreground text-sm md:text-base">Here's what's happening at {profile.church.name}</p>
       </div>
 
       {/* Widgets Grid */}
