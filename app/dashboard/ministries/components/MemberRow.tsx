@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -20,7 +20,7 @@ interface MemberRowProps {
   onRemove: () => void
 }
 
-export function MemberRow({
+export const MemberRow = memo(function MemberRow({
   member,
   allRoles,
   canManage,
@@ -132,4 +132,4 @@ export function MemberRow({
       </div>
     </div>
   )
-}
+})

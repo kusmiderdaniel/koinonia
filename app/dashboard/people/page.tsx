@@ -37,31 +37,35 @@ export default async function PeoplePage() {
 
   const isAdmin = profile.role === 'admin' || profile.role === 'owner'
 
-  // Fetch pending registrations count and join code for admins
-  let pendingCount = 0
-  let joinCode = ''
-  if (isAdmin) {
-    const { count } = await adminClient
-      .from('pending_registrations')
-      .select('*', { count: 'exact', head: true })
+  // Parallel fetch: members + admin-only data (pending count, join code)
+  const [membersResult, pendingResult, churchResult] = await Promise.all([
+    // Always fetch members
+    adminClient
+      .from('profiles')
+      .select('id, first_name, last_name, email, role, active, date_of_birth, sex, date_of_departure, reason_for_departure, baptism, baptism_date, member_type, created_at')
       .eq('church_id', profile.church_id)
-      .eq('status', 'pending')
-    pendingCount = count || 0
+      .order('created_at', { ascending: false }),
+    // Fetch pending count only for admins
+    isAdmin
+      ? adminClient
+          .from('pending_registrations')
+          .select('*', { count: 'exact', head: true })
+          .eq('church_id', profile.church_id)
+          .eq('status', 'pending')
+      : Promise.resolve({ count: 0 }),
+    // Fetch join code only for admins
+    isAdmin
+      ? adminClient
+          .from('churches')
+          .select('join_code')
+          .eq('id', profile.church_id)
+          .single()
+      : Promise.resolve({ data: null }),
+  ])
 
-    const { data: church } = await adminClient
-      .from('churches')
-      .select('join_code')
-      .eq('id', profile.church_id)
-      .single()
-    joinCode = church?.join_code || ''
-  }
-
-  // First fetch members
-  const { data: membersData, error: membersError } = await adminClient
-    .from('profiles')
-    .select('id, first_name, last_name, email, role, active, date_of_birth, sex, date_of_departure, reason_for_departure, baptism, baptism_date, member_type, created_at')
-    .eq('church_id', profile.church_id)
-    .order('created_at', { ascending: false })
+  const { data: membersData, error: membersError } = membersResult
+  const pendingCount = pendingResult.count || 0
+  const joinCode = churchResult.data?.join_code || ''
 
   if (membersError) {
     console.error('Error fetching members:', membersError)

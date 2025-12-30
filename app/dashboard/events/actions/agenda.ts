@@ -119,17 +119,21 @@ export async function reorderAgendaItems(eventId: string, itemIds: string[]) {
   const permError = requireManagePermission(profile.role, 'reorder agenda items')
   if (permError) return { error: permError }
 
-  for (let i = 0; i < itemIds.length; i++) {
-    const { error } = await adminClient
+  // Batch all updates in parallel instead of sequential
+  const updatePromises = itemIds.map((itemId, index) =>
+    adminClient
       .from('event_agenda_items')
-      .update({ sort_order: i })
-      .eq('id', itemIds[i])
+      .update({ sort_order: index })
+      .eq('id', itemId)
       .eq('event_id', eventId)
+  )
 
-    if (error) {
-      console.error('Error reordering agenda items:', error)
-      return { error: 'Failed to reorder agenda items' }
-    }
+  const results = await Promise.all(updatePromises)
+  const failedUpdate = results.find(result => result.error)
+
+  if (failedUpdate?.error) {
+    console.error('Error reordering agenda items:', failedUpdate.error)
+    return { error: 'Failed to reorder agenda items' }
   }
 
   revalidatePath('/dashboard/events')
