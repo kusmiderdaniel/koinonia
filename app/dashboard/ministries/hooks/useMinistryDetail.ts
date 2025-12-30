@@ -9,6 +9,8 @@ import {
   addMinistryMember,
   updateMinistryMemberRoles,
   removeMinistryMember,
+  getMinistryRoles,
+  getMinistryMembers,
 } from '../actions'
 import type { Role, MinistryMember, ChurchMember, MinistryInfo } from '../types'
 
@@ -72,13 +74,28 @@ export function useMinistryDetail(): UseMinistryDetailReturn {
     setIsLoadingDetail(false)
   }, [])
 
+  // Granular refresh functions - only fetch what changed
+  const refreshRoles = useCallback(async (ministryId: string) => {
+    const result = await getMinistryRoles(ministryId)
+    if (result.data) {
+      setRoles(result.data)
+    }
+  }, [])
+
+  const refreshMembers = useCallback(async (ministryId: string) => {
+    const result = await getMinistryMembers(ministryId)
+    if (result.data) {
+      setMembers(result.data as MinistryMember[])
+    }
+  }, [])
+
   // Get available members (not already in this ministry)
   const availableMembers = useMemo(
     () => churchMembers.filter((cm) => !members.some((m) => m.profile_id === cm.id)),
     [churchMembers, members]
   )
 
-  // Role actions
+  // Role actions - use granular refresh (only roles, not everything)
   const saveRole = useCallback(
     async (
       ministryId: string,
@@ -93,56 +110,56 @@ export function useMinistryDetail(): UseMinistryDetailReturn {
         : await createMinistryRole(ministryId, data)
 
       if (!result.error) {
-        await loadMinistryDetails(ministryId)
+        await refreshRoles(ministryId)
       }
       return result
     },
-    [loadMinistryDetails]
+    [refreshRoles]
   )
 
   const deleteRole = useCallback(
     async (roleId: string, ministryId: string) => {
       const result = await deleteMinistryRole(roleId)
       if (!result.error) {
-        await loadMinistryDetails(ministryId)
+        await refreshRoles(ministryId)
       }
       return result
     },
-    [loadMinistryDetails]
+    [refreshRoles]
   )
 
-  // Member actions
+  // Member actions - use granular refresh (only members, not everything)
   const addMember = useCallback(
     async (ministryId: string, memberId: string, roleIds: string[]) => {
       const result = await addMinistryMember(ministryId, memberId, roleIds)
       if (!result.error) {
-        await loadMinistryDetails(ministryId)
+        await refreshMembers(ministryId)
       }
       return result
     },
-    [loadMinistryDetails]
+    [refreshMembers]
   )
 
   const updateMemberRoles = useCallback(
     async (memberId: string, roleIds: string[], ministryId: string) => {
       const result = await updateMinistryMemberRoles(memberId, roleIds)
       if (!result.error) {
-        await loadMinistryDetails(ministryId)
+        await refreshMembers(ministryId)
       }
       return result
     },
-    [loadMinistryDetails]
+    [refreshMembers]
   )
 
   const removeMember = useCallback(
     async (membershipId: string, ministryId: string) => {
       const result = await removeMinistryMember(membershipId)
       if (!result.error) {
-        await loadMinistryDetails(ministryId)
+        await refreshMembers(ministryId)
       }
       return result
     },
-    [loadMinistryDetails]
+    [refreshMembers]
   )
 
   return {

@@ -160,15 +160,15 @@ export const MembersTable = memo(function MembersTable({ members, currentUserId,
         )}
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[60px]">Active</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>
-              <div className="flex items-center gap-1">
-                Email
-                <TooltipProvider>
+      <TooltipProvider>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[60px]">Active</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>
+                <div className="flex items-center gap-1">
+                  Email
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Info className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
@@ -177,15 +177,13 @@ export const MembersTable = memo(function MembersTable({ members, currentUserId,
                       <p>Cannot be changed</p>
                     </TooltipContent>
                   </Tooltip>
-                </TooltipProvider>
-              </div>
-            </TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Ministry Roles</TableHead>
-            <TableHead>
-              <div className="flex items-center gap-1">
-                Sex
-                <TooltipProvider>
+                </div>
+              </TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Ministry Roles</TableHead>
+              <TableHead>
+                <div className="flex items-center gap-1">
+                  Sex
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Info className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
@@ -194,13 +192,11 @@ export const MembersTable = memo(function MembersTable({ members, currentUserId,
                       <p>Can be changed in user&apos;s profile settings</p>
                     </TooltipContent>
                   </Tooltip>
-                </TooltipProvider>
-              </div>
-            </TableHead>
-            <TableHead>
-              <div className="flex items-center gap-1">
-                Date of Birth
-                <TooltipProvider>
+                </div>
+              </TableHead>
+              <TableHead>
+                <div className="flex items-center gap-1">
+                  Date of Birth
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Info className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
@@ -209,17 +205,16 @@ export const MembersTable = memo(function MembersTable({ members, currentUserId,
                       <p>Can be changed in user&apos;s profile settings</p>
                     </TooltipContent>
                   </Tooltip>
-                </TooltipProvider>
-              </div>
-            </TableHead>
-            <TableHead>Age</TableHead>
-            <TableHead className="w-[70px]">Baptized</TableHead>
-            <TableHead>Baptism Date</TableHead>
-            <TableHead>Departure Date</TableHead>
-            <TableHead>Departure Reason</TableHead>
-            <TableHead>Joined</TableHead>
-          </TableRow>
-        </TableHeader>
+                </div>
+              </TableHead>
+              <TableHead>Age</TableHead>
+              <TableHead className="w-[70px]">Baptized</TableHead>
+              <TableHead>Baptism Date</TableHead>
+              <TableHead>Departure Date</TableHead>
+              <TableHead>Departure Reason</TableHead>
+              <TableHead>Joined</TableHead>
+            </TableRow>
+          </TableHeader>
         <TableBody>
           {filteredAndSortedMembers.map((member) => (
             <MemberRow
@@ -241,7 +236,8 @@ export const MembersTable = memo(function MembersTable({ members, currentUserId,
             />
           ))}
         </TableBody>
-      </Table>
+        </Table>
+      </TooltipProvider>
     </div>
   )
 })

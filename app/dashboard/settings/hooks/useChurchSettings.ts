@@ -79,7 +79,11 @@ export function useChurchSettings(): UseChurchSettingsReturn {
       const result = await getChurchSettings()
       if (result.error) {
         setError(result.error)
-      } else if (result.data) {
+        setIsLoadingData(false)
+        return
+      }
+
+      if (result.data) {
         setChurchData({
           subdomain: result.data.subdomain,
           join_code: result.data.join_code,
@@ -105,20 +109,20 @@ export function useChurchSettings(): UseChurchSettingsReturn {
             'members',
         })
 
-        // Load members if user is owner (for ownership transfer)
-        if (result.data.role === 'owner') {
-          const membersResult = await getChurchMembers()
-          if (membersResult.data) {
-            setMembers(membersResult.data)
-          }
-        }
+        // Parallel load: members (if owner) and locations (if can manage)
+        const isOwner = result.data.role === 'owner'
+        const canManageLocs = ['owner', 'admin', 'leader'].includes(result.data.role)
 
-        // Load locations if user can manage them
-        if (['owner', 'admin', 'leader'].includes(result.data.role)) {
-          const locationsResult = await getLocations()
-          if (locationsResult.data) {
-            setLocations(locationsResult.data)
-          }
+        const [membersResult, locationsResult] = await Promise.all([
+          isOwner ? getChurchMembers() : Promise.resolve({ data: [] }),
+          canManageLocs ? getLocations() : Promise.resolve({ data: [] }),
+        ])
+
+        if (membersResult.data) {
+          setMembers(membersResult.data)
+        }
+        if (locationsResult.data) {
+          setLocations(locationsResult.data)
         }
       }
       setIsLoadingData(false)

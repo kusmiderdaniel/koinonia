@@ -111,16 +111,36 @@ export function useEventDetail(): UseEventDetailReturn {
     }
   }, [selectedEvent, sortedAgendaItems])
 
-  // Agenda item handlers
+  // Helper to update a single agenda item field optimistically
+  const updateAgendaItemField = useCallback(<K extends keyof AgendaItem>(
+    itemId: string,
+    field: K,
+    value: AgendaItem[K]
+  ) => {
+    if (!selectedEvent) return
+    setSelectedEvent({
+      ...selectedEvent,
+      event_agenda_items: selectedEvent.event_agenda_items.map(item =>
+        item.id === itemId ? { ...item, [field]: value } : item
+      ),
+    })
+  }, [selectedEvent])
+
+  // Agenda item handlers - use optimistic updates instead of full reload
   const handleAgendaItemKeyChange = useCallback(async (itemId: string, key: string | null) => {
+    // Optimistic update
+    updateAgendaItemField(itemId, 'song_key', key)
+
     const result = await updateAgendaItemSongKey(itemId, key)
-    if (!result.error && selectedEvent) {
+    // Only reload on error to revert
+    if (result.error && selectedEvent) {
       await loadEventDetail(selectedEvent.id)
     }
     return result
-  }, [selectedEvent, loadEventDetail])
+  }, [selectedEvent, loadEventDetail, updateAgendaItemField])
 
   const handleAgendaItemLeaderChange = useCallback(async (itemId: string, leaderId: string | null) => {
+    // For leader changes, we need to reload to get the full leader profile data
     const result = await updateAgendaItemLeader(itemId, leaderId)
     if (!result.error && selectedEvent) {
       await loadEventDetail(selectedEvent.id)
@@ -129,20 +149,28 @@ export function useEventDetail(): UseEventDetailReturn {
   }, [selectedEvent, loadEventDetail])
 
   const handleAgendaItemDurationChange = useCallback(async (itemId: string, durationSeconds: number) => {
+    // Optimistic update
+    updateAgendaItemField(itemId, 'duration_seconds', durationSeconds)
+
     const result = await updateAgendaItemDuration(itemId, durationSeconds)
-    if (!result.error && selectedEvent) {
+    // Only reload on error to revert
+    if (result.error && selectedEvent) {
       await loadEventDetail(selectedEvent.id)
     }
     return result
-  }, [selectedEvent, loadEventDetail])
+  }, [selectedEvent, loadEventDetail, updateAgendaItemField])
 
   const handleAgendaItemDescriptionChange = useCallback(async (itemId: string, description: string | null) => {
+    // Optimistic update
+    updateAgendaItemField(itemId, 'description', description)
+
     const result = await updateAgendaItemDescription(itemId, description)
-    if (!result.error && selectedEvent) {
+    // Only reload on error to revert
+    if (result.error && selectedEvent) {
       await loadEventDetail(selectedEvent.id)
     }
     return result
-  }, [selectedEvent, loadEventDetail])
+  }, [selectedEvent, loadEventDetail, updateAgendaItemField])
 
   return {
     // Data

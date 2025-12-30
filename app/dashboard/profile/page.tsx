@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -226,10 +227,13 @@ export default function ProfilePage() {
               <div className="relative flex-shrink-0">
                 <div className="w-24 h-24 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-border">
                   {avatarUrl ? (
-                    <img
+                    <Image
                       src={avatarUrl}
                       alt="Profile photo"
+                      width={96}
+                      height={96}
                       className="w-full h-full object-cover"
+                      unoptimized={avatarUrl.includes('127.0.0.1')}
                     />
                   ) : (
                     <User className="w-12 h-12 text-muted-foreground" />

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { TableCell, TableRow } from '@/components/ui/table'
 import {
@@ -46,7 +46,7 @@ interface MemberRowProps {
   onBaptismChange: (memberId: string, baptism: boolean, date: string | null) => void
 }
 
-export function MemberRow({
+export const MemberRow = memo(function MemberRow({
   member,
   currentUserId,
   canEditRole,
@@ -264,4 +264,4 @@ export function MemberRow({
       </TableCell>
     </TableRow>
   )
-}
+})
