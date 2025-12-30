@@ -2,11 +2,19 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { useDebouncedValue, queryKeys, useServerQuery, useCacheInvalidation } from '@/lib/hooks'
+import { useQuery } from '@tanstack/react-query'
+import { useDebouncedValue, queryKeys, useCacheInvalidation } from '@/lib/hooks'
 import { getEvents, getChurchMembers } from '../actions'
 import type { Event, Member } from '../types'
 
 export type ViewMode = 'list' | 'calendar' | 'templates'
+
+export interface EventsInitialData {
+  events: Event[]
+  churchMembers: Member[]
+  role: string
+  firstDayOfWeek: number
+}
 
 interface UseEventListReturn {
   // Data
@@ -37,7 +45,7 @@ interface UseEventListReturn {
   refreshEvents: () => Promise<void>
 }
 
-export function useEventList(): UseEventListReturn {
+export function useEventList(initialData?: EventsInitialData): UseEventListReturn {
   const searchParams = useSearchParams()
   const { invalidateEvents, invalidateChurchMembers } = useCacheInvalidation()
 
@@ -47,43 +55,40 @@ export function useEventList(): UseEventListReturn {
   const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [error, setError] = useState<string | null>(null)
 
-  // React Query for events data
-  const eventsQuery = useServerQuery<{
-    data: Event[]
-    role: string
-    firstDayOfWeek: number
-  }>(
-    queryKeys.events,
-    async () => {
+  // React Query with initialData for instant render
+  const eventsQuery = useQuery({
+    queryKey: queryKeys.events,
+    queryFn: async () => {
       const result = await getEvents()
       if (result.error) {
-        return { error: result.error }
+        throw new Error(result.error)
       }
       return {
-        data: {
-          data: result.data || [],
-          role: result.role || '',
-          firstDayOfWeek: result.firstDayOfWeek ?? 1,
-        },
+        data: result.data || [],
+        role: result.role || '',
+        firstDayOfWeek: result.firstDayOfWeek ?? 1,
       }
     },
-    {
-      staleTime: 60 * 1000, // Data fresh for 1 minute
-      refetchOnWindowFocus: true,
-    }
-  )
+    initialData: initialData ? {
+      data: initialData.events,
+      role: initialData.role,
+      firstDayOfWeek: initialData.firstDayOfWeek,
+    } : undefined,
+    staleTime: 60 * 1000, // Data fresh for 1 minute
+    refetchOnWindowFocus: false,
+  })
 
-  // React Query for church members
-  const membersQuery = useServerQuery<Member[]>(
-    queryKeys.churchMembers,
-    async () => {
+  // React Query for church members with initialData
+  const membersQuery = useQuery({
+    queryKey: queryKeys.churchMembers,
+    queryFn: async () => {
       const result = await getChurchMembers()
-      return { data: result.data || [] }
+      return result.data || []
     },
-    {
-      staleTime: 5 * 60 * 1000, // Members data fresh for 5 minutes
-    }
-  )
+    initialData: initialData?.churchMembers,
+    staleTime: 5 * 60 * 1000, // Members data fresh for 5 minutes
+    refetchOnWindowFocus: false,
+  })
 
   // Extract data from queries with defaults
   const events = eventsQuery.data?.data ?? []

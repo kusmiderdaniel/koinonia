@@ -1,9 +1,15 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
-import { useDebouncedValue, queryKeys, useServerQuery, useCacheInvalidation } from '@/lib/hooks'
+import { useQuery } from '@tanstack/react-query'
+import { useDebouncedValue, queryKeys, useCacheInvalidation } from '@/lib/hooks'
 import { getSongs } from '../actions'
 import type { Song, Tag } from '../types'
+
+export interface SongsInitialData {
+  songs: Song[]
+  canManage: boolean
+}
 
 interface UseSongListReturn {
   // Data
@@ -29,7 +35,7 @@ interface UseSongListReturn {
   refreshSongs: () => Promise<void>
 }
 
-export function useSongList(): UseSongListReturn {
+export function useSongList(initialData?: SongsInitialData): UseSongListReturn {
   const { invalidateSongs } = useCacheInvalidation()
 
   // Local UI state
@@ -38,29 +44,26 @@ export function useSongList(): UseSongListReturn {
   const debouncedSearch = useDebouncedValue(search, 300)
   const [filterTagIds, setFilterTagIds] = useState<string[]>([])
 
-  // React Query for songs data
-  const songsQuery = useServerQuery<{
-    songs: Song[]
-    canManage: boolean
-  }>(
-    queryKeys.songs,
-    async () => {
+  // React Query with initialData for instant render
+  const songsQuery = useQuery({
+    queryKey: queryKeys.songs,
+    queryFn: async () => {
       const result = await getSongs()
       if (result.error) {
-        return { error: result.error }
+        throw new Error(result.error)
       }
       return {
-        data: {
-          songs: result.data || [],
-          canManage: result.canManage || false,
-        },
+        songs: result.data || [],
+        canManage: result.canManage || false,
       }
     },
-    {
-      staleTime: 60 * 1000, // Data fresh for 1 minute
-      refetchOnWindowFocus: true,
-    }
-  )
+    initialData: initialData ? {
+      songs: initialData.songs,
+      canManage: initialData.canManage,
+    } : undefined,
+    staleTime: 60 * 1000, // Data fresh for 1 minute
+    refetchOnWindowFocus: false,
+  })
 
   // Extract data from query with defaults
   const songs = songsQuery.data?.songs ?? []
@@ -92,7 +95,7 @@ export function useSongList(): UseSongListReturn {
 
       // Tag filter
       if (filterTagIds.length > 0) {
-        const songTagIds = song.tags?.map((t) => t.id) || []
+        const songTagIds = song.tags?.map((t: Tag) => t.id) || []
         const hasAllTags = filterTagIds.every((tagId) => songTagIds.includes(tagId))
         if (!hasAllTags) return false
       }

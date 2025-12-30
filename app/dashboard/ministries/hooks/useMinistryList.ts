@@ -1,9 +1,15 @@
 'use client'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { queryKeys, useServerQuery, useCacheInvalidation } from '@/lib/hooks'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { queryKeys, useCacheInvalidation } from '@/lib/hooks'
 import { getMinistries } from '../actions'
 import type { Ministry } from '../types'
+
+export interface MinistriesInitialData {
+  ministries: Ministry[]
+  role: string
+}
 
 interface UseMinistryListReturn {
   // Data
@@ -26,36 +32,36 @@ interface UseMinistryListReturn {
   refreshMinistries: () => Promise<void>
 }
 
-export function useMinistryList(): UseMinistryListReturn {
+export function useMinistryList(initialData?: MinistriesInitialData): UseMinistryListReturn {
   const { invalidateMinistries } = useCacheInvalidation()
+  const queryClient = useQueryClient()
 
-  // Local UI state
-  const [selectedMinistryId, setSelectedMinistryId] = useState<string | null>(null)
+  // Local UI state - auto-select first ministry if initial data provided
+  const [selectedMinistryId, setSelectedMinistryId] = useState<string | null>(
+    initialData?.ministries?.[0]?.id ?? null
+  )
   const [error, setError] = useState<string | null>(null)
 
-  // React Query for ministries data
-  const ministriesQuery = useServerQuery<{
-    data: Ministry[]
-    role: string
-  }>(
-    queryKeys.ministries,
-    async () => {
+  // React Query with initialData for instant render
+  const ministriesQuery = useQuery({
+    queryKey: queryKeys.ministries,
+    queryFn: async () => {
       const result = await getMinistries()
       if (result.error) {
-        return { error: result.error }
+        throw new Error(result.error)
       }
       return {
-        data: {
-          data: result.data || [],
-          role: result.role || '',
-        },
+        data: result.data || [],
+        role: result.role || '',
       }
     },
-    {
-      staleTime: 60 * 1000, // Data fresh for 1 minute
-      refetchOnWindowFocus: true,
-    }
-  )
+    initialData: initialData ? {
+      data: initialData.ministries,
+      role: initialData.role,
+    } : undefined,
+    staleTime: 60 * 1000, // Data fresh for 1 minute
+    refetchOnWindowFocus: false,
+  })
 
   // Extract data from query with defaults
   const ministries = ministriesQuery.data?.data ?? []
