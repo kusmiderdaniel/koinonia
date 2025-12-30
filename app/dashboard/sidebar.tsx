@@ -1,9 +1,7 @@
 'use client'
 
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +14,7 @@ import { Home, Calendar, Users, Heart, Music, Settings, User, LogOut, CalendarOf
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { NotificationCenter } from '@/components/NotificationCenter'
+import { ProgressLink } from '@/components/ProgressLink'
 import { usePrefetchRoutes } from '@/lib/hooks'
 
 interface SidebarProps {
@@ -69,7 +68,7 @@ export function Sidebar({ user, churchName }: SidebarProps) {
         {navItems.map((item) => {
           const isActive = pathname === item.href
           return (
-            <Link
+            <ProgressLink
               key={item.href}
               href={item.href}
               onMouseEnter={() => prefetchRoute(item.href)}
@@ -82,7 +81,7 @@ export function Sidebar({ user, churchName }: SidebarProps) {
             >
               <item.icon className="w-5 h-5" />
               {item.label}
-            </Link>
+            </ProgressLink>
           )
         })}
 
@@ -96,7 +95,7 @@ export function Sidebar({ user, churchName }: SidebarProps) {
             {adminNavItems.map((item) => {
               const isActive = pathname === item.href
               return (
-                <Link
+                <ProgressLink
                   key={item.href}
                   href={item.href}
                   onMouseEnter={() => prefetchRoute(item.href)}
@@ -109,7 +108,7 @@ export function Sidebar({ user, churchName }: SidebarProps) {
                 >
                   <item.icon className="w-5 h-5" />
                   {item.label}
-                </Link>
+                </ProgressLink>
               )
             })}
           </>
@@ -141,16 +140,16 @@ export function Sidebar({ user, churchName }: SidebarProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56 bg-white dark:bg-zinc-950">
             <DropdownMenuItem asChild>
-              <Link href="/dashboard/profile" className="flex items-center gap-2">
+              <ProgressLink href="/dashboard/profile" className="flex items-center gap-2">
                 <User className="w-4 h-4" />
                 Profile
-              </Link>
+              </ProgressLink>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/dashboard/availability" className="flex items-center gap-2">
+              <ProgressLink href="/dashboard/availability" className="flex items-center gap-2">
                 <CalendarOff className="w-4 h-4" />
                 Unavailability
-              </Link>
+              </ProgressLink>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem

@@ -1,5 +1,10 @@
 import { DashboardPageSkeleton } from '@/components/skeletons'
+import { DelayedSkeleton } from '@/components/DelayedSkeleton'
 
 export default function Loading() {
-  return <DashboardPageSkeleton />
+  return (
+    <DelayedSkeleton>
+      <DashboardPageSkeleton />
+    </DelayedSkeleton>
+  )
 }

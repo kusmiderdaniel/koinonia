@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Inter } from "next/font/google";
 import { QueryProvider } from "@/components/providers/QueryProvider";
+import { NavigationProgress } from "@/components/NavigationProgress";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -31,6 +33,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} antialiased`}
       >
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         <QueryProvider>{children}</QueryProvider>
         <Toaster position="top-right" richColors />
       </body>
