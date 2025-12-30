@@ -1,3 +1,8 @@
 export { EventsPageSkeleton } from './EventsPageSkeleton'
 export { MinistriesPageSkeleton } from './MinistriesPageSkeleton'
 export { SongsPageSkeleton } from './SongsPageSkeleton'
+export { PeoplePageSkeleton } from './PeoplePageSkeleton'
+export { SettingsPageSkeleton } from './SettingsPageSkeleton'
+export { ProfilePageSkeleton } from './ProfilePageSkeleton'
+export { AvailabilityPageSkeleton } from './AvailabilityPageSkeleton'
+export { DashboardPageSkeleton } from './DashboardPageSkeleton'

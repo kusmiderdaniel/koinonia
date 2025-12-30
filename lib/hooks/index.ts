@@ -15,3 +15,4 @@ export {
   type ConfirmDialogState,
   type PickerDialogState,
 } from './useDialogState'
+export { usePrefetchRoutes } from './usePrefetchRoutes'
