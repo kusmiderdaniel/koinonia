@@ -259,8 +259,8 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 overflow-hidden flex flex-col">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+      <CardContent className="flex-1 overflow-hidden flex flex-col min-h-0">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
           <TabsList className="grid w-full grid-cols-2 mb-4 border border-black dark:border-zinc-700">
             <TabsTrigger value="agenda" className="gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground">
               <Music className="w-4 h-4" />
@@ -272,7 +272,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="agenda" className="flex-1 overflow-y-auto mt-0">
+          <TabsContent value="agenda" className="flex-1 overflow-y-auto mt-0 min-h-0">
             <div className="space-y-2">
               {agendaItems.length === 0 ? (
                 <div className="text-center py-8">
@@ -352,7 +352,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
             </div>
           </TabsContent>
 
-          <TabsContent value="positions" className="flex-1 overflow-y-auto mt-0">
+          <TabsContent value="positions" className="flex-1 overflow-y-auto mt-0 min-h-0">
             <div className="space-y-2">
               {positions.length === 0 ? (
                 <div className="text-center py-8">
