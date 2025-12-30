@@ -212,21 +212,21 @@ export default function EventsPage() {
             <ToggleGroupItem
               value="list"
               aria-label="List view"
-              className="rounded-2xl data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
+              className="rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
             >
               <List className="w-4 h-4" />
             </ToggleGroupItem>
             <ToggleGroupItem
               value="calendar"
               aria-label="Calendar view"
-              className="rounded-2xl data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
+              className="rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
             >
               <CalendarDays className="w-4 h-4" />
             </ToggleGroupItem>
             <ToggleGroupItem
               value="templates"
               aria-label="Templates"
-              className="rounded-2xl data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
+              className="rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
             >
               <FileText className="w-4 h-4" />
             </ToggleGroupItem>
