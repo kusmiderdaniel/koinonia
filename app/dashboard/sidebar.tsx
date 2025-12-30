@@ -16,6 +16,7 @@ import { Home, Calendar, Users, Heart, Music, Settings, User, LogOut, CalendarOf
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { NotificationCenter } from '@/components/NotificationCenter'
+import { usePrefetchRoutes } from '@/lib/hooks'
 
 interface SidebarProps {
   user: {
@@ -42,6 +43,7 @@ const adminNavItems = [
 export function Sidebar({ user, churchName }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
+  const { prefetchRoute } = usePrefetchRoutes()
 
   const handleSignOut = async () => {
     const supabase = createClient()
@@ -70,6 +72,7 @@ export function Sidebar({ user, churchName }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              onMouseEnter={() => prefetchRoute(item.href)}
               className={cn(
                 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                 isActive
@@ -96,6 +99,7 @@ export function Sidebar({ user, churchName }: SidebarProps) {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onMouseEnter={() => prefetchRoute(item.href)}
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                     isActive
