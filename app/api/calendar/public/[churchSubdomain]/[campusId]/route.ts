@@ -98,7 +98,7 @@ export async function GET(
   // Add events
   if (events) {
     for (const event of events) {
-      const location = event.location as { name: string; address: string | null } | null
+      const location = event.location as unknown as { name: string; address: string | null } | null
       const locationStr = location
         ? location.address
           ? `${location.name}, ${location.address}`
