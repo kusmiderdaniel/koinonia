@@ -51,11 +51,11 @@ export type AgendaItemInput = z.infer<typeof agendaItemSchema>
 export function canUserSeeEvent(
   userRole: string,
   eventVisibility: string,
-  userId: string,
-  invitedUserIds: string[]
+  profileId: string,
+  invitedProfileIds: string[]
 ): boolean {
   if (eventVisibility === 'hidden') {
-    return invitedUserIds.includes(userId)
+    return invitedProfileIds.includes(profileId)
   }
   if (eventVisibility === 'leaders') {
     return ['leader', 'admin', 'owner'].includes(userRole)

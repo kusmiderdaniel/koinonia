@@ -65,10 +65,10 @@ export async function getEvents(filters?: { status?: string; eventType?: string 
   }
 
   const filteredEvents = events?.filter((event) => {
-    const invitedUserIds = event.event_invitations?.map((inv: { profile_id: string }) => inv.profile_id) || []
+    const invitedProfileIds = event.event_invitations?.map((inv: { profile_id: string }) => inv.profile_id) || []
 
-    // First check visibility permissions
-    if (!canUserSeeEvent(profile.role, event.visibility, user.id, invitedUserIds)) {
+    // First check visibility permissions (use profile.id since invitations use profile_id)
+    if (!canUserSeeEvent(profile.role, event.visibility, profile.id, invitedProfileIds)) {
       return false
     }
 
@@ -165,8 +165,8 @@ export async function getEvent(eventId: string) {
 
   if (!event) return { error: 'Event not found' }
 
-  const invitedUserIds = event.event_invitations?.map((inv: { profile_id: string }) => inv.profile_id) || []
-  if (!canUserSeeEvent(profile.role, event.visibility, user.id, invitedUserIds)) {
+  const invitedProfileIds = event.event_invitations?.map((inv: { profile_id: string }) => inv.profile_id) || []
+  if (!canUserSeeEvent(profile.role, event.visibility, profile.id, invitedProfileIds)) {
     return { error: 'Event not found' }
   }
 
