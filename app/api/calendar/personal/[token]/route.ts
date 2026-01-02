@@ -27,6 +27,16 @@ interface HiddenInvitationData {
   event: (EventData & { visibility: string }) | null
 }
 
+interface RoleInfo {
+  title: string
+  status: string | null
+}
+
+interface AggregatedEvent {
+  event: EventData
+  roles: RoleInfo[]
+}
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ token: string }> }
@@ -117,48 +127,85 @@ export async function GET(
     prodId: { company: 'Koinonia', product: 'Church Calendar' },
   })
 
-  // Track added event IDs to avoid duplicates
-  const addedEventIds = new Set<string>()
+  // Aggregate all roles per event
+  const eventRolesMap = new Map<string, AggregatedEvent>()
 
-  // Add events from assignments
   if (assignments) {
     for (const assignment of assignments as unknown as AssignmentData[]) {
       const position = assignment.position
       const event = position?.event
 
-      if (!event || event.status === 'cancelled' || addedEventIds.has(event.id)) {
+      if (!event || event.status === 'cancelled') {
         continue
       }
 
-      addedEventIds.add(event.id)
-
-      const location = event.location
-      const locationStr = location
-        ? location.address
-          ? `${location.name}, ${location.address}`
-          : location.name
-        : undefined
-
-      // Build description with role info
-      let description = `Role: ${position?.title || 'Volunteer'}`
-      if (assignment.status === 'invited') {
-        description += ' (Pending response)'
+      const existing = eventRolesMap.get(event.id)
+      if (existing) {
+        // Add this role to the existing event
+        existing.roles.push({
+          title: position?.title || 'Volunteer',
+          status: assignment.status,
+        })
+      } else {
+        // Create new entry for this event
+        eventRolesMap.set(event.id, {
+          event,
+          roles: [
+            {
+              title: position?.title || 'Volunteer',
+              status: assignment.status,
+            },
+          ],
+        })
       }
-      if (event.description) {
-        description += `\n\n${event.description}`
-      }
-
-      calendar.createEvent({
-        id: event.id,
-        summary: event.title,
-        description,
-        start: new Date(event.start_time),
-        end: new Date(event.end_time),
-        allDay: event.is_all_day,
-        location: locationStr,
-      })
     }
   }
+
+  // Add events with all their roles to calendar
+  for (const [eventId, { event, roles }] of eventRolesMap) {
+    const location = event.location
+    const locationStr = location
+      ? location.address
+        ? `${location.name}, ${location.address}`
+        : location.name
+      : undefined
+
+    // Build description with all roles
+    let description = ''
+    if (roles.length === 1) {
+      description = `Role: ${roles[0].title}`
+      if (roles[0].status === 'invited') {
+        description += ' (Pending response)'
+      }
+    } else {
+      description = 'Roles:\n'
+      for (const role of roles) {
+        description += `• ${role.title}`
+        if (role.status === 'invited') {
+          description += ' (Pending response)'
+        }
+        description += '\n'
+      }
+      description = description.trimEnd()
+    }
+
+    if (event.description) {
+      description += `\n\n${event.description}`
+    }
+
+    calendar.createEvent({
+      id: eventId,
+      summary: event.title,
+      description,
+      start: new Date(event.start_time),
+      end: new Date(event.end_time),
+      allDay: event.is_all_day,
+      location: locationStr,
+    })
+  }
+
+  // Track which events we've added (for hidden invitations)
+  const addedEventIds = new Set(eventRolesMap.keys())
 
   // Add hidden events from invitations (that aren't already added via assignments)
   if (hiddenInvitations) {
