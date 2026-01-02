@@ -107,7 +107,7 @@ export async function GET(
         // Handle location - it might be null or an object
         let locationStr: string | undefined
         if (event.locations && typeof event.locations === 'object') {
-          const loc = event.locations as { name: string; address: string | null }
+          const loc = event.locations as unknown as { name: string; address: string | null }
           locationStr = loc.address ? `${loc.name}, ${loc.address}` : loc.name
         }
 
