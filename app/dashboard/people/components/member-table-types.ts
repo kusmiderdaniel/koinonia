@@ -18,6 +18,13 @@ export interface MinistryMember {
   ministry: Ministry | Ministry[] | null
 }
 
+export interface Campus {
+  id: string
+  name: string
+  color: string
+  is_primary: boolean
+}
+
 export interface Member {
   id: string
   first_name: string
@@ -34,6 +41,7 @@ export interface Member {
   member_type: string
   created_at: string
   ministry_members: MinistryMember[]
+  campuses: Campus[]
 }
 
 export const roleHierarchy: Record<Role, number> = {

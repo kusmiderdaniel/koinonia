@@ -5,6 +5,7 @@ import {
   getAuthenticatedUserWithProfile,
   isAuthError,
   requireAdminPermission,
+  requireManagePermission,
 } from '@/lib/utils/server-auth'
 
 type Role = 'owner' | 'admin' | 'leader' | 'volunteer' | 'member'
@@ -290,8 +291,8 @@ export async function createOfflineMember(data: {
 
   const { profile, adminClient } = auth
 
-  // Only admins can create offline members
-  const permError = requireAdminPermission(profile.role, 'create offline members')
+  // Leaders and above can create offline members
+  const permError = requireManagePermission(profile.role, 'create offline members')
   if (permError) return { error: permError }
 
   // Validate required fields

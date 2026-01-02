@@ -13,6 +13,7 @@ export const ministrySchema = z.object({
   description: z.string().optional(),
   color: z.string().default('#3B82F6'),
   leaderId: z.string().uuid().nullable(),
+  campusId: z.string().uuid().nullable().optional(),
 })
 
 export type MinistryInput = z.infer<typeof ministrySchema>

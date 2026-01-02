@@ -48,7 +48,8 @@ interface EventDetailPanelProps {
   positionsByMinistry: Record<string, { ministry: Position['ministry']; positions: Position[] }>
   detailTab: string
   setDetailTab: (tab: string) => void
-  canManage: boolean
+  canManage: boolean // Can edit/delete event (admin/owner only)
+  canManageContent: boolean // Can manage agenda, songs, positions (leader+)
   canDelete: boolean
   sensors: ReturnType<typeof useSensors>
   formatDuration: (seconds: number) => string
@@ -81,6 +82,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
   detailTab,
   setDetailTab,
   canManage,
+  canManageContent,
   canDelete,
   sensors,
   formatDuration,
@@ -280,7 +282,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
                 {sortedAgendaItems.length} items • Total: {formatDuration(totalDuration)}
               </p>
             )}
-            {canManage && (
+            {canManageContent && (
               <div className="flex gap-2 ml-auto">
                 <Button variant="outline-pill" size="sm" className="!border !border-gray-300 dark:!border-zinc-600" onClick={onAddAgendaItem}>
                   <Plus className="w-4 h-4 mr-1" />
@@ -313,7 +315,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
                       key={item.id}
                       item={item}
                       index={index}
-                      canManage={canManage}
+                      canManage={canManageContent}
                       formatDuration={formatDuration}
                       onEdit={onEditAgendaItem}
                       onDelete={onDeleteAgendaItem}
@@ -332,7 +334,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
 
         <TabsContent value="positions" className="flex-1 overflow-y-auto p-6 pt-4 mt-0">
           <div className="flex items-center justify-end mb-4">
-            {canManage && (
+            {canManageContent && (
               <div className="flex gap-2">
                 {pendingInvitationsCount > 0 && (
                   <Button
@@ -382,7 +384,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
                                 </Badge>
                               )}
                             </div>
-                            {canManage && (
+                            {canManageContent && (
                               <div className="flex gap-1">
                                 {!hasAssignment && (
                                   <Button
@@ -478,7 +480,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
                                       </p>
                                     )}
                                   </div>
-                                  {canManage && (
+                                  {canManageContent && (
                                     <Button
                                       variant="ghost"
                                       size="icon"

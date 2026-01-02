@@ -34,6 +34,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      agenda_item_presets: {
+        Row: {
+          church_id: string
+          created_at: string
+          description: string | null
+          duration_seconds: number
+          id: string
+          is_active: boolean
+          ministry_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          church_id: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number
+          id?: string
+          is_active?: boolean
+          ministry_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          church_id?: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number
+          id?: string
+          is_active?: boolean
+          ministry_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agenda_item_presets_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agenda_item_presets_ministry_id_fkey"
+            columns: ["ministry_id"]
+            isOneToOne: false
+            referencedRelation: "ministries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agenda_item_templates: {
         Row: {
           church_id: string
@@ -62,6 +113,107 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "agenda_item_templates_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calendar_tokens: {
+        Row: {
+          church_id: string
+          created_at: string | null
+          id: string
+          profile_id: string
+          token: string
+          updated_at: string | null
+        }
+        Insert: {
+          church_id: string
+          created_at?: string | null
+          id?: string
+          profile_id: string
+          token: string
+          updated_at?: string | null
+        }
+        Update: {
+          church_id?: string
+          created_at?: string | null
+          id?: string
+          profile_id?: string
+          token?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_tokens_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_tokens_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campuses: {
+        Row: {
+          address: string | null
+          church_id: string
+          city: string | null
+          color: string | null
+          country: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          name: string
+          state: string | null
+          updated_at: string | null
+          zip_code: string | null
+        }
+        Insert: {
+          address?: string | null
+          church_id: string
+          city?: string | null
+          color?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name: string
+          state?: string | null
+          updated_at?: string | null
+          zip_code?: string | null
+        }
+        Update: {
+          address?: string | null
+          church_id?: string
+          city?: string | null
+          color?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name?: string
+          state?: string | null
+          updated_at?: string | null
+          zip_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campuses_church_id_fkey"
             columns: ["church_id"]
             isOneToOne: false
             referencedRelation: "churches"
@@ -263,6 +415,39 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_campuses: {
+        Row: {
+          campus_id: string
+          event_id: string
+          id: string
+        }
+        Insert: {
+          campus_id: string
+          event_id: string
+          id?: string
+        }
+        Update: {
+          campus_id?: string
+          event_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_campuses_campus_id_fkey"
+            columns: ["campus_id"]
+            isOneToOne: false
+            referencedRelation: "campuses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_campuses_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
             referencedColumns: ["id"]
           },
         ]
@@ -481,6 +666,7 @@ export type Database = {
       }
       event_templates: {
         Row: {
+          campus_id: string | null
           church_id: string
           created_at: string | null
           created_by: string | null
@@ -497,6 +683,7 @@ export type Database = {
           visibility: string
         }
         Insert: {
+          campus_id?: string | null
           church_id: string
           created_at?: string | null
           created_by?: string | null
@@ -513,6 +700,7 @@ export type Database = {
           visibility?: string
         }
         Update: {
+          campus_id?: string | null
           church_id?: string
           created_at?: string | null
           created_by?: string | null
@@ -529,6 +717,13 @@ export type Database = {
           visibility?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "event_templates_campus_id_fkey"
+            columns: ["campus_id"]
+            isOneToOne: false
+            referencedRelation: "campuses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "event_templates_church_id_fkey"
             columns: ["church_id"]
@@ -648,6 +843,7 @@ export type Database = {
       locations: {
         Row: {
           address: string | null
+          campus_id: string | null
           church_id: string
           created_at: string
           id: string
@@ -658,6 +854,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          campus_id?: string | null
           church_id: string
           created_at?: string
           id?: string
@@ -668,6 +865,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          campus_id?: string | null
           church_id?: string
           created_at?: string
           id?: string
@@ -677,6 +875,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "locations_campus_id_fkey"
+            columns: ["campus_id"]
+            isOneToOne: false
+            referencedRelation: "campuses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "locations_church_id_fkey"
             columns: ["church_id"]
@@ -688,6 +893,7 @@ export type Database = {
       }
       ministries: {
         Row: {
+          campus_id: string | null
           church_id: string
           color: string | null
           created_at: string
@@ -701,6 +907,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          campus_id?: string | null
           church_id: string
           color?: string | null
           created_at?: string
@@ -714,6 +921,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          campus_id?: string | null
           church_id?: string
           color?: string | null
           created_at?: string
@@ -727,6 +935,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "ministries_campus_id_fkey"
+            columns: ["campus_id"]
+            isOneToOne: false
+            referencedRelation: "campuses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "ministries_church_id_fkey"
             columns: ["church_id"]
@@ -944,51 +1159,70 @@ export type Database = {
       }
       pending_registrations: {
         Row: {
+          campus_id: string | null
           church_id: string
           created_at: string
+          date_of_birth: string | null
           email: string
           first_name: string
           id: string
           last_name: string
           linked_profile_id: string | null
+          phone: string | null
           rejection_reason: string | null
           reviewed_at: string | null
           reviewed_by: string | null
+          sex: string | null
           status: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          campus_id?: string | null
           church_id: string
           created_at?: string
+          date_of_birth?: string | null
           email: string
           first_name: string
           id?: string
           last_name: string
           linked_profile_id?: string | null
+          phone?: string | null
           rejection_reason?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          sex?: string | null
           status?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          campus_id?: string | null
           church_id?: string
           created_at?: string
+          date_of_birth?: string | null
           email?: string
           first_name?: string
           id?: string
           last_name?: string
           linked_profile_id?: string | null
+          phone?: string | null
           rejection_reason?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          sex?: string | null
           status?: string
           updated_at?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "pending_registrations_campus_id_fkey"
+            columns: ["campus_id"]
+            isOneToOne: false
+            referencedRelation: "campuses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "pending_registrations_church_id_fkey"
             columns: ["church_id"]
@@ -1006,6 +1240,45 @@ export type Database = {
           {
             foreignKeyName: "pending_registrations_reviewed_by_fkey"
             columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_campuses: {
+        Row: {
+          assigned_at: string | null
+          campus_id: string
+          id: string
+          is_primary: boolean | null
+          profile_id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          campus_id: string
+          id?: string
+          is_primary?: boolean | null
+          profile_id: string
+        }
+        Update: {
+          assigned_at?: string | null
+          campus_id?: string
+          id?: string
+          is_primary?: boolean | null
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_campuses_campus_id_fkey"
+            columns: ["campus_id"]
+            isOneToOne: false
+            referencedRelation: "campuses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_campuses_profile_id_fkey"
+            columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -1321,9 +1594,27 @@ export type Database = {
       expire_past_event_invitations: { Args: never; Returns: undefined }
       generate_alphanumeric_code: { Args: { length?: number }; Returns: string }
       generate_unique_join_code: { Args: never; Returns: string }
+      get_default_campus_id: {
+        Args: { target_church_id: string }
+        Returns: string
+      }
+      get_user_campus_ids: { Args: never; Returns: string[] }
       get_user_church_id: { Args: never; Returns: string }
       get_user_profile_id: { Args: never; Returns: string }
+      is_admin_or_owner: { Args: never; Returns: boolean }
       is_leader_or_above: { Args: never; Returns: boolean }
+      user_has_event_campus_access: {
+        Args: { target_event_id: string }
+        Returns: boolean
+      }
+      user_has_ministry_campus_access: {
+        Args: { target_ministry_id: string }
+        Returns: boolean
+      }
+      user_has_template_campus_access: {
+        Args: { target_template_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

@@ -27,6 +27,7 @@ import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Search } from 'lucide-react'
 import { toast } from 'sonner'
+import { CampusBadge } from '@/components/CampusBadge'
 import {
   getPendingRegistrations,
   approveRegistration,
@@ -34,6 +35,12 @@ import {
   linkRegistrationToProfile,
   getOfflineMembers,
 } from './actions'
+
+interface CampusInfo {
+  id: string
+  name: string
+  color: string
+}
 
 interface PendingRegistration {
   id: string
@@ -43,6 +50,8 @@ interface PendingRegistration {
   email: string
   status: string
   created_at: string
+  campus_id: string | null
+  campus: CampusInfo | null
 }
 
 interface OfflineMember {
@@ -56,6 +65,7 @@ interface OfflineMember {
 export default function PendingRegistrationsPage() {
   const [registrations, setRegistrations] = useState<PendingRegistration[]>([])
   const [offlineMembers, setOfflineMembers] = useState<OfflineMember[]>([])
+  const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
 
@@ -73,16 +83,21 @@ export default function PendingRegistrationsPage() {
 
   async function loadData() {
     setLoading(true)
-    const [regResult, membersResult] = await Promise.all([
-      getPendingRegistrations(),
-      getOfflineMembers(),
-    ])
+    const regResult = await getPendingRegistrations()
 
     if (regResult.data) {
       setRegistrations(regResult.data)
     }
-    if (membersResult.data) {
-      setOfflineMembers(membersResult.data)
+    if (regResult.isAdmin !== undefined) {
+      setIsAdmin(regResult.isAdmin)
+    }
+
+    // Only fetch offline members for admins (for linking)
+    if (regResult.isAdmin) {
+      const membersResult = await getOfflineMembers()
+      if (membersResult.data) {
+        setOfflineMembers(membersResult.data)
+      }
     }
     setLoading(false)
   }
@@ -213,6 +228,7 @@ export default function PendingRegistrationsPage() {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
+                  <TableHead>Campus</TableHead>
                   <TableHead>Registered</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -224,10 +240,21 @@ export default function PendingRegistrationsPage() {
                       {registration.first_name} {registration.last_name}
                     </TableCell>
                     <TableCell>{registration.email}</TableCell>
+                    <TableCell>
+                      {registration.campus ? (
+                        <CampusBadge
+                          name={registration.campus.name}
+                          color={registration.campus.color}
+                          size="sm"
+                        />
+                      ) : (
+                        <span className="text-muted-foreground text-sm">Not specified</span>
+                      )}
+                    </TableCell>
                     <TableCell>{formatDate(registration.created_at)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        {offlineMembers.length > 0 && (
+                        {isAdmin && offlineMembers.length > 0 && (
                           <Button
                             variant="outline"
                             size="sm"

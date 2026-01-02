@@ -134,6 +134,46 @@ export async function createChurch(data: CreateChurchInput) {
     return { error: 'Failed to create your profile. Please try again.' }
   }
 
+  // Create default campus for the church
+  const { data: defaultCampus, error: campusError } = await adminClient
+    .from('campuses')
+    .insert({
+      church_id: church.id,
+      name: 'Main Campus',
+      description: `Default campus for ${validatedChurch.data.name}`,
+      address: validatedChurch.data.address || null,
+      city: validatedChurch.data.city || null,
+      state: validatedChurch.data.state || null,
+      zip_code: validatedChurch.data.zipCode || null,
+      country: validatedChurch.data.country || null,
+      color: '#3B82F6', // Blue color
+      is_default: true,
+      is_active: true,
+    })
+    .select()
+    .single()
+
+  if (campusError) {
+    console.error('Campus creation error:', campusError)
+    // Continue anyway - this is not critical for church creation
+  }
+
+  // Assign owner to the default campus
+  if (defaultCampus) {
+    const { error: profileCampusError } = await adminClient
+      .from('profile_campuses')
+      .insert({
+        profile_id: profileId,
+        campus_id: defaultCampus.id,
+        is_primary: true,
+      })
+
+    if (profileCampusError) {
+      console.error('Profile campus assignment error:', profileCampusError)
+      // Continue anyway
+    }
+  }
+
   // Create default Worship ministry (system ministry that cannot be deleted)
   const { data: worshipMinistry, error: ministryError } = await adminClient
     .from('ministries')
@@ -144,6 +184,7 @@ export async function createChurch(data: CreateChurchInput) {
       leader_id: profileId,
       color: '#8B5CF6', // Purple color for worship
       is_system: true,
+      campus_id: defaultCampus?.id || null,
     })
     .select()
     .single()
@@ -191,7 +232,12 @@ export async function createChurch(data: CreateChurchInput) {
   return { success: true }
 }
 
-export async function joinChurch(data: JoinChurchInput & { phone?: string }) {
+export async function joinChurch(data: JoinChurchInput & {
+  phone?: string
+  dateOfBirth?: string
+  sex?: 'male' | 'female'
+  campusId?: string
+}) {
   const supabase = await createClient()
 
   // Get current user
@@ -263,6 +309,19 @@ export async function joinChurch(data: JoinChurchInput & { phone?: string }) {
     }
   }
 
+  // If no campus specified, get the default campus
+  let campusId = data.campusId
+  if (!campusId) {
+    const { data: defaultCampus } = await adminClient
+      .from('campuses')
+      .select('id')
+      .eq('church_id', church.id)
+      .eq('is_default', true)
+      .single()
+
+    campusId = defaultCampus?.id
+  }
+
   // Create pending registration (admin must approve)
   const { error: pendingError } = await adminClient
     .from('pending_registrations')
@@ -272,7 +331,11 @@ export async function joinChurch(data: JoinChurchInput & { phone?: string }) {
       first_name: firstName,
       last_name: lastName,
       email: user.email!,
+      phone: data.phone || null,
+      date_of_birth: data.dateOfBirth || null,
+      sex: data.sex || null,
       status: 'pending',
+      campus_id: campusId || null,
     })
 
   if (pendingError) {
@@ -296,4 +359,39 @@ export async function checkUserProfile() {
     .single()
 
   return { hasProfile: !!profile }
+}
+
+export async function getCampusesByJoinCode(joinCode: string) {
+  // Use service role client to look up church by join code
+  const adminClient = createServiceRoleClient()
+
+  // Find church by join_code
+  const { data: church, error: churchError } = await adminClient
+    .from('churches')
+    .select('id, name')
+    .eq('join_code', joinCode.toUpperCase())
+    .single()
+
+  if (churchError || !church) {
+    return { error: 'Church not found' }
+  }
+
+  // Get active campuses for this church
+  const { data: campuses, error: campusError } = await adminClient
+    .from('campuses')
+    .select('id, name, color, is_default')
+    .eq('church_id', church.id)
+    .eq('is_active', true)
+    .order('is_default', { ascending: false })
+    .order('name')
+
+  if (campusError) {
+    console.error('Error fetching campuses:', campusError)
+    return { error: 'Failed to fetch campuses' }
+  }
+
+  return {
+    church: { id: church.id, name: church.name },
+    campuses: campuses || [],
+  }
 }

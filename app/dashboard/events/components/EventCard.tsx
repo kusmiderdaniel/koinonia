@@ -2,6 +2,7 @@
 
 import { memo } from 'react'
 import { EventTypeBadge } from '@/components/EventTypeBadge'
+import { CampusBadges } from '@/components/CampusBadge'
 import type { Event } from '../types'
 
 interface EventCardProps {
@@ -30,8 +31,11 @@ export const EventCard = memo(function EventCard({ event, isSelected, onClick }:
           : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'
       }`}
     >
-      <div className="flex items-center gap-2 mb-1">
+      <div className="flex items-center gap-2 mb-1 flex-wrap">
         <EventTypeBadge type={event.event_type} />
+        {event.campuses && event.campuses.length > 0 && (
+          <CampusBadges campuses={event.campuses} size="sm" maxVisible={2} />
+        )}
       </div>
       <p className="font-medium truncate">{event.title}</p>
       <p className="text-xs text-muted-foreground">

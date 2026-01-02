@@ -203,7 +203,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
 
   // Destructure commonly used values
   const { selectedEvent, sortedAgendaItems, totalDuration, positionsByMinistry, detailTab, setDetailTab } = eventDetail
-  const { events, error, searchQuery, viewMode, upcomingEvents, pastEvents, canManage, canDelete, firstDayOfWeek } = eventList
+  const { events, error, searchQuery, viewMode, upcomingEvents, pastEvents, canManage, canManageContent, canDelete, firstDayOfWeek } = eventList
 
   return (
     <div className="h-full p-6">
@@ -233,13 +233,16 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
             >
               <CalendarDays className="w-4 h-4" />
             </ToggleGroupItem>
-            <ToggleGroupItem
-              value="templates"
-              aria-label="Templates"
-              className="!rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
-            >
-              <FileText className="w-4 h-4" />
-            </ToggleGroupItem>
+            {/* Templates tab only visible to leader+ */}
+            {canManageContent && (
+              <ToggleGroupItem
+                value="templates"
+                aria-label="Templates"
+                className="!rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
+              >
+                <FileText className="w-4 h-4" />
+              </ToggleGroupItem>
+            )}
           </ToggleGroup>
           {canManage && (
             <div className="flex items-center gap-2">
@@ -281,6 +284,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
               detailTab={detailTab}
               setDetailTab={setDetailTab}
               canManage={canManage}
+              canManageContent={canManageContent}
               canDelete={canDelete}
               sensors={sensors}
               formatDuration={formatDuration}
@@ -328,6 +332,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
               detailTab={detailTab}
               setDetailTab={setDetailTab}
               canManage={canManage}
+              canManageContent={canManageContent}
               canDelete={canDelete}
               sensors={sensors}
               formatDuration={formatDuration}

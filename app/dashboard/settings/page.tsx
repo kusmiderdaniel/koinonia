@@ -1,9 +1,16 @@
 import { redirect } from 'next/navigation'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { SettingsPageClient } from './SettingsPageClient'
+import { hasPageAccess } from '@/lib/permissions'
 import type { ChurchSettingsData, Location, Member } from './types'
+import type { Campus } from './actions'
 
-export default async function SettingsPage() {
+interface PageProps {
+  searchParams: Promise<{ tab?: string }>
+}
+
+export default async function SettingsPage({ searchParams }: PageProps) {
+  const { tab } = await searchParams
   // Get authenticated user
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -22,6 +29,11 @@ export default async function SettingsPage() {
 
   if (!profile) {
     redirect('/onboarding')
+  }
+
+  // Check page access - block leaders, volunteers, and members from settings page
+  if (!hasPageAccess(profile.role, 'settings')) {
+    redirect('/dashboard')
   }
 
   // Fetch church settings
@@ -43,13 +55,51 @@ export default async function SettingsPage() {
     .neq('id', profile.id)
     .order('first_name')
 
-  // Fetch locations
+  // Fetch locations with campus info
   const { data: locations } = await adminClient
     .from('locations')
-    .select('*')
+    .select(`
+      *,
+      campus:campuses (
+        id,
+        name,
+        color
+      )
+    `)
     .eq('church_id', profile.church_id)
     .eq('is_active', true)
     .order('name')
+
+  // Fetch campuses
+  const { data: campuses } = await adminClient
+    .from('campuses')
+    .select('*')
+    .eq('church_id', profile.church_id)
+    .eq('is_active', true)
+    .order('is_default', { ascending: false })
+    .order('name')
+
+  // Fetch agenda presets and ministries for presets tab (admin only)
+  const [presetsResult, ministriesResult] = await Promise.all([
+    adminClient
+      .from('agenda_item_presets')
+      .select(`
+        *,
+        ministry:ministries (id, name, color)
+      `)
+      .eq('church_id', profile.church_id)
+      .eq('is_active', true)
+      .order('title'),
+    adminClient
+      .from('ministries')
+      .select('id, name, color')
+      .eq('church_id', profile.church_id)
+      .eq('is_active', true)
+      .order('name'),
+  ])
+
+  const presets = presetsResult.data || []
+  const ministries = ministriesResult.data || []
 
   // Build the church settings data with role
   const churchSettings: ChurchSettingsData = {
@@ -75,7 +125,11 @@ export default async function SettingsPage() {
         church: churchSettings,
         members: (members || []) as Member[],
         locations: (locations || []) as Location[],
+        campuses: (campuses || []) as Campus[],
+        presets: presets as { id: string; title: string; description: string | null; duration_seconds: number; ministry_id: string | null; ministry: { id: string; name: string; color: string } | null }[],
+        ministries: ministries as { id: string; name: string; color: string }[],
       }}
+      defaultTab={tab}
     />
   )
 }

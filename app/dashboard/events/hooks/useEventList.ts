@@ -35,7 +35,8 @@ interface UseEventListReturn {
   pastEvents: Event[]
 
   // Permissions
-  canManage: boolean
+  canManage: boolean // Can create/edit/delete events (admin/owner only)
+  canManageContent: boolean // Can manage agenda, songs, positions (leader+)
   canDelete: boolean
 
   // Actions
@@ -113,7 +114,14 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
   }, [eventsQuery.error])
 
   // Permissions
+  // canManage: Can create/edit/delete events (admin/owner only)
   const canManage = useMemo(
+    () => ['owner', 'admin'].includes(userRole),
+    [userRole]
+  )
+
+  // canManageContent: Can manage agenda, songs, positions (leader+)
+  const canManageContent = useMemo(
     () => ['owner', 'admin', 'leader'].includes(userRole),
     [userRole]
   )
@@ -178,6 +186,7 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
 
     // Permissions
     canManage,
+    canManageContent,
     canDelete,
 
     // Actions

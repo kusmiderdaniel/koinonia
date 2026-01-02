@@ -16,11 +16,15 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { MapPin, Plus, Pencil, Trash2 } from 'lucide-react'
+import { SingleCampusPicker } from '@/components/CampusPicker'
+import { CampusBadge } from '@/components/CampusBadge'
 import type { useLocationManager } from '../hooks'
 import type { Location } from '../types'
+import type { Campus } from '../actions'
 
 interface LocationsTabProps {
   locations: Location[]
+  campuses: Campus[]
   locationManager: ReturnType<typeof useLocationManager>
   setLocations: (locations: Location[]) => void
   setError: (error: string | null) => void
@@ -29,6 +33,7 @@ interface LocationsTabProps {
 
 export const LocationsTab = memo(function LocationsTab({
   locations,
+  campuses,
   locationManager,
   setLocations,
   setError,
@@ -68,7 +73,12 @@ export const LocationsTab = memo(function LocationsTab({
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 mt-0.5 text-muted-foreground" />
                     <div>
-                      <div className="font-medium">{location.name}</div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{location.name}</span>
+                        {location.campus && (
+                          <CampusBadge name={location.campus.name} color={location.campus.color} size="sm" />
+                        )}
+                      </div>
                       {location.address && (
                         <div className="text-sm text-muted-foreground">{location.address}</div>
                       )}
@@ -144,6 +154,17 @@ export const LocationsTab = memo(function LocationsTab({
                 placeholder="e.g., Enter through side door"
               />
             </div>
+            {campuses.length > 0 && (
+              <div className="space-y-2">
+                <Label>Campus</Label>
+                <SingleCampusPicker
+                  campuses={campuses}
+                  selectedCampusId={locationManager.locationCampusId}
+                  onChange={locationManager.setLocationCampusId}
+                  placeholder="All campuses"
+                />
+              </div>
+            )}
           </div>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
             <AlertDialogCancel disabled={locationManager.isSavingLocation} className="rounded-full border-input bg-white dark:bg-zinc-950 px-4 py-2">Cancel</AlertDialogCancel>

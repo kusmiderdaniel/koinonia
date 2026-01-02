@@ -10,12 +10,23 @@ import {
   requireAdminPermission,
 } from './helpers'
 import type { EventInput } from './helpers'
+import { getUserCampusIds } from '@/lib/utils/campus'
 
 export async function getEvents(filters?: { status?: string; eventType?: string }) {
   const auth = await getAuthenticatedUserWithProfile()
   if (isAuthError(auth)) return { error: auth.error }
 
   const { user, profile, adminClient } = auth
+
+  const isVolunteer = profile.role === 'volunteer'
+  const isLeader = profile.role === 'leader'
+  const needsCampusFilter = isVolunteer || isLeader
+
+  // For volunteers and leaders, get their campus IDs for filtering
+  let userCampusIds: string[] = []
+  if (needsCampusFilter) {
+    userCampusIds = await getUserCampusIds(profile.id, adminClient)
+  }
 
   // Build events query
   let eventsQuery = adminClient
@@ -26,7 +37,8 @@ export async function getEvents(filters?: { status?: string; eventType?: string 
       created_by_profile:profiles!created_by (id, first_name, last_name),
       responsible_person:profiles!responsible_person_id (id, first_name, last_name, email),
       event_positions (id, quantity_needed, event_assignments (id)),
-      event_invitations (profile_id)
+      event_invitations (profile_id),
+      event_campuses (campus:campuses (id, name, color))
     `)
     .eq('church_id', profile.church_id)
     .order('start_time', { ascending: true })
@@ -54,7 +66,34 @@ export async function getEvents(filters?: { status?: string; eventType?: string 
 
   const filteredEvents = events?.filter((event) => {
     const invitedUserIds = event.event_invitations?.map((inv: { profile_id: string }) => inv.profile_id) || []
-    return canUserSeeEvent(profile.role, event.visibility, user.id, invitedUserIds)
+
+    // First check visibility permissions
+    if (!canUserSeeEvent(profile.role, event.visibility, user.id, invitedUserIds)) {
+      return false
+    }
+
+    // For volunteers and leaders, filter by campus - they can only see events in their campus
+    if (needsCampusFilter) {
+      const eventCampusIds: string[] = []
+      for (const ec of event.event_campuses || []) {
+        // Handle both array and object return types from Supabase
+        const campus = Array.isArray(ec.campus) ? ec.campus[0] : ec.campus
+        if (campus?.id) {
+          eventCampusIds.push(campus.id)
+        }
+      }
+
+      // If event has no campus, they can see it (church-wide event)
+      if (eventCampusIds.length === 0) return true
+
+      // If user has no campus, they can only see church-wide events
+      if (userCampusIds.length === 0) return false
+
+      // Check if any event campus matches user's campus
+      return eventCampusIds.some((campusId: string) => userCampusIds.includes(campusId))
+    }
+
+    return true
   })
 
   const transformedEvents = filteredEvents?.map((event) => {
@@ -64,7 +103,15 @@ export async function getEvents(filters?: { status?: string; eventType?: string 
     const filledPositions = event.event_positions?.reduce(
       (sum: number, p: { event_assignments: { id: string }[] | null }) => sum + (p.event_assignments?.length || 0), 0
     ) || 0
-    return { ...event, totalPositions, filledPositions }
+    // Transform event_campuses to campuses array (handle both array and object from Supabase)
+    const campuses: { id: string; name: string; color: string }[] = []
+    for (const ec of event.event_campuses || []) {
+      const campus = Array.isArray(ec.campus) ? ec.campus[0] : ec.campus
+      if (campus?.id) {
+        campuses.push(campus)
+      }
+    }
+    return { ...event, totalPositions, filledPositions, campuses }
   })
 
   return {
@@ -104,7 +151,8 @@ export async function getEvent(eventId: string) {
           assigned_by_profile:profiles!event_assignments_assigned_by_fkey (id, first_name, last_name)
         )
       ),
-      event_invitations (profile_id, profile:profiles (id, first_name, last_name))
+      event_invitations (profile_id, profile:profiles (id, first_name, last_name)),
+      event_campuses (campus:campuses (id, name, color))
     `)
     .eq('id', eventId)
     .eq('church_id', profile.church_id)
@@ -122,7 +170,30 @@ export async function getEvent(eventId: string) {
     return { error: 'Event not found' }
   }
 
-  return { data: event, role: profile.role }
+  // Transform event_campuses to campuses array (handle both array and object from Supabase)
+  const campuses: { id: string; name: string; color: string }[] = []
+  for (const ec of event.event_campuses || []) {
+    const campus = Array.isArray(ec.campus) ? ec.campus[0] : ec.campus
+    if (campus?.id) {
+      campuses.push(campus)
+    }
+  }
+
+  // For volunteers and leaders, check campus access
+  if (profile.role === 'volunteer' || profile.role === 'leader') {
+    const eventCampusIds = campuses.map(c => c.id)
+
+    // If event has campus restrictions, check if user is in one of them
+    if (eventCampusIds.length > 0) {
+      const userCampusIds = await getUserCampusIds(profile.id, adminClient)
+      const hasAccess = eventCampusIds.some((campusId: string) => userCampusIds.includes(campusId))
+      if (!hasAccess) {
+        return { error: 'Event not found' }
+      }
+    }
+  }
+
+  return { data: { ...event, campuses }, role: profile.role }
 }
 
 export async function createEvent(data: EventInput) {
@@ -134,7 +205,8 @@ export async function createEvent(data: EventInput) {
 
   const { user, profile, adminClient } = auth
 
-  const permError = requireManagePermission(profile.role, 'create events')
+  // Only admin/owner can create events (not leaders)
+  const permError = requireAdminPermission(profile.role, 'create events')
   if (permError) return { error: permError }
 
   const { data: event, error } = await adminClient
@@ -171,6 +243,15 @@ export async function createEvent(data: EventInput) {
     await adminClient.from('event_invitations').insert(invitations)
   }
 
+  // Save event campuses if provided
+  if (validated.data.campusIds && validated.data.campusIds.length > 0) {
+    const eventCampuses = validated.data.campusIds.map((campusId) => ({
+      event_id: event.id,
+      campus_id: campusId,
+    }))
+    await adminClient.from('event_campuses').insert(eventCampuses)
+  }
+
   revalidatePath('/dashboard/events')
   return { data: event }
 }
@@ -181,7 +262,8 @@ export async function updateEvent(eventId: string, data: Partial<EventInput>) {
 
   const { user, profile, adminClient } = auth
 
-  const permError = requireManagePermission(profile.role, 'update events')
+  // Only admin/owner can update event details (not leaders)
+  const permError = requireAdminPermission(profile.role, 'update events')
   if (permError) return { error: permError }
 
   const updateData: Record<string, unknown> = {}
@@ -217,6 +299,18 @@ export async function updateEvent(eventId: string, data: Partial<EventInput>) {
         profile_id: profileId,
       }))
       await adminClient.from('event_invitations').insert(invitations)
+    }
+  }
+
+  // Update event campuses if provided
+  if (data.campusIds !== undefined) {
+    await adminClient.from('event_campuses').delete().eq('event_id', eventId)
+    if (data.campusIds.length > 0) {
+      const eventCampuses = data.campusIds.map((campusId) => ({
+        event_id: eventId,
+        campus_id: campusId,
+      }))
+      await adminClient.from('event_campuses').insert(eventCampuses)
     }
   }
 

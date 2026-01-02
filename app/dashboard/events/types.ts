@@ -69,6 +69,12 @@ export interface EventInvitation {
   profile?: PersonBrief
 }
 
+export interface EventCampus {
+  id: string
+  name: string
+  color: string
+}
+
 export interface Event {
   id: string
   title: string
@@ -87,6 +93,7 @@ export interface Event {
   filledPositions: number
   created_by_profile: PersonBrief | null
   event_invitations?: EventInvitation[]
+  campuses?: EventCampus[]
 }
 
 export interface EventDetail extends Event {

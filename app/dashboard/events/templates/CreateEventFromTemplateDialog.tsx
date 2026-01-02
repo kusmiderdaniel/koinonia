@@ -180,11 +180,10 @@ export function CreateEventFromTemplateDialog({
           </div>
         </div>
 
-        <DialogFooter className="gap-3 border-0 bg-transparent">
+        <DialogFooter className="flex justify-end gap-3 pt-4 !bg-transparent !border-0">
           <Button
             type="button"
-            variant="outline"
-            className="rounded-full"
+            variant="outline-pill-muted"
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
           >
@@ -193,7 +192,7 @@ export function CreateEventFromTemplateDialog({
           <Button
             onClick={handleCreate}
             disabled={isLoading || selectedDates.length === 0}
-            className="rounded-full bg-brand hover:bg-brand/90 text-brand-foreground"
+            className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white !px-4 !py-2 disabled:!opacity-50"
           >
             {isLoading
               ? 'Creating...'

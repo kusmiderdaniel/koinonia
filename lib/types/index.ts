@@ -5,6 +5,12 @@ export interface Location {
   name: string
   address: string | null
   notes?: string | null
+  campus_id?: string | null
+  campus?: {
+    id: string
+    name: string
+    color: string
+  } | null
 }
 
 export interface Person {

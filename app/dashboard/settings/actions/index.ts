@@ -15,8 +15,18 @@ export {
   deleteLocation,
 } from './locations'
 
+// Campuses CRUD
+export {
+  getCampuses,
+  createCampus,
+  updateCampus,
+  deleteCampus,
+  setDefaultCampus,
+} from './campuses'
+export type { Campus } from './campuses'
+
 // Church preferences
 export { updateChurchPreferences } from './preferences'
 
 // Types
-export type { UpdateChurchInput, LocationInput, ChurchPreferencesInput } from './helpers'
+export type { UpdateChurchInput, LocationInput, ChurchPreferencesInput, CampusInput } from './helpers'

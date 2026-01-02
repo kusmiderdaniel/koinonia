@@ -15,10 +15,17 @@ export async function getLocations() {
 
   const { profile, adminClient } = auth
 
-  // Get active locations for this church
+  // Get active locations for this church with campus info
   const { data: locations, error } = await adminClient
     .from('locations')
-    .select('*')
+    .select(`
+      *,
+      campus:campuses (
+        id,
+        name,
+        color
+      )
+    `)
     .eq('church_id', profile.church_id)
     .eq('is_active', true)
     .order('name')
@@ -54,6 +61,7 @@ export async function createLocation(data: LocationInput) {
       name: validated.data.name,
       address: validated.data.address || null,
       notes: validated.data.notes || null,
+      campus_id: validated.data.campusId || null,
     })
     .select()
     .single()
@@ -84,13 +92,18 @@ export async function updateLocation(id: string, data: LocationInput) {
   if (permError) return { error: permError }
 
   // Update location
+  const updateData: Record<string, unknown> = {
+    name: validated.data.name,
+    address: validated.data.address || null,
+    notes: validated.data.notes || null,
+  }
+  if (validated.data.campusId !== undefined) {
+    updateData.campus_id = validated.data.campusId || null
+  }
+
   const { error } = await adminClient
     .from('locations')
-    .update({
-      name: validated.data.name,
-      address: validated.data.address || null,
-      notes: validated.data.notes || null,
-    })
+    .update(updateData)
     .eq('id', id)
     .eq('church_id', profile.church_id)
 

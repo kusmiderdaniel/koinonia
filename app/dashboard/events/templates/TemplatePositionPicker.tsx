@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
 import {
   Dialog,
   DialogContent,
@@ -12,13 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Users } from 'lucide-react'
+import { Users, ChevronDown, ChevronRight } from 'lucide-react'
 import { getMinistries, addTemplatePositions } from './actions'
 
 interface Role {
@@ -29,6 +22,7 @@ interface Role {
 interface Ministry {
   id: string
   name: string
+  color: string
   ministry_roles: Role[]
 }
 
@@ -61,7 +55,9 @@ export function TemplatePositionPicker({
 }: TemplatePositionPickerProps) {
   const [ministries, setMinistries] = useState<Ministry[]>([])
   const [selectedPositions, setSelectedPositions] = useState<SelectedPosition[]>([])
+  const [expandedMinistries, setExpandedMinistries] = useState<Set<string>>(new Set())
   const [isLoading, setIsLoading] = useState(false)
+  const [isAdding, setIsAdding] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -73,10 +69,27 @@ export function TemplatePositionPicker({
   }, [open])
 
   const loadMinistries = async () => {
+    setIsLoading(true)
     const result = await getMinistries()
     if (result.data) {
-      setMinistries(result.data)
+      const ministryData = result.data as Ministry[]
+      setMinistries(ministryData)
+      // Expand all ministries by default
+      setExpandedMinistries(new Set(ministryData.map(m => m.id)))
     }
+    setIsLoading(false)
+  }
+
+  const toggleMinistryExpanded = (ministryId: string) => {
+    setExpandedMinistries(prev => {
+      const next = new Set(prev)
+      if (next.has(ministryId)) {
+        next.delete(ministryId)
+      } else {
+        next.add(ministryId)
+      }
+      return next
+    })
   }
 
   const isPositionAlreadyAdded = (ministryId: string, roleId: string) => {
@@ -109,16 +122,16 @@ export function TemplatePositionPicker({
   const handleSubmit = async () => {
     if (selectedPositions.length === 0) return
 
-    setIsLoading(true)
+    setIsAdding(true)
     setError(null)
 
     const result = await addTemplatePositions(templateId, selectedPositions)
 
     if (result.error) {
       setError(result.error)
-      setIsLoading(false)
+      setIsAdding(false)
     } else {
-      setIsLoading(false)
+      setIsAdding(false)
       onSuccess()
     }
   }
@@ -127,119 +140,139 @@ export function TemplatePositionPicker({
     (m) => m.ministry_roles && m.ministry_roles.length > 0
   )
 
+  const totalRoles = ministriesWithRoles.reduce(
+    (sum, m) => sum + (m.ministry_roles?.length || 0),
+    0
+  )
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950">
         <DialogHeader>
           <DialogTitle>Add Positions</DialogTitle>
           <DialogDescription>
-            Select positions from ministries to add to this template.
+            Select roles to add as volunteer positions for this template.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4">
-          {error && (
-            <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md mb-4">
-              {error}
-            </div>
-          )}
+        {error && (
+          <div className="text-sm text-red-500 bg-red-50 dark:bg-red-950 p-3 rounded">
+            {error}
+          </div>
+        )}
 
-          {ministriesWithRoles.length === 0 ? (
-            <div className="text-center py-8">
-              <Users className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
-              <p className="text-sm text-muted-foreground">
-                No ministries with roles found.
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Create ministry roles first in the Ministries section.
-              </p>
-            </div>
-          ) : (
-            <div className="max-h-80 overflow-y-auto">
-              <Accordion type="multiple" className="w-full">
-                {ministriesWithRoles.map((ministry) => (
-                  <AccordionItem key={ministry.id} value={ministry.id}>
-                    <AccordionTrigger className="hover:no-underline">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{ministry.name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          ({ministry.ministry_roles.length} roles)
-                        </span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-2 pl-2">
-                        {ministry.ministry_roles.map((role) => {
-                          const alreadyAdded = isPositionAlreadyAdded(
-                            ministry.id,
-                            role.id
-                          )
-                          const isSelected = isPositionSelected(ministry.id, role.id)
+        {isLoading ? (
+          <div className="py-8 text-center text-muted-foreground">
+            Loading ministries...
+          </div>
+        ) : ministriesWithRoles.length === 0 ? (
+          <div className="text-center py-8">
+            <Users className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
+            <p className="text-sm text-muted-foreground">
+              No ministries with roles found.
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Create ministry roles first in the Ministries section.
+            </p>
+          </div>
+        ) : totalRoles === 0 ? (
+          <div className="py-8 text-center text-muted-foreground">
+            No roles defined in any ministry. Add roles to ministries first.
+          </div>
+        ) : (
+          <div className="border rounded-lg overflow-hidden">
+            <div className="h-[350px] overflow-y-auto p-4">
+              <div className="space-y-6">
+              {ministriesWithRoles.map((ministry) => {
+                const isExpanded = expandedMinistries.has(ministry.id)
+                return (
+                <div key={ministry.id}>
+                  <button
+                    type="button"
+                    onClick={() => toggleMinistryExpanded(ministry.id)}
+                    className="flex items-center gap-2 mb-3 w-full text-left hover:opacity-70 transition-opacity"
+                  >
+                    {isExpanded ? (
+                      <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    )}
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: ministry.color || '#6b7280' }}
+                    />
+                    <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
+                      {ministry.name}
+                    </h3>
+                    <span className="text-xs text-muted-foreground ml-1">
+                      ({ministry.ministry_roles.length})
+                    </span>
+                  </button>
+                  {isExpanded && (
+                  <div className="space-y-2 pl-6">
+                    {ministry.ministry_roles.map((role) => {
+                      const alreadyAdded = isPositionAlreadyAdded(
+                        ministry.id,
+                        role.id
+                      )
+                      const isSelected = isPositionSelected(ministry.id, role.id)
 
-                          return (
-                            <div
-                              key={role.id}
-                              className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
-                                alreadyAdded
-                                  ? 'opacity-50'
-                                  : isSelected
-                                  ? 'bg-brand/10'
-                                  : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'
-                              }`}
-                            >
-                              <Checkbox
-                                id={`${ministry.id}-${role.id}`}
-                                checked={isSelected}
-                                disabled={alreadyAdded}
-                                onCheckedChange={() =>
-                                  togglePosition(ministry.id, role.id, role.name)
-                                }
-                              />
-                              <Label
-                                htmlFor={`${ministry.id}-${role.id}`}
-                                className={`flex-1 cursor-pointer ${
-                                  alreadyAdded ? 'cursor-not-allowed' : ''
-                                }`}
-                              >
-                                {role.name}
-                                {alreadyAdded && (
-                                  <span className="text-xs text-muted-foreground ml-2">
-                                    (already added)
-                                  </span>
-                                )}
-                              </Label>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
+                      return (
+                        <label
+                          key={role.id}
+                          className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                            alreadyAdded
+                              ? 'opacity-50 cursor-not-allowed bg-muted/30'
+                              : isSelected
+                              ? 'bg-brand/10 border-brand/30'
+                              : 'hover:bg-muted/50'
+                          }`}
+                        >
+                          <Checkbox
+                            checked={isSelected}
+                            disabled={alreadyAdded}
+                            onCheckedChange={() =>
+                              togglePosition(ministry.id, role.id, role.name)
+                            }
+                          />
+                          <span className={`font-medium ${alreadyAdded ? 'text-muted-foreground' : ''}`}>
+                            {role.name}
+                          </span>
+                          {alreadyAdded && (
+                            <span className="text-xs text-muted-foreground ml-auto">
+                              (already added)
+                            </span>
+                          )}
+                        </label>
+                      )
+                    })}
+                  </div>
+                  )}
+                </div>
+              )})}
+              </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-        <DialogFooter className="gap-3 border-0 bg-transparent">
+        <DialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
           <Button
-            type="button"
-            variant="outline"
-            className="rounded-full"
+            variant="outline-pill-muted"
             onClick={() => onOpenChange(false)}
-            disabled={isLoading}
+            disabled={isAdding}
           >
             Cancel
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={isLoading || selectedPositions.length === 0}
-            className="rounded-full bg-brand hover:bg-brand/90 text-brand-foreground"
+            disabled={isAdding || selectedPositions.length === 0}
+            className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white !px-4 !py-2 disabled:!opacity-50"
           >
-            {isLoading
+            {isAdding
               ? 'Adding...'
-              : `Add ${selectedPositions.length} Position${
-                  selectedPositions.length !== 1 ? 's' : ''
-                }`}
+              : selectedPositions.length === 0
+              ? 'Select roles'
+              : `Add ${selectedPositions.length} position${selectedPositions.length > 1 ? 's' : ''}`}
           </Button>
         </DialogFooter>
       </DialogContent>

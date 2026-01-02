@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { MembersTable } from './members-table'
 import { OfflineMemberDialog } from './offline-member-dialog'
 import { InvitePopover } from './invite-popover'
+import { getUserCampusIds } from '@/lib/utils/campus'
 
 export default async function PeoplePage() {
   const supabase = await createClient()
@@ -36,8 +37,16 @@ export default async function PeoplePage() {
   }
 
   const isAdmin = profile.role === 'admin' || profile.role === 'owner'
+  const isLeader = profile.role === 'leader'
+  const canViewPending = isAdmin || isLeader
 
-  // Parallel fetch: members + admin-only data (pending count, join code)
+  // For leaders, get their campus IDs for filtering
+  let leaderCampusIds: string[] = []
+  if (isLeader) {
+    leaderCampusIds = await getUserCampusIds(profile.id, adminClient)
+  }
+
+  // Parallel fetch: members + pending count + church data
   const [membersResult, pendingResult, churchResult] = await Promise.all([
     // Always fetch members
     adminClient
@@ -45,13 +54,25 @@ export default async function PeoplePage() {
       .select('id, first_name, last_name, email, role, active, date_of_birth, sex, date_of_departure, reason_for_departure, baptism, baptism_date, member_type, created_at')
       .eq('church_id', profile.church_id)
       .order('created_at', { ascending: false }),
-    // Fetch pending count only for admins
-    isAdmin
-      ? adminClient
-          .from('pending_registrations')
-          .select('*', { count: 'exact', head: true })
-          .eq('church_id', profile.church_id)
-          .eq('status', 'pending')
+    // Fetch pending count for admins and leaders (leaders filtered by campus below)
+    canViewPending
+      ? (async () => {
+          let query = adminClient
+            .from('pending_registrations')
+            .select('*', { count: 'exact', head: true })
+            .eq('church_id', profile.church_id)
+            .eq('status', 'pending')
+
+          // Leaders only see pending registrations for their campus
+          if (isLeader && leaderCampusIds.length > 0) {
+            query = query.in('campus_id', leaderCampusIds)
+          } else if (isLeader) {
+            // Leader has no campus, so no pending registrations
+            return { count: 0 }
+          }
+
+          return query
+        })()
       : Promise.resolve({ count: 0 }),
     // Fetch church data (join code for admins, first_day_of_week for all)
     adminClient
@@ -70,24 +91,40 @@ export default async function PeoplePage() {
     console.error('Error fetching members:', membersError)
   }
 
-  // Then fetch ministry memberships with roles for all members
+  // Then fetch ministry memberships with roles and campus assignments for all members
   const memberIds = membersData?.map(m => m.id) || []
-  const { data: ministryMemberships } = memberIds.length > 0
-    ? await adminClient
-        .from('ministry_members')
-        .select(`
-          id,
-          profile_id,
-          ministries(id, name, color),
-          ministry_member_roles(
-            id,
-            ministry_roles(id, name)
-          )
-        `)
-        .in('profile_id', memberIds)
-    : { data: [] }
 
-  // Build a Map for O(1) lookups instead of O(n) filtering per member
+  const [ministryMembershipsResult, profileCampusesResult] = await Promise.all([
+    memberIds.length > 0
+      ? adminClient
+          .from('ministry_members')
+          .select(`
+            id,
+            profile_id,
+            ministries(id, name, color),
+            ministry_member_roles(
+              id,
+              ministry_roles(id, name)
+            )
+          `)
+          .in('profile_id', memberIds)
+      : Promise.resolve({ data: [] }),
+    memberIds.length > 0
+      ? adminClient
+          .from('profile_campuses')
+          .select(`
+            profile_id,
+            is_primary,
+            campus:campuses(id, name, color)
+          `)
+          .in('profile_id', memberIds)
+      : Promise.resolve({ data: [] }),
+  ])
+
+  const ministryMemberships = ministryMembershipsResult.data || []
+  const profileCampuses = profileCampusesResult.data || []
+
+  // Build Maps for O(1) lookups instead of O(n) filtering per member
   const ministryMembershipsByProfileId = new Map<string, typeof ministryMemberships>()
   for (const mm of ministryMemberships || []) {
     const existing = ministryMembershipsByProfileId.get(mm.profile_id) || []
@@ -95,9 +132,17 @@ export default async function PeoplePage() {
     ministryMembershipsByProfileId.set(mm.profile_id, existing)
   }
 
+  const campusesByProfileId = new Map<string, typeof profileCampuses>()
+  for (const pc of profileCampuses || []) {
+    const existing = campusesByProfileId.get(pc.profile_id) || []
+    existing.push(pc)
+    campusesByProfileId.set(pc.profile_id, existing)
+  }
+
   // Combine the data - flatten ministry_member_roles into individual entries
   const members = membersData?.map(member => {
     const memberMinistries = ministryMembershipsByProfileId.get(member.id) || []
+    const memberCampuses = campusesByProfileId.get(member.id) || []
 
     // Flatten: each role becomes a separate entry with the ministry info
     const ministryRoles: { id: string; role: { id: string; name: string } | null; ministry: { id: string; name: string; color: string } | null }[] = []
@@ -118,11 +163,40 @@ export default async function PeoplePage() {
       }
     }
 
+    // Transform campus data
+    const campuses = memberCampuses
+      .filter(pc => pc.campus)
+      .map(pc => {
+        const campus = Array.isArray(pc.campus) ? pc.campus[0] : pc.campus
+        return {
+          id: campus!.id,
+          name: campus!.name,
+          color: campus!.color,
+          is_primary: pc.is_primary,
+        }
+      })
+      .sort((a, b) => {
+        // Primary campus first, then alphabetical
+        if (a.is_primary !== b.is_primary) return a.is_primary ? -1 : 1
+        return a.name.localeCompare(b.name)
+      })
+
     return {
       ...member,
       ministry_members: ministryRoles,
+      campuses,
     }
   }) || []
+
+  // For leaders, filter members to only show those who share a campus with them
+  const filteredMembers = isLeader && leaderCampusIds.length > 0
+    ? members.filter(member => {
+        // If member has no campus, leaders can't see them
+        if (member.campuses.length === 0) return false
+        // Check if member has any campus that overlaps with leader's campuses
+        return member.campuses.some(c => leaderCampusIds.includes(c.id))
+      })
+    : members
 
   return (
     <div className="p-4 md:p-8">
@@ -130,10 +204,10 @@ export default async function PeoplePage() {
         <div>
           <h1 className="text-2xl font-bold">People</h1>
           <p className="text-muted-foreground">
-            {members?.length || 0} member{members?.length !== 1 ? 's' : ''} in your church
+            {filteredMembers?.length || 0} member{filteredMembers?.length !== 1 ? 's' : ''} {isLeader ? 'in your campus' : 'in your church'}
           </p>
         </div>
-        {isAdmin && (
+        {(isAdmin || isLeader) && (
           <div className="flex items-center gap-2 flex-wrap">
             {pendingCount > 0 && (
               <Button variant="outline" asChild className="!border !border-gray-300">
@@ -154,21 +228,21 @@ export default async function PeoplePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Church Members</CardTitle>
+          <CardTitle>{isLeader ? 'Campus Members' : 'Church Members'}</CardTitle>
           <CardDescription>
-            All members who have joined your church. {isAdmin && 'Click on a role to change it.'}
+            {isLeader ? 'Members in your campus.' : 'All members who have joined your church.'} {isAdmin && 'Click on a role to change it.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {members && members.length > 0 ? (
+          {filteredMembers && filteredMembers.length > 0 ? (
             <MembersTable
-              members={members}
+              members={filteredMembers}
               currentUserId={profile.id}
               currentUserRole={profile.role}
             />
           ) : (
             <p className="text-center text-muted-foreground py-8">
-              No members yet. Share your invite link to get started!
+              {isLeader ? 'No members in your campus yet.' : 'No members yet. Share your invite link to get started!'}
             </p>
           )}
         </CardContent>

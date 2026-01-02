@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { MinistriesPageClient } from './MinistriesPageClient'
+import { hasPageAccess } from '@/lib/permissions'
 import type { Ministry } from './types'
 
 export default async function MinistriesPage() {
@@ -22,6 +23,11 @@ export default async function MinistriesPage() {
 
   if (!profile) {
     redirect('/onboarding')
+  }
+
+  // Check page access - block volunteers and members from ministries page
+  if (!hasPageAccess(profile.role, 'ministries')) {
+    redirect('/dashboard')
   }
 
   // Fetch ministries server-side

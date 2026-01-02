@@ -52,7 +52,29 @@ export async function addAgendaItem(eventId: string, data: AgendaItemInput) {
     return { error: 'Failed to add agenda item' }
   }
 
+  // Auto-save to presets library if title exists and not already in library
+  if (validated.data.title) {
+    const { data: existingPreset } = await adminClient
+      .from('agenda_item_presets')
+      .select('id')
+      .eq('church_id', profile.church_id)
+      .eq('title', validated.data.title)
+      .eq('is_active', true)
+      .single()
+
+    if (!existingPreset) {
+      await adminClient.from('agenda_item_presets').insert({
+        church_id: profile.church_id,
+        title: validated.data.title,
+        description: validated.data.description || null,
+        duration_seconds: validated.data.durationSeconds,
+        ministry_id: validated.data.ministryId || null,
+      })
+    }
+  }
+
   revalidatePath('/dashboard/events')
+  revalidatePath('/dashboard/settings')
   return { data: agendaItem }
 }
 

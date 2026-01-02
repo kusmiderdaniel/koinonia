@@ -10,12 +10,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Home, Calendar, Users, Heart, Music, Settings, User, LogOut, CalendarOff } from 'lucide-react'
+import { Home, Calendar, Users, Heart, Music, Settings, User, LogOut, CalendarOff, CalendarSync } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { NotificationCenter } from '@/components/NotificationCenter'
 import { ProgressLink } from '@/components/ProgressLink'
 import { usePrefetchRoutes } from '@/lib/hooks'
+import { hasPageAccess, type PageKey } from '@/lib/permissions'
 
 interface SidebarContentProps {
   user: {
@@ -29,15 +30,15 @@ interface SidebarContentProps {
 }
 
 const navItems = [
-  { href: '/dashboard', label: 'Home', icon: Home },
-  { href: '/dashboard/events', label: 'Events', icon: Calendar },
-  { href: '/dashboard/people', label: 'People', icon: Users },
-  { href: '/dashboard/ministries', label: 'Ministries', icon: Heart },
-  { href: '/dashboard/songs', label: 'Songs', icon: Music },
+  { href: '/dashboard', label: 'Home', icon: Home, pageKey: 'dashboard' as PageKey },
+  { href: '/dashboard/events', label: 'Events', icon: Calendar, pageKey: 'events' as PageKey },
+  { href: '/dashboard/people', label: 'People', icon: Users, pageKey: 'people' as PageKey },
+  { href: '/dashboard/ministries', label: 'Ministries', icon: Heart, pageKey: 'ministries' as PageKey },
+  { href: '/dashboard/songs', label: 'Songs', icon: Music, pageKey: 'songs' as PageKey },
 ]
 
 const adminNavItems = [
-  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+  { href: '/dashboard/settings', label: 'Settings', icon: Settings, pageKey: 'settings' as PageKey },
 ]
 
 export function SidebarContent({ user, churchName, onNavigate }: SidebarContentProps) {
@@ -58,6 +59,10 @@ export function SidebarContent({ user, churchName, onNavigate }: SidebarContentP
   const isAdmin = user.role === 'admin' || user.role === 'owner'
   const initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase()
 
+  // Filter navigation items based on user role
+  const visibleNavItems = navItems.filter(item => hasPageAccess(user.role, item.pageKey))
+  const visibleAdminNavItems = adminNavItems.filter(item => hasPageAccess(user.role, item.pageKey))
+
   return (
     <div className="flex flex-col h-full bg-white dark:bg-zinc-950">
       {/* Logo/Church Name */}
@@ -70,7 +75,7 @@ export function SidebarContent({ user, churchName, onNavigate }: SidebarContentP
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1">
-        {navItems.map((item) => {
+        {visibleNavItems.map((item) => {
           const isActive = pathname === item.href
           return (
             <ProgressLink
@@ -91,14 +96,14 @@ export function SidebarContent({ user, churchName, onNavigate }: SidebarContentP
           )
         })}
 
-        {isAdmin && (
+        {visibleAdminNavItems.length > 0 && (
           <>
             <div className="pt-4 pb-2">
               <span className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Admin
               </span>
             </div>
-            {adminNavItems.map((item) => {
+            {visibleAdminNavItems.map((item) => {
               const isActive = pathname === item.href
               return (
                 <ProgressLink
@@ -156,6 +161,12 @@ export function SidebarContent({ user, churchName, onNavigate }: SidebarContentP
               <ProgressLink href="/dashboard/availability" onClick={handleNavClick}>
                 <CalendarOff />
                 Unavailability
+              </ProgressLink>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <ProgressLink href="/dashboard/calendar-integration" onClick={handleNavClick}>
+                <CalendarSync />
+                Calendar Integration
               </ProgressLink>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

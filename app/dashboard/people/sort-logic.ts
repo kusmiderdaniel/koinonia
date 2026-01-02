@@ -1,26 +1,5 @@
 import { SortRule, SortState, SORT_FIELDS } from './sort-types'
-
-interface Member {
-  id: string
-  first_name: string
-  last_name: string
-  email: string | null
-  role: string
-  active: boolean
-  date_of_birth: string | null
-  sex: string | null
-  date_of_departure: string | null
-  reason_for_departure: string | null
-  baptism: boolean
-  baptism_date: string | null
-  member_type: string
-  created_at: string
-  ministry_members: {
-    id: string
-    role: { id: string; name: string } | { id: string; name: string }[] | null
-    ministry: { id: string; name: string; color: string } | { id: string; name: string; color: string }[] | null
-  }[]
-}
+import { type Member } from './components/member-table-types'
 
 // Role hierarchy for sorting
 const roleOrder: Record<string, number> = {

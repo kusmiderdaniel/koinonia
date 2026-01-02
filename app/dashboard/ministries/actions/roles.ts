@@ -7,7 +7,49 @@ import {
   isAuthError,
   requireManagePermission,
 } from './helpers'
+import { getUserCampusIds } from '@/lib/utils/campus'
 import type { RoleInput } from './helpers'
+
+/**
+ * Check if a leader has access to a ministry based on campus
+ * Returns an error message if access is denied, null if allowed
+ */
+async function checkLeaderMinistryAccess(
+  profileId: string,
+  profileRole: string,
+  ministryId: string,
+  adminClient: ReturnType<typeof import('@/lib/supabase/server').createServiceRoleClient>
+): Promise<string | null> {
+  // Admin and owner can access all ministries
+  if (profileRole === 'admin' || profileRole === 'owner') {
+    return null
+  }
+
+  // For leaders, check campus access
+  if (profileRole === 'leader') {
+    // Get the ministry's campus
+    const { data: ministry } = await adminClient
+      .from('ministries')
+      .select('campus_id')
+      .eq('id', ministryId)
+      .single()
+
+    // If ministry has no campus, it's accessible to all
+    if (!ministry?.campus_id) {
+      return null
+    }
+
+    // Check if user is in the ministry's campus
+    const userCampusIds = await getUserCampusIds(profileId, adminClient)
+    if (!userCampusIds.includes(ministry.campus_id)) {
+      return 'You can only manage roles in ministries that belong to your campus'
+    }
+
+    return null
+  }
+
+  return 'You do not have permission to manage roles'
+}
 
 export async function getMinistryRoles(ministryId: string) {
   const auth = await getAuthenticatedUserWithProfile()
@@ -43,6 +85,10 @@ export async function createMinistryRole(ministryId: string, data: RoleInput) {
 
   const permError = requireManagePermission(profile.role, 'create roles')
   if (permError) return { error: permError }
+
+  // For leaders, check campus access
+  const campusError = await checkLeaderMinistryAccess(profile.id, profile.role, ministryId, adminClient)
+  if (campusError) return { error: campusError }
 
   // Get highest sort order
   const { data: existingRoles } = await adminClient
@@ -93,6 +139,19 @@ export async function updateMinistryRole(roleId: string, data: RoleInput) {
   const permError = requireManagePermission(profile.role, 'update roles')
   if (permError) return { error: permError }
 
+  // Get the role's ministry_id for campus check
+  const { data: role } = await adminClient
+    .from('ministry_roles')
+    .select('ministry_id')
+    .eq('id', roleId)
+    .single()
+
+  if (!role) return { error: 'Role not found' }
+
+  // For leaders, check campus access
+  const campusError = await checkLeaderMinistryAccess(profile.id, profile.role, role.ministry_id, adminClient)
+  if (campusError) return { error: campusError }
+
   const { error } = await adminClient
     .from('ministry_roles')
     .update({
@@ -121,6 +180,19 @@ export async function deleteMinistryRole(roleId: string) {
 
   const permError = requireManagePermission(profile.role, 'delete roles')
   if (permError) return { error: permError }
+
+  // Get the role's ministry_id for campus check
+  const { data: role } = await adminClient
+    .from('ministry_roles')
+    .select('ministry_id')
+    .eq('id', roleId)
+    .single()
+
+  if (!role) return { error: 'Role not found' }
+
+  // For leaders, check campus access
+  const campusError = await checkLeaderMinistryAccess(profile.id, profile.role, role.ministry_id, adminClient)
+  if (campusError) return { error: campusError }
 
   const { error } = await adminClient
     .from('ministry_roles')

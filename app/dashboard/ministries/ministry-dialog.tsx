@@ -13,8 +13,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { createMinistry, updateMinistry, getChurchLeaders, getMinistries } from './actions'
+import { createMinistry, updateMinistry, getChurchLeaders, getMinistries, getCampuses } from './actions'
 import { LeaderPicker } from './leader-picker'
+import { SingleCampusPicker } from '@/components/CampusPicker'
 
 interface Leader {
   id: string
@@ -24,12 +25,20 @@ interface Leader {
   role: string
 }
 
+interface Campus {
+  id: string
+  name: string
+  color: string
+  is_default: boolean
+}
+
 interface Ministry {
   id: string
   name: string
   description: string | null
   color: string
   leader_id: string | null
+  campus_id: string | null
   is_active?: boolean
   created_at?: string
   leader: {
@@ -37,6 +46,11 @@ interface Ministry {
     first_name: string
     last_name: string
     email: string | null
+  } | null
+  campus: {
+    id: string
+    name: string
+    color: string
   } | null
 }
 
@@ -69,14 +83,16 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
   const [description, setDescription] = useState('')
   const [color, setColor] = useState('#3B82F6')
   const [leaderId, setLeaderId] = useState<string>('')
+  const [campusId, setCampusId] = useState<string | null>(null)
   const [leaders, setLeaders] = useState<Leader[]>([])
+  const [campuses, setCampuses] = useState<Campus[]>([])
   const [allMinistries, setAllMinistries] = useState<MinistryBasic[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (open) {
-      // Load leaders and ministries
+      // Load leaders, ministries, and campuses
       getChurchLeaders().then((result) => {
         if (result.data) {
           setLeaders(result.data)
@@ -91,6 +107,11 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
           })))
         }
       })
+      getCampuses().then((result) => {
+        if (result.data) {
+          setCampuses(result.data)
+        }
+      })
 
       // Set form values
       if (ministry) {
@@ -98,11 +119,13 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
         setDescription(ministry.description || '')
         setColor(ministry.color)
         setLeaderId(ministry.leader?.id || '')
+        setCampusId(ministry.campus_id || null)
       } else {
         setName('')
         setDescription('')
         setColor('#3B82F6')
         setLeaderId('')
+        setCampusId(null)
       }
       setError(null)
     }
@@ -118,6 +141,7 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
       description: description || undefined,
       color,
       leaderId: leaderId || null,
+      campusId: campusId,
     }
 
     const result = ministry
@@ -210,6 +234,21 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
               </p>
             )}
           </div>
+
+          {campuses.length > 1 && (
+            <div className="space-y-2">
+              <Label>Campus</Label>
+              <SingleCampusPicker
+                campuses={campuses}
+                selectedCampusId={campusId}
+                onChange={setCampusId}
+                placeholder="All campuses"
+              />
+              <p className="text-sm text-muted-foreground">
+                Leave empty for a church-wide ministry
+              </p>
+            </div>
+          )}
 
           <DialogFooter className="!bg-transparent !border-0 !p-0 !mx-0 !mb-0 !mt-6">
             <Button

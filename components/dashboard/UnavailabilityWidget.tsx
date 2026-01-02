@@ -116,7 +116,7 @@ export function UnavailabilityWidget() {
     data.setError('')
   }, [dialogs, data])
 
-  const monthName = calendar.calendarMonth.toLocaleString('default', { month: 'long', year: 'numeric' })
+  const monthName = calendar.calendarMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })
 
   return (
     <>
@@ -184,10 +184,10 @@ export function UnavailabilityWidget() {
                   <span className="font-medium">Selected: </span>
                   {calendar.selectedEnd ? (
                     <span>
-                      {calendar.selectedStart.toLocaleDateString()} - {calendar.selectedEnd.toLocaleDateString()}
+                      {calendar.selectedStart.toLocaleDateString('en-US')} - {calendar.selectedEnd.toLocaleDateString('en-US')}
                     </span>
                   ) : (
-                    <span>{calendar.selectedStart.toLocaleDateString()}</span>
+                    <span>{calendar.selectedStart.toLocaleDateString('en-US')}</span>
                   )}
                 </div>
                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleClearSelection}>

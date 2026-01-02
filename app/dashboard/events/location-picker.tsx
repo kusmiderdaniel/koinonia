@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Search, MapPin, Plus } from 'lucide-react'
+import { CampusBadge } from '@/components/CampusBadge'
 import { getLocations, createLocation } from '../settings/actions'
 
 interface Location {
@@ -21,6 +22,12 @@ interface Location {
   name: string
   address: string | null
   notes: string | null
+  campus_id?: string | null
+  campus?: {
+    id: string
+    name: string
+    color: string
+  } | null
 }
 
 interface LocationPickerProps {
@@ -28,6 +35,7 @@ interface LocationPickerProps {
   onOpenChange: (open: boolean) => void
   selectedLocationId: string | null
   onSelect: (location: Location | null) => void
+  filterByCampusIds?: string[]
 }
 
 export function LocationPicker({
@@ -35,6 +43,7 @@ export function LocationPicker({
   onOpenChange,
   selectedLocationId,
   onSelect,
+  filterByCampusIds = [],
 }: LocationPickerProps) {
   const [locations, setLocations] = useState<Location[]>([])
   const [search, setSearch] = useState('')
@@ -68,15 +77,27 @@ export function LocationPicker({
   }, [open])
 
   const filteredLocations = useMemo(() => {
-    if (!debouncedSearch.trim()) return locations
+    let filtered = locations
 
-    const searchLower = debouncedSearch.toLowerCase()
-    return locations.filter(
-      (l) =>
-        l.name.toLowerCase().includes(searchLower) ||
-        l.address?.toLowerCase().includes(searchLower)
-    )
-  }, [locations, debouncedSearch])
+    // Filter by campus: show locations that match selected campus(es) OR have no campus (church-wide)
+    if (filterByCampusIds.length > 0) {
+      filtered = filtered.filter(
+        (l) => !l.campus_id || filterByCampusIds.includes(l.campus_id)
+      )
+    }
+
+    // Filter by search
+    if (debouncedSearch.trim()) {
+      const searchLower = debouncedSearch.toLowerCase()
+      filtered = filtered.filter(
+        (l) =>
+          l.name.toLowerCase().includes(searchLower) ||
+          l.address?.toLowerCase().includes(searchLower)
+      )
+    }
+
+    return filtered
+  }, [locations, debouncedSearch, filterByCampusIds])
 
   const handleSelect = (location: Location) => {
     onSelect(location)
@@ -98,6 +119,7 @@ export function LocationPicker({
       name: newName,
       address: newAddress || undefined,
       notes: newNotes || undefined,
+      campusId: filterByCampusIds.length > 0 ? filterByCampusIds[0] : null,
     })
 
     if (result.error) {
@@ -232,7 +254,12 @@ export function LocationPicker({
                           <div className="flex items-start gap-3">
                             <MapPin className="w-4 h-4 mt-0.5 text-muted-foreground" />
                             <div>
-                              <div className={isSelected ? 'font-medium' : ''}>{location.name}</div>
+                              <div className="flex items-center gap-2">
+                                <span className={isSelected ? 'font-medium' : ''}>{location.name}</span>
+                                {location.campus && (
+                                  <CampusBadge name={location.campus.name} color={location.campus.color} size="sm" />
+                                )}
+                              </div>
                               {location.address && (
                                 <div className="text-sm text-muted-foreground">
                                   {location.address}

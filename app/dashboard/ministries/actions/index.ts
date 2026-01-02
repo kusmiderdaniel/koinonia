@@ -30,6 +30,7 @@ export {
 export {
   getAllMinistriesWithMembers,
   getMinistryDetails,
+  getCampuses,
 } from './queries'
 
 // Types

@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { updateChurchSettings, regenerateJoinCode } from '../actions'
 import type { ChurchData, ChurchPreferences, ChurchSettingsData, Location, Member } from '../types'
+import type { Campus } from '../actions'
 
 const churchSettingsSchema = z.object({
   name: z.string().min(2, 'Church name must be at least 2 characters'),
@@ -24,6 +25,7 @@ export interface SettingsInitialData {
   church: ChurchSettingsData
   members: Member[]
   locations: Location[]
+  campuses: Campus[]
 }
 
 interface UseChurchSettingsReturn {
@@ -40,6 +42,7 @@ interface UseChurchSettingsReturn {
   // Initial data for other hooks
   members: Member[]
   locations: Location[]
+  campuses: Campus[]
   preferences: ChurchPreferences
 
   // Computed
@@ -58,6 +61,7 @@ interface UseChurchSettingsReturn {
   copyJoinCode: () => Promise<void>
   handleRegenerateJoinCode: () => Promise<void>
   setLocations: (locations: Location[]) => void
+  setCampuses: (campuses: Campus[]) => void
 }
 
 export function useChurchSettings(initialData?: SettingsInitialData): UseChurchSettingsReturn {
@@ -76,6 +80,7 @@ export function useChurchSettings(initialData?: SettingsInitialData): UseChurchS
   const [isRegeneratingCode, setIsRegeneratingCode] = useState(false)
   const [members, setMembers] = useState<Member[]>(initialData?.members || [])
   const [locations, setLocations] = useState<Location[]>(initialData?.locations || [])
+  const [campuses, setCampuses] = useState<Campus[]>(initialData?.campuses || [])
   const [preferences, setPreferences] = useState<ChurchPreferences>(
     initialData ? {
       timezone: initialData.church.timezone || 'America/New_York',
@@ -179,6 +184,7 @@ export function useChurchSettings(initialData?: SettingsInitialData): UseChurchS
     // Initial data
     members,
     locations,
+    campuses,
     preferences,
 
     // Computed
@@ -197,5 +203,6 @@ export function useChurchSettings(initialData?: SettingsInitialData): UseChurchS
     copyJoinCode,
     handleRegenerateJoinCode,
     setLocations,
+    setCampuses,
   }
 }

@@ -21,6 +21,7 @@ import { getEventTemplates, getEventTemplate, deleteEventTemplate } from './acti
 import { TemplateDialog } from './TemplateDialog'
 import { DetailPanelSkeleton } from '@/components/DynamicLoadingFallback'
 import { EventTypeBadge } from '@/components/EventTypeBadge'
+import { CampusBadge } from '@/components/CampusBadge'
 import { MobileBackHeader } from '@/components/MobileBackHeader'
 import { useIsMobile } from '@/lib/hooks'
 import { formatTimeString, formatDurationMinutes } from '@/lib/utils/format'
@@ -44,6 +45,12 @@ interface Person {
   email: string
 }
 
+interface Campus {
+  id: string
+  name: string
+  color: string
+}
+
 interface Template {
   id: string
   name: string
@@ -53,6 +60,8 @@ interface Template {
   location: Location | null
   responsible_person_id: string | null
   responsible_person: Person | null
+  campus_id: string | null
+  campus: Campus | null
   default_start_time: string
   default_duration_minutes: number
   visibility: string
@@ -69,6 +78,8 @@ interface TemplateDetail {
   location: Location | null
   responsible_person_id: string | null
   responsible_person: Person | null
+  campus_id: string | null
+  campus: Campus | null
   default_start_time: string
   default_duration_minutes: number
   visibility: string
@@ -200,9 +211,9 @@ export const TemplatesTab = memo(function TemplatesTab() {
 
   const templateListContent = (
     <div className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card ${isMobile ? 'w-full h-full' : 'w-80 flex-shrink-0'}`}>
-      {/* Search */}
-      <div className="p-3 border-b">
-        <div className="relative">
+      {/* Search + Add Button */}
+      <div className="p-3 border-b flex gap-2">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Search templates..."
@@ -211,6 +222,17 @@ export const TemplatesTab = memo(function TemplatesTab() {
             className="pl-9"
           />
         </div>
+        {canManage && (
+          <Button
+            variant="outline"
+            size="icon"
+            className="flex-shrink-0 rounded-full"
+            onClick={handleCreateTemplate}
+            title="Create template"
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+        )}
       </div>
 
       {/* Template List */}
@@ -252,8 +274,11 @@ export const TemplatesTab = memo(function TemplatesTab() {
                     : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'
                 }`}
               >
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <EventTypeBadge type={template.event_type} />
+                  {template.campus && (
+                    <CampusBadge name={template.campus.name} color={template.campus.color} size="sm" />
+                  )}
                 </div>
                 <p className="font-medium truncate">{template.name}</p>
                 <p className="text-xs text-muted-foreground">

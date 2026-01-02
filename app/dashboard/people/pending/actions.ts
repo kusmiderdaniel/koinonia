@@ -5,7 +5,9 @@ import {
   getAuthenticatedUserWithProfile,
   isAuthError,
   requireAdminPermission,
+  requireManagePermission,
 } from '@/lib/utils/server-auth'
+import { getUserCampusIds } from '@/lib/utils/campus'
 
 export async function getPendingRegistrations() {
   const auth = await getAuthenticatedUserWithProfile()
@@ -13,34 +15,63 @@ export async function getPendingRegistrations() {
 
   const { profile, adminClient } = auth
 
-  // Only admins can view pending registrations
-  const permError = requireAdminPermission(profile.role, 'view pending registrations')
+  // Leaders and above can view pending registrations
+  const permError = requireManagePermission(profile.role, 'view pending registrations')
   if (permError) return { error: permError }
 
-  const { data, error } = await adminClient
+  const isAdmin = profile.role === 'admin' || profile.role === 'owner'
+  const isLeader = profile.role === 'leader'
+
+  // For leaders, get their campus IDs for filtering
+  let leaderCampusIds: string[] = []
+  if (isLeader) {
+    leaderCampusIds = await getUserCampusIds(profile.id, adminClient)
+    if (leaderCampusIds.length === 0) {
+      // Leader has no campus, return empty data
+      return { data: [] }
+    }
+  }
+
+  let query = adminClient
     .from('pending_registrations')
-    .select('*')
+    .select(`
+      *,
+      campus:campuses (
+        id,
+        name,
+        color
+      )
+    `)
     .eq('church_id', profile.church_id)
     .eq('status', 'pending')
     .order('created_at', { ascending: false })
+
+  // Leaders can only see registrations for their campus
+  if (isLeader) {
+    query = query.in('campus_id', leaderCampusIds)
+  }
+
+  const { data, error } = await query
 
   if (error) {
     console.error('Error fetching pending registrations:', error)
     return { error: 'Failed to fetch pending registrations' }
   }
 
-  return { data }
+  return { data, isAdmin }
 }
 
-export async function approveRegistration(registrationId: string) {
+export async function approveRegistration(registrationId: string, campusId?: string) {
   const auth = await getAuthenticatedUserWithProfile()
   if (isAuthError(auth)) return { error: auth.error }
 
   const { profile, adminClient } = auth
 
-  // Only admins can approve registrations
-  const permError = requireAdminPermission(profile.role, 'approve registrations')
+  // Leaders and above can approve registrations
+  const permError = requireManagePermission(profile.role, 'approve registrations')
   if (permError) return { error: permError }
+
+  const isLeader = profile.role === 'leader'
 
   // Get the pending registration
   const { data: registration, error: fetchError } = await adminClient
@@ -58,7 +89,27 @@ export async function approveRegistration(registrationId: string) {
     return { error: 'Registration has already been processed' }
   }
 
-  // Create profile for the user
+  // For leaders, verify they can only approve registrations for their campus
+  if (isLeader) {
+    const leaderCampusIds = await getUserCampusIds(profile.id, adminClient)
+    if (!registration.campus_id || !leaderCampusIds.includes(registration.campus_id)) {
+      return { error: 'You can only approve registrations for your campus' }
+    }
+  }
+
+  // Use provided campusId, or fall back to registration's campus_id, or get default campus
+  let finalCampusId = campusId || registration.campus_id
+  if (!finalCampusId) {
+    const { data: defaultCampus } = await adminClient
+      .from('campuses')
+      .select('id')
+      .eq('church_id', registration.church_id)
+      .eq('is_default', true)
+      .single()
+    finalCampusId = defaultCampus?.id
+  }
+
+  // Create profile for the user with all collected information
   const profileId = crypto.randomUUID()
   const { error: profileError } = await adminClient
     .from('profiles')
@@ -69,6 +120,9 @@ export async function approveRegistration(registrationId: string) {
       first_name: registration.first_name,
       last_name: registration.last_name,
       email: registration.email,
+      phone: registration.phone || null,
+      date_of_birth: registration.date_of_birth || null,
+      sex: registration.sex || null,
       role: 'member',
       member_type: 'authenticated',
     })
@@ -76,6 +130,22 @@ export async function approveRegistration(registrationId: string) {
   if (profileError) {
     console.error('Error creating profile:', profileError)
     return { error: 'Failed to create member profile' }
+  }
+
+  // Create profile_campuses entry if campus is available
+  if (finalCampusId) {
+    const { error: campusError } = await adminClient
+      .from('profile_campuses')
+      .insert({
+        profile_id: profileId,
+        campus_id: finalCampusId,
+        is_primary: true,
+      })
+
+    if (campusError) {
+      console.error('Error assigning campus:', campusError)
+      // Continue anyway - campus can be assigned later
+    }
   }
 
   // Update registration status
@@ -107,9 +177,11 @@ export async function rejectRegistration(registrationId: string, reason?: string
 
   const { profile, adminClient } = auth
 
-  // Only admins can reject registrations
-  const permError = requireAdminPermission(profile.role, 'reject registrations')
+  // Leaders and above can reject registrations
+  const permError = requireManagePermission(profile.role, 'reject registrations')
   if (permError) return { error: permError }
+
+  const isLeader = profile.role === 'leader'
 
   // Get the pending registration
   const { data: registration, error: fetchError } = await adminClient
@@ -125,6 +197,14 @@ export async function rejectRegistration(registrationId: string, reason?: string
 
   if (registration.status !== 'pending') {
     return { error: 'Registration has already been processed' }
+  }
+
+  // For leaders, verify they can only reject registrations for their campus
+  if (isLeader) {
+    const leaderCampusIds = await getUserCampusIds(profile.id, adminClient)
+    if (!registration.campus_id || !leaderCampusIds.includes(registration.campus_id)) {
+      return { error: 'You can only reject registrations for your campus' }
+    }
   }
 
   // Update registration status to rejected
@@ -207,6 +287,40 @@ export async function linkRegistrationToProfile(registrationId: string, profileI
   if (linkError) {
     console.error('Error linking profile:', linkError)
     return { error: 'Failed to link profile to user' }
+  }
+
+  // If registration has campus_id, add to profile_campuses if not already assigned
+  if (registration.campus_id) {
+    // Check if profile already has this campus
+    const { data: existingCampus } = await adminClient
+      .from('profile_campuses')
+      .select('id')
+      .eq('profile_id', profileId)
+      .eq('campus_id', registration.campus_id)
+      .single()
+
+    if (!existingCampus) {
+      // Check if profile has any campuses
+      const { data: anyCampus } = await adminClient
+        .from('profile_campuses')
+        .select('id')
+        .eq('profile_id', profileId)
+        .limit(1)
+        .single()
+
+      const { error: campusError } = await adminClient
+        .from('profile_campuses')
+        .insert({
+          profile_id: profileId,
+          campus_id: registration.campus_id,
+          is_primary: !anyCampus, // Make primary if first campus
+        })
+
+      if (campusError) {
+        console.error('Error assigning campus to linked profile:', campusError)
+        // Continue anyway
+      }
+    }
   }
 
   // Update registration status

@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Users, Pencil, Plus, Trash2 } from 'lucide-react'
 import { LoadingState } from '@/components/LoadingState'
+import { CampusBadge } from '@/components/CampusBadge'
 import { MemberPicker } from '../member-picker'
 import { MemberRow } from './MemberRow'
 import type { Ministry, Role, MinistryMember } from '../types'
@@ -81,8 +82,11 @@ export function MinistryDetailPanel({
             style={{ backgroundColor: ministry.color }}
           />
           <div className="flex-1">
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 flex-wrap">
               {ministry.name}
+              {ministry.campus && (
+                <CampusBadge name={ministry.campus.name} color={ministry.campus.color} size="sm" />
+              )}
               {canManage && (
                 <Button
                   variant="ghost"

@@ -158,3 +158,32 @@ export async function getMinistryDetails(ministryId: string) {
     }
   }
 }
+
+interface Campus {
+  id: string
+  name: string
+  color: string
+  is_default: boolean
+}
+
+export async function getCampuses(): Promise<{ data?: Campus[]; error?: string }> {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  const { data: campuses, error } = await adminClient
+    .from('campuses')
+    .select('id, name, color, is_default')
+    .eq('church_id', profile.church_id)
+    .eq('is_active', true)
+    .order('is_default', { ascending: false })
+    .order('name')
+
+  if (error) {
+    console.error('Error fetching campuses:', error)
+    return { error: 'Failed to fetch campuses' }
+  }
+
+  return { data: campuses || [] }
+}

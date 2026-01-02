@@ -22,6 +22,7 @@ const templateSchema = z.object({
   defaultStartTime: z.string().regex(/^\d{2}:\d{2}$/, 'Invalid time format (HH:MM)'),
   defaultDurationMinutes: z.number().int().positive().default(120),
   visibility: z.enum(['members', 'volunteers', 'leaders', 'hidden']).default('members'),
+  campusId: z.string().uuid().nullable().optional(),
 })
 
 type TemplateInput = z.infer<typeof templateSchema>
@@ -62,6 +63,11 @@ export async function getEventTemplates() {
         last_name,
         email
       ),
+      campus:campuses (
+        id,
+        name,
+        color
+      ),
       event_template_agenda_items (
         id
       ),
@@ -91,7 +97,8 @@ export async function getEventTemplates() {
 
   return {
     data: transformedTemplates,
-    canManage: ['owner', 'admin', 'leader'].includes(profile.role),
+    // Only admin/owner can manage templates (leaders can view only)
+    canManage: ['owner', 'admin'].includes(profile.role),
   }
 }
 
@@ -116,6 +123,11 @@ export async function getEventTemplate(templateId: string) {
         first_name,
         last_name,
         email
+      ),
+      campus:campuses (
+        id,
+        name,
+        color
       ),
       event_template_agenda_items (
         *,
@@ -155,7 +167,8 @@ export async function getEventTemplate(templateId: string) {
 
   return {
     data: template,
-    canManage: ['owner', 'admin', 'leader'].includes(profile.role),
+    // Only admin/owner can manage templates (leaders can view only)
+    canManage: ['owner', 'admin'].includes(profile.role),
     canDelete: ['owner', 'admin'].includes(profile.role),
   }
 }
@@ -172,7 +185,8 @@ export async function createEventTemplate(data: TemplateInput) {
 
   const { user, profile, adminClient } = auth
 
-  const permError = requireManagePermission(profile.role, 'create templates')
+  // Only admin/owner can create templates
+  const permError = requireAdminPermission(profile.role, 'create templates')
   if (permError) return { error: permError }
 
   // Create template
@@ -188,6 +202,7 @@ export async function createEventTemplate(data: TemplateInput) {
       default_start_time: validated.data.defaultStartTime + ':00', // Add seconds
       default_duration_minutes: validated.data.defaultDurationMinutes,
       visibility: validated.data.visibility,
+      campus_id: validated.data.campusId || null,
       created_by: profile.id,
     })
     .select()
@@ -212,7 +227,8 @@ export async function updateEventTemplate(templateId: string, data: Partial<Temp
 
   const { profile, adminClient } = auth
 
-  const permError = requireManagePermission(profile.role, 'update templates')
+  // Only admin/owner can update templates
+  const permError = requireAdminPermission(profile.role, 'update templates')
   if (permError) return { error: permError }
 
   // Build update object
@@ -225,6 +241,7 @@ export async function updateEventTemplate(templateId: string, data: Partial<Temp
   if (data.defaultStartTime !== undefined) updateData.default_start_time = data.defaultStartTime + ':00'
   if (data.defaultDurationMinutes !== undefined) updateData.default_duration_minutes = data.defaultDurationMinutes
   if (data.visibility !== undefined) updateData.visibility = data.visibility
+  if (data.campusId !== undefined) updateData.campus_id = data.campusId || null
 
   const { error } = await adminClient
     .from('event_templates')
@@ -271,6 +288,123 @@ export async function deleteEventTemplate(templateId: string) {
   return { success: true }
 }
 
+export async function duplicateEventTemplate(templateId: string) {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  const permError = requireAdminPermission(profile.role, 'duplicate templates')
+  if (permError) return { error: permError }
+
+  // Get the original template with all related data
+  const { data: original, error: fetchError } = await adminClient
+    .from('event_templates')
+    .select(`
+      *,
+      event_template_agenda_items (*),
+      event_template_positions (*)
+    `)
+    .eq('id', templateId)
+    .eq('church_id', profile.church_id)
+    .eq('is_active', true)
+    .single()
+
+  if (fetchError || !original) {
+    console.error('Error fetching template:', fetchError)
+    return { error: 'Template not found' }
+  }
+
+  // Create the duplicate template with " - copy" suffix
+  const { data: newTemplate, error: createError } = await adminClient
+    .from('event_templates')
+    .insert({
+      church_id: profile.church_id,
+      name: `${original.name} - copy`,
+      description: original.description,
+      event_type: original.event_type,
+      location_id: original.location_id,
+      responsible_person_id: original.responsible_person_id,
+      default_start_time: original.default_start_time,
+      default_duration_minutes: original.default_duration_minutes,
+      visibility: original.visibility,
+      campus_id: original.campus_id,
+      created_by: profile.id,
+    })
+    .select()
+    .single()
+
+  if (createError || !newTemplate) {
+    console.error('Error creating duplicate template:', createError)
+    if (createError?.code === '23505') {
+      return { error: 'A template with this name already exists. Please rename the original first.' }
+    }
+    return { error: 'Failed to duplicate template' }
+  }
+
+  // Copy agenda items
+  if (original.event_template_agenda_items && original.event_template_agenda_items.length > 0) {
+    const agendaItems = original.event_template_agenda_items.map((item: {
+      title: string
+      description: string | null
+      duration_seconds: number
+      is_song_placeholder: boolean
+      ministry_id: string | null
+      sort_order: number
+    }) => ({
+      template_id: newTemplate.id,
+      title: item.title,
+      description: item.description,
+      duration_seconds: item.duration_seconds,
+      is_song_placeholder: item.is_song_placeholder,
+      ministry_id: item.ministry_id,
+      sort_order: item.sort_order,
+    }))
+
+    const { error: agendaError } = await adminClient
+      .from('event_template_agenda_items')
+      .insert(agendaItems)
+
+    if (agendaError) {
+      console.error('Error copying agenda items:', agendaError)
+      // Template was created, but agenda items failed - continue anyway
+    }
+  }
+
+  // Copy positions
+  if (original.event_template_positions && original.event_template_positions.length > 0) {
+    const positions = original.event_template_positions.map((pos: {
+      ministry_id: string
+      role_id: string | null
+      title: string
+      quantity_needed: number
+      notes: string | null
+      sort_order: number | null
+    }) => ({
+      template_id: newTemplate.id,
+      ministry_id: pos.ministry_id,
+      role_id: pos.role_id,
+      title: pos.title,
+      quantity_needed: pos.quantity_needed,
+      notes: pos.notes,
+      sort_order: pos.sort_order,
+    }))
+
+    const { error: positionsError } = await adminClient
+      .from('event_template_positions')
+      .insert(positions)
+
+    if (positionsError) {
+      console.error('Error copying positions:', positionsError)
+      // Template was created, but positions failed - continue anyway
+    }
+  }
+
+  revalidatePath('/dashboard/events')
+
+  return { data: { templateId: newTemplate.id } }
+}
+
 // ============================================================================
 // TEMPLATE AGENDA ITEM ACTIONS
 // ============================================================================
@@ -287,7 +421,7 @@ export async function addTemplateAgendaItem(templateId: string, data: TemplateAg
 
   const { profile, adminClient } = auth
 
-  const permError = requireManagePermission(profile.role, 'modify templates')
+  const permError = requireAdminPermission(profile.role, 'modify templates')
   if (permError) return { error: permError }
 
   // Verify template belongs to user's church
@@ -339,7 +473,29 @@ export async function addTemplateAgendaItem(templateId: string, data: TemplateAg
     return { error: 'Failed to add agenda item' }
   }
 
+  // Auto-save to presets library if not a song placeholder and title exists
+  if (validated.data.title && !validated.data.isSongPlaceholder) {
+    const { data: existingPreset } = await adminClient
+      .from('agenda_item_presets')
+      .select('id')
+      .eq('church_id', profile.church_id)
+      .eq('title', validated.data.title)
+      .eq('is_active', true)
+      .single()
+
+    if (!existingPreset) {
+      await adminClient.from('agenda_item_presets').insert({
+        church_id: profile.church_id,
+        title: validated.data.title,
+        description: validated.data.description || null,
+        duration_seconds: validated.data.durationSeconds,
+        ministry_id: validated.data.ministryId || null,
+      })
+    }
+  }
+
   revalidatePath('/dashboard/events')
+  revalidatePath('/dashboard/settings')
 
   return { data: item }
 }
@@ -350,7 +506,7 @@ export async function updateTemplateAgendaItem(itemId: string, data: Partial<Tem
 
   const { profile, adminClient } = auth
 
-  const permError = requireManagePermission(profile.role, 'modify templates')
+  const permError = requireAdminPermission(profile.role, 'modify templates')
   if (permError) return { error: permError }
 
   // Build update object
@@ -382,7 +538,7 @@ export async function removeTemplateAgendaItem(itemId: string) {
 
   const { profile, adminClient } = auth
 
-  const permError = requireManagePermission(profile.role, 'modify templates')
+  const permError = requireAdminPermission(profile.role, 'modify templates')
   if (permError) return { error: permError }
 
   const { error } = await adminClient
@@ -406,7 +562,7 @@ export async function reorderTemplateAgendaItems(templateId: string, itemIds: st
 
   const { profile, adminClient } = auth
 
-  const permError = requireManagePermission(profile.role, 'modify templates')
+  const permError = requireAdminPermission(profile.role, 'modify templates')
   if (permError) return { error: permError }
 
   // Update sort_order for each item
@@ -444,7 +600,7 @@ export async function addTemplatePositions(
 
   const { profile, adminClient } = auth
 
-  const permError = requireManagePermission(profile.role, 'modify templates')
+  const permError = requireAdminPermission(profile.role, 'modify templates')
   if (permError) return { error: permError }
 
   // Verify template belongs to user's church
@@ -514,7 +670,7 @@ export async function updateTemplatePosition(
 
   const { profile, adminClient } = auth
 
-  const permError = requireManagePermission(profile.role, 'modify templates')
+  const permError = requireAdminPermission(profile.role, 'modify templates')
   if (permError) return { error: permError }
 
   // Build update object
@@ -544,7 +700,7 @@ export async function removeTemplatePosition(positionId: string) {
 
   const { profile, adminClient } = auth
 
-  const permError = requireManagePermission(profile.role, 'modify templates')
+  const permError = requireAdminPermission(profile.role, 'modify templates')
   if (permError) return { error: permError }
 
   const { error } = await adminClient
@@ -572,7 +728,8 @@ export async function createEventFromTemplate(templateId: string, eventDate: str
 
   const { user, profile, adminClient } = auth
 
-  const permError = requireManagePermission(profile.role, 'create events')
+  // Only admin/owner can create events from templates
+  const permError = requireAdminPermission(profile.role, 'create events')
   if (permError) return { error: permError }
 
   // Get template with all related data
@@ -689,6 +846,21 @@ export async function createEventFromTemplate(templateId: string, eventDate: str
     }
   }
 
+  // Copy campus from template to event
+  if (template.campus_id) {
+    const { error: campusError } = await adminClient
+      .from('event_campuses')
+      .insert({
+        event_id: event.id,
+        campus_id: template.campus_id,
+      })
+
+    if (campusError) {
+      console.error('Error assigning campus to event:', campusError)
+      // Event was created, but campus assignment failed - still return event
+    }
+  }
+
   revalidatePath('/dashboard/events')
 
   return { data: { eventId: event.id } }
@@ -745,4 +917,33 @@ export async function getMinistries() {
   }
 
   return { data: ministries }
+}
+
+interface Campus {
+  id: string
+  name: string
+  color: string
+  is_default: boolean
+}
+
+export async function getCampuses(): Promise<{ data?: Campus[]; error?: string }> {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  const { data: campuses, error } = await adminClient
+    .from('campuses')
+    .select('id, name, color, is_default')
+    .eq('church_id', profile.church_id)
+    .eq('is_active', true)
+    .order('is_default', { ascending: false })
+    .order('name')
+
+  if (error) {
+    console.error('Error fetching campuses:', error)
+    return { error: 'Failed to fetch campuses' }
+  }
+
+  return { data: campuses || [] }
 }

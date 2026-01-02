@@ -1,5 +1,7 @@
 export { ChurchDetailsTab } from './ChurchDetailsTab'
 export { InviteMembersTab } from './InviteMembersTab'
 export { LocationsTab } from './LocationsTab'
+export { CampusesTab } from './CampusesTab'
 export { PreferencesTab } from './PreferencesTab'
 export { TransferOwnershipTab } from './TransferOwnershipTab'
+export { AgendaPresetsTab } from './AgendaPresetsTab'

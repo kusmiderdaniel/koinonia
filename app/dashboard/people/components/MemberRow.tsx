@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/popover'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { CampusBadge, CampusBadges } from '@/components/CampusBadge'
 import { InlineDateEditor } from './InlineDateEditor'
 import {
   type Member,
@@ -127,6 +128,19 @@ export const MemberRow = memo(function MemberRow({
           <span className={getRoleBadgeClasses(member.role)}>
             {member.role}
           </span>
+        )}
+      </TableCell>
+
+      {/* Campus */}
+      <TableCell>
+        {member.campuses && member.campuses.length > 0 ? (
+          <CampusBadges
+            campuses={member.campuses}
+            size="sm"
+            maxVisible={2}
+          />
+        ) : (
+          <span className="text-muted-foreground text-sm">—</span>
         )}
       </TableCell>
 

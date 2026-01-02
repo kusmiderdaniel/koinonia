@@ -207,6 +207,7 @@ export const MembersTable = memo(function MembersTable({ members, currentUserId,
                   </div>
                 </TableHead>
                 <TableHead>Role</TableHead>
+                <TableHead>Campus</TableHead>
                 <TableHead>Ministry Roles</TableHead>
                 <TableHead>
                   <div className="flex items-center gap-1">

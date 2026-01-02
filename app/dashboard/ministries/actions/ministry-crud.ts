@@ -24,6 +24,11 @@ export async function getMinistries() {
         first_name,
         last_name,
         email
+      ),
+      campus:campuses (
+        id,
+        name,
+        color
       )
     `)
     .eq('church_id', profile.church_id)
@@ -63,6 +68,7 @@ export async function createMinistry(data: MinistryInput) {
       description: validated.data.description || null,
       color: validated.data.color,
       leader_id: validated.data.leaderId || null,
+      campus_id: validated.data.campusId || null,
     })
     .select()
     .single()
@@ -109,14 +115,19 @@ export async function updateMinistry(id: string, data: MinistryInput) {
     return { error: 'You do not have permission to edit this ministry' }
   }
 
+  const updateData: Record<string, unknown> = {
+    name: validated.data.name,
+    description: validated.data.description || null,
+    color: validated.data.color,
+    leader_id: validated.data.leaderId || null,
+  }
+  if (validated.data.campusId !== undefined) {
+    updateData.campus_id = validated.data.campusId || null
+  }
+
   const { error } = await adminClient
     .from('ministries')
-    .update({
-      name: validated.data.name,
-      description: validated.data.description || null,
-      color: validated.data.color,
-      leader_id: validated.data.leaderId || null,
-    })
+    .update(updateData)
     .eq('id', id)
 
   if (error) {

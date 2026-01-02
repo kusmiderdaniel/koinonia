@@ -1,26 +1,5 @@
 import { FilterRule, FilterGroup, FilterState, FILTER_FIELDS } from './filter-types'
-
-interface Member {
-  id: string
-  first_name: string
-  last_name: string
-  email: string | null
-  role: string
-  active: boolean
-  date_of_birth: string | null
-  sex: string | null
-  date_of_departure: string | null
-  reason_for_departure: string | null
-  baptism: boolean
-  baptism_date: string | null
-  member_type: string
-  created_at: string
-  ministry_members: {
-    id: string
-    role: { id: string; name: string } | { id: string; name: string }[] | null
-    ministry: { id: string; name: string; color: string } | { id: string; name: string; color: string }[] | null
-  }[]
-}
+import { type Member } from './components/member-table-types'
 
 // Calculate age from date of birth
 function calculateAge(dateOfBirth: string | null): number | null {

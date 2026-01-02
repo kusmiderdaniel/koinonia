@@ -20,6 +20,7 @@ export const eventSchema = z.object({
   status: z.enum(['draft', 'published', 'cancelled']).default('draft'),
   visibility: z.enum(['members', 'volunteers', 'leaders', 'hidden']).default('members'),
   invitedUsers: z.array(z.string().uuid()).optional(),
+  campusIds: z.array(z.string().uuid()).optional(),
 })
 
 export type EventInput = z.infer<typeof eventSchema>

@@ -27,9 +27,10 @@ import {
 } from '@/components/ui/popover'
 import { MapPin, X, User, Search, Eye, Lock, Check } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
-import { createEvent, updateEvent, getChurchMembers } from './actions'
+import { createEvent, updateEvent, getChurchMembers, getCampuses } from './actions'
 import { LocationPicker } from './location-picker'
 import { ResponsiblePersonPicker } from './responsible-person-picker'
+import { CampusPicker, type CampusOption } from '@/components/CampusPicker'
 import type { Event, Location, Person } from './types'
 
 interface EventDialogProps {
@@ -86,6 +87,8 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
   const [selectedResponsiblePerson, setSelectedResponsiblePerson] = useState<Person | null>(null)
   const [responsiblePersonPickerOpen, setResponsiblePersonPickerOpen] = useState(false)
   const [churchMembers, setChurchMembers] = useState<Person[]>([])
+  const [campuses, setCampuses] = useState<CampusOption[]>([])
+  const [selectedCampusIds, setSelectedCampusIds] = useState<string[]>([])
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
   const [visibility, setVisibility] = useState('members')
@@ -98,10 +101,16 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
 
   useEffect(() => {
     if (open) {
-      // Load church members for responsible person picker
-      getChurchMembers().then((result) => {
-        if (result.data) {
-          setChurchMembers(result.data as Person[])
+      // Load church members and campuses in parallel
+      Promise.all([
+        getChurchMembers(),
+        getCampuses(),
+      ]).then(([membersResult, campusesResult]) => {
+        if (membersResult.data) {
+          setChurchMembers(membersResult.data as Person[])
+        }
+        if (campusesResult.data) {
+          setCampuses(campusesResult.data)
         }
       })
 
@@ -114,6 +123,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
         setEndTime(formatDateTimeLocal(event.end_time))
         setVisibility(event.visibility || 'members')
         setInvitedUsers(event.event_invitations?.map(inv => inv.profile_id) || [])
+        setSelectedCampusIds(event.campuses?.map(c => c.id) || [])
       } else {
         setTitle('')
         setEventType('service')
@@ -123,10 +133,24 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
         setEndTime(getDefaultEndTime())
         setVisibility('members')
         setInvitedUsers([])
+        setSelectedCampusIds([])
       }
       setError(null)
     }
   }, [open, event])
+
+  // Clear location if it's not available for the selected campus(es)
+  const handleCampusChange = (newCampusIds: string[]) => {
+    setSelectedCampusIds(newCampusIds)
+
+    // If a location is selected and doesn't match the new campus selection, clear it
+    if (selectedLocation && selectedLocation.campus_id) {
+      // Location has a campus - check if it's in the new selection
+      if (newCampusIds.length > 0 && !newCampusIds.includes(selectedLocation.campus_id)) {
+        setSelectedLocation(null)
+      }
+    }
+  }
 
   // Auto-update end time when start time changes
   const handleStartTimeChange = (newStartTime: string) => {
@@ -170,6 +194,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
       status: 'published' as const,
       visibility: visibility as 'members' | 'volunteers' | 'leaders' | 'hidden',
       invitedUsers: visibility === 'hidden' ? invitedUsers : undefined,
+      campusIds: selectedCampusIds,
     }
 
     const result = event
@@ -189,7 +214,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950 max-h-[100dvh] sm:max-h-[90vh] flex flex-col w-full h-full sm:h-auto sm:w-auto fixed inset-0 sm:inset-auto sm:top-[50%] sm:left-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] rounded-none sm:rounded-lg">
+      <DialogContent className="sm:max-w-xl bg-white dark:bg-zinc-950 max-h-[100dvh] sm:max-h-[90vh] flex flex-col w-full h-full sm:h-auto sm:w-auto fixed inset-0 sm:inset-auto sm:top-[50%] sm:left-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] rounded-none sm:rounded-lg overflow-x-hidden">
         <DialogHeader>
           <DialogTitle>{isEditing ? 'Edit Event' : 'Create Event'}</DialogTitle>
           <DialogDescription>
@@ -199,7 +224,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 overflow-y-auto flex-1 pr-2">
+        <form onSubmit={handleSubmit} className="space-y-4 overflow-y-auto overflow-x-hidden flex-1">
           {error && (
             <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
               {error}
@@ -269,6 +294,20 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
               </Select>
             </div>
           </div>
+
+          {/* Campus Selection */}
+          {campuses.length > 0 && (
+            <div className="space-y-2">
+              <Label>Campus</Label>
+              <CampusPicker
+                campuses={campuses}
+                selectedCampusIds={selectedCampusIds}
+                onChange={handleCampusChange}
+                multiple={true}
+                placeholder="Select campus(es)..."
+              />
+            </div>
+          )}
 
           {visibility === 'hidden' && (
             <div className="space-y-2">
@@ -430,6 +469,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
             onOpenChange={setLocationPickerOpen}
             selectedLocationId={selectedLocation?.id || null}
             onSelect={setSelectedLocation}
+            filterByCampusIds={selectedCampusIds}
           />
 
           <div className="space-y-2">
@@ -503,7 +543,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
             </div>
           </div>
 
-          <DialogFooter className="flex justify-end gap-3 pt-4 !bg-transparent !border-0">
+          <DialogFooter className="flex justify-end gap-3 pt-4 !bg-transparent !border-0 !mx-0 !mb-0 !p-0">
             <Button
               type="button"
               variant="outline-pill-muted"

@@ -1,11 +1,18 @@
 // Shared types for the ministries module
 
+export interface MinistryCampus {
+  id: string
+  name: string
+  color: string
+}
+
 export interface Ministry {
   id: string
   name: string
   description: string | null
   color: string
   leader_id: string | null
+  campus_id: string | null
   is_active: boolean
   is_system: boolean
   created_at: string
@@ -15,6 +22,7 @@ export interface Ministry {
     last_name: string
     email: string | null
   } | null
+  campus: MinistryCampus | null
 }
 
 export interface Role {

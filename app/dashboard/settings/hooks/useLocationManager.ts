@@ -11,6 +11,7 @@ interface UseLocationManagerReturn {
   locationName: string
   locationAddress: string
   locationNotes: string
+  locationCampusId: string | null
   isSavingLocation: boolean
   deleteLocationDialogOpen: boolean
   locationToDelete: Location | null
@@ -19,6 +20,7 @@ interface UseLocationManagerReturn {
   setLocationName: (name: string) => void
   setLocationAddress: (address: string) => void
   setLocationNotes: (notes: string) => void
+  setLocationCampusId: (campusId: string | null) => void
   openLocationDialog: (location?: Location) => void
   closeLocationDialog: () => void
   openDeleteLocationDialog: (location: Location) => void
@@ -43,6 +45,7 @@ export function useLocationManager(): UseLocationManagerReturn {
   const [locationName, setLocationName] = useState('')
   const [locationAddress, setLocationAddress] = useState('')
   const [locationNotes, setLocationNotes] = useState('')
+  const [locationCampusId, setLocationCampusId] = useState<string | null>(null)
   const [isSavingLocation, setIsSavingLocation] = useState(false)
   const [deleteLocationDialogOpen, setDeleteLocationDialogOpen] = useState(false)
   const [locationToDelete, setLocationToDelete] = useState<Location | null>(null)
@@ -53,11 +56,13 @@ export function useLocationManager(): UseLocationManagerReturn {
       setLocationName(location.name)
       setLocationAddress(location.address || '')
       setLocationNotes(location.notes || '')
+      setLocationCampusId(location.campus_id || null)
     } else {
       setEditingLocation(null)
       setLocationName('')
       setLocationAddress('')
       setLocationNotes('')
+      setLocationCampusId(null)
     }
     setLocationDialogOpen(true)
   }, [])
@@ -68,6 +73,7 @@ export function useLocationManager(): UseLocationManagerReturn {
     setLocationName('')
     setLocationAddress('')
     setLocationNotes('')
+    setLocationCampusId(null)
   }, [])
 
   const openDeleteLocationDialog = useCallback((location: Location) => {
@@ -94,6 +100,7 @@ export function useLocationManager(): UseLocationManagerReturn {
         name: locationName,
         address: locationAddress || undefined,
         notes: locationNotes || undefined,
+        campusId: locationCampusId,
       }
 
       const result = editingLocation
@@ -113,7 +120,7 @@ export function useLocationManager(): UseLocationManagerReturn {
       }
       setIsSavingLocation(false)
     },
-    [editingLocation, locationName, locationAddress, locationNotes]
+    [editingLocation, locationName, locationAddress, locationNotes, locationCampusId]
   )
 
   const handleDeleteLocation = useCallback(
@@ -147,6 +154,7 @@ export function useLocationManager(): UseLocationManagerReturn {
     locationName,
     locationAddress,
     locationNotes,
+    locationCampusId,
     isSavingLocation,
     deleteLocationDialogOpen,
     locationToDelete,
@@ -155,6 +163,7 @@ export function useLocationManager(): UseLocationManagerReturn {
     setLocationName,
     setLocationAddress,
     setLocationNotes,
+    setLocationCampusId,
     openLocationDialog,
     closeLocationDialog,
     openDeleteLocationDialog,

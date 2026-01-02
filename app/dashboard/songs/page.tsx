@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { SongsPageClient } from './SongsPageClient'
+import { hasPageAccess } from '@/lib/permissions'
 import type { Song } from './types'
 
 export default async function SongsPage() {
@@ -22,6 +23,11 @@ export default async function SongsPage() {
 
   if (!profile) {
     redirect('/onboarding')
+  }
+
+  // Check page access - block volunteers and members from songs page
+  if (!hasPageAccess(profile.role, 'songs')) {
+    redirect('/dashboard')
   }
 
   // Fetch songs with tags server-side

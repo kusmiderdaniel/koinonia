@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import { CampusBadges } from '@/components/CampusBadge'
 import {
   type Member,
   type AssignableRole,
@@ -136,6 +137,14 @@ export const MemberCard = memo(function MemberCard({
           <p className="text-sm text-muted-foreground">
             {member.email || 'No email'}
           </p>
+
+          {/* Campus */}
+          {member.campuses && member.campuses.length > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Campus:</span>
+              <CampusBadges campuses={member.campuses} size="sm" maxVisible={3} />
+            </div>
+          )}
 
           {/* Ministry Roles */}
           {member.ministry_members && member.ministry_members.length > 0 && (

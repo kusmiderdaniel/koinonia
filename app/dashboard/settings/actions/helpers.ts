@@ -34,6 +34,7 @@ export const locationSchema = z.object({
   name: z.string().min(1, 'Location name is required'),
   address: z.string().optional(),
   notes: z.string().optional(),
+  campusId: z.string().uuid().nullable().optional(),
 })
 
 export type LocationInput = z.infer<typeof locationSchema>
@@ -49,3 +50,21 @@ export const churchPreferencesSchema = z.object({
 })
 
 export type ChurchPreferencesInput = z.infer<typeof churchPreferencesSchema>
+
+// ============================================================================
+// CAMPUS SCHEMA
+// ============================================================================
+
+export const campusSchema = z.object({
+  name: z.string().min(1, 'Campus name is required'),
+  description: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zipCode: z.string().optional(),
+  country: z.string().optional(),
+  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid color format').default('#3B82F6'),
+  isDefault: z.boolean().optional(),
+})
+
+export type CampusInput = z.infer<typeof campusSchema>

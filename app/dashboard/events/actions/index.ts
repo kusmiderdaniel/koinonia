@@ -50,6 +50,7 @@ export {
   getChurchMembers,
   getMinistriesWithRoles,
   getMinistryMembersForAgenda,
+  getCampuses,
 } from './queries'
 
 // Types

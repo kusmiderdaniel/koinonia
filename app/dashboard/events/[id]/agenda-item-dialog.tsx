@@ -20,7 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { ListChecks } from 'lucide-react'
 import { addAgendaItem, updateAgendaItem, getMinistriesWithRoles, getMinistryMembersForAgenda } from '../actions'
+import { getAgendaPresets } from '@/app/dashboard/settings/agenda-presets/actions'
+import { formatDuration } from '@/lib/utils/format'
 
 interface Leader {
   id: string
@@ -53,6 +56,15 @@ interface Member {
   email: string
 }
 
+interface Preset {
+  id: string
+  title: string
+  description: string | null
+  duration_seconds: number
+  ministry_id: string | null
+  ministry: Ministry | null
+}
+
 interface AgendaItemDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -76,9 +88,12 @@ export function AgendaItemDialog({
   const [leaderId, setLeaderId] = useState<string>('')
   const [ministries, setMinistries] = useState<Ministry[]>([])
   const [members, setMembers] = useState<Member[]>([])
+  const [presets, setPresets] = useState<Preset[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingMembers, setIsLoadingMembers] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const isEditing = !!item
 
   useEffect(() => {
     if (open) {
@@ -103,8 +118,8 @@ export function AgendaItemDialog({
       }
       setError(null)
 
-      // Load ministries and members for selection
-      loadMinistries()
+      // Load ministries, presets, and members for selection
+      loadData()
     }
   }, [open, item])
 
@@ -134,10 +149,32 @@ export function AgendaItemDialog({
     }
   }
 
-  const loadMinistries = async () => {
-    const result = await getMinistriesWithRoles()
-    if (result.data) {
-      setMinistries(result.data)
+  const loadData = async () => {
+    const [ministriesResult, presetsResult] = await Promise.all([
+      getMinistriesWithRoles(),
+      getAgendaPresets(),
+    ])
+    if (ministriesResult.data) {
+      setMinistries(ministriesResult.data)
+    }
+    if (presetsResult.data) {
+      setPresets(presetsResult.data as Preset[])
+    }
+  }
+
+  const handlePresetSelect = (presetId: string) => {
+    const preset = presets.find(p => p.id === presetId)
+    if (preset) {
+      setTitle(preset.title)
+      setDescription(preset.description || '')
+      const totalSeconds = preset.duration_seconds
+      const mins = Math.floor(totalSeconds / 60)
+      const secs = totalSeconds % 60
+      setDurationMinutes(mins.toString())
+      setDurationSeconds(secs.toString().padStart(2, '0'))
+      if (preset.ministry_id) {
+        setMinistryId(preset.ministry_id)
+      }
     }
   }
 
@@ -214,6 +251,39 @@ export function AgendaItemDialog({
             {error && (
               <div className="text-sm text-red-500 bg-red-50 dark:bg-red-950 p-3 rounded">
                 {error}
+              </div>
+            )}
+
+            {/* Preset selector - only show when adding new item and presets exist */}
+            {!isEditing && presets.length > 0 && (
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <ListChecks className="w-4 h-4" />
+                  Use Preset
+                </Label>
+                <Select onValueChange={handlePresetSelect}>
+                  <SelectTrigger className="bg-white dark:bg-zinc-950 border border-input">
+                    <SelectValue placeholder="Select a preset to auto-fill..." />
+                  </SelectTrigger>
+                  <SelectContent
+                    align="start"
+                    className="bg-white dark:bg-zinc-950 border border-input max-h-[200px]"
+                  >
+                    {presets.map((preset) => (
+                      <SelectItem key={preset.id} value={preset.id}>
+                        <div className="flex items-center justify-between gap-4">
+                          <span>{preset.title}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {formatDuration(preset.duration_seconds)}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Or fill in the fields manually below
+                </p>
               </div>
             )}
 
@@ -323,7 +393,7 @@ export function AgendaItemDialog({
               disabled={isLoading || !title.trim()}
               className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white !px-4 !py-2 disabled:!opacity-50"
             >
-              {isLoading ? 'Saving...' : item ? 'Save Changes' : 'Add Item'}
+              {isLoading ? 'Saving...' : isEditing ? 'Save Changes' : 'Add Item'}
             </Button>
           </DialogFooter>
         </form>

@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import { getMinistriesWithRoles, addMultiplePositions } from '../actions'
 
 interface Ministry {
@@ -46,6 +46,7 @@ export function PositionPicker({
 }: PositionPickerProps) {
   const [ministries, setMinistries] = useState<Ministry[]>([])
   const [selectedRoles, setSelectedRoles] = useState<SelectedRole[]>([])
+  const [expandedMinistries, setExpandedMinistries] = useState<Set<string>>(new Set())
   const [isLoading, setIsLoading] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -63,10 +64,24 @@ export function PositionPicker({
     const result = await getMinistriesWithRoles()
     if (result.data) {
       setMinistries(result.data)
+      // Expand all ministries by default
+      setExpandedMinistries(new Set(result.data.map(m => m.id)))
     } else if (result.error) {
       setError(result.error)
     }
     setIsLoading(false)
+  }
+
+  const toggleMinistryExpanded = (ministryId: string) => {
+    setExpandedMinistries(prev => {
+      const next = new Set(prev)
+      if (next.has(ministryId)) {
+        next.delete(ministryId)
+      } else {
+        next.add(ministryId)
+      }
+      return next
+    })
   }
 
   const toggleRole = (ministry: Ministry, role: Ministry['ministry_roles'][0]) => {
@@ -149,16 +164,28 @@ export function PositionPicker({
             No roles defined in any ministry. Add roles to ministries first.
           </div>
         ) : (
-          <ScrollArea className="max-h-[400px] pr-4">
-            <div className="space-y-6">
+          <div className="border rounded-lg overflow-hidden">
+            <div className="h-[350px] overflow-y-auto p-4">
+              <div className="space-y-6">
               {ministries.map((ministry) => {
                 if (!ministry.ministry_roles || ministry.ministry_roles.length === 0) {
                   return null
                 }
 
+                const isExpanded = expandedMinistries.has(ministry.id)
+
                 return (
                   <div key={ministry.id}>
-                    <div className="flex items-center gap-2 mb-3">
+                    <button
+                      type="button"
+                      onClick={() => toggleMinistryExpanded(ministry.id)}
+                      className="flex items-center gap-2 mb-3 w-full text-left hover:opacity-70 transition-opacity"
+                    >
+                      {isExpanded ? (
+                        <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                      )}
                       <div
                         className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: ministry.color }}
@@ -166,8 +193,12 @@ export function PositionPicker({
                       <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
                         {ministry.name}
                       </h3>
-                    </div>
-                    <div className="space-y-2 pl-5">
+                      <span className="text-xs text-muted-foreground ml-1">
+                        ({ministry.ministry_roles.length})
+                      </span>
+                    </button>
+                    {isExpanded && (
+                    <div className="space-y-2 pl-6">
                       {ministry.ministry_roles.map((role) => (
                         <label
                           key={role.id}
@@ -181,11 +212,13 @@ export function PositionPicker({
                         </label>
                       ))}
                     </div>
+                    )}
                   </div>
                 )
               })}
+              </div>
             </div>
-          </ScrollArea>
+          </div>
         )}
 
         <DialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">

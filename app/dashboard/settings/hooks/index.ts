@@ -1,4 +1,5 @@
 export { useChurchSettings } from './useChurchSettings'
 export { useLocationManager } from './useLocationManager'
+export { useCampusManager } from './useCampusManager'
 export { usePreferencesManager } from './usePreferencesManager'
 export { useOwnershipTransfer } from './useOwnershipTransfer'

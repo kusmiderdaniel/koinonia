@@ -26,15 +26,17 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { MapPin, X, Eye, Lock, User } from 'lucide-react'
-import { createEventTemplate, updateEventTemplate } from './actions'
+import { createEventTemplate, updateEventTemplate, getCampuses } from './actions'
 import { getChurchMembers } from '../actions'
 import { LocationPicker } from '../location-picker'
 import { ResponsiblePersonPicker } from '../responsible-person-picker'
+import { SingleCampusPicker } from '@/components/CampusPicker'
 
 interface Location {
   id: string
   name: string
   address: string | null
+  campus_id?: string | null
 }
 
 interface Person {
@@ -42,6 +44,13 @@ interface Person {
   first_name: string
   last_name: string
   email: string | null
+}
+
+interface Campus {
+  id: string
+  name: string
+  color: string
+  is_default: boolean
 }
 
 interface Template {
@@ -53,6 +62,8 @@ interface Template {
   location: Location | null
   responsible_person_id: string | null
   responsible_person: Person | null
+  campus_id: string | null
+  campus: { id: string; name: string; color: string } | null
   default_start_time: string
   default_duration_minutes: number
   visibility: string
@@ -104,6 +115,8 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess }: Temp
   const [selectedResponsiblePerson, setSelectedResponsiblePerson] = useState<Person | null>(null)
   const [responsiblePersonPickerOpen, setResponsiblePersonPickerOpen] = useState(false)
   const [churchMembers, setChurchMembers] = useState<Person[]>([])
+  const [campuses, setCampuses] = useState<Campus[]>([])
+  const [campusId, setCampusId] = useState<string | null>(null)
   const [defaultStartTime, setDefaultStartTime] = useState('09:00')
   const [defaultDurationMinutes, setDefaultDurationMinutes] = useState(120)
   const [visibility, setVisibility] = useState('members')
@@ -118,6 +131,12 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess }: Temp
           setChurchMembers(result.data as Person[])
         }
       })
+      // Load campuses
+      getCampuses().then((result) => {
+        if (result.data) {
+          setCampuses(result.data)
+        }
+      })
 
       if (template) {
         setName(template.name)
@@ -128,6 +147,7 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess }: Temp
         setDefaultStartTime(parseTime(template.default_start_time))
         setDefaultDurationMinutes(template.default_duration_minutes)
         setVisibility(template.visibility)
+        setCampusId(template.campus_id || null)
       } else {
         setName('')
         setDescription('')
@@ -137,10 +157,23 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess }: Temp
         setDefaultStartTime('09:00')
         setDefaultDurationMinutes(120)
         setVisibility('members')
+        setCampusId(null)
       }
       setError(null)
     }
   }, [open, template])
+
+  // Clear location if it's not available for the selected campus
+  const handleCampusChange = (newCampusId: string | null) => {
+    setCampusId(newCampusId)
+
+    // If a location is selected and doesn't match the new campus, clear it
+    if (selectedLocation && selectedLocation.campus_id) {
+      if (newCampusId && selectedLocation.campus_id !== newCampusId) {
+        setSelectedLocation(null)
+      }
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -156,6 +189,7 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess }: Temp
       defaultStartTime,
       defaultDurationMinutes,
       visibility: visibility as 'members' | 'volunteers' | 'leaders' | 'hidden',
+      campusId: campusId,
     }
 
     const result = template
@@ -304,10 +338,25 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess }: Temp
             />
           </div>
 
+          {campuses.length > 0 && (
+            <div className="space-y-2">
+              <Label>Campus</Label>
+              <SingleCampusPicker
+                campuses={campuses}
+                selectedCampusId={campusId}
+                onChange={handleCampusChange}
+                placeholder="All campuses"
+              />
+              <p className="text-sm text-muted-foreground">
+                Leave empty for a church-wide template
+              </p>
+            </div>
+          )}
+
           <div className="space-y-2">
             <Label>Default Location</Label>
             {selectedLocation ? (
-              <div className="flex items-center gap-2 p-3 border rounded-lg bg-muted/50">
+              <div className="flex items-center gap-2 p-3 border border-gray-300 dark:border-zinc-700 rounded-lg bg-muted/50">
                 <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate">{selectedLocation.name}</div>
@@ -331,7 +380,7 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess }: Temp
               <Button
                 type="button"
                 variant="outline"
-                className="w-full justify-start text-muted-foreground rounded-lg"
+                className="w-full justify-start text-muted-foreground rounded-lg !border !border-gray-300 dark:!border-zinc-700"
                 onClick={() => setLocationPickerOpen(true)}
               >
                 <MapPin className="w-4 h-4 mr-2" />
@@ -345,12 +394,13 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess }: Temp
             onOpenChange={setLocationPickerOpen}
             selectedLocationId={selectedLocation?.id || null}
             onSelect={setSelectedLocation}
+            filterByCampusIds={campusId ? [campusId] : []}
           />
 
           <div className="space-y-2">
             <Label>Responsible Person</Label>
             {selectedResponsiblePerson ? (
-              <div className="flex items-center gap-2 p-3 border rounded-lg bg-muted/50">
+              <div className="flex items-center gap-2 p-3 border border-gray-300 dark:border-zinc-700 rounded-lg bg-muted/50">
                 <User className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate">
@@ -376,7 +426,7 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess }: Temp
               <Button
                 type="button"
                 variant="outline"
-                className="w-full justify-start text-muted-foreground rounded-lg"
+                className="w-full justify-start text-muted-foreground rounded-lg !border !border-gray-300 dark:!border-zinc-700"
                 onClick={() => setResponsiblePersonPickerOpen(true)}
               >
                 <User className="w-4 h-4 mr-2" />

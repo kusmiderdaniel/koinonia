@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { EVENT_TYPE_LABELS } from '@/lib/constants/event'
 import { formatTimeFromDate } from '@/lib/utils/format'
+import { CampusBadges } from '@/components/CampusBadge'
 import type { Event } from './types'
 
 interface CalendarViewProps {
@@ -284,7 +285,12 @@ export const CalendarView = memo(function CalendarView({ events, firstDayOfWeek 
                               )}
                             />
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium truncate">{event.title}</p>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <p className="font-medium truncate">{event.title}</p>
+                                {event.campuses && event.campuses.length > 0 && (
+                                  <CampusBadges campuses={event.campuses} size="sm" maxVisible={1} />
+                                )}
+                              </div>
                               <p className="text-sm text-muted-foreground">
                                 {formatTimeFromDate(startTime)}
                                 {event.location && ` • ${event.location.name}`}

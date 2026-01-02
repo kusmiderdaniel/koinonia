@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { EventsPageClient } from './EventsPageClient'
 import { canUserSeeEvent } from './actions/helpers'
+import { hasPageAccess } from '@/lib/permissions'
+import { getUserCampusIds } from '@/lib/utils/campus'
 import type { Event, Member } from './types'
 
 export default async function EventsPage() {
@@ -25,6 +27,11 @@ export default async function EventsPage() {
     redirect('/onboarding')
   }
 
+  // Check page access - block members from events page
+  if (!hasPageAccess(profile.role, 'events')) {
+    redirect('/dashboard')
+  }
+
   // Parallel fetch: events, church settings, and church members
   const [eventsResult, churchResult, membersResult] = await Promise.all([
     adminClient
@@ -35,7 +42,8 @@ export default async function EventsPage() {
         created_by_profile:profiles!created_by (id, first_name, last_name),
         responsible_person:profiles!responsible_person_id (id, first_name, last_name, email),
         event_positions (id, quantity_needed, event_assignments (id)),
-        event_invitations (profile_id)
+        event_invitations (profile_id),
+        event_campuses (campus:campuses (id, name, color))
       `)
       .eq('church_id', profile.church_id)
       .order('start_time', { ascending: true }),
@@ -57,13 +65,50 @@ export default async function EventsPage() {
   const church = churchResult.data
   const members = membersResult.data || []
 
-  // Filter events based on visibility
+  const isVolunteer = profile.role === 'volunteer'
+  const isLeader = profile.role === 'leader'
+  const needsCampusFilter = isVolunteer || isLeader
+
+  // For volunteers and leaders, get their campus IDs for filtering
+  let userCampusIds: string[] = []
+  if (needsCampusFilter) {
+    userCampusIds = await getUserCampusIds(profile.id, adminClient)
+  }
+
+  // Filter events based on visibility and campus (for volunteers and leaders)
   const filteredEvents = events.filter((event) => {
     const invitedUserIds = event.event_invitations?.map((inv: { profile_id: string }) => inv.profile_id) || []
-    return canUserSeeEvent(profile.role, event.visibility, user.id, invitedUserIds)
+
+    // First check visibility permissions
+    if (!canUserSeeEvent(profile.role, event.visibility, user.id, invitedUserIds)) {
+      return false
+    }
+
+    // For volunteers and leaders, filter by campus - they can only see events in their campus
+    if (needsCampusFilter) {
+      const eventCampusIds: string[] = []
+      for (const ec of event.event_campuses || []) {
+        // Handle both array and object return types from Supabase
+        const campus = Array.isArray(ec.campus) ? ec.campus[0] : ec.campus
+        if (campus?.id) {
+          eventCampusIds.push(campus.id)
+        }
+      }
+
+      // If event has no campus, they can see it (church-wide event)
+      if (eventCampusIds.length === 0) return true
+
+      // If user has no campus, they can only see church-wide events
+      if (userCampusIds.length === 0) return false
+
+      // Check if any event campus matches user's campus
+      return eventCampusIds.some((campusId: string) => userCampusIds.includes(campusId))
+    }
+
+    return true
   })
 
-  // Transform events with position counts
+  // Transform events with position counts and campuses
   const transformedEvents = filteredEvents.map((event) => {
     const totalPositions = event.event_positions?.reduce(
       (sum: number, p: { quantity_needed: number }) => sum + p.quantity_needed, 0
@@ -71,7 +116,15 @@ export default async function EventsPage() {
     const filledPositions = event.event_positions?.reduce(
       (sum: number, p: { event_assignments: { id: string }[] | null }) => sum + (p.event_assignments?.length || 0), 0
     ) || 0
-    return { ...event, totalPositions, filledPositions }
+    // Transform event_campuses to campuses array (handle both array and object from Supabase)
+    const campuses: { id: string; name: string; color: string }[] = []
+    for (const ec of event.event_campuses || []) {
+      const campus = Array.isArray(ec.campus) ? ec.campus[0] : ec.campus
+      if (campus?.id) {
+        campuses.push(campus)
+      }
+    }
+    return { ...event, totalPositions, filledPositions, campuses }
   })
 
   return (

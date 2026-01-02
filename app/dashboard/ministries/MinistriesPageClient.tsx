@@ -10,6 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Plus, Users, Pencil, Trash2 } from 'lucide-react'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { MobileBackHeader } from '@/components/MobileBackHeader'
+import { CampusBadge } from '@/components/CampusBadge'
 import { useIsMobile } from '@/lib/hooks'
 import { MinistryDetailPanel, RoleDialog } from './components'
 import { useMinistryList, useMinistryDetail, useMinistryDialogs } from './hooks'
@@ -304,7 +305,7 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
                       style={{ backgroundColor: ministry.color }}
                     />
                     <div className="pl-2">
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <div
                           className="w-3 h-3 rounded-full flex-shrink-0"
                           style={{ backgroundColor: ministry.color }}
@@ -312,6 +313,9 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
                         <span className="font-medium truncate">{ministry.name}</span>
                         {!ministry.is_active && (
                           <Badge variant="secondary" className="text-xs">Inactive</Badge>
+                        )}
+                        {ministry.campus && (
+                          <CampusBadge name={ministry.campus.name} color={ministry.campus.color} size="sm" />
                         )}
                       </div>
                       {ministry.leader && (

@@ -22,6 +22,7 @@ import {
   Users,
   X,
   CalendarPlus,
+  Copy,
 } from 'lucide-react'
 import {
   DndContext,
@@ -42,7 +43,9 @@ import {
   reorderTemplateAgendaItems,
   removeTemplatePosition,
   updateTemplatePosition,
+  duplicateEventTemplate,
 } from './actions'
+import { toast } from 'sonner'
 import { TemplateAgendaItemDialog } from './TemplateAgendaItemDialog'
 import { TemplatePositionPicker } from './TemplatePositionPicker'
 import { CreateEventFromTemplateDialog } from './CreateEventFromTemplateDialog'
@@ -118,6 +121,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
   const [editingAgendaItem, setEditingAgendaItem] = useState<AgendaItem | null>(null)
   const [positionPickerOpen, setPositionPickerOpen] = useState(false)
   const [createEventDialogOpen, setCreateEventDialogOpen] = useState(false)
+  const [isDuplicating, setIsDuplicating] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -129,6 +133,19 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
       coordinateGetter: sortableKeyboardCoordinates,
     })
   )
+
+  const handleDuplicate = async () => {
+    setIsDuplicating(true)
+    const result = await duplicateEventTemplate(template.id)
+    setIsDuplicating(false)
+
+    if (result.error) {
+      toast.error(result.error)
+    } else {
+      toast.success(`Template duplicated as "${template.name} - copy"`)
+      onTemplateUpdated()
+    }
+  }
 
   const handleAddAgendaItem = (isSongPlaceholder: boolean = false) => {
     setEditingAgendaItem(isSongPlaceholder ? ({ is_song_placeholder: true } as AgendaItem) : null)
@@ -242,6 +259,10 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
                   <DropdownMenuItem onClick={onEdit}>
                     <Pencil className="w-4 h-4 mr-2" />
                     Edit Template
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleDuplicate} disabled={isDuplicating}>
+                    <Copy className="w-4 h-4 mr-2" />
+                    {isDuplicating ? 'Duplicating...' : 'Duplicate Template'}
                   </DropdownMenuItem>
                   {canDelete && (
                     <DropdownMenuItem onClick={onDelete} className="text-red-600">

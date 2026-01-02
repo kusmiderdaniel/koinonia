@@ -16,6 +16,7 @@ import { Search, FileText, Clock, MapPin, Settings, Music, Users } from 'lucide-
 import { getEventTemplates } from './actions'
 import { CreateEventFromTemplateDialog } from './CreateEventFromTemplateDialog'
 import { EventTypeBadge } from '@/components/EventTypeBadge'
+import { CampusBadge } from '@/components/CampusBadge'
 import { formatTimeString, formatDurationMinutes } from '@/lib/utils/format'
 
 interface Location {
@@ -30,6 +31,7 @@ interface Template {
   description: string | null
   event_type: string
   location: Location | null
+  campus?: { id: string; name: string; color: string } | null
   default_start_time: string
   default_duration_minutes: number
   agendaItemCount: number
@@ -154,8 +156,11 @@ export function TemplatePicker({
                   onClick={() => handleSelectTemplate(template)}
                   className="w-full text-left p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-muted/50 transition-colors"
                 >
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <EventTypeBadge type={template.event_type} />
+                    {template.campus && (
+                      <CampusBadge name={template.campus.name} color={template.campus.color} size="sm" />
+                    )}
                   </div>
                   <p className="font-semibold">{template.name}</p>
                   {template.description && (
