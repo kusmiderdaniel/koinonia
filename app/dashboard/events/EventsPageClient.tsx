@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useCallback, useState, useEffect, useRef } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -66,17 +66,22 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
   const eventDetail = useEventDetail()
   const dialogs = useEventDialogs()
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const hasHandledUrlParam = useRef(false)
 
   // Toggle between upcoming and past events in list view
   const [listFilter, setListFilter] = useState<'upcoming' | 'past'>('upcoming')
 
-  // Handle event query param from notification navigation
+  // Handle event query param from notification navigation (only once on mount)
   useEffect(() => {
     const eventId = searchParams.get('event')
-    if (eventId && !eventDetail.selectedEvent) {
+    if (eventId && !hasHandledUrlParam.current) {
+      hasHandledUrlParam.current = true
       eventDetail.loadEventDetail(eventId)
+      // Clear the URL param to prevent re-opening on state changes
+      router.replace('/dashboard/events', { scroll: false })
     }
-  }, [searchParams, eventDetail])
+  }, [searchParams, eventDetail, router])
 
   // Drag and drop sensors
   const sensors = useSensors(
