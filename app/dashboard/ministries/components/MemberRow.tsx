@@ -78,7 +78,7 @@ export const MemberRow = memo(function MemberRow({
                 <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-56 p-3 bg-white dark:bg-zinc-950" align="end">
+            <PopoverContent className="w-56 p-3 bg-white dark:bg-zinc-950 border border-gray-300 dark:border-zinc-700" align="end">
               <div className="space-y-2">
                 {allRoles.map((role) => (
                   <div key={role.id} className="flex items-center space-x-2">
@@ -100,7 +100,7 @@ export const MemberRow = memo(function MemberRow({
                 <Button variant="ghost" size="sm" onClick={handleCancel}>
                   Cancel
                 </Button>
-                <Button size="sm" onClick={handleSave}>
+                <Button size="sm" onClick={handleSave} className="!bg-brand hover:!bg-brand/90 !text-white">
                   Save
                 </Button>
               </div>

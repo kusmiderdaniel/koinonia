@@ -25,7 +25,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { MapPin, X, User, Search, Eye, Lock, Check } from 'lucide-react'
+import { MapPin, X, User, Search, Eye, Lock, Check, Building2 } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Checkbox } from '@/components/ui/checkbox'
 import { createEvent, updateEvent, getChurchMembers, getCampuses } from './actions'
 import { LocationPicker } from './location-picker'
@@ -88,6 +89,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
   const [responsiblePersonPickerOpen, setResponsiblePersonPickerOpen] = useState(false)
   const [churchMembers, setChurchMembers] = useState<Person[]>([])
   const [campuses, setCampuses] = useState<CampusOption[]>([])
+  const [campusesLoading, setCampusesLoading] = useState(true)
   const [selectedCampusIds, setSelectedCampusIds] = useState<string[]>([])
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
@@ -101,6 +103,8 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
 
   useEffect(() => {
     if (open) {
+      setCampusesLoading(true)
+
       // Load church members and campuses in parallel
       Promise.all([
         getChurchMembers(),
@@ -111,7 +115,15 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
         }
         if (campusesResult.data) {
           setCampuses(campusesResult.data)
+          // Auto-select default campus for new events
+          if (!event) {
+            const defaultCampus = campusesResult.data.find(c => c.is_default)
+            if (defaultCampus) {
+              setSelectedCampusIds([defaultCampus.id])
+            }
+          }
         }
+        setCampusesLoading(false)
       })
 
       if (event) {
@@ -133,7 +145,7 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
         setEndTime(getDefaultEndTime())
         setVisibility('members')
         setInvitedUsers([])
-        setSelectedCampusIds([])
+        // Don't reset to empty - the default campus will be set after loading
       }
       setError(null)
     }
@@ -296,9 +308,14 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
           </div>
 
           {/* Campus Selection */}
-          {campuses.length > 0 && (
-            <div className="space-y-2">
-              <Label>Campus</Label>
+          <div className="space-y-2">
+            <Label>Campus</Label>
+            {campusesLoading ? (
+              <div className="flex items-center gap-2 h-10 px-3 border border-gray-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-950">
+                <Building2 className="w-4 h-4 text-muted-foreground" />
+                <Skeleton className="h-4 w-32" />
+              </div>
+            ) : campuses.length > 0 ? (
               <CampusPicker
                 campuses={campuses}
                 selectedCampusIds={selectedCampusIds}
@@ -306,8 +323,8 @@ export const EventDialog = memo(function EventDialog({ open, onOpenChange, event
                 multiple={true}
                 placeholder="Select campus(es)..."
               />
-            </div>
-          )}
+            ) : null}
+          </div>
 
           {visibility === 'hidden' && (
             <div className="space-y-2">

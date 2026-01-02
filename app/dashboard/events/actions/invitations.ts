@@ -261,13 +261,15 @@ export async function respondToInvitation(
     return { error: 'Failed to update response' }
   }
 
-  // Update the notification
+  // Update the notification - mark as actioned AND read
   const { error: notifyError } = await adminClient
     .from('notifications')
     .update({
       is_actioned: true,
       action_taken: response,
       actioned_at: now,
+      is_read: true,
+      read_at: now,
     })
     .eq('assignment_id', assignmentId)
     .eq('type', 'position_invitation')

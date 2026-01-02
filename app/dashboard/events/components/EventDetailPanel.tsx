@@ -23,7 +23,9 @@ import {
   Check,
   XCircle,
   Clock as ClockIcon,
+  Printer,
 } from 'lucide-react'
+import Link from 'next/link'
 import {
   DndContext,
   closestCenter,
@@ -277,11 +279,21 @@ export const EventDetailPanel = memo(function EventDetailPanel({
 
         <TabsContent value="agenda" className="flex-1 overflow-y-auto p-6 pt-4 mt-0">
           <div className="flex items-center justify-between mb-4">
-            {sortedAgendaItems.length > 0 && (
-              <p className="text-sm text-muted-foreground">
-                {sortedAgendaItems.length} items • Total: {formatDuration(totalDuration)}
-              </p>
-            )}
+            <div className="flex items-center gap-3">
+              {sortedAgendaItems.length > 0 && (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    {sortedAgendaItems.length} items • Total: {formatDuration(totalDuration)}
+                  </p>
+                  <Link href={`/dashboard/events/${selectedEvent.id}/print`} target="_blank">
+                    <Button variant="ghost" size="sm" className="h-7 gap-1 text-muted-foreground hover:text-foreground">
+                      <Printer className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">Print</span>
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </div>
             {canManageContent && (
               <div className="flex gap-2 ml-auto">
                 <Button variant="outline-pill" size="sm" className="!border !border-gray-300 dark:!border-zinc-600" onClick={onAddAgendaItem}>
