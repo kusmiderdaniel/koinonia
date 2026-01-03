@@ -189,3 +189,134 @@ export async function regenerateJoinCode() {
 
   return { success: true, joinCode: newCode }
 }
+
+export async function uploadChurchLogo(formData: FormData) {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  // Only admins can upload church logo
+  const permError = requireRole(profile.role, ['owner', 'admin'], 'upload church logo')
+  if (permError) return { error: permError }
+
+  const file = formData.get('file') as File
+  if (!file) {
+    return { error: 'No file provided' }
+  }
+
+  // Validate file type
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+  if (!allowedTypes.includes(file.type)) {
+    return { error: 'Only JPEG, PNG, WebP, and GIF images are allowed' }
+  }
+
+  // Validate file size (max 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    return { error: 'Image size must be less than 5MB' }
+  }
+
+  // Get current logo to delete later
+  const { data: currentChurch } = await adminClient
+    .from('churches')
+    .select('logo_url')
+    .eq('id', profile.church_id)
+    .single()
+
+  // Generate unique file path
+  const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+  const fileName = `${profile.church_id}/${Date.now()}.${fileExt}`
+
+  // Upload to storage
+  const { error: uploadError } = await adminClient.storage
+    .from('church-logos')
+    .upload(fileName, file, {
+      upsert: true,
+    })
+
+  if (uploadError) {
+    console.error('Error uploading church logo:', uploadError)
+    return { error: 'Failed to upload image' }
+  }
+
+  // Get public URL
+  const { data: { publicUrl } } = adminClient.storage
+    .from('church-logos')
+    .getPublicUrl(fileName)
+
+  // Update church with new logo URL
+  const { error: updateError } = await adminClient
+    .from('churches')
+    .update({ logo_url: publicUrl })
+    .eq('id', profile.church_id)
+
+  if (updateError) {
+    // Clean up uploaded file
+    await adminClient.storage.from('church-logos').remove([fileName])
+    console.error('Error updating logo URL:', updateError)
+    return { error: 'Failed to save logo' }
+  }
+
+  // Delete old logo if exists
+  if (currentChurch?.logo_url) {
+    try {
+      const oldPath = currentChurch.logo_url.split('/church-logos/')[1]
+      if (oldPath) {
+        await adminClient.storage.from('church-logos').remove([oldPath])
+      }
+    } catch {
+      // Ignore errors when deleting old logo
+    }
+  }
+
+  revalidatePath('/dashboard')
+  revalidatePath('/dashboard/settings')
+  return { data: { logoUrl: publicUrl } }
+}
+
+export async function removeChurchLogo() {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  // Only admins can remove church logo
+  const permError = requireRole(profile.role, ['owner', 'admin'], 'remove church logo')
+  if (permError) return { error: permError }
+
+  // Get current logo
+  const { data: currentChurch } = await adminClient
+    .from('churches')
+    .select('logo_url')
+    .eq('id', profile.church_id)
+    .single()
+
+  if (!currentChurch?.logo_url) {
+    return { success: true }
+  }
+
+  // Delete from storage
+  try {
+    const path = currentChurch.logo_url.split('/church-logos/')[1]
+    if (path) {
+      await adminClient.storage.from('church-logos').remove([path])
+    }
+  } catch {
+    // Continue even if storage delete fails
+  }
+
+  // Clear logo_url in database
+  const { error: updateError } = await adminClient
+    .from('churches')
+    .update({ logo_url: null })
+    .eq('id', profile.church_id)
+
+  if (updateError) {
+    console.error('Error removing logo URL:', updateError)
+    return { error: 'Failed to remove logo' }
+  }
+
+  revalidatePath('/dashboard')
+  revalidatePath('/dashboard/settings')
+  return { success: true }
+}

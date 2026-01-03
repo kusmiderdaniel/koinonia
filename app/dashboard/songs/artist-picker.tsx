@@ -69,7 +69,7 @@ export const ArtistPicker = memo(function ArtistPicker({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="w-full justify-between !border !border-gray-300 dark:!border-gray-600"
+          className="w-full justify-between !border !border-black dark:!border-zinc-700"
         >
           <span className={value ? 'text-foreground' : 'text-muted-foreground'}>
             {value || 'Select or add artist...'}

@@ -1,38 +1,49 @@
-// Generate unique ID (fallback for browsers without crypto.randomUUID)
-function generateId(): string {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID()
-  }
-  // Fallback for older browsers
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`
-}
+// People-specific filter definitions
+// Re-export shared types for convenience
 
-// Filter field definitions
-export type FilterFieldType = 'text' | 'select' | 'boolean' | 'date' | 'number' | 'multiSelect'
+export {
+  type FilterState,
+  type FilterRule,
+  type FilterGroup,
+  type FilterFieldDefinition,
+  type FilterFieldType,
+  type OperatorsByType,
+  createEmptyFilterState,
+  createFilterRule,
+  createFilterGroup,
+  getDefaultOperator,
+  operatorNeedsValue,
+  countActiveFilters,
+} from '@/lib/filters/filter-types'
 
-export interface FilterFieldDefinition {
-  id: string
-  label: string
-  type: FilterFieldType
-  options?: { value: string; label: string }[]
-}
+import type { FilterFieldDefinition, OperatorsByType } from '@/lib/filters/filter-types'
 
-// Available fields for filtering
-export const FILTER_FIELDS: FilterFieldDefinition[] = [
+// People-specific filter fields
+export const PEOPLE_FILTER_FIELDS: FilterFieldDefinition[] = [
   { id: 'name', label: 'Name', type: 'text' },
   { id: 'email', label: 'Email', type: 'text' },
-  { id: 'role', label: 'Role', type: 'select', options: [
-    { value: 'owner', label: 'Owner' },
-    { value: 'admin', label: 'Admin' },
-    { value: 'leader', label: 'Leader' },
-    { value: 'volunteer', label: 'Volunteer' },
-    { value: 'member', label: 'Member' },
-  ]},
+  {
+    id: 'role',
+    label: 'Role',
+    type: 'select',
+    options: [
+      { value: 'owner', label: 'Owner' },
+      { value: 'admin', label: 'Admin' },
+      { value: 'leader', label: 'Leader' },
+      { value: 'volunteer', label: 'Volunteer' },
+      { value: 'member', label: 'Member' },
+    ],
+  },
   { id: 'active', label: 'Active', type: 'boolean' },
-  { id: 'sex', label: 'Sex', type: 'select', options: [
-    { value: 'male', label: 'Male' },
-    { value: 'female', label: 'Female' },
-  ]},
+  {
+    id: 'sex',
+    label: 'Sex',
+    type: 'select',
+    options: [
+      { value: 'male', label: 'Male' },
+      { value: 'female', label: 'Female' },
+    ],
+  },
   { id: 'date_of_birth', label: 'Date of Birth', type: 'date' },
   { id: 'age', label: 'Age', type: 'number' },
   { id: 'baptism', label: 'Baptized', type: 'boolean' },
@@ -42,8 +53,8 @@ export const FILTER_FIELDS: FilterFieldDefinition[] = [
   { id: 'ministry_roles', label: 'Ministry Roles', type: 'multiSelect' },
 ]
 
-// Operators by field type
-export const OPERATORS_BY_TYPE: Record<FilterFieldType, { value: string; label: string }[]> = {
+// People-specific operators (using 'is'/'is_not' naming convention)
+export const PEOPLE_OPERATORS_BY_TYPE: OperatorsByType = {
   text: [
     { value: 'contains', label: 'Contains' },
     { value: 'not_contains', label: 'Does not contain' },
@@ -88,72 +99,6 @@ export const OPERATORS_BY_TYPE: Record<FilterFieldType, { value: string; label: 
   ],
 }
 
-// Filter rule structure
-export interface FilterRule {
-  id: string
-  field: string
-  operator: string
-  value: string | boolean | null
-}
-
-// Filter group structure (supports nesting)
-export interface FilterGroup {
-  id: string
-  conjunction: 'and' | 'or'
-  rules: FilterRule[]
-  groups: FilterGroup[]
-}
-
-// Root filter state
-export interface FilterState {
-  conjunction: 'and' | 'or'
-  rules: FilterRule[]
-  groups: FilterGroup[]
-}
-
-// Helper to create empty filter state
-export function createEmptyFilterState(): FilterState {
-  return {
-    conjunction: 'and',
-    rules: [],
-    groups: [],
-  }
-}
-
-// Helper to create a new rule
-export function createFilterRule(): FilterRule {
-  return {
-    id: generateId(),
-    field: 'name',
-    operator: 'contains',
-    value: '',
-  }
-}
-
-// Helper to create a new group
-export function createFilterGroup(): FilterGroup {
-  return {
-    id: generateId(),
-    conjunction: 'and',
-    rules: [createFilterRule()],
-    groups: [],
-  }
-}
-
-// Get default operator for a field type
-export function getDefaultOperator(fieldType: FilterFieldType): string {
-  switch (fieldType) {
-    case 'text': return 'contains'
-    case 'select': return 'is'
-    case 'boolean': return 'is'
-    case 'date': return 'is'
-    case 'number': return 'eq'
-    case 'multiSelect': return 'contains'
-    default: return 'contains'
-  }
-}
-
-// Check if operator needs a value input
-export function operatorNeedsValue(operator: string): boolean {
-  return !['is_empty', 'is_not_empty'].includes(operator)
-}
+// Backwards compatibility exports
+export const FILTER_FIELDS = PEOPLE_FILTER_FIELDS
+export const OPERATORS_BY_TYPE = PEOPLE_OPERATORS_BY_TYPE

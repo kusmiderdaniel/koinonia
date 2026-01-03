@@ -1,10 +1,8 @@
-// Shared types for the songs feature
+// Songs module types
+import type { Tag } from '@/lib/types'
 
-export interface Tag {
-  id: string
-  name: string
-  color: string
-}
+// Re-export shared Tag type
+export type { Tag }
 
 export interface Attachment {
   id: string

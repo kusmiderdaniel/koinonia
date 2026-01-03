@@ -1,5 +1,8 @@
-import { SortRule, SortState, SORT_FIELDS } from './sort-types'
+import type { SortState } from './sort-types'
+import { countActiveSorts } from '@/lib/filters/sort-types'
 import { type Member } from './components/member-table-types'
+
+export { countActiveSorts }
 
 // Role hierarchy for sorting
 const roleOrder: Record<string, number> = {
@@ -99,7 +102,3 @@ export function applySorts(members: Member[], sortState: SortState): Member[] {
   })
 }
 
-// Count active sorts
-export function countActiveSorts(sortState: SortState): number {
-  return sortState.length
-}

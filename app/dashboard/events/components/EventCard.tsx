@@ -3,6 +3,7 @@
 import { memo } from 'react'
 import { EventTypeBadge } from '@/components/EventTypeBadge'
 import { CampusBadges } from '@/components/CampusBadge'
+import { SelectableCard } from '@/components/cards'
 import type { Event } from '../types'
 
 interface EventCardProps {
@@ -23,14 +24,7 @@ export const EventCard = memo(function EventCard({ event, isSelected, onClick }:
     : startDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
 
   return (
-    <button
-      onClick={onClick}
-      className={`w-full text-left p-3 rounded-lg transition-colors ${
-        isSelected
-          ? 'bg-gray-100 dark:bg-zinc-800 font-medium'
-          : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'
-      }`}
-    >
+    <SelectableCard isSelected={isSelected} onClick={onClick}>
       <div className="flex items-center gap-2 mb-1 flex-wrap">
         <EventTypeBadge type={event.event_type} />
         {event.campuses && event.campuses.length > 0 && (
@@ -46,6 +40,6 @@ export const EventCard = memo(function EventCard({ event, isSelected, onClick }:
           {event.filledPositions}/{event.totalPositions} volunteers
         </p>
       )}
-    </button>
+    </SelectableCard>
   )
 })

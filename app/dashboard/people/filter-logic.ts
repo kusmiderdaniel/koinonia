@@ -197,7 +197,7 @@ function evaluateMultiSelectRule(values: string[], operator: string, filterValue
 // Evaluate a filter group
 function evaluateGroup(member: Member, group: FilterGroup): boolean {
   const ruleResults = group.rules.map(rule => evaluateRule(member, rule))
-  const groupResults = group.groups.map(g => evaluateGroup(member, g))
+  const groupResults = (group.groups ?? []).map(g => evaluateGroup(member, g))
   const allResults = [...ruleResults, ...groupResults]
 
   if (allResults.length === 0) return true
@@ -236,7 +236,7 @@ export function countActiveFilters(filterState: FilterState): number {
   let count = filterState.rules.length
 
   function countGroupFilters(group: FilterGroup): number {
-    return group.rules.length + group.groups.reduce((sum, g) => sum + countGroupFilters(g), 0)
+    return group.rules.length + (group.groups ?? []).reduce((sum, g) => sum + countGroupFilters(g), 0)
   }
 
   count += filterState.groups.reduce((sum, g) => sum + countGroupFilters(g), 0)

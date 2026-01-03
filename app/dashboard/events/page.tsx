@@ -32,8 +32,8 @@ export default async function EventsPage() {
     redirect('/dashboard')
   }
 
-  // Parallel fetch: events, church settings, and church members
-  const [eventsResult, churchResult, membersResult] = await Promise.all([
+  // Parallel fetch: events, church settings, church members, ministries, and campuses
+  const [eventsResult, churchResult, membersResult, ministriesResult, campusesResult] = await Promise.all([
     adminClient
       .from('events')
       .select(`
@@ -59,11 +59,23 @@ export default async function EventsPage() {
       .eq('active', true)
       .eq('member_type', 'authenticated')
       .order('first_name'),
+    adminClient
+      .from('ministries')
+      .select('id, name, color, campus_id')
+      .eq('church_id', profile.church_id)
+      .order('name'),
+    adminClient
+      .from('campuses')
+      .select('id, name, color')
+      .eq('church_id', profile.church_id)
+      .order('name'),
   ])
 
   const events = eventsResult.data || []
   const church = churchResult.data
   const members = membersResult.data || []
+  const ministries = ministriesResult.data || []
+  const campuses = campusesResult.data || []
 
   const isVolunteer = profile.role === 'volunteer'
   const isLeader = profile.role === 'leader'
@@ -132,6 +144,8 @@ export default async function EventsPage() {
       initialData={{
         events: transformedEvents as Event[],
         churchMembers: members as Member[],
+        ministries: ministries as { id: string; name: string; color: string; campus_id: string | null }[],
+        campuses: campuses as { id: string; name: string; color: string }[],
         role: profile.role,
         firstDayOfWeek: church?.first_day_of_week ?? 1,
       }}

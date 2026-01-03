@@ -59,6 +59,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
   const ownershipTransfer = useOwnershipTransfer(settings.members)
   const [presets, setPresets] = useState<Preset[]>(initialData.presets)
   const presetsMinistries = initialData.ministries
+  const [logoUrl, setLogoUrl] = useState<string | null>(initialData.church.logo_url)
 
   // Initialize preferences from loaded settings
   useEffect(() => {
@@ -124,6 +125,8 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
             isLoading={settings.isLoading}
             isAdmin={settings.isAdmin}
             churchData={settings.churchData}
+            logoUrl={logoUrl}
+            onLogoChange={setLogoUrl}
             onSubmit={settings.onSubmit}
           />
         </TabsContent>

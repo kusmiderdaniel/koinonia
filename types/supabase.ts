@@ -1089,6 +1089,7 @@ export type Database = {
           message: string | null
           read_at: string | null
           recipient_id: string
+          task_id: string | null
           title: string
           type: string
         }
@@ -1106,6 +1107,7 @@ export type Database = {
           message?: string | null
           read_at?: string | null
           recipient_id: string
+          task_id?: string | null
           title: string
           type: string
         }
@@ -1123,6 +1125,7 @@ export type Database = {
           message?: string | null
           read_at?: string | null
           recipient_id?: string
+          task_id?: string | null
           title?: string
           type?: string
         }
@@ -1153,6 +1156,13 @@ export type Database = {
             columns: ["recipient_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
             referencedColumns: ["id"]
           },
         ]
@@ -1377,6 +1387,66 @@ export type Database = {
           },
         ]
       }
+      saved_views: {
+        Row: {
+          church_id: string
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          filter_state: Json
+          group_by: string | null
+          id: string
+          is_default: boolean
+          name: string
+          sort_state: Json
+          updated_at: string | null
+          view_type: string
+        }
+        Insert: {
+          church_id: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          filter_state?: Json
+          group_by?: string | null
+          id?: string
+          is_default?: boolean
+          name: string
+          sort_state?: Json
+          updated_at?: string | null
+          view_type: string
+        }
+        Update: {
+          church_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          filter_state?: Json
+          group_by?: string | null
+          id?: string
+          is_default?: boolean
+          name?: string
+          sort_state?: Json
+          updated_at?: string | null
+          view_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_views_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_views_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       song_attachments: {
         Row: {
           created_at: string
@@ -1534,6 +1604,161 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_comments: {
+        Row: {
+          activity_type: string
+          author_id: string
+          content: string
+          created_at: string | null
+          id: string
+          new_value: string | null
+          old_value: string | null
+          task_id: string
+        }
+        Insert: {
+          activity_type?: string
+          author_id: string
+          content: string
+          created_at?: string | null
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          task_id: string
+        }
+        Update: {
+          activity_type?: string
+          author_id?: string
+          content?: string
+          created_at?: string | null
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_comments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          assigned_to: string | null
+          campus_id: string | null
+          church_id: string
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          due_date: string | null
+          event_id: string | null
+          id: string
+          ministry_id: string | null
+          priority: string
+          status: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          campus_id?: string | null
+          church_id: string
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          event_id?: string | null
+          id?: string
+          ministry_id?: string | null
+          priority?: string
+          status?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          campus_id?: string | null
+          church_id?: string
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          due_date?: string | null
+          event_id?: string | null
+          id?: string
+          ministry_id?: string | null
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_campus_id_fkey"
+            columns: ["campus_id"]
+            isOneToOne: false
+            referencedRelation: "campuses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_ministry_id_fkey"
+            columns: ["ministry_id"]
+            isOneToOne: false
+            referencedRelation: "ministries"
             referencedColumns: ["id"]
           },
         ]

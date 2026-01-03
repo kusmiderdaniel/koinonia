@@ -23,6 +23,7 @@ export interface ChurchSettingsData {
   timezone: string | null
   first_day_of_week: number | null
   default_event_visibility: string | null
+  logo_url: string | null
 }
 
 export interface ChurchPreferences {

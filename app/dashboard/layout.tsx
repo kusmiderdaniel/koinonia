@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { Sidebar } from './sidebar'
 import { MobileHeader } from './MobileHeader'
 import { MobileSidebar } from './MobileSidebar'
+import { MainContent } from './MainContent'
 
 export default async function DashboardLayout({
   children,
@@ -44,6 +45,7 @@ export default async function DashboardLayout({
       <Sidebar
         user={userProps}
         churchName={profile.church.name}
+        churchLogoUrl={profile.church.logo_url}
         className="hidden md:flex"
       />
 
@@ -51,12 +53,13 @@ export default async function DashboardLayout({
       <MobileSidebar
         user={userProps}
         churchName={profile.church.name}
+        churchLogoUrl={profile.church.logo_url}
       />
 
       {/* Main content - responsive padding */}
-      <main className="md:pl-64 pt-14 md:pt-0">
+      <MainContent>
         {children}
-      </main>
+      </MainContent>
     </div>
   )
 }

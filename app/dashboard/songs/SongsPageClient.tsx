@@ -3,28 +3,10 @@
 import { useEffect, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import {
-  Music,
-  Plus,
-  Search,
-  Clock,
-  Key,
-  User,
-  FileText,
-  Pencil,
-  Trash2,
-  Download,
-  Upload,
-  X,
-} from 'lucide-react'
+import { Music, Plus } from 'lucide-react'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
-import { MobileBackHeader } from '@/components/MobileBackHeader'
-import { useIsMobile } from '@/lib/hooks'
-import { formatDuration } from '@/lib/utils/format'
+import { ListDetailLayout } from '@/components/layouts'
+import { SongsListView, SongDetailPanel } from './components'
 import { useSongList, useSongDetail, useSongDialogs } from './hooks'
 import type { Song } from './types'
 
@@ -41,8 +23,6 @@ interface SongsPageClientProps {
 }
 
 export function SongsPageClient({ initialData }: SongsPageClientProps) {
-  const isMobile = useIsMobile()
-
   // Use custom hooks for state management - pass initial data
   const list = useSongList(initialData)
   const detail = useSongDetail()
@@ -58,8 +38,8 @@ export function SongsPageClient({ initialData }: SongsPageClientProps) {
   }, [list.selectedSongId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Handler bridges - memoized to prevent unnecessary re-renders
-  const handleSelectSong = useCallback((songId: string) => {
-    list.setSelectedSongId(songId)
+  const handleSelectSong = useCallback((song: Song) => {
+    list.setSelectedSongId(song.id)
   }, [list])
 
   const handleClearSelection = useCallback(() => {
@@ -111,395 +91,88 @@ export function SongsPageClient({ initialData }: SongsPageClientProps) {
     e.target.value = ''
   }, [detail, list.selectedSongId])
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-  }
-
   // Destructure commonly used values
   const { filteredSongs, songs, tags, selectedSongId, canManage, search, filterTagIds } = list
   const { selectedSong, isUploading, isDeletingAttachment } = detail
 
-  // Song Detail Component (reused in mobile and desktop)
-  const SongDetailContent = () => (
-    <Card className="border border-black dark:border-zinc-700">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between gap-4">
-          <CardTitle className="text-xl md:text-2xl truncate flex-1">{selectedSong!.title}</CardTitle>
-          {canManage && (
-            <div className="flex items-center gap-1 flex-shrink-0">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => dialogs.openEditDialog(selectedSong!)}
-              >
-                <Pencil className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => dialogs.openDeleteDialog(selectedSong!)}
-                className="h-8 w-8 text-destructive hover:text-destructive hover:bg-red-50 dark:hover:bg-red-950"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
-          )}
-        </div>
-        {selectedSong!.artist && (
-          <p className="text-muted-foreground flex items-center gap-2">
-            <User className="w-4 h-4" />
-            {selectedSong!.artist}
-          </p>
-        )}
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Song Details */}
-        <div className="grid grid-cols-2 gap-4">
-          {selectedSong!.default_key && (
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Default Key
-              </label>
-              <p className="text-lg font-medium flex items-center gap-2 mt-1">
-                <Key className="w-4 h-4 text-muted-foreground" />
-                {selectedSong!.default_key}
-              </p>
-            </div>
-          )}
-          {selectedSong!.duration_seconds && (
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Duration
-              </label>
-              <p className="text-lg font-medium flex items-center gap-2 mt-1">
-                <Clock className="w-4 h-4 text-muted-foreground" />
-                {formatDuration(selectedSong!.duration_seconds)}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Tags */}
-        <div>
-          <label className="text-sm font-medium text-muted-foreground mb-2 block">
-            Tags
-          </label>
-          {selectedSong!.tags && selectedSong!.tags.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {selectedSong!.tags.map((tag) => (
-                <Badge
-                  key={tag.id}
-                  style={{ backgroundColor: tag.color }}
-                  className="text-white rounded-full px-3"
-                >
-                  {tag.name}
-                </Badge>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">No tags</p>
-          )}
-        </div>
-
-        {/* Attachments */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-muted-foreground">
-              Attachments
-            </label>
-            {canManage && (
-              <label className="cursor-pointer">
-                <input
-                  type="file"
-                  accept="application/pdf"
-                  className="hidden"
-                  onChange={handleUploadAttachment}
-                  disabled={isUploading}
-                />
-                <Button variant="outline" size="sm" className="rounded-full" asChild disabled={isUploading}>
-                  <span>
-                    <Upload className="w-4 h-4 mr-1" />
-                    {isUploading ? 'Uploading...' : 'Upload PDF'}
-                  </span>
-                </Button>
-              </label>
-            )}
-          </div>
-          {selectedSong!.song_attachments && selectedSong!.song_attachments.length > 0 ? (
-            <div className="space-y-2">
-              {selectedSong!.song_attachments.map((attachment) => (
-                <div
-                  key={attachment.id}
-                  className="flex items-center justify-between p-3 border rounded-lg"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <FileText className="w-5 h-5 text-red-500 flex-shrink-0" />
-                    <div className="min-w-0">
-                      <p className="font-medium truncate">{attachment.file_name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatFileSize(attachment.file_size)}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDownloadAttachment(attachment.id)}
-                    >
-                      <Download className="w-4 h-4" />
-                    </Button>
-                    {canManage && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteAttachment(attachment.id)}
-                        disabled={isDeletingAttachment === attachment.id}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        {isDeletingAttachment === attachment.id ? (
-                          <span className="w-4 h-4">...</span>
-                        ) : (
-                          <X className="w-4 h-4" />
-                        )}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">No attachments</p>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  )
-
-  // Song List Component (reused in mobile and desktop)
-  const SongListContent = ({ className = '' }: { className?: string }) => (
-    <div className={`flex flex-col ${className}`}>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Music className="w-5 h-5 text-muted-foreground" />
-          <h1 className="text-xl font-semibold">Songs</h1>
-        </div>
-        {canManage && (
-          <Button variant="ghost" size="sm" className="rounded-full !border !border-gray-300 dark:!border-gray-600" onClick={dialogs.openCreateDialog}>
-            <Plus className="w-4 h-4 mr-1" />
-            Add
-          </Button>
-        )}
+  // Header component
+  const headerContent = (
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <h1 className="text-2xl font-bold">Songs</h1>
+        <p className="text-muted-foreground">
+          Manage your song library
+        </p>
       </div>
-
-      {/* Search */}
-      <div className="relative mb-3">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
-          placeholder="Search songs..."
-          value={search}
-          onChange={(e) => list.setSearch(e.target.value)}
-          className="pl-9"
-        />
-      </div>
-
-      {/* Tag Filter */}
-      {tags.length > 0 && (
-        <div className="flex flex-wrap gap-1 mb-3">
-          {tags.map((tag) => (
-            <Badge
-              key={tag.id}
-              variant={filterTagIds.includes(tag.id) ? 'default' : 'outline'}
-              className="cursor-pointer text-xs rounded-full"
-              style={filterTagIds.includes(tag.id) ? { backgroundColor: tag.color } : {}}
-              onClick={() => list.toggleFilterTag(tag.id)}
-            >
-              {tag.name}
-            </Badge>
-          ))}
-          {filterTagIds.length > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-5 px-2 text-xs"
-              onClick={list.clearFilters}
-            >
-              Clear
-            </Button>
-          )}
-        </div>
+      {canManage && (
+        <Button variant="ghost" className="rounded-full !border !border-gray-300 dark:!border-gray-600" onClick={dialogs.openCreateDialog}>
+          <Plus className="w-4 h-4 mr-2" />
+          New Song
+        </Button>
       )}
-
-      {/* Songs List */}
-      <ScrollArea className="flex-1">
-        {filteredSongs.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            {songs.length === 0 ? (
-              <>
-                <Music className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>No songs yet</p>
-                {canManage && (
-                  <p className="text-sm mt-1">Add your first song to get started</p>
-                )}
-              </>
-            ) : (
-              <p>No songs match your search</p>
-            )}
-          </div>
-        ) : (
-          <div className="space-y-2 pr-2">
-            {filteredSongs.map((song) => (
-              <div
-                key={song.id}
-                onClick={() => handleSelectSong(song.id)}
-                className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                  selectedSongId === song.id
-                    ? 'border-primary bg-primary/5 shadow-sm'
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-muted/50'
-                }`}
-              >
-                <div className="font-medium truncate">{song.title}</div>
-                {song.artist && (
-                  <div className="text-sm text-muted-foreground truncate">
-                    {song.artist}
-                  </div>
-                )}
-                <div className="flex items-center gap-2 mt-2 flex-wrap">
-                  {song.duration_seconds && (
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {formatDuration(song.duration_seconds)}
-                    </span>
-                  )}
-                  {song.default_key && (
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Key className="w-3 h-3" />
-                      {song.default_key}
-                    </span>
-                  )}
-                </div>
-                {song.tags && song.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {song.tags.map((tag) => (
-                      <Badge
-                        key={tag.id}
-                        variant="secondary"
-                        className="text-xs rounded-full"
-                        style={{ backgroundColor: `${tag.color}20`, color: tag.color }}
-                      >
-                        {tag.name}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </ScrollArea>
     </div>
   )
 
-  // Mobile: Show detail view with back button
-  if (isMobile && selectedSongId && selectedSong) {
-    return (
-      <div className="h-full p-4">
-        <MobileBackHeader
-          title={selectedSong.title}
-          onBack={handleClearSelection}
-        />
-        <SongDetailContent />
+  // Dialogs
+  const dialogsContent = (
+    <>
+      <SongDialog
+        open={dialogs.songDialogOpen}
+        onOpenChange={dialogs.setSongDialogOpen}
+        song={dialogs.editingSong}
+        onSuccess={handleSongDialogSuccess}
+      />
+      <ConfirmDialog
+        open={dialogs.deleteDialogOpen}
+        onOpenChange={(open) => !open && dialogs.closeDeleteDialog()}
+        title="Delete Song?"
+        description={<>Are you sure you want to delete <strong>{dialogs.deletingSong?.title}</strong>? This will also delete all attachments. This action cannot be undone.</>}
+        confirmLabel="Delete"
+        destructive
+        isLoading={dialogs.isDeleting}
+        onConfirm={handleDeleteSong}
+      />
+    </>
+  )
 
-        {/* Dialogs */}
-        <SongDialog
-          open={dialogs.songDialogOpen}
-          onOpenChange={dialogs.setSongDialogOpen}
-          song={dialogs.editingSong}
-          onSuccess={handleSongDialogSuccess}
-        />
-        <ConfirmDialog
-          open={dialogs.deleteDialogOpen}
-          onOpenChange={(open) => !open && dialogs.closeDeleteDialog()}
-          title="Delete Song?"
-          description={<>Are you sure you want to delete <strong>{dialogs.deletingSong?.title}</strong>? This will also delete all attachments. This action cannot be undone.</>}
-          confirmLabel="Delete"
-          destructive
-          isLoading={dialogs.isDeleting}
-          onConfirm={handleDeleteSong}
-        />
-      </div>
-    )
-  }
-
-  // Mobile list view
-  if (isMobile) {
-    return (
-      <div className="h-full p-4">
-        <SongListContent className="h-[calc(100vh-140px)]" />
-
-        {/* Dialogs */}
-        <SongDialog
-          open={dialogs.songDialogOpen}
-          onOpenChange={dialogs.setSongDialogOpen}
-          song={dialogs.editingSong}
-          onSuccess={handleSongDialogSuccess}
-        />
-        <ConfirmDialog
-          open={dialogs.deleteDialogOpen}
-          onOpenChange={(open) => !open && dialogs.closeDeleteDialog()}
-          title="Delete Song?"
-          description={<>Are you sure you want to delete <strong>{dialogs.deletingSong?.title}</strong>? This will also delete all attachments. This action cannot be undone.</>}
-          confirmLabel="Delete"
-          destructive
-          isLoading={dialogs.isDeleting}
-          onConfirm={handleDeleteSong}
-        />
-      </div>
-    )
-  }
-
-  // Desktop: side-by-side layout
   return (
-    <div className="h-full p-6">
-      <div className="flex gap-6 h-[calc(100vh-140px)]">
-        {/* Left Panel - Song List */}
-        <SongListContent className="w-80 flex-shrink-0" />
-
-        {/* Right Panel - Song Detail */}
-        <div className="flex-1 min-w-0">
-          {selectedSong ? (
-            <SongDetailContent />
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-              <Music className="w-16 h-16 mb-4 opacity-30" />
-              <p>Select a song to view details</p>
-            </div>
-          )}
-        </div>
-
-        {/* Song Dialog */}
-        <SongDialog
-          open={dialogs.songDialogOpen}
-          onOpenChange={dialogs.setSongDialogOpen}
-          song={dialogs.editingSong}
-          onSuccess={handleSongDialogSuccess}
+    <ListDetailLayout
+      header={headerContent}
+      listView={
+        <SongsListView
+          searchQuery={search}
+          onSearchChange={list.setSearch}
+          songs={songs}
+          filteredSongs={filteredSongs}
+          tags={tags}
+          filterTagIds={filterTagIds}
+          onToggleFilterTag={list.toggleFilterTag}
+          onClearFilters={list.clearFilters}
+          selectedSongId={selectedSongId}
+          onSelectSong={handleSelectSong}
+          className="h-full"
         />
-
-        {/* Delete Confirmation */}
-        <ConfirmDialog
-          open={dialogs.deleteDialogOpen}
-          onOpenChange={(open) => !open && dialogs.closeDeleteDialog()}
-          title="Delete Song?"
-          description={<>Are you sure you want to delete <strong>{dialogs.deletingSong?.title}</strong>? This will also delete all attachments. This action cannot be undone.</>}
-          confirmLabel="Delete"
-          destructive
-          isLoading={dialogs.isDeleting}
-          onConfirm={handleDeleteSong}
+      }
+      detailView={
+        <SongDetailPanel
+          song={selectedSong}
+          canManage={canManage}
+          isUploading={isUploading}
+          isDeletingAttachment={isDeletingAttachment}
+          onEdit={(song) => dialogs.openEditDialog(song)}
+          onDelete={(song) => dialogs.openDeleteDialog(song)}
+          onUploadAttachment={handleUploadAttachment}
+          onDownloadAttachment={handleDownloadAttachment}
+          onDeleteAttachment={handleDeleteAttachment}
         />
-      </div>
-    </div>
+      }
+      hasSelection={!!selectedSongId && !!selectedSong}
+      selectionTitle={selectedSong?.title || 'Song Details'}
+      onClearSelection={handleClearSelection}
+      emptyIcon={Music}
+      emptyTitle="Select a song"
+      emptyDescription="Choose a song from the list to view details"
+      dialogs={dialogsContent}
+    />
   )
 }

@@ -17,6 +17,7 @@ export const PAGE_ACCESS = {
   home: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[],
   dashboard: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[], // alias for home
   events: ['owner', 'admin', 'leader', 'volunteer'] as UserRole[],
+  tasks: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[], // Everyone can access tasks
   people: ['owner', 'admin', 'leader'] as UserRole[],
   ministries: ['owner', 'admin', 'leader'] as UserRole[],
   songs: ['owner', 'admin', 'leader'] as UserRole[],

@@ -1,18 +1,16 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Plus, Users, Pencil, Trash2 } from 'lucide-react'
+import { Plus, Users } from 'lucide-react'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { MobileBackHeader } from '@/components/MobileBackHeader'
-import { CampusBadge } from '@/components/CampusBadge'
+import { EmptyState } from '@/components/EmptyState'
 import { useIsMobile } from '@/lib/hooks'
-import { MinistryDetailPanel, RoleDialog } from './components'
+import { MinistryDetailPanel, RoleDialog, MinistriesListView } from './components'
 import { useMinistryList, useMinistryDetail, useMinistryDialogs } from './hooks'
 import type { Ministry } from './types'
 
@@ -30,12 +28,24 @@ interface MinistriesPageClientProps {
 
 export function MinistriesPageClient({ initialData }: MinistriesPageClientProps) {
   const isMobile = useIsMobile()
+  const [searchQuery, setSearchQuery] = useState('')
 
   // Use custom hooks for state management - pass initial data
   // Hook checks viewport directly to avoid auto-selecting on mobile
   const list = useMinistryList(initialData)
   const detail = useMinistryDetail()
   const dialogs = useMinistryDialogs()
+
+  // Filter ministries based on search query
+  const filteredMinistries = useMemo(() => {
+    if (!searchQuery.trim()) return list.ministries
+    const query = searchQuery.toLowerCase()
+    return list.ministries.filter((ministry) =>
+      ministry.name.toLowerCase().includes(query) ||
+      ministry.leader?.first_name?.toLowerCase().includes(query) ||
+      ministry.leader?.last_name?.toLowerCase().includes(query)
+    )
+  }, [list.ministries, searchQuery])
 
   // Load ministry details when selection changes
   useEffect(() => {
@@ -268,93 +278,22 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
         </Alert>
       )}
 
-      {ministries.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Users className="w-12 h-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium mb-2">No ministries yet</h3>
-            <p className="text-muted-foreground text-center mb-4">
-              Create ministry teams to organize your church's volunteers and activities.
-            </p>
-            {canManage && (
-              <Button onClick={dialogs.openCreateDialog}>
-                <Plus className="w-4 h-4 mr-2" />
-                Create First Ministry
-              </Button>
-            )}
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Ministry List */}
-          <div className="w-full md:w-72 md:flex-shrink-0">
-            <ScrollArea className="h-auto md:h-[calc(100vh-220px)]">
-              <div className="space-y-2 md:pr-4">
-                {ministries.map((ministry) => (
-                  <div
-                    key={ministry.id}
-                    onClick={() => list.setSelectedMinistryId(ministry.id)}
-                    className={`relative p-4 rounded-lg border cursor-pointer transition-all ${
-                      selectedMinistryId === ministry.id
-                        ? 'border-primary bg-primary/5 shadow-sm'
-                        : 'border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:bg-muted/50'
-                    }`}
-                  >
-                    <div
-                      className="absolute top-0 left-0 w-1 h-full rounded-l-lg"
-                      style={{ backgroundColor: ministry.color }}
-                    />
-                    <div className="pl-2">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <div
-                          className="w-3 h-3 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: ministry.color }}
-                        />
-                        <span className="font-medium truncate">{ministry.name}</span>
-                        {!ministry.is_active && (
-                          <Badge variant="secondary" className="text-xs">Inactive</Badge>
-                        )}
-                        {ministry.campus && (
-                          <CampusBadge name={ministry.campus.name} color={ministry.campus.color} size="sm" />
-                        )}
-                      </div>
-                      {ministry.leader && (
-                        <p className="text-xs text-muted-foreground pl-5">
-                          {ministry.leader.first_name} {ministry.leader.last_name}
-                        </p>
-                      )}
-                    </div>
-                    {canManage && (
-                      <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 hover:opacity-100">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7"
-                          onClick={(e) => handleEdit(ministry, e)}
-                        >
-                          <Pencil className="w-3 h-3" />
-                        </Button>
-                        {!ministry.is_system && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50"
-                            onClick={(e) => handleDeleteClick(ministry, e)}
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </Button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
+      <div className="flex flex-col md:flex-row gap-6 h-[calc(100vh-220px)]">
+        {/* Ministry List */}
+        <MinistriesListView
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          ministries={ministries}
+          filteredMinistries={filteredMinistries}
+          selectedMinistryId={selectedMinistryId}
+          onSelectMinistry={(ministry) => list.setSelectedMinistryId(ministry.id)}
+          className="w-full md:w-80 md:flex-shrink-0 h-full"
+        />
 
-          {/* Ministry Detail - Right Side (Desktop only) */}
-          {!isMobile && (
-            <div className="flex-1 min-w-0">
+        {/* Ministry Detail - Right Side (Desktop only) */}
+        {!isMobile && (
+          <div className="flex-1 min-w-0 h-full">
+            {selectedMinistry ? (
               <MinistryDetailPanel
                 ministry={selectedMinistry}
                 roles={roles}
@@ -372,10 +311,19 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
                 onUpdateMemberRoles={handleUpdateMemberRoles}
                 onRemoveMember={(member) => dialogs.openRemoveMemberDialog(member)}
               />
-            </div>
-          )}
-        </div>
-      )}
+            ) : (
+              <Card className="h-full flex items-center justify-center border border-black dark:border-zinc-700">
+                <EmptyState
+                  icon={Users}
+                  title="Select a ministry"
+                  description="Choose a ministry to view details"
+                  size="sm"
+                />
+              </Card>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Ministry Dialog */}
       <MinistryDialog

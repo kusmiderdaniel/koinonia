@@ -1,35 +1,43 @@
 // Shared types used across the application
+// Re-export all types from organized modules
 
-export interface Location {
-  id: string
-  name: string
-  address: string | null
-  notes?: string | null
-  campus_id?: string | null
-  campus?: {
-    id: string
-    name: string
-    color: string
-  } | null
-}
+// Entity types (Campus, Ministry, Role, etc.)
+export {
+  type Campus,
+  type CampusWithPrimary,
+  type MinistryBrief,
+  type MinistryWithCampus,
+  type RoleBrief,
+  type ChurchRole,
+  type AssignableChurchRole,
+  ROLE_HIERARCHY,
+  ASSIGNABLE_ROLES,
+  ROLE_COLORS,
+  getRoleBadgeClasses,
+  hasPermission,
+  canManageRole,
+} from './entities'
 
-export interface Person {
-  id: string
-  first_name: string
-  last_name: string
-  email: string | null
-}
+// Person types
+export {
+  type Person,
+  type PersonBrief,
+  type Member,
+  type MemberFull,
+  getFullName,
+  getInitials,
+} from './person'
 
-export interface PersonBrief {
-  id: string
-  first_name: string
-  last_name: string
-}
-
-export interface Member {
-  id: string
-  first_name: string
-  last_name: string
-  email: string | null
-  role?: string
-}
+// Common types and utilities
+export {
+  type Location,
+  type BaseEntity,
+  type NamedEntity,
+  type ColoredEntity,
+  type SongBrief,
+  type Tag,
+  formatDate,
+  formatDateOfBirth,
+  calculateAge,
+  formatAge,
+} from './common'

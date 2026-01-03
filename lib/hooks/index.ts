@@ -18,3 +18,4 @@ export {
 export { usePrefetchRoutes } from './usePrefetchRoutes'
 export { useMobileNav } from './useMobileNav'
 export { useMediaQuery, useIsMobile } from './useMediaQuery'
+export { useSidebarCollapse } from './useSidebarCollapse'

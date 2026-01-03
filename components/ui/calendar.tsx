@@ -38,16 +38,16 @@ function Calendar({
         weekday:
           "text-muted-foreground rounded-md flex-1 text-center font-normal text-[0.8rem]",
         week: "flex w-full mt-2",
-        day: "relative p-0 text-center text-sm flex-1 focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent [&:has([aria-selected])]:rounded-md",
+        day: "relative p-0 text-center text-sm flex-1 focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-brand [&:has([aria-selected])]:rounded-md",
         day_button: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-10 w-full p-0 font-normal aria-selected:opacity-100"
+          "h-10 w-full p-0 font-normal aria-selected:opacity-100 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
         ),
         range_start: "day-range-start",
         range_end: "day-range-end",
         selected:
-          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-md",
-        today: "bg-accent text-accent-foreground rounded-md",
+          "!bg-brand !text-white hover:!bg-brand hover:!text-white focus:!bg-brand focus:!text-white rounded-md font-semibold",
+        today: "bg-gray-100 dark:bg-zinc-800 text-foreground rounded-md font-medium",
         outside:
           "text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground",
         disabled: "text-muted-foreground opacity-50",

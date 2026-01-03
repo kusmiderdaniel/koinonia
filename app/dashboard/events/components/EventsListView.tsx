@@ -34,7 +34,7 @@ export function EventsListView({
   className,
 }: EventsListViewProps) {
   return (
-    <div className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card ${className ?? 'w-full md:w-80 md:flex-shrink-0'}`}>
+    <div className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card overflow-hidden ${className ?? 'w-full md:w-80 md:flex-shrink-0'}`}>
       {/* Search */}
       <div className="p-3 border-b">
         <div className="relative">
@@ -135,18 +135,20 @@ export function EventsListViewWithDetail({
   if (isMobile) {
     if (listProps.selectedEvent) {
       return (
-        <div className="h-[calc(100vh-140px)]">
+        <div className="h-full flex flex-col">
           <MobileBackHeader
             title={listProps.selectedEvent.title}
             onBack={() => onClearSelection?.()}
           />
-          {detailContent}
+          <div className="flex-1 min-h-0">
+            {detailContent}
+          </div>
         </div>
       )
     }
 
     return (
-      <div className="h-[calc(100vh-140px)]">
+      <div className="h-full">
         <EventsListView {...listProps} className="w-full h-full" />
       </div>
     )
@@ -154,9 +156,9 @@ export function EventsListViewWithDetail({
 
   // Desktop: Side-by-side layout
   return (
-    <div className="flex gap-6 h-[calc(100vh-200px)]">
-      <EventsListView {...listProps} />
-      <div className="flex-1 min-w-0">
+    <div className="flex gap-6 h-full">
+      <EventsListView {...listProps} className="w-80 flex-shrink-0 h-full" />
+      <div className="flex-1 min-w-0 h-full">
         {listProps.selectedEvent ? (
           detailContent
         ) : (

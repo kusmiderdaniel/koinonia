@@ -12,9 +12,10 @@ interface MobileSidebarProps {
     role: string
   }
   churchName: string
+  churchLogoUrl?: string | null
 }
 
-export function MobileSidebar({ user, churchName }: MobileSidebarProps) {
+export function MobileSidebar({ user, churchName, churchLogoUrl }: MobileSidebarProps) {
   const { isOpen, close } = useMobileNav()
 
   return (
@@ -24,7 +25,9 @@ export function MobileSidebar({ user, churchName }: MobileSidebarProps) {
         <SidebarContent
           user={user}
           churchName={churchName}
+          churchLogoUrl={churchLogoUrl}
           onNavigate={close}
+          isMobile
         />
       </SheetContent>
     </Sheet>

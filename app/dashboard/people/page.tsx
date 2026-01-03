@@ -9,6 +9,7 @@ import { MembersTable } from './members-table'
 import { OfflineMemberDialog } from './offline-member-dialog'
 import { InvitePopover } from './invite-popover'
 import { getUserCampusIds } from '@/lib/utils/campus'
+import type { SavedView } from '@/types/saved-views'
 
 export default async function PeoplePage() {
   const supabase = await createClient()
@@ -46,8 +47,8 @@ export default async function PeoplePage() {
     leaderCampusIds = await getUserCampusIds(profile.id, adminClient)
   }
 
-  // Parallel fetch: members + pending count + church data
-  const [membersResult, pendingResult, churchResult] = await Promise.all([
+  // Parallel fetch: members + pending count + church data + saved views
+  const [membersResult, pendingResult, churchResult, savedViewsResult] = await Promise.all([
     // Always fetch members
     adminClient
       .from('profiles')
@@ -80,6 +81,14 @@ export default async function PeoplePage() {
       .select('join_code, first_day_of_week')
       .eq('id', profile.church_id)
       .single(),
+    // Fetch saved views for people page
+    adminClient
+      .from('saved_views')
+      .select('*')
+      .eq('church_id', profile.church_id)
+      .eq('view_type', 'people')
+      .order('is_default', { ascending: false })
+      .order('name'),
   ])
 
   const { data: membersData, error: membersError } = membersResult
@@ -239,6 +248,8 @@ export default async function PeoplePage() {
               members={filteredMembers}
               currentUserId={profile.id}
               currentUserRole={profile.role}
+              savedViews={(savedViewsResult.data || []) as SavedView[]}
+              canManageViews={isAdmin || isLeader}
             />
           ) : (
             <p className="text-center text-muted-foreground py-8">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, memo, useMemo, useCallback } from 'react'
+import { useState, memo, useMemo, useCallback, useEffect } from 'react'
 import {
   Table,
   TableBody,
@@ -17,12 +17,12 @@ import {
 import { Info } from 'lucide-react'
 import { useIsMobile } from '@/lib/hooks'
 import { updateMemberRole, updateMemberActive, updateMemberDeparture, updateMemberBaptism } from './actions'
-import { FilterBuilder } from './filter-builder'
-import { FilterState, createEmptyFilterState } from './filter-types'
-import { applyFilters, countActiveFilters } from './filter-logic'
-import { SortBuilder } from './sort-builder'
-import { SortState, createEmptySortState } from './sort-types'
-import { applySorts, countActiveSorts } from './sort-logic'
+import { PeopleFilterBuilder } from './filter-builder'
+import { FilterState, createEmptyFilterState, countActiveFilters } from './filter-types'
+import { applyFilters } from './filter-logic'
+import { PeopleSortBuilder } from './sort-builder'
+import { SortState, createEmptySortState, countActiveSorts } from './sort-types'
+import { applySorts } from './sort-logic'
 import { MemberRow, MemberCard } from './components'
 import {
   type Member,
@@ -30,14 +30,27 @@ import {
   type AssignableRole,
   roleHierarchy,
 } from './components/member-table-types'
+import { ViewSelector, SaveViewDialog } from '@/components/saved-views'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { deleteSavedView, setDefaultView, updateSavedView } from '@/lib/actions/saved-views'
+import { toast } from 'sonner'
+import type { SavedView } from '@/types/saved-views'
 
 interface MembersTableProps {
   members: Member[]
   currentUserId: string
   currentUserRole: string
+  savedViews: SavedView[]
+  canManageViews: boolean
 }
 
-export const MembersTable = memo(function MembersTable({ members, currentUserId, currentUserRole }: MembersTableProps) {
+export const MembersTable = memo(function MembersTable({
+  members,
+  currentUserId,
+  currentUserRole,
+  savedViews,
+  canManageViews,
+}: MembersTableProps) {
   const isMobile = useIsMobile()
   const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [updatingActiveId, setUpdatingActiveId] = useState<string | null>(null)
@@ -45,6 +58,52 @@ export const MembersTable = memo(function MembersTable({ members, currentUserId,
   const [updatingBaptismId, setUpdatingBaptismId] = useState<string | null>(null)
   const [filterState, setFilterState] = useState<FilterState>(createEmptyFilterState)
   const [sortState, setSortState] = useState<SortState>(createEmptySortState)
+
+  // Saved views state
+  const [views, setViews] = useState<SavedView[]>(savedViews)
+  const [selectedViewId, setSelectedViewId] = useState<string | null>(() => {
+    const defaultView = savedViews.find((v) => v.is_default)
+    return defaultView?.id || null
+  })
+  const [showSaveDialog, setShowSaveDialog] = useState(false)
+  const [editingView, setEditingView] = useState<SavedView | null>(null)
+  const [viewToDelete, setViewToDelete] = useState<SavedView | null>(null)
+  const [isDeletingView, setIsDeletingView] = useState(false)
+  const [isSavingChanges, setIsSavingChanges] = useState(false)
+
+  // Detect if current state differs from selected view's saved state
+  const hasUnsavedChanges = useMemo(() => {
+    if (!selectedViewId) return false
+    const selectedView = views.find((v) => v.id === selectedViewId)
+    if (!selectedView) return false
+
+    // Compare filter state
+    const filterChanged = JSON.stringify(filterState) !== JSON.stringify(selectedView.filter_state)
+    // Compare sort state
+    const sortChanged = JSON.stringify(sortState) !== JSON.stringify(selectedView.sort_state)
+
+    return filterChanged || sortChanged
+  }, [selectedViewId, views, filterState, sortState])
+
+  // Apply selected view's configuration
+  useEffect(() => {
+    if (selectedViewId) {
+      const view = views.find((v) => v.id === selectedViewId)
+      if (view) {
+        setFilterState(view.filter_state as FilterState)
+        setSortState(view.sort_state as SortState)
+      }
+    } else {
+      // Reset to defaults when "All" is selected
+      setFilterState(createEmptyFilterState())
+      setSortState(createEmptySortState())
+    }
+  }, [selectedViewId, views])
+
+  // Sync views when savedViews prop changes
+  useEffect(() => {
+    setViews(savedViews)
+  }, [savedViews])
 
   const canEditActive = ['owner', 'admin', 'leader'].includes(currentUserRole)
   const canEditFields = ['owner', 'admin', 'leader'].includes(currentUserRole)
@@ -147,13 +206,104 @@ export const MembersTable = memo(function MembersTable({ members, currentUserId,
     }
   }, [])
 
+  // View handlers
+  const handleViewSuccess = useCallback((newView: SavedView) => {
+    setViews((prev) => {
+      const filtered = prev.filter((v) => v.id !== newView.id)
+      const updated = newView.is_default
+        ? filtered.map((v) => ({ ...v, is_default: false }))
+        : filtered
+      return [...updated, newView].sort((a, b) => {
+        if (a.is_default !== b.is_default) return a.is_default ? -1 : 1
+        return a.name.localeCompare(b.name)
+      })
+    })
+    setSelectedViewId(newView.id)
+  }, [])
+
+  const handleDeleteViewConfirm = useCallback(async () => {
+    if (!viewToDelete) return
+    setIsDeletingView(true)
+    const result = await deleteSavedView(viewToDelete.id)
+    setIsDeletingView(false)
+    if (result.error) {
+      toast.error(result.error)
+    } else {
+      toast.success('View deleted')
+      setViews((prev) => prev.filter((v) => v.id !== viewToDelete.id))
+      if (selectedViewId === viewToDelete.id) {
+        setSelectedViewId(null)
+      }
+    }
+    setViewToDelete(null)
+  }, [viewToDelete, selectedViewId])
+
+  const handleSetDefaultView = useCallback(async (view: SavedView) => {
+    const result = await setDefaultView(view.id)
+    if (result.error) {
+      toast.error(result.error)
+    } else {
+      toast.success(`"${view.name}" set as default`)
+      setViews((prev) =>
+        prev.map((v) => ({
+          ...v,
+          is_default: v.id === view.id,
+        }))
+      )
+    }
+  }, [])
+
+  const handleSaveViewChanges = useCallback(async () => {
+    if (!selectedViewId) return
+    const selectedView = views.find((v) => v.id === selectedViewId)
+    if (!selectedView) return
+
+    setIsSavingChanges(true)
+    const result = await updateSavedView(selectedViewId, {
+      filter_state: filterState,
+      sort_state: sortState,
+    })
+    setIsSavingChanges(false)
+
+    if (result.error) {
+      toast.error(result.error)
+    } else {
+      toast.success('View updated')
+      if (result.data) {
+        setViews((prev) =>
+          prev.map((v) => (v.id === result.data!.id ? result.data! : v))
+        )
+      }
+    }
+  }, [selectedViewId, views, filterState, sortState])
+
   return (
     <div className="space-y-4">
       {/* Filter and Sort toolbar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
-          <SortBuilder sortState={sortState} onChange={setSortState} />
-          <FilterBuilder filterState={filterState} onChange={setFilterState} />
+        <div className="grid grid-cols-3 sm:flex sm:items-center gap-2 w-full sm:w-auto">
+          <PeopleSortBuilder sortState={sortState} onChange={setSortState} />
+          <PeopleFilterBuilder filterState={filterState} onChange={setFilterState} />
+          <ViewSelector
+            viewType="people"
+            views={views}
+            selectedViewId={selectedViewId}
+            onSelectView={setSelectedViewId}
+            onCreateView={() => {
+              setEditingView(null)
+              setShowSaveDialog(true)
+            }}
+            onEditView={(view) => {
+              setEditingView(view)
+              setShowSaveDialog(true)
+            }}
+            onDeleteView={setViewToDelete}
+            onSetDefault={handleSetDefaultView}
+            canManageViews={canManageViews}
+            hasUnsavedChanges={hasUnsavedChanges}
+            onSaveChanges={handleSaveViewChanges}
+            isSavingChanges={isSavingChanges}
+          />
         </div>
         {(activeFilterCount > 0 || activeSortCount > 0) && (
           <p className="text-sm text-muted-foreground">
@@ -267,6 +417,28 @@ export const MembersTable = memo(function MembersTable({ members, currentUserId,
           </Table>
         </TooltipProvider>
       )}
+
+      {/* Saved Views Dialogs */}
+      <SaveViewDialog
+        open={showSaveDialog}
+        onOpenChange={setShowSaveDialog}
+        viewType="people"
+        currentFilterState={filterState}
+        currentSortState={sortState}
+        editingView={editingView}
+        onSuccess={handleViewSuccess}
+      />
+
+      <ConfirmDialog
+        open={!!viewToDelete}
+        onOpenChange={(open) => !open && setViewToDelete(null)}
+        title="Delete View"
+        description={`Are you sure you want to delete the view "${viewToDelete?.name}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        destructive
+        onConfirm={handleDeleteViewConfirm}
+        isLoading={isDeletingView}
+      />
     </div>
   )
 })

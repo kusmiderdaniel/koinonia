@@ -1,31 +1,15 @@
-// Shared types for the events module
-// Import and re-export common types from lib/types
-import type { Location, Person, PersonBrief, Member } from '@/lib/types'
+// Events module types
+// Import shared types
+import type { Location, Person, PersonBrief, Member, MinistryBrief, RoleBrief, Campus, SongBrief } from '@/lib/types'
+
+// Re-export shared types for convenience
 export type { Location, Person, PersonBrief, Member }
 
-export interface Ministry {
-  id: string
-  name: string
-  color: string
-}
-
-export interface MinistryBrief {
-  id: string
-  name: string
-}
-
-export interface Role {
-  id: string
-  name: string
-}
-
-export interface Song {
-  id: string
-  title: string
-  artist: string | null
-  default_key: string | null
-  duration_seconds: number | null
-}
+// Use shared types with domain-specific aliases
+export type Ministry = MinistryBrief
+export type Role = RoleBrief
+export type Song = SongBrief
+export type EventCampus = Campus
 
 export type AssignmentStatus = 'invited' | 'accepted' | 'declined' | 'expired' | null
 
@@ -67,12 +51,6 @@ export interface AgendaItem {
 export interface EventInvitation {
   profile_id: string
   profile?: PersonBrief
-}
-
-export interface EventCampus {
-  id: string
-  name: string
-  color: string
 }
 
 export interface Event {

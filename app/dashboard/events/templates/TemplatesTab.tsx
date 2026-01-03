@@ -344,19 +344,21 @@ export const TemplatesTab = memo(function TemplatesTab() {
   if (isMobile) {
     if (selectedTemplate) {
       return (
-        <div className="h-[calc(100vh-140px)]">
+        <div className="h-full flex flex-col">
           <MobileBackHeader
             title={selectedTemplate.name}
             onBack={handleCloseDetail}
           />
-          {detailContent}
+          <div className="flex-1 min-h-0">
+            {detailContent}
+          </div>
           {dialogs}
         </div>
       )
     }
 
     return (
-      <div className="h-[calc(100vh-140px)]">
+      <div className="h-full">
         {templateListContent}
         {dialogs}
       </div>
@@ -365,7 +367,7 @@ export const TemplatesTab = memo(function TemplatesTab() {
 
   // Desktop: Side-by-side layout
   return (
-    <div className="flex gap-6 h-[calc(100vh-220px)]">
+    <div className="flex gap-6 h-full">
       {templateListContent}
 
       {/* Right Panel - Template Detail */}

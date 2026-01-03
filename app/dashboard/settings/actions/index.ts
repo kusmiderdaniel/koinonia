@@ -5,6 +5,8 @@ export {
   getChurchMembers,
   transferOwnership,
   regenerateJoinCode,
+  uploadChurchLogo,
+  removeChurchLogo,
 } from './church'
 
 // Locations CRUD

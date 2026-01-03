@@ -1,3 +1,5 @@
 export { MinistryDetailPanel } from './MinistryDetailPanel'
 export { MemberRow } from './MemberRow'
 export { RoleDialog } from './RoleDialog'
+export { MinistryCard } from './MinistryCard'
+export { MinistriesListView } from './MinistriesListView'

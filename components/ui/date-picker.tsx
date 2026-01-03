@@ -59,13 +59,13 @@ export function DatePicker({
           variant="outline"
           disabled={disabled}
           className={cn(
-            "w-full justify-start text-left font-normal !border !border-gray-300 dark:!border-gray-600",
+            "w-full justify-center font-normal !border !border-black dark:!border-white",
             !selectedDate && "text-muted-foreground",
             className
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {selectedDate ? format(selectedDate, "PPP") : <span>{placeholder}</span>}
+          {selectedDate ? format(selectedDate, "dd/MM/yyyy") : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0 bg-white dark:bg-zinc-950 border border-gray-200 dark:border-gray-700 shadow-lg" align="start">
@@ -73,9 +73,9 @@ export function DatePicker({
           mode="single"
           selected={selectedDate}
           onSelect={handleSelect}
-          defaultMonth={selectedDate || new Date(2000, 0)}
+          defaultMonth={selectedDate || new Date()}
           fromYear={1920}
-          toYear={new Date().getFullYear()}
+          toYear={new Date().getFullYear() + 5}
           captionLayout="dropdown"
           weekStartsOn={weekStartsOn}
         />

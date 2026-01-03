@@ -1,21 +1,23 @@
-// Generate unique ID (fallback for browsers without crypto.randomUUID)
-function generateId(): string {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID()
-  }
-  // Fallback for older browsers
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`
-}
+// People-specific sort definitions
+// Re-export shared types for convenience
 
-// Sort field definitions
-export interface SortFieldDefinition {
-  id: string
-  label: string
-  icon: 'text' | 'number' | 'date' | 'boolean' | 'select'
-}
+export {
+  type SortState,
+  type SortRule,
+  type SortDirection,
+  type SortFieldDefinition,
+  createEmptySortState,
+  countActiveSorts,
+} from '@/lib/filters/sort-types'
 
-// Available fields for sorting
-export const SORT_FIELDS: SortFieldDefinition[] = [
+import {
+  type SortState,
+  type SortFieldDefinition,
+  createSortRule as createGenericSortRule,
+} from '@/lib/filters/sort-types'
+
+// People-specific sort fields
+export const PEOPLE_SORT_FIELDS: SortFieldDefinition[] = [
   { id: 'name', label: 'Name', icon: 'text' },
   { id: 'email', label: 'Email', icon: 'text' },
   { id: 'role', label: 'Role', icon: 'select' },
@@ -29,33 +31,10 @@ export const SORT_FIELDS: SortFieldDefinition[] = [
   { id: 'created_at', label: 'Joined', icon: 'date' },
 ]
 
-// Sort direction
-export type SortDirection = 'asc' | 'desc'
+// Backwards compatibility exports
+export const SORT_FIELDS = PEOPLE_SORT_FIELDS
 
-// Sort rule structure
-export interface SortRule {
-  id: string
-  field: string
-  direction: SortDirection
-}
-
-// Sort state (array of rules applied in order)
-export type SortState = SortRule[]
-
-// Helper to create empty sort state
-export function createEmptySortState(): SortState {
-  return []
-}
-
-// Helper to create a new sort rule
-export function createSortRule(existingSorts: SortState): SortRule {
-  // Find a field that's not already being sorted
-  const usedFields = existingSorts.map(s => s.field)
-  const availableField = SORT_FIELDS.find(f => !usedFields.includes(f.id)) || SORT_FIELDS[0]
-
-  return {
-    id: generateId(),
-    field: availableField.id,
-    direction: 'asc',
-  }
+// Wrapper for createSortRule that uses people fields
+export function createSortRule(existingSorts: SortState) {
+  return createGenericSortRule(existingSorts, PEOPLE_SORT_FIELDS)
 }

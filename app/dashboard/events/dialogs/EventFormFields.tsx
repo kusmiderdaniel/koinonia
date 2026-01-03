@@ -1,0 +1,275 @@
+'use client'
+
+import { memo } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
+import { MapPin, X, User, Eye, Lock, Building2 } from 'lucide-react'
+import { LocationPicker } from '../location-picker'
+import { ResponsiblePersonPicker } from '../responsible-person-picker'
+import { CampusPicker } from '@/components/CampusPicker'
+import { InviteUsersPicker } from './InviteUsersPicker'
+import { EVENT_TYPES, VISIBILITY_LEVELS } from './constants'
+import type { EventFormFieldsProps } from './types'
+
+export const EventFormFields = memo(function EventFormFields({
+  title,
+  setTitle,
+  eventType,
+  setEventType,
+  visibility,
+  setVisibility,
+  campuses,
+  campusesLoading,
+  selectedCampusIds,
+  onCampusChange,
+  invitedUsers,
+  setInvitedUsers,
+  churchMembers,
+  selectedLocation,
+  setSelectedLocation,
+  locationPickerOpen,
+  setLocationPickerOpen,
+  selectedResponsiblePerson,
+  setSelectedResponsiblePerson,
+  responsiblePersonPickerOpen,
+  setResponsiblePersonPickerOpen,
+  startTime,
+  endTime,
+  onStartTimeChange,
+  setEndTime,
+  error,
+}: EventFormFieldsProps) {
+  return (
+    <div className="space-y-4">
+      {error && (
+        <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">{error}</div>
+      )}
+
+      <div className="space-y-2">
+        <Label htmlFor="title">Event Title *</Label>
+        <Input
+          id="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="e.g., Sunday Morning Service"
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="eventType">Event Type *</Label>
+          <Select value={eventType} onValueChange={setEventType}>
+            <SelectTrigger className="bg-white dark:bg-zinc-950 border border-input">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent
+              align="start"
+              className="bg-white dark:bg-zinc-950 border border-input"
+            >
+              {EVENT_TYPES.map((type) => (
+                <SelectItem
+                  key={type.value}
+                  value={type.value}
+                  className="cursor-pointer [&>span.absolute]:hidden hover:!bg-gray-50 dark:hover:!bg-zinc-800/50 data-[state=checked]:!bg-gray-100 dark:data-[state=checked]:!bg-zinc-800 data-[state=checked]:font-medium"
+                >
+                  {type.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="visibility">Visibility</Label>
+          <Select value={visibility} onValueChange={setVisibility}>
+            <SelectTrigger className="bg-white dark:bg-zinc-950 border border-input [&_[data-description]]:hidden">
+              <div className="flex items-center gap-2">
+                {visibility === 'hidden' ? (
+                  <Lock className="w-4 h-4 text-muted-foreground" />
+                ) : (
+                  <Eye className="w-4 h-4 text-muted-foreground" />
+                )}
+                <SelectValue />
+              </div>
+            </SelectTrigger>
+            <SelectContent
+              align="start"
+              className="bg-white dark:bg-zinc-950 border border-input"
+            >
+              {VISIBILITY_LEVELS.map((v) => (
+                <SelectItem
+                  key={v.value}
+                  value={v.value}
+                  textValue={v.label}
+                  className="py-2 cursor-pointer [&>span.absolute]:hidden hover:!bg-gray-50 dark:hover:!bg-zinc-800/50 data-[state=checked]:!bg-gray-100 dark:data-[state=checked]:!bg-zinc-800 data-[state=checked]:font-medium"
+                >
+                  <div className="flex flex-col">
+                    <span>{v.label}</span>
+                    <span
+                      data-description
+                      className="text-xs text-muted-foreground font-normal"
+                    >
+                      {v.description}
+                    </span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Campus Selection */}
+      <div className="space-y-2">
+        <Label>Campus</Label>
+        {campusesLoading ? (
+          <div className="flex items-center gap-2 h-10 px-3 border border-gray-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-950">
+            <Building2 className="w-4 h-4 text-muted-foreground" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        ) : campuses.length > 0 ? (
+          <CampusPicker
+            campuses={campuses}
+            selectedCampusIds={selectedCampusIds}
+            onChange={onCampusChange}
+            multiple={true}
+            placeholder="Select campus(es)..."
+          />
+        ) : null}
+      </div>
+
+      {visibility === 'hidden' && (
+        <InviteUsersPicker
+          invitedUsers={invitedUsers}
+          setInvitedUsers={setInvitedUsers}
+          churchMembers={churchMembers}
+        />
+      )}
+
+      <div className="space-y-2">
+        <Label>Location</Label>
+        {selectedLocation ? (
+          <div className="flex items-center gap-2 p-3 border border-gray-300 dark:border-zinc-700 rounded-lg bg-muted/50">
+            <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <div className="font-medium truncate">{selectedLocation.name}</div>
+              {selectedLocation.address && (
+                <div className="text-sm text-muted-foreground truncate">
+                  {selectedLocation.address}
+                </div>
+              )}
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="flex-shrink-0 rounded-full"
+              onClick={() => setSelectedLocation(null)}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        ) : (
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full justify-start text-muted-foreground rounded-lg !border !border-gray-300 dark:!border-zinc-700"
+            onClick={() => setLocationPickerOpen(true)}
+          >
+            <MapPin className="w-4 h-4 mr-2" />
+            Choose location...
+          </Button>
+        )}
+      </div>
+
+      <LocationPicker
+        open={locationPickerOpen}
+        onOpenChange={setLocationPickerOpen}
+        selectedLocationId={selectedLocation?.id || null}
+        onSelect={setSelectedLocation}
+        filterByCampusIds={selectedCampusIds}
+      />
+
+      <div className="space-y-2">
+        <Label>Responsible Person</Label>
+        {selectedResponsiblePerson ? (
+          <div className="flex items-center gap-2 p-3 border border-gray-300 dark:border-zinc-700 rounded-lg bg-muted/50">
+            <User className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <div className="font-medium truncate">
+                {selectedResponsiblePerson.first_name} {selectedResponsiblePerson.last_name}
+              </div>
+              {selectedResponsiblePerson.email && (
+                <div className="text-sm text-muted-foreground truncate">
+                  {selectedResponsiblePerson.email}
+                </div>
+              )}
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="flex-shrink-0 rounded-full"
+              onClick={() => setSelectedResponsiblePerson(null)}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        ) : (
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full justify-start text-muted-foreground rounded-lg !border !border-gray-300 dark:!border-zinc-700"
+            onClick={() => setResponsiblePersonPickerOpen(true)}
+          >
+            <User className="w-4 h-4 mr-2" />
+            Choose responsible person...
+          </Button>
+        )}
+      </div>
+
+      <ResponsiblePersonPicker
+        open={responsiblePersonPickerOpen}
+        onOpenChange={setResponsiblePersonPickerOpen}
+        selectedPersonId={selectedResponsiblePerson?.id || null}
+        onSelect={setSelectedResponsiblePerson}
+      />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="startTime">Start Time *</Label>
+          <Input
+            id="startTime"
+            type="datetime-local"
+            value={startTime}
+            onChange={(e) => onStartTimeChange(e.target.value)}
+            className="rounded-lg"
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="endTime">End Time *</Label>
+          <Input
+            id="endTime"
+            type="datetime-local"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+            className="rounded-lg"
+            required
+          />
+        </div>
+      </div>
+    </div>
+  )
+})
