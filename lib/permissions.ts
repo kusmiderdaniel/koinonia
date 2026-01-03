@@ -16,6 +16,7 @@ export const ROLE_HIERARCHY: Record<UserRole, number> = {
 export const PAGE_ACCESS = {
   home: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[],
   dashboard: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[], // alias for home
+  inbox: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[], // Everyone has inbox
   events: ['owner', 'admin', 'leader', 'volunteer'] as UserRole[],
   tasks: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[], // Everyone can access tasks
   people: ['owner', 'admin', 'leader'] as UserRole[],

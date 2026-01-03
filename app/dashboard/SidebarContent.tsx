@@ -20,8 +20,8 @@ import { Button } from '@/components/ui/button'
 import { Home, Calendar, CheckSquare, Users, Heart, Music, Settings, User, LogOut, CalendarOff, CalendarSync, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { NotificationCenter } from '@/components/NotificationCenter'
 import { ProgressLink } from '@/components/ProgressLink'
+import { InboxNavItem } from '@/components/InboxNavItem'
 import { usePrefetchRoutes, useSidebarCollapse } from '@/lib/hooks'
 import { hasPageAccess, type PageKey } from '@/lib/permissions'
 
@@ -109,31 +109,28 @@ export function SidebarContent({ user, churchName, churchLogoUrl, onNavigate, is
                 </TooltipContent>
               </Tooltip>
             ) : (
-              // Expanded: show logo + name + notifications
-              <>
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  {churchLogoUrl ? (
-                    <img
-                      src={churchLogoUrl}
-                      alt={`${churchName} logo`}
-                      className="w-8 h-8 rounded-md object-contain flex-shrink-0"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-md bg-brand text-brand-foreground flex items-center justify-center font-bold text-sm flex-shrink-0">
-                      {churchInitial}
-                    </div>
-                  )}
-                  <h1 className="font-semibold text-lg truncate">{churchName}</h1>
-                </div>
-                <NotificationCenter />
-              </>
+              // Expanded: show logo + name
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                {churchLogoUrl ? (
+                  <img
+                    src={churchLogoUrl}
+                    alt={`${churchName} logo`}
+                    className="w-8 h-8 rounded-md object-contain flex-shrink-0"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-md bg-brand text-brand-foreground flex items-center justify-center font-bold text-sm flex-shrink-0">
+                    {churchInitial}
+                  </div>
+                )}
+                <h1 className="font-semibold text-lg truncate">{churchName}</h1>
+              </div>
             )}
           </div>
         </div>
 
         {/* Navigation */}
         <nav className="flex-1 space-y-1 p-2">
-          {visibleNavItems.map((item) => {
+          {visibleNavItems.map((item, index) => {
             const isActive = pathname === item.href
             const linkContent = (
               <ProgressLink
@@ -155,20 +152,33 @@ export function SidebarContent({ user, churchName, churchLogoUrl, onNavigate, is
               </ProgressLink>
             )
 
-            if (collapsed) {
+            // Render nav item with Inbox right after Home (index 0)
+            const navElement = collapsed ? (
+              <Tooltip key={item.href}>
+                <TooltipTrigger asChild>
+                  {linkContent}
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  {item.label}
+                </TooltipContent>
+              </Tooltip>
+            ) : linkContent
+
+            // Insert Inbox after Home
+            if (index === 0) {
               return (
-                <Tooltip key={item.href}>
-                  <TooltipTrigger asChild>
-                    {linkContent}
-                  </TooltipTrigger>
-                  <TooltipContent side="right">
-                    {item.label}
-                  </TooltipContent>
-                </Tooltip>
+                <div key={item.href}>
+                  {navElement}
+                  <InboxNavItem
+                    collapsed={collapsed}
+                    onNavigate={handleNavClick}
+                    onPrefetch={() => prefetchRoute('/dashboard/inbox')}
+                  />
+                </div>
               )
             }
 
-            return linkContent
+            return navElement
           })}
 
           {visibleAdminNavItems.length > 0 && (

@@ -1,11 +1,15 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { nanoid } from 'nanoid'
+import { format } from 'date-fns'
 import {
   getAuthenticatedUserWithProfile,
   isAuthError,
   requireManagePermission,
 } from './helpers'
+import { sendEmail } from '@/lib/email/config'
+import { InvitationEmail } from '@/emails/InvitationEmail'
 
 export type InvitationScope = 'all' | 'ministry' | 'positions'
 
@@ -39,11 +43,21 @@ export async function sendInvitations(options: SendInvitationsOptions) {
         id,
         title,
         ministry_id,
+        ministry:ministries (
+          id,
+          name,
+          color
+        ),
         event:events!inner (
           id,
           title,
           start_time,
-          church_id
+          end_time,
+          church_id,
+          church:churches (
+            id,
+            name
+          )
         )
       )
     `)
@@ -91,13 +105,24 @@ export async function sendInvitations(options: SendInvitationsOptions) {
     return { error: 'Failed to update assignment status' }
   }
 
-  // Create notifications for each assignment
+  // Create notifications for each assignment with email tokens
   // Type assertion for the nested query result
+  type MinistryData = { id: string; name: string; color: string }
+  type ChurchData = { id: string; name: string }
+  type EventData = {
+    id: string
+    title: string
+    start_time: string
+    end_time: string | null
+    church_id: string
+    church: ChurchData | ChurchData[]
+  }
   type PositionData = {
     id: string
     title: string
     ministry_id: string
-    event: { id: string; title: string; start_time: string; church_id: string } | { id: string; title: string; start_time: string; church_id: string }[]
+    ministry: MinistryData | MinistryData[]
+    event: EventData | EventData[]
   }
 
   const notifications = assignments.map((a) => {
@@ -113,20 +138,82 @@ export async function sendInvitations(options: SendInvitationsOptions) {
       event_id: event.id,
       assignment_id: a.id,
       expires_at: event.start_time,
+      email_token: nanoid(32), // Generate unique token for email links
     }
   })
 
-  const { error: notifyError } = await adminClient
+  const { data: insertedNotifications, error: notifyError } = await adminClient
     .from('notifications')
     .insert(notifications)
+    .select('id, email_token, recipient_id, assignment_id')
 
   if (notifyError) {
     console.error('Failed to create notifications:', notifyError)
     // Don't fail the whole operation - assignments are already updated
   }
 
+  // Send email notifications
+  if (insertedNotifications && insertedNotifications.length > 0) {
+    // Fetch profiles to get emails and preferences
+    const profileIds = assignments.map((a) => a.profile_id)
+    const { data: profiles } = await adminClient
+      .from('profiles')
+      .select('id, first_name, email, receive_email_notifications')
+      .in('id', profileIds)
+
+    const profileMap = new Map(profiles?.map((p) => [p.id, p]) || [])
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+    // Send emails asynchronously (don't block response)
+    for (const notification of insertedNotifications) {
+      const profile = profileMap.get(notification.recipient_id)
+
+      // Skip if user opted out of emails or no email address
+      if (!profile?.receive_email_notifications || !profile?.email) {
+        continue
+      }
+
+      // Find the assignment data for this notification
+      const assignment = assignments.find((a) => a.id === notification.assignment_id)
+      if (!assignment) continue
+
+      const position = assignment.position as unknown as PositionData
+      const event = Array.isArray(position.event) ? position.event[0] : position.event
+      const ministry = Array.isArray(position.ministry) ? position.ministry[0] : position.ministry
+      const church = Array.isArray(event.church) ? event.church[0] : event.church
+
+      // Format event date and time
+      const startDate = new Date(event.start_time)
+      const eventDate = format(startDate, 'EEEE, MMMM d, yyyy')
+      const eventTime = event.end_time
+        ? `${format(startDate, 'h:mm a')} - ${format(new Date(event.end_time), 'h:mm a')}`
+        : format(startDate, 'h:mm a')
+
+      // Send email (fire and forget - don't await)
+      sendEmail({
+        to: profile.email,
+        subject: `You're invited to serve: ${position.title} for ${event.title}`,
+        react: InvitationEmail({
+          recipientName: profile.first_name,
+          eventTitle: event.title,
+          eventDate,
+          eventTime,
+          positionTitle: position.title,
+          ministryName: ministry?.name || 'Ministry',
+          ministryColor: ministry?.color || '#3B82F6',
+          acceptUrl: `${siteUrl}/api/invitation/respond?token=${notification.email_token}&action=accept`,
+          declineUrl: `${siteUrl}/api/invitation/respond?token=${notification.email_token}&action=decline`,
+          viewInAppUrl: `${siteUrl}/dashboard/inbox`,
+          churchName: church?.name || 'Your Church',
+        }),
+      }).catch((err) => console.error('[Email] Failed to send invitation email:', err))
+    }
+  }
+
   revalidatePath('/dashboard/events')
   revalidatePath('/dashboard')
+  revalidatePath('/dashboard/inbox')
 
   return {
     data: {
@@ -241,8 +328,10 @@ export async function respondToInvitation(
     return { error: 'You can only respond to your own invitations' }
   }
 
-  if (assignment.status !== 'invited') {
-    return { error: 'This invitation is no longer pending' }
+  // Allow response if status is 'invited', 'accepted', or 'declined' (can change response)
+  const allowedStatuses = ['invited', 'accepted', 'declined']
+  if (!allowedStatuses.includes(assignment.status)) {
+    return { error: 'This invitation can no longer be changed' }
   }
 
   const now = new Date().toISOString()

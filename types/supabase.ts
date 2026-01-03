@@ -1081,6 +1081,7 @@ export type Database = {
           assignment_id: string | null
           church_id: string
           created_at: string | null
+          email_token: string | null
           event_id: string | null
           expires_at: string | null
           id: string
@@ -1099,6 +1100,7 @@ export type Database = {
           assignment_id?: string | null
           church_id: string
           created_at?: string | null
+          email_token?: string | null
           event_id?: string | null
           expires_at?: string | null
           id?: string
@@ -1117,6 +1119,7 @@ export type Database = {
           assignment_id?: string | null
           church_id?: string
           created_at?: string | null
+          email_token?: string | null
           event_id?: string | null
           expires_at?: string | null
           id?: string

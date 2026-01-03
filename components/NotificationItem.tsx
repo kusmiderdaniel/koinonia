@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Check, X, Calendar, Clock, Loader2 } from 'lucide-react'
 import type { Notification } from '@/types/notifications'
 import { respondToInvitation } from '@/app/dashboard/events/actions/invitations'
@@ -17,10 +16,18 @@ interface NotificationItemProps {
 
 export function NotificationItem({ notification, onActionComplete, onNavigateToEvent }: NotificationItemProps) {
   const [isLoading, setIsLoading] = useState<'accept' | 'decline' | null>(null)
+  const [isChangingResponse, setIsChangingResponse] = useState(false)
 
   const isActionable =
     notification.type === 'position_invitation' &&
     !notification.is_actioned &&
+    notification.assignment_id
+
+  // Can change response if already actioned (not expired) and still has assignment
+  const canChangeResponse =
+    notification.type === 'position_invitation' &&
+    notification.is_actioned &&
+    notification.action_taken !== 'expired' &&
     notification.assignment_id
 
   const handleRespond = async (response: 'accepted' | 'declined', e: React.MouseEvent) => {
@@ -36,6 +43,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
         toast.error(result.error)
       } else {
         toast.success(response === 'accepted' ? 'Invitation accepted!' : 'Invitation declined')
+        setIsChangingResponse(false)
         onActionComplete?.()
       }
     } catch (error) {
@@ -45,34 +53,59 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
     }
   }
 
-  const getActionBadge = () => {
+  const handleBadgeClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (canChangeResponse) {
+      setIsChangingResponse(true)
+    }
+  }
+
+  const handleCancelChange = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsChangingResponse(false)
+  }
+
+  const renderStatusBadge = () => {
     if (!notification.is_actioned) return null
 
-    switch (notification.action_taken) {
-      case 'accepted':
-        return (
-          <Badge className="bg-green-100 text-green-700 border-green-300">
-            <Check className="w-3 h-3 mr-1" />
-            Accepted
-          </Badge>
-        )
-      case 'declined':
-        return (
-          <Badge className="bg-red-100 text-red-700 border-red-300">
-            <X className="w-3 h-3 mr-1" />
-            Declined
-          </Badge>
-        )
-      case 'expired':
-        return (
-          <Badge variant="secondary" className="text-muted-foreground">
-            <Clock className="w-3 h-3 mr-1" />
-            Expired
-          </Badge>
-        )
-      default:
-        return null
+    const isAccepted = notification.action_taken === 'accepted'
+    const isDeclined = notification.action_taken === 'declined'
+    const isExpired = notification.action_taken === 'expired'
+
+    if (isExpired) {
+      return (
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+          <Clock className="w-3 h-3 mr-1" />
+          Expired
+        </span>
+      )
     }
+
+    if (isAccepted) {
+      return (
+        <button
+          onClick={handleBadgeClick}
+          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-600 text-white hover:bg-green-700 transition-colors cursor-pointer"
+        >
+          <Check className="w-3 h-3 mr-1" />
+          Accepted
+        </button>
+      )
+    }
+
+    if (isDeclined) {
+      return (
+        <button
+          onClick={handleBadgeClick}
+          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer"
+        >
+          <X className="w-3 h-3 mr-1" />
+          Declined
+        </button>
+      )
+    }
+
+    return null
   }
 
   const ministryColor = notification.assignment?.position?.ministry?.color
@@ -85,7 +118,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
 
   return (
     <div
-      className={`p-3 border-b last:border-b-0 transition-colors ${
+      className={`p-3 border rounded-lg transition-colors ${
         notification.is_read ? 'bg-white dark:bg-zinc-950' : 'bg-blue-50/50 dark:bg-blue-950/20'
       } ${onNavigateToEvent ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-900' : ''}`}
       onClick={handleClick}
@@ -112,7 +145,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
                 </p>
               )}
             </div>
-            {getActionBadge()}
+            {!isChangingResponse && renderStatusBadge()}
           </div>
 
           {/* Event info */}
@@ -149,6 +182,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
               {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
             </span>
 
+            {/* Initial response buttons */}
             {isActionable && (
               <div className="flex gap-2">
                 <Button
@@ -183,6 +217,56 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
                     </>
                   )}
                 </Button>
+              </div>
+            )}
+
+            {/* Change response buttons */}
+            {isChangingResponse && (
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 px-3 text-xs rounded-full"
+                  onClick={handleCancelChange}
+                  disabled={isLoading !== null}
+                >
+                  Cancel
+                </Button>
+                {notification.action_taken === 'accepted' ? (
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    className="h-7 px-3 text-xs rounded-full !bg-red-600 hover:!bg-red-700 !text-white"
+                    onClick={(e) => handleRespond('declined', e)}
+                    disabled={isLoading !== null}
+                  >
+                    {isLoading === 'decline' ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <>
+                        <X className="w-3 h-3 mr-1" />
+                        Decline Instead
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="default"
+                    className="h-7 px-3 text-xs rounded-full !bg-green-600 hover:!bg-green-700 !text-white"
+                    onClick={(e) => handleRespond('accepted', e)}
+                    disabled={isLoading !== null}
+                  >
+                    {isLoading === 'accept' ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <>
+                        <Check className="w-3 h-3 mr-1" />
+                        Accept Instead
+                      </>
+                    )}
+                  </Button>
+                )}
               </div>
             )}
           </div>
