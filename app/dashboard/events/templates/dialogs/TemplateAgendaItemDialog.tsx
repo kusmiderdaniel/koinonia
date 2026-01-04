@@ -176,10 +176,17 @@ export function TemplateAgendaItemDialog({
     setIsAdding(true)
     setError(null)
 
+    // For song placeholders, find or keep the Worship ministry
+    let ministryIdToUse = editMinistryId || null
+    if (isSongPlaceholder) {
+      const worshipMinistry = ministries.find(m => m.name === 'Worship')
+      ministryIdToUse = worshipMinistry?.id || item.ministry_id || null
+    }
+
     const result = await updateTemplateAgendaItem(item.id, {
       title: isSongPlaceholder ? 'Song' : editTitle,
       durationSeconds: isSongPlaceholder ? 300 : totalSeconds,
-      ministryId: isSongPlaceholder ? null : editMinistryId || null,
+      ministryId: ministryIdToUse,
       isSongPlaceholder,
     })
 
@@ -197,11 +204,14 @@ export function TemplateAgendaItemDialog({
     setIsAdding(true)
     setError(null)
 
+    // Find the Worship ministry for song placeholders
+    const worshipMinistry = ministries.find(m => m.name === 'Worship')
+
     const result = await addTemplateAgendaItem(templateId, {
       title: 'Song',
       durationSeconds: 300,
       isSongPlaceholder: true,
-      ministryId: null,
+      ministryId: worshipMinistry?.id || null,
     })
 
     if (result.error) {

@@ -143,25 +143,32 @@ export function EventTasksTab({
   }
 
   return (
-    <>
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-muted-foreground">
-          {tasks.length} task{tasks.length !== 1 ? 's' : ''}
-        </p>
+    <div className="flex flex-col h-full">
+      {/* Fixed header */}
+      <div className="flex-shrink-0 flex items-center justify-between pl-6 pr-6 py-4 min-h-[72px]">
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-muted-foreground">
+            {tasks.length} task{tasks.length !== 1 ? 's' : ''}
+          </p>
+        </div>
         {canManage && (
-          <Button
-            variant="outline-pill"
-            size="sm"
-            className="!border !border-gray-300 dark:!border-zinc-600"
-            onClick={onAddTask}
-          >
-            <Plus className="w-4 h-4 mr-1" />
-            Add Task
-          </Button>
+          <div className="flex gap-2 ml-auto">
+            <Button
+              variant="outline-pill"
+              size="sm"
+              className="!border !border-gray-300 dark:!border-zinc-600"
+              onClick={onAddTask}
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Add Task
+            </Button>
+          </div>
         )}
       </div>
 
-      {tasks.length === 0 ? (
+      {/* Scrollable content */}
+      <div className="flex-1 min-h-0 overflow-y-auto pl-6 pr-6 pb-6 scrollbar-minimal">
+        {tasks.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           <CheckSquare className="w-10 h-10 mx-auto mb-2 opacity-50" />
           <p className="text-sm">No tasks linked to this event</p>
@@ -282,6 +289,7 @@ export function EventTasksTab({
           })}
         </div>
       )}
+      </div>
 
       <ConfirmDialog
         open={deleteConfirmOpen}
@@ -304,6 +312,6 @@ export function EventTasksTab({
         campuses={campuses}
         weekStartsOn={weekStartsOn}
       />
-    </>
+    </div>
   )
 }

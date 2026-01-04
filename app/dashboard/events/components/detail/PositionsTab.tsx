@@ -73,10 +73,14 @@ export const PositionsTab = memo(function PositionsTab({
   onSendInvitations,
 }: PositionsTabProps) {
   return (
-    <div className="flex-1 overflow-y-auto px-6 pt-4 pb-6 mt-0">
-      <div className="flex items-center justify-end mb-4">
+    <div className="flex flex-col h-full">
+      {/* Fixed header */}
+      <div className="flex-shrink-0 flex items-center justify-between pl-6 pr-6 py-4 min-h-[72px]">
+        <div className="flex items-center gap-3">
+          {/* Placeholder for consistent height with Agenda tab */}
+        </div>
         {canManageContent && (
-          <div className="flex gap-2">
+          <div className="flex gap-2 ml-auto">
             {pendingInvitationsCount > 0 && (
               <Button
                 variant="outline"
@@ -101,7 +105,9 @@ export const PositionsTab = memo(function PositionsTab({
         )}
       </div>
 
-      {Object.keys(positionsByMinistry).length === 0 ? (
+      {/* Scrollable content */}
+      <div className="flex-1 min-h-0 overflow-y-auto pl-6 pr-6 pb-6 scrollbar-minimal">
+        {Object.keys(positionsByMinistry).length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           <Users className="w-10 h-10 mx-auto mb-2 opacity-50" />
           <p className="text-sm">No positions added yet</p>
@@ -180,6 +186,7 @@ export const PositionsTab = memo(function PositionsTab({
           ))}
         </div>
       )}
+      </div>
     </div>
   )
 })

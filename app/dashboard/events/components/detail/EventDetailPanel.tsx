@@ -102,7 +102,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
       <Tabs
         value={detailTab}
         onValueChange={setDetailTab}
-        className="flex-1 flex flex-col overflow-hidden gap-0"
+        className="flex-1 flex flex-col min-h-0 overflow-hidden gap-0"
       >
         <div className="px-6 py-3 border-b">
           <TabsList className="grid w-full grid-cols-3">
@@ -130,7 +130,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
           </TabsList>
         </div>
 
-        <TabsContent value="agenda" className="mt-0">
+        <TabsContent value="agenda" className="flex flex-col min-h-0 overflow-hidden mt-0">
           <AgendaTab
             selectedEvent={selectedEvent}
             sortedAgendaItems={sortedAgendaItems}
@@ -151,7 +151,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
           />
         </TabsContent>
 
-        <TabsContent value="positions" className="mt-0">
+        <TabsContent value="positions" className="flex flex-col min-h-0 overflow-hidden mt-0">
           <PositionsTab
             positionsByMinistry={positionsByMinistry}
             canManageContent={canManageContent}
@@ -166,7 +166,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
           />
         </TabsContent>
 
-        <TabsContent value="tasks" className="flex-1 overflow-y-auto px-6 pt-4 pb-6 mt-0">
+        <TabsContent value="tasks" className="flex flex-col min-h-0 overflow-hidden mt-0">
           <EventTasksTab
             eventId={selectedEvent.id}
             canManage={canManageContent}

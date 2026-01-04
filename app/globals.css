@@ -114,3 +114,56 @@
   opacity: 1;
   transform: rotate(3deg) translate(0px, -4px);
 }
+
+/* Minimal scrollbar styling - works with both horizontal and vertical scroll */
+.scrollbar-minimal {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(180 180 180) transparent;
+}
+
+.scrollbar-minimal::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: transparent;
+}
+
+.scrollbar-minimal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-minimal::-webkit-scrollbar-thumb {
+  background-color: rgb(180 180 180);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.scrollbar-minimal::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(150 150 150);
+}
+
+.scrollbar-minimal::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.dark .scrollbar-minimal {
+  scrollbar-color: rgb(80 80 80) transparent;
+}
+
+.dark .scrollbar-minimal::-webkit-scrollbar-thumb {
+  background-color: rgb(80 80 80);
+}
+
+.dark .scrollbar-minimal::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(110 110 110);
+}
+
+/* Hidden scrollbar - still scrollable but no visible scrollbar */
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
