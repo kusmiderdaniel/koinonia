@@ -30,10 +30,12 @@ export const VISIBILITY_STYLES: Record<string, string> = {
   hidden: 'bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-200',
 }
 
-// Musical keys for songs
+// Musical keys for songs (major and minor)
 export const MUSICAL_KEYS = [
   'C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F',
   'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B',
+  'Cm', 'C#m', 'Dm', 'D#m', 'Ebm', 'Em', 'Fm',
+  'F#m', 'Gm', 'G#m', 'Am', 'A#m', 'Bbm', 'Bm',
 ] as const
 
 export type MusicalKey = typeof MUSICAL_KEYS[number]

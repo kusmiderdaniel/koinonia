@@ -301,6 +301,307 @@ export async function getPendingInvitationCounts(eventId: string) {
 }
 
 /**
+ * Get pending invitation counts for the scheduling matrix (across multiple events)
+ */
+export async function getMatrixPendingInvitationCounts(eventIds: string[]) {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { adminClient } = auth
+
+  if (!eventIds.length) {
+    return { data: { total: 0, byEvent: [], byMinistry: [], byPosition: [] } }
+  }
+
+  // Get all assignments without invitations for these events
+  const { data: assignments, error } = await adminClient
+    .from('event_assignments')
+    .select(`
+      id,
+      position:event_positions!inner (
+        id,
+        title,
+        ministry_id,
+        ministry:ministries (id, name, color),
+        event_id,
+        event:events!inner (id, title, start_time)
+      )
+    `)
+    .is('status', null)
+    .in('position.event_id', eventIds)
+
+  if (error) {
+    console.error('Error fetching matrix pending counts:', error)
+    return { error: 'Failed to fetch pending counts' }
+  }
+
+  type MinistryData = { id: string; name: string; color: string }
+  type EventData = { id: string; title: string; start_time: string }
+  type PositionData = {
+    id: string
+    title: string
+    ministry_id: string
+    ministry: MinistryData | MinistryData[]
+    event_id: string
+    event: EventData | EventData[]
+  }
+  type AssignmentData = {
+    id: string
+    position: PositionData
+  }
+
+  const eventCountsMap = new Map<string, { event: EventData; count: number }>()
+  const ministryCountsMap = new Map<string, { ministry: MinistryData; count: number }>()
+  const positionCountsMap = new Map<string, { position: { id: string; title: string; eventId: string; ministry: MinistryData | null }; count: number }>()
+
+  for (const a of (assignments as unknown as AssignmentData[])) {
+    const position = a.position
+    const ministry = Array.isArray(position.ministry) ? position.ministry[0] : position.ministry
+    const event = Array.isArray(position.event) ? position.event[0] : position.event
+
+    // Event count
+    const existingEvent = eventCountsMap.get(event.id)
+    if (existingEvent) {
+      existingEvent.count++
+    } else {
+      eventCountsMap.set(event.id, { event, count: 1 })
+    }
+
+    // Ministry count
+    if (ministry) {
+      const existingMinistry = ministryCountsMap.get(ministry.id)
+      if (existingMinistry) {
+        existingMinistry.count++
+      } else {
+        ministryCountsMap.set(ministry.id, { ministry, count: 1 })
+      }
+    }
+
+    // Position count
+    const existingPosition = positionCountsMap.get(position.id)
+    if (existingPosition) {
+      existingPosition.count++
+    } else {
+      positionCountsMap.set(position.id, {
+        position: { id: position.id, title: position.title, eventId: event.id, ministry: ministry || null },
+        count: 1,
+      })
+    }
+  }
+
+  return {
+    data: {
+      total: assignments?.length || 0,
+      byEvent: Array.from(eventCountsMap.values()).sort(
+        (a, b) => new Date(a.event.start_time).getTime() - new Date(b.event.start_time).getTime()
+      ),
+      byMinistry: Array.from(ministryCountsMap.values()),
+      byPosition: Array.from(positionCountsMap.values()),
+    },
+  }
+}
+
+export type BulkInvitationScope = 'all' | 'events' | 'ministries' | 'positions'
+
+export interface SendBulkInvitationsOptions {
+  eventIds: string[]
+  scope: BulkInvitationScope
+  selectedEventIds?: string[]
+  selectedMinistryIds?: string[]
+  selectedPositionIds?: string[]
+}
+
+/**
+ * Send bulk invitations across multiple events (for scheduling matrix)
+ */
+export async function sendBulkInvitations(options: SendBulkInvitationsOptions) {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  const permError = requireManagePermission(profile.role, 'send invitations')
+  if (permError) return { error: permError }
+
+  // Build query based on scope
+  let query = adminClient
+    .from('event_assignments')
+    .select(`
+      id,
+      profile_id,
+      position:event_positions!inner (
+        id,
+        title,
+        ministry_id,
+        ministry:ministries (
+          id,
+          name,
+          color
+        ),
+        event:events!inner (
+          id,
+          title,
+          start_time,
+          end_time,
+          church_id,
+          church:churches (
+            id,
+            name
+          )
+        )
+      )
+    `)
+    .is('status', null)
+    .in('position.event.id', options.eventIds)
+
+  if (options.scope === 'events' && options.selectedEventIds?.length) {
+    query = query.in('position.event.id', options.selectedEventIds)
+  } else if (options.scope === 'ministries' && options.selectedMinistryIds?.length) {
+    query = query.in('position.ministry_id', options.selectedMinistryIds)
+  } else if (options.scope === 'positions' && options.selectedPositionIds?.length) {
+    query = query.in('position_id', options.selectedPositionIds)
+  } else if (options.scope !== 'all') {
+    return { error: 'Invalid scope or missing parameters' }
+  }
+
+  const { data: assignments, error: fetchError } = await query
+
+  if (fetchError) {
+    console.error('Error fetching assignments:', fetchError)
+    return { error: 'Failed to fetch assignments' }
+  }
+
+  if (!assignments || assignments.length === 0) {
+    return { error: 'No pending assignments found to invite' }
+  }
+
+  // Extract assignment IDs
+  const assignmentIds = assignments.map((a) => a.id)
+  const now = new Date().toISOString()
+
+  // Update all assignments to 'invited' status
+  const { error: updateError } = await adminClient
+    .from('event_assignments')
+    .update({
+      status: 'invited',
+      invited_at: now,
+    })
+    .in('id', assignmentIds)
+
+  if (updateError) {
+    console.error('Error updating assignments:', updateError)
+    return { error: 'Failed to update assignment status' }
+  }
+
+  // Create notifications for each assignment with email tokens
+  type MinistryData = { id: string; name: string; color: string }
+  type ChurchData = { id: string; name: string }
+  type EventData = {
+    id: string
+    title: string
+    start_time: string
+    end_time: string | null
+    church_id: string
+    church: ChurchData | ChurchData[]
+  }
+  type PositionData = {
+    id: string
+    title: string
+    ministry_id: string
+    ministry: MinistryData | MinistryData[]
+    event: EventData | EventData[]
+  }
+
+  const notifications = assignments.map((a) => {
+    const position = a.position as unknown as PositionData
+    const event = Array.isArray(position.event) ? position.event[0] : position.event
+
+    return {
+      church_id: event.church_id,
+      recipient_id: a.profile_id,
+      type: 'position_invitation' as const,
+      title: "You've been invited to serve",
+      message: `You've been assigned to "${position.title}" for "${event.title}"`,
+      event_id: event.id,
+      assignment_id: a.id,
+      expires_at: event.start_time,
+      email_token: nanoid(32),
+    }
+  })
+
+  const { data: insertedNotifications, error: notifyError } = await adminClient
+    .from('notifications')
+    .insert(notifications)
+    .select('id, email_token, recipient_id, assignment_id')
+
+  if (notifyError) {
+    console.error('Failed to create notifications:', notifyError)
+  }
+
+  // Send email notifications
+  if (insertedNotifications && insertedNotifications.length > 0) {
+    const profileIds = assignments.map((a) => a.profile_id)
+    const { data: profiles } = await adminClient
+      .from('profiles')
+      .select('id, first_name, email, receive_email_notifications')
+      .in('id', profileIds)
+
+    const profileMap = new Map(profiles?.map((p) => [p.id, p]) || [])
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+    for (const notification of insertedNotifications) {
+      const profile = profileMap.get(notification.recipient_id)
+
+      if (!profile?.receive_email_notifications || !profile?.email) {
+        continue
+      }
+
+      const assignment = assignments.find((a) => a.id === notification.assignment_id)
+      if (!assignment) continue
+
+      const position = assignment.position as unknown as PositionData
+      const event = Array.isArray(position.event) ? position.event[0] : position.event
+      const ministry = Array.isArray(position.ministry) ? position.ministry[0] : position.ministry
+      const church = Array.isArray(event.church) ? event.church[0] : event.church
+
+      const startDate = new Date(event.start_time)
+      const eventDate = format(startDate, 'EEEE, MMMM d, yyyy')
+      const eventTime = event.end_time
+        ? `${format(startDate, 'h:mm a')} - ${format(new Date(event.end_time), 'h:mm a')}`
+        : format(startDate, 'h:mm a')
+
+      sendEmail({
+        to: profile.email,
+        subject: `You're invited to serve: ${position.title} for ${event.title}`,
+        react: InvitationEmail({
+          recipientName: profile.first_name,
+          eventTitle: event.title,
+          eventDate,
+          eventTime,
+          positionTitle: position.title,
+          ministryName: ministry?.name || 'Ministry',
+          ministryColor: ministry?.color || '#3B82F6',
+          acceptUrl: `${siteUrl}/api/invitation/respond?token=${notification.email_token}&action=accept`,
+          declineUrl: `${siteUrl}/api/invitation/respond?token=${notification.email_token}&action=decline`,
+          viewInAppUrl: `${siteUrl}/dashboard/inbox`,
+          churchName: church?.name || 'Your Church',
+        }),
+      }).catch((err) => console.error('[Email] Failed to send invitation email:', err))
+    }
+  }
+
+  revalidatePath('/dashboard/events')
+  revalidatePath('/dashboard')
+  revalidatePath('/dashboard/inbox')
+
+  return {
+    data: {
+      invitedCount: assignmentIds.length,
+    },
+  }
+}
+
+/**
  * Respond to an invitation (accept or decline).
  * Only the assigned volunteer can respond to their own invitation.
  */

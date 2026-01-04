@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import type { QueryClient } from '@tanstack/react-query'
 import type { useEventList } from './useEventList'
 import type { useEventDetail } from './useEventDetail'
 import type { useEventDialogs } from './useEventDialogs'
@@ -8,12 +9,14 @@ interface UseEventHandlersOptions {
   eventList: ReturnType<typeof useEventList>
   eventDetail: ReturnType<typeof useEventDetail>
   dialogs: ReturnType<typeof useEventDialogs>
+  queryClient?: QueryClient
 }
 
 export function useEventHandlers({
   eventList,
   eventDetail,
   dialogs,
+  queryClient,
 }: UseEventHandlersOptions) {
   // Task dialog state
   const [taskDialogOpen, setTaskDialogOpen] = useState(false)
@@ -145,10 +148,13 @@ export function useEventHandlers({
   // Volunteer handlers
   const handleVolunteerPickerSuccess = useCallback(() => {
     dialogs.closeVolunteerPicker()
+    // Reload the selected event if viewing event details
     if (eventDetail.selectedEvent) {
       eventDetail.loadEventDetail(eventDetail.selectedEvent.id)
     }
-  }, [dialogs, eventDetail])
+    // Also invalidate matrix data so it refreshes
+    queryClient?.invalidateQueries({ queryKey: ['matrix-data'] })
+  }, [dialogs, eventDetail, queryClient])
 
   const handleUnassign = useCallback(async () => {
     const result = await dialogs.handleUnassign(() => {
@@ -183,10 +189,13 @@ export function useEventHandlers({
 
   const handleSongPickerSuccess = useCallback(() => {
     dialogs.closeSongPicker()
+    // Reload the selected event if viewing event details
     if (eventDetail.selectedEvent) {
       eventDetail.loadEventDetail(eventDetail.selectedEvent.id)
     }
-  }, [dialogs, eventDetail])
+    // Also invalidate matrix data so it refreshes
+    queryClient?.invalidateQueries({ queryKey: ['matrix-data'] })
+  }, [dialogs, eventDetail, queryClient])
 
   const handlePositionPickerSuccess = useCallback(() => {
     dialogs.setPositionPickerOpen(false)
@@ -200,6 +209,37 @@ export function useEventHandlers({
       eventDetail.loadEventDetail(eventDetail.selectedEvent.id)
     }
   }, [eventDetail])
+
+  const handleLeaderPickerSuccess = useCallback(() => {
+    dialogs.closeLeaderPicker()
+    // Reload the selected event if viewing event details
+    if (eventDetail.selectedEvent) {
+      eventDetail.loadEventDetail(eventDetail.selectedEvent.id)
+    }
+    // Also invalidate matrix data so it refreshes
+    queryClient?.invalidateQueries({ queryKey: ['matrix-data'] })
+  }, [dialogs, eventDetail, queryClient])
+
+  const handleSongEditorSuccess = useCallback(() => {
+    dialogs.closeSongEditor()
+    // Reload the selected event if viewing event details
+    if (eventDetail.selectedEvent) {
+      eventDetail.loadEventDetail(eventDetail.selectedEvent.id)
+    }
+    // Also invalidate matrix data so it refreshes
+    queryClient?.invalidateQueries({ queryKey: ['matrix-data'] })
+  }, [dialogs, eventDetail, queryClient])
+
+  const handleSongEditorDataChange = useCallback(() => {
+    // Just refresh the matrix data without closing the dialog
+    queryClient?.invalidateQueries({ queryKey: ['matrix-data'] })
+  }, [queryClient])
+
+  const handleSongEditorReplaceSong = useCallback((eventId: string, agendaItemId: string) => {
+    dialogs.closeSongEditor()
+    // Open song picker to replace this song
+    dialogs.openSongPickerForEvent(eventId, agendaItemId)
+  }, [dialogs])
 
   return {
     // Task dialog state
@@ -238,5 +278,9 @@ export function useEventHandlers({
     handleSongPickerSuccess,
     handlePositionPickerSuccess,
     handleSendInvitationsSuccess,
+    handleLeaderPickerSuccess,
+    handleSongEditorSuccess,
+    handleSongEditorDataChange,
+    handleSongEditorReplaceSong,
   }
 }

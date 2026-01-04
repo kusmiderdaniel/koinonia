@@ -51,9 +51,11 @@ interface UseEventDialogsReturn {
 
   // Volunteer picker
   volunteerPickerOpen: boolean
+  volunteerPickerPositionId: string | null
   assigningPosition: Position | null
   setVolunteerPickerOpen: (open: boolean) => void
   openVolunteerPicker: (position: Position) => void
+  openVolunteerPickerForPosition: (positionId: string) => void
   closeVolunteerPicker: () => void
 
   // Unassign dialog
@@ -85,9 +87,12 @@ interface UseEventDialogsReturn {
 
   // Song picker
   songPickerOpen: boolean
+  songPickerEventId: string | null
+  songPickerAgendaItemId: string | null
   replacingAgendaItem: AgendaItem | null
   setSongPickerOpen: (open: boolean) => void
   openSongPicker: (item: AgendaItem) => void
+  openSongPickerForEvent: (eventId: string, agendaItemId: string | null) => void
   closeSongPicker: () => void
 
   // Template picker
@@ -97,6 +102,43 @@ interface UseEventDialogsReturn {
   // Send invitations dialog
   sendInvitationsDialogOpen: boolean
   setSendInvitationsDialogOpen: (open: boolean) => void
+
+  // Leader picker
+  leaderPickerOpen: boolean
+  leaderPickerAgendaItemId: string | null
+  leaderPickerMinistryId: string | null
+  leaderPickerCurrentLeaderId: string | null
+  leaderPickerEventDate: string | null
+  setLeaderPickerOpen: (open: boolean) => void
+  openLeaderPickerForAgendaItem: (agendaItemId: string, ministryId: string, currentLeaderId: string | null, eventDate: string) => void
+  closeLeaderPicker: () => void
+
+  // Song editor
+  songEditorOpen: boolean
+  songEditorData: {
+    agendaItemId: string
+    songTitle: string
+    currentKey: string | null
+    currentLeaderId: string | null
+    currentLeaderName: string | null
+    currentDescription: string | null
+    ministryId: string | null
+    eventId: string
+    eventDate: string
+  } | null
+  setSongEditorOpen: (open: boolean) => void
+  openSongEditor: (data: {
+    agendaItemId: string
+    songTitle: string
+    currentKey: string | null
+    currentLeaderId: string | null
+    currentLeaderName: string | null
+    currentDescription: string | null
+    ministryId: string | null
+    eventId: string
+    eventDate: string
+  }) => void
+  closeSongEditor: () => void
 }
 
 export function useEventDialogs(): UseEventDialogsReturn {
@@ -116,6 +158,34 @@ export function useEventDialogs(): UseEventDialogsReturn {
   const [agendaPickerOpen, setAgendaPickerOpen] = useState(false)
   const [templatePickerOpen, setTemplatePickerOpen] = useState(false)
   const [sendInvitationsDialogOpen, setSendInvitationsDialogOpen] = useState(false)
+
+  // Song picker can operate on a specific event (for matrix view)
+  const [songPickerEventId, setSongPickerEventId] = useState<string | null>(null)
+  const [songPickerAgendaItemId, setSongPickerAgendaItemId] = useState<string | null>(null)
+
+  // Volunteer picker can operate on a specific position (for matrix view)
+  const [volunteerPickerPositionId, setVolunteerPickerPositionId] = useState<string | null>(null)
+
+  // Leader picker state (for matrix view)
+  const [leaderPickerOpen, setLeaderPickerOpen] = useState(false)
+  const [leaderPickerAgendaItemId, setLeaderPickerAgendaItemId] = useState<string | null>(null)
+  const [leaderPickerMinistryId, setLeaderPickerMinistryId] = useState<string | null>(null)
+  const [leaderPickerCurrentLeaderId, setLeaderPickerCurrentLeaderId] = useState<string | null>(null)
+  const [leaderPickerEventDate, setLeaderPickerEventDate] = useState<string | null>(null)
+
+  // Song editor state (for matrix view)
+  const [songEditorOpen, setSongEditorOpen] = useState(false)
+  const [songEditorData, setSongEditorData] = useState<{
+    agendaItemId: string
+    songTitle: string
+    currentKey: string | null
+    currentLeaderId: string | null
+    currentLeaderName: string | null
+    currentDescription: string | null
+    ministryId: string | null
+    eventId: string
+    eventDate: string
+  } | null>(null)
 
   // Delete event handler
   const handleDeleteEvent = useCallback(
@@ -194,6 +264,72 @@ export function useEventDialogs(): UseEventDialogsReturn {
     unassignDialog.open({ assignment, positionTitle })
   }, [unassignDialog])
 
+  // Open song picker for a specific event (used by matrix view)
+  const openSongPickerForEvent = useCallback((eventId: string, agendaItemId: string | null) => {
+    setSongPickerEventId(eventId)
+    setSongPickerAgendaItemId(agendaItemId)
+    songPicker.setOpen(true)
+  }, [songPicker])
+
+  // Custom close for song picker to clear event-specific state
+  const closeSongPickerWithReset = useCallback(() => {
+    songPicker.close()
+    setSongPickerEventId(null)
+    setSongPickerAgendaItemId(null)
+  }, [songPicker])
+
+  // Open volunteer picker for a specific position (used by matrix view)
+  const openVolunteerPickerForPosition = useCallback((positionId: string) => {
+    setVolunteerPickerPositionId(positionId)
+    volunteerPicker.setOpen(true)
+  }, [volunteerPicker])
+
+  // Custom close for volunteer picker to clear position-specific state
+  const closeVolunteerPickerWithReset = useCallback(() => {
+    volunteerPicker.close()
+    setVolunteerPickerPositionId(null)
+  }, [volunteerPicker])
+
+  // Open leader picker for a specific agenda item (used by matrix view)
+  const openLeaderPickerForAgendaItem = useCallback((agendaItemId: string, ministryId: string, currentLeaderId: string | null, eventDate: string) => {
+    setLeaderPickerAgendaItemId(agendaItemId)
+    setLeaderPickerMinistryId(ministryId)
+    setLeaderPickerCurrentLeaderId(currentLeaderId)
+    setLeaderPickerEventDate(eventDate)
+    setLeaderPickerOpen(true)
+  }, [])
+
+  // Custom close for leader picker to clear state
+  const closeLeaderPickerWithReset = useCallback(() => {
+    setLeaderPickerOpen(false)
+    setLeaderPickerAgendaItemId(null)
+    setLeaderPickerMinistryId(null)
+    setLeaderPickerCurrentLeaderId(null)
+    setLeaderPickerEventDate(null)
+  }, [])
+
+  // Open song editor (used by matrix view)
+  const openSongEditor = useCallback((data: {
+    agendaItemId: string
+    songTitle: string
+    currentKey: string | null
+    currentLeaderId: string | null
+    currentLeaderName: string | null
+    currentDescription: string | null
+    ministryId: string | null
+    eventId: string
+    eventDate: string
+  }) => {
+    setSongEditorData(data)
+    setSongEditorOpen(true)
+  }, [])
+
+  // Close song editor and clear state
+  const closeSongEditorWithReset = useCallback(() => {
+    setSongEditorOpen(false)
+    setSongEditorData(null)
+  }, [])
+
   return {
     // Event dialog
     dialogOpen: eventDialog.isOpen,
@@ -232,10 +368,12 @@ export function useEventDialogs(): UseEventDialogsReturn {
 
     // Volunteer picker
     volunteerPickerOpen: volunteerPicker.isOpen,
+    volunteerPickerPositionId,
     assigningPosition: volunteerPicker.item,
     setVolunteerPickerOpen: volunteerPicker.setOpen,
     openVolunteerPicker: volunteerPicker.open,
-    closeVolunteerPicker: volunteerPicker.close,
+    openVolunteerPickerForPosition,
+    closeVolunteerPicker: closeVolunteerPickerWithReset,
 
     // Unassign dialog
     unassignDialogOpen: unassignDialog.isOpen,
@@ -266,10 +404,13 @@ export function useEventDialogs(): UseEventDialogsReturn {
 
     // Song picker
     songPickerOpen: songPicker.isOpen,
+    songPickerEventId,
+    songPickerAgendaItemId,
     replacingAgendaItem: songPicker.item,
     setSongPickerOpen: songPicker.setOpen,
     openSongPicker: songPicker.open,
-    closeSongPicker: songPicker.close,
+    openSongPickerForEvent,
+    closeSongPicker: closeSongPickerWithReset,
 
     // Template picker
     templatePickerOpen,
@@ -278,5 +419,22 @@ export function useEventDialogs(): UseEventDialogsReturn {
     // Send invitations dialog
     sendInvitationsDialogOpen,
     setSendInvitationsDialogOpen,
+
+    // Leader picker
+    leaderPickerOpen,
+    leaderPickerAgendaItemId,
+    leaderPickerMinistryId,
+    leaderPickerCurrentLeaderId,
+    leaderPickerEventDate,
+    setLeaderPickerOpen,
+    openLeaderPickerForAgendaItem,
+    closeLeaderPicker: closeLeaderPickerWithReset,
+
+    // Song editor
+    songEditorOpen,
+    songEditorData,
+    setSongEditorOpen,
+    openSongEditor,
+    closeSongEditor: closeSongEditorWithReset,
   }
 }

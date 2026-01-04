@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { useQueryClient } from '@tanstack/react-query'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -11,6 +12,7 @@ import {
   List,
   CalendarDays,
   FileText,
+  Grid3X3,
 } from 'lucide-react'
 import { EmptyState } from '@/components/EmptyState'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
@@ -53,6 +55,14 @@ const EventDetailPanel = dynamic(
   }
 )
 
+const SchedulingMatrix = dynamic(
+  () => import('./matrix/SchedulingMatrix').then((mod) => ({ default: mod.SchedulingMatrix })),
+  {
+    loading: () => <CalendarViewSkeleton />,
+    ssr: false,
+  }
+)
+
 import { useEventList, useEventDetail, useEventDialogs, useEventHandlers } from './hooks'
 import { EventsListViewWithDetail, EventDialogs } from './components'
 import { TaskDialog } from '@/app/dashboard/tasks/task-dialog'
@@ -74,10 +84,11 @@ interface EventsPageClientProps {
 
 export function EventsPageClient({ initialData }: EventsPageClientProps) {
   // Use custom hooks for state management
+  const queryClient = useQueryClient()
   const eventList = useEventList(initialData)
   const eventDetail = useEventDetail()
   const dialogs = useEventDialogs()
-  const handlers = useEventHandlers({ eventList, eventDetail, dialogs })
+  const handlers = useEventHandlers({ eventList, eventDetail, dialogs, queryClient })
   const searchParams = useSearchParams()
   const router = useRouter()
   const hasHandledUrlParam = useRef(false)
@@ -137,7 +148,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
             type="single"
             value={viewMode}
             onValueChange={(value) =>
-              value && eventList.setViewMode(value as 'list' | 'calendar' | 'templates')
+              value && eventList.setViewMode(value as 'list' | 'calendar' | 'matrix' | 'templates')
             }
             className="!border !border-black dark:!border-white rounded-full p-1 gap-1"
           >
@@ -155,6 +166,15 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
             >
               <CalendarDays className="w-4 h-4" />
             </ToggleGroupItem>
+            {canManageContent && (
+              <ToggleGroupItem
+                value="matrix"
+                aria-label="Scheduling matrix"
+                className="!rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
+              >
+                <Grid3X3 className="w-4 h-4" />
+              </ToggleGroupItem>
+            )}
             {canManageContent && (
               <ToggleGroupItem
                 value="templates"
@@ -198,6 +218,24 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
         {viewMode === 'templates' ? (
           <ErrorBoundary>
             <TemplatesTab />
+          </ErrorBoundary>
+        ) : viewMode === 'matrix' ? (
+          <ErrorBoundary>
+            <SchedulingMatrix
+              onEventSelect={(eventId) => handlers.handleSelectEvent({ id: eventId } as Event)}
+              onOpenSongPicker={(eventId, agendaItemId) => {
+                dialogs.openSongPickerForEvent(eventId, agendaItemId)
+              }}
+              onOpenVolunteerPicker={(eventId, positionId) => {
+                dialogs.openVolunteerPickerForPosition(positionId)
+              }}
+              onOpenLeaderPicker={(agendaItemId, ministryId, currentLeaderId, eventDate) => {
+                dialogs.openLeaderPickerForAgendaItem(agendaItemId, ministryId, currentLeaderId, eventDate)
+              }}
+              onOpenSongEditor={(data) => {
+                dialogs.openSongEditor(data)
+              }}
+            />
           </ErrorBoundary>
         ) : viewMode === 'calendar' ? (
           <ErrorBoundary>
@@ -341,6 +379,8 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
         editingAgendaItem={dialogs.editingAgendaItem}
         onAgendaDialogSuccess={handlers.handleAgendaDialogSuccess}
         songPickerOpen={dialogs.songPickerOpen}
+        songPickerEventId={dialogs.songPickerEventId}
+        songPickerAgendaItemId={dialogs.songPickerAgendaItemId}
         setSongPickerOpen={dialogs.setSongPickerOpen}
         closeSongPicker={dialogs.closeSongPicker}
         replacingAgendaItem={dialogs.replacingAgendaItem}
@@ -353,6 +393,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
         editingPosition={dialogs.editingPosition}
         onPositionDialogSuccess={handlers.handlePositionDialogSuccess}
         volunteerPickerOpen={dialogs.volunteerPickerOpen}
+        volunteerPickerPositionId={dialogs.volunteerPickerPositionId}
         setVolunteerPickerOpen={dialogs.setVolunteerPickerOpen}
         assigningPosition={dialogs.assigningPosition}
         onVolunteerPickerSuccess={handlers.handleVolunteerPickerSuccess}
@@ -377,6 +418,21 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
         sendInvitationsDialogOpen={dialogs.sendInvitationsDialogOpen}
         setSendInvitationsDialogOpen={dialogs.setSendInvitationsDialogOpen}
         onSendInvitationsSuccess={handlers.handleSendInvitationsSuccess}
+        leaderPickerOpen={dialogs.leaderPickerOpen}
+        leaderPickerAgendaItemId={dialogs.leaderPickerAgendaItemId}
+        leaderPickerMinistryId={dialogs.leaderPickerMinistryId}
+        leaderPickerCurrentLeaderId={dialogs.leaderPickerCurrentLeaderId}
+        leaderPickerEventDate={dialogs.leaderPickerEventDate}
+        setLeaderPickerOpen={dialogs.setLeaderPickerOpen}
+        closeLeaderPicker={dialogs.closeLeaderPicker}
+        onLeaderPickerSuccess={handlers.handleLeaderPickerSuccess}
+        songEditorOpen={dialogs.songEditorOpen}
+        songEditorData={dialogs.songEditorData}
+        setSongEditorOpen={dialogs.setSongEditorOpen}
+        closeSongEditor={dialogs.closeSongEditor}
+        onSongEditorSuccess={handlers.handleSongEditorSuccess}
+        onSongEditorDataChange={handlers.handleSongEditorDataChange}
+        onSongEditorReplaceSong={handlers.handleSongEditorReplaceSong}
       />
 
       {/* Task Dialog for adding tasks to events */}

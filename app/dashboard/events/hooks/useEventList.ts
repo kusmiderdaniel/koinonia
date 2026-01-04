@@ -7,7 +7,7 @@ import { useDebouncedValue, queryKeys, useCacheInvalidation } from '@/lib/hooks'
 import { getEvents, getChurchMembers } from '../actions'
 import type { Event, Member } from '../types'
 
-export type ViewMode = 'list' | 'calendar' | 'templates'
+export type ViewMode = 'list' | 'calendar' | 'matrix' | 'templates'
 
 export interface EventsInitialData {
   events: Event[]
@@ -101,7 +101,7 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
   // Handle view query param from URL
   useEffect(() => {
     const viewParam = searchParams.get('view')
-    if (viewParam === 'list' || viewParam === 'calendar' || viewParam === 'templates') {
+    if (viewParam === 'list' || viewParam === 'calendar' || viewParam === 'matrix' || viewParam === 'templates') {
       setViewMode(viewParam)
     }
   }, [searchParams])

@@ -14,6 +14,8 @@ const AgendaItemPicker = dynamic(() => import('../[id]/agenda-item-picker').then
 const SongPicker = dynamic(() => import('../[id]/song-picker').then(mod => ({ default: mod.SongPicker })), { ssr: false })
 const TemplatePicker = dynamic(() => import('../templates/TemplatePicker').then(mod => ({ default: mod.TemplatePicker })), { ssr: false })
 const SendInvitationsDialog = dynamic(() => import('../[id]/send-invitations-dialog').then(mod => ({ default: mod.SendInvitationsDialog })), { ssr: false })
+const LeaderPicker = dynamic(() => import('../[id]/leader-picker').then(mod => ({ default: mod.LeaderPicker })), { ssr: false })
+const SongEditor = dynamic(() => import('../[id]/song-editor').then(mod => ({ default: mod.SongEditor })), { ssr: false })
 
 interface EventDialogsProps {
   selectedEvent: EventDetail | null
@@ -39,6 +41,8 @@ interface EventDialogsProps {
   onAgendaDialogSuccess: () => void
   // Song picker
   songPickerOpen: boolean
+  songPickerEventId: string | null
+  songPickerAgendaItemId: string | null
   setSongPickerOpen: (open: boolean) => void
   closeSongPicker: () => void
   replacingAgendaItem: AgendaItem | null
@@ -54,6 +58,7 @@ interface EventDialogsProps {
   onPositionDialogSuccess: () => void
   // Volunteer picker
   volunteerPickerOpen: boolean
+  volunteerPickerPositionId: string | null
   setVolunteerPickerOpen: (open: boolean) => void
   assigningPosition: Position | null
   onVolunteerPickerSuccess: () => void
@@ -83,6 +88,33 @@ interface EventDialogsProps {
   sendInvitationsDialogOpen: boolean
   setSendInvitationsDialogOpen: (open: boolean) => void
   onSendInvitationsSuccess: () => void
+  // Leader picker
+  leaderPickerOpen: boolean
+  leaderPickerAgendaItemId: string | null
+  leaderPickerMinistryId: string | null
+  leaderPickerCurrentLeaderId: string | null
+  leaderPickerEventDate: string | null
+  setLeaderPickerOpen: (open: boolean) => void
+  closeLeaderPicker: () => void
+  onLeaderPickerSuccess: () => void
+  // Song editor
+  songEditorOpen: boolean
+  songEditorData: {
+    agendaItemId: string
+    songTitle: string
+    currentKey: string | null
+    currentLeaderId: string | null
+    currentLeaderName: string | null
+    currentDescription: string | null
+    ministryId: string | null
+    eventId: string
+    eventDate: string
+  } | null
+  setSongEditorOpen: (open: boolean) => void
+  closeSongEditor: () => void
+  onSongEditorSuccess: () => void
+  onSongEditorDataChange?: () => void
+  onSongEditorReplaceSong: (eventId: string, agendaItemId: string) => void
 }
 
 export function EventDialogs({
@@ -104,6 +136,8 @@ export function EventDialogs({
   editingAgendaItem,
   onAgendaDialogSuccess,
   songPickerOpen,
+  songPickerEventId,
+  songPickerAgendaItemId,
   setSongPickerOpen,
   closeSongPicker,
   replacingAgendaItem,
@@ -116,6 +150,7 @@ export function EventDialogs({
   editingPosition,
   onPositionDialogSuccess,
   volunteerPickerOpen,
+  volunteerPickerPositionId,
   setVolunteerPickerOpen,
   assigningPosition,
   onVolunteerPickerSuccess,
@@ -140,6 +175,21 @@ export function EventDialogs({
   sendInvitationsDialogOpen,
   setSendInvitationsDialogOpen,
   onSendInvitationsSuccess,
+  leaderPickerOpen,
+  leaderPickerAgendaItemId,
+  leaderPickerMinistryId,
+  leaderPickerCurrentLeaderId,
+  leaderPickerEventDate,
+  setLeaderPickerOpen,
+  closeLeaderPicker,
+  onLeaderPickerSuccess,
+  songEditorOpen,
+  songEditorData,
+  setSongEditorOpen,
+  closeSongEditor,
+  onSongEditorSuccess,
+  onSongEditorDataChange,
+  onSongEditorReplaceSong,
 }: EventDialogsProps) {
   return (
     <>
@@ -181,17 +231,6 @@ export function EventDialogs({
             onSuccess={onAgendaDialogSuccess}
           />
 
-          <SongPicker
-            open={songPickerOpen}
-            onOpenChange={(open) => {
-              setSongPickerOpen(open)
-              if (!open) closeSongPicker()
-            }}
-            eventId={selectedEvent.id}
-            onSuccess={onSongPickerSuccess}
-            replaceAgendaItemId={replacingAgendaItem?.id}
-          />
-
           <PositionPicker
             open={positionPickerOpen}
             onOpenChange={setPositionPickerOpen}
@@ -209,12 +248,32 @@ export function EventDialogs({
         </>
       )}
 
-      {/* Volunteer Picker */}
-      {assigningPosition && selectedEvent && (
+      {/* Song Picker - can operate on selectedEvent or a specific event from matrix */}
+      {(selectedEvent || songPickerEventId) && (
+        <SongPicker
+          open={songPickerOpen}
+          onOpenChange={(open) => {
+            setSongPickerOpen(open)
+            if (!open) closeSongPicker()
+          }}
+          eventId={songPickerEventId || selectedEvent!.id}
+          onSuccess={onSongPickerSuccess}
+          replaceAgendaItemId={songPickerAgendaItemId || replacingAgendaItem?.id}
+        />
+      )}
+
+      {/* Volunteer Picker - works with full position object or just position ID from matrix */}
+      {(assigningPosition || volunteerPickerPositionId) && (
         <VolunteerPicker
           open={volunteerPickerOpen}
           onOpenChange={setVolunteerPickerOpen}
-          position={assigningPosition}
+          position={assigningPosition || {
+            id: volunteerPickerPositionId!,
+            title: 'Position',
+            quantity_needed: 1,
+            role: null,
+            event_assignments: [],
+          }}
           onSuccess={onVolunteerPickerSuccess}
         />
       )}
@@ -269,6 +328,44 @@ export function EventDialogs({
           onOpenChange={setSendInvitationsDialogOpen}
           eventId={selectedEvent.id}
           onSuccess={onSendInvitationsSuccess}
+        />
+      )}
+
+      {/* Leader Picker - for assigning leaders to agenda items */}
+      {leaderPickerAgendaItemId && leaderPickerMinistryId && leaderPickerEventDate && (
+        <LeaderPicker
+          open={leaderPickerOpen}
+          onOpenChange={(open) => {
+            setLeaderPickerOpen(open)
+            if (!open) closeLeaderPicker()
+          }}
+          agendaItemId={leaderPickerAgendaItemId}
+          ministryId={leaderPickerMinistryId}
+          currentLeaderId={leaderPickerCurrentLeaderId}
+          eventDate={leaderPickerEventDate}
+          onSuccess={onLeaderPickerSuccess}
+        />
+      )}
+
+      {/* Song Editor - for editing song key and leader in matrix */}
+      {songEditorData && (
+        <SongEditor
+          open={songEditorOpen}
+          onOpenChange={(open) => {
+            setSongEditorOpen(open)
+            if (!open) closeSongEditor()
+          }}
+          agendaItemId={songEditorData.agendaItemId}
+          songTitle={songEditorData.songTitle}
+          currentKey={songEditorData.currentKey}
+          currentLeaderId={songEditorData.currentLeaderId}
+          currentLeaderName={songEditorData.currentLeaderName}
+          currentDescription={songEditorData.currentDescription}
+          ministryId={songEditorData.ministryId}
+          eventDate={songEditorData.eventDate}
+          onSuccess={onSongEditorSuccess}
+          onDataChange={onSongEditorDataChange}
+          onReplaceSong={() => onSongEditorReplaceSong(songEditorData.eventId, songEditorData.agendaItemId)}
         />
       )}
     </>
