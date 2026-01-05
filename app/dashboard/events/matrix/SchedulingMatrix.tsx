@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { MatrixFilters } from './MatrixFilters'
 import { MatrixGrid, type AgendaCellClickData } from './MatrixGrid'
 import { MatrixLegend } from './MatrixLegend'
-import { MatrixInvitationsDialog } from './MatrixInvitationsDialog'
+import { MatrixInvitationsDialog } from './matrix-invitations-dialog'
 import { getMatrixData, getMatrixMinistries, getMatrixCampuses } from '../actions/matrix-queries'
 import type { MatrixFilters as MatrixFiltersType, MatrixData, MatrixMinistry, MatrixCampus } from './types'
 
