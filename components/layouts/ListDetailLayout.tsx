@@ -57,12 +57,14 @@ export const ListDetailLayout = memo(function ListDetailLayout({
   // Mobile: Show detail view with back button when item is selected
   if (isMobile && hasSelection) {
     return (
-      <div className={cn('h-full p-4', className)}>
+      <div className={cn('flex flex-col h-[calc(100vh-3.5rem)] p-4', className)}>
         <MobileBackHeader
           title={selectionTitle}
           onBack={onClearSelection}
         />
-        {detailView}
+        <div className="flex-1 min-h-0 overflow-auto">
+          {detailView}
+        </div>
         {dialogs}
       </div>
     )
@@ -71,9 +73,9 @@ export const ListDetailLayout = memo(function ListDetailLayout({
   // Mobile: Show list view only
   if (isMobile) {
     return (
-      <div className={cn('h-full p-4', className)}>
-        {header && <div className="mb-4">{header}</div>}
-        <div className="h-[calc(100vh-200px)]">
+      <div className={cn('flex flex-col h-[calc(100vh-3.5rem)] p-4', className)}>
+        {header && <div className="mb-4 shrink-0">{header}</div>}
+        <div className="flex-1 min-h-0">
           {listView}
         </div>
         {dialogs}
@@ -83,10 +85,10 @@ export const ListDetailLayout = memo(function ListDetailLayout({
 
   // Desktop: Side-by-side layout
   return (
-    <div className={cn('p-4 md:p-8', className)}>
-      {header && <div className="mb-6">{header}</div>}
+    <div className={cn('flex flex-col h-screen p-4 md:p-8', className)}>
+      {header && <div className="mb-6 shrink-0">{header}</div>}
 
-      <div className={cn('flex flex-col md:flex-row gap-6', contentHeight)}>
+      <div className="flex flex-col md:flex-row gap-6 flex-1 min-h-0">
         {/* List Panel */}
         <div className={cn('w-full md:flex-shrink-0 h-full', `md:${listWidth}`)}>
           {listView}
