@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/tooltip'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Home, Calendar, CheckSquare, Users, Heart, Music, Settings, User, LogOut, CalendarOff, CalendarSync, ChevronsLeft, ChevronsRight } from 'lucide-react'
+import { Home, Calendar, CheckSquare, Users, Heart, Music, FileText, Settings, User, LogOut, CalendarOff, CalendarSync, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { ProgressLink } from '@/components/ProgressLink'
@@ -45,6 +45,7 @@ const navItems = [
   { href: '/dashboard/people', label: 'People', icon: Users, pageKey: 'people' as PageKey },
   { href: '/dashboard/ministries', label: 'Ministries', icon: Heart, pageKey: 'ministries' as PageKey },
   { href: '/dashboard/songs', label: 'Songs', icon: Music, pageKey: 'songs' as PageKey },
+  { href: '/dashboard/forms', label: 'Forms', icon: FileText, pageKey: 'forms' as PageKey },
 ]
 
 const adminNavItems = [
