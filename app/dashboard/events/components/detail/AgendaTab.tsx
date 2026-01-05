@@ -6,7 +6,7 @@ import { ListOrdered, Music, Plus, Printer } from 'lucide-react'
 import Link from 'next/link'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { SortableAgendaItem } from '../SortableAgendaItem'
+import { SortableAgendaItem } from '../sortable-agenda-item'
 import type { AgendaTabProps } from './types'
 
 export const AgendaTab = memo(function AgendaTab({

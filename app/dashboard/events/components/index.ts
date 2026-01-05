@@ -1,5 +1,6 @@
-export { SortableAgendaItem } from './SortableAgendaItem'
+export { SortableAgendaItem } from './sortable-agenda-item'
 export { EventCard } from './EventCard'
 export { EventDetailPanel } from './EventDetailPanel'
 export { EventsListView, EventsListViewWithDetail } from './EventsListView'
 export { EventDialogs } from './EventDialogs'
+export { EventsHeader } from './EventsHeader'

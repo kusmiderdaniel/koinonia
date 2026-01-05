@@ -4,16 +4,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import dynamic from 'next/dynamic'
-import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import {
-  Plus,
-  Calendar,
-  List,
-  CalendarDays,
-  FileText,
-  Grid3X3,
-} from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { EmptyState } from '@/components/EmptyState'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import {
@@ -21,7 +13,6 @@ import {
   TemplatesTabSkeleton,
   DetailPanelSkeleton,
 } from '@/components/DynamicLoadingFallback'
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   KeyboardSensor,
   PointerSensor,
@@ -63,10 +54,15 @@ const SchedulingMatrix = dynamic(
   }
 )
 
-import { useEventList, useEventDetail, useEventDialogs, useEventHandlers } from './hooks'
-import { EventsListViewWithDetail, EventDialogs } from './components'
+import {
+  useEventList,
+  useEventDetail,
+  useEventDialogs,
+  useEventHandlers,
+  useEventDetailPanelProps,
+} from './hooks'
+import { EventsListViewWithDetail, EventDialogs, EventsHeader } from './components'
 import { TaskDialog } from '@/app/dashboard/tasks/task-dialog'
-import { formatDuration } from '@/lib/utils/format'
 import type { Event, Member } from './types'
 
 export interface EventsInitialData {
@@ -83,7 +79,6 @@ interface EventsPageClientProps {
 }
 
 export function EventsPageClient({ initialData }: EventsPageClientProps) {
-  // Use custom hooks for state management
   const queryClient = useQueryClient()
   const eventList = useEventList(initialData)
   const eventDetail = useEventDetail()
@@ -93,10 +88,9 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
   const router = useRouter()
   const hasHandledUrlParam = useRef(false)
 
-  // Toggle between upcoming and past events in list view
   const [listFilter, setListFilter] = useState<'upcoming' | 'past'>('upcoming')
 
-  // Handle event query param from notification navigation (only once on mount)
+  // Handle event query param from notification navigation
   useEffect(() => {
     const eventId = searchParams.get('event')
     if (eventId && !hasHandledUrlParam.current) {
@@ -115,14 +109,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
   )
 
   // Destructure commonly used values
-  const {
-    selectedEvent,
-    sortedAgendaItems,
-    totalDuration,
-    positionsByMinistry,
-    detailTab,
-    setDetailTab,
-  } = eventDetail
+  const { selectedEvent } = eventDetail
   const {
     events,
     error,
@@ -136,77 +123,56 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
     firstDayOfWeek,
   } = eventList
 
+  // Build EventDetailPanel props using shared hook
+  const detailPanelProps = useEventDetailPanelProps({
+    selectedEvent,
+    sortedAgendaItems: eventDetail.sortedAgendaItems,
+    totalDuration: eventDetail.totalDuration,
+    positionsByMinistry: eventDetail.positionsByMinistry,
+    detailTab: eventDetail.detailTab,
+    setDetailTab: eventDetail.setDetailTab,
+    closeEventDetail: eventDetail.closeEventDetail,
+    handleDragEnd: eventDetail.handleDragEnd,
+    canManage,
+    canManageContent,
+    canDelete,
+    sensors,
+    openEditDialog: dialogs.openEditDialog,
+    openDeleteDialog: dialogs.openDeleteDialog,
+    setAgendaPickerOpen: dialogs.setAgendaPickerOpen,
+    setSongPickerOpen: dialogs.setSongPickerOpen,
+    closeSongPicker: dialogs.closeSongPicker,
+    openDeleteAgendaItemDialog: dialogs.openDeleteAgendaItemDialog,
+    setPositionPickerOpen: dialogs.setPositionPickerOpen,
+    openEditPositionDialog: dialogs.openEditPositionDialog,
+    openDeletePositionDialog: dialogs.openDeletePositionDialog,
+    openVolunteerPicker: dialogs.openVolunteerPicker,
+    openUnassignDialog: dialogs.openUnassignDialog,
+    setSendInvitationsDialogOpen: dialogs.setSendInvitationsDialogOpen,
+    handleEditAgendaItem: handlers.handleEditAgendaItem,
+    handleAgendaKeyChange: handlers.handleAgendaKeyChange,
+    handleAgendaLeaderChange: handlers.handleAgendaLeaderChange,
+    handleAgendaDurationChange: handlers.handleAgendaDurationChange,
+    handleAgendaDescriptionChange: handlers.handleAgendaDescriptionChange,
+    handleSongPlaceholderClick: handlers.handleSongPlaceholderClick,
+    handleAddTask: handlers.handleAddTask,
+    taskRefreshKey: handlers.taskRefreshKey,
+    taskMembers: initialData.churchMembers,
+    taskMinistries: initialData.ministries,
+    taskCampuses: initialData.campuses,
+    weekStartsOn: firstDayOfWeek as 0 | 1 | 2 | 3 | 4 | 5 | 6,
+  })
+
   return (
     <div className="h-[calc(100vh-56px)] md:h-screen flex flex-col p-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 flex-shrink-0">
-        <div className="flex items-center gap-3">
-          <Calendar className="w-6 h-6" />
-          <h1 className="text-2xl font-bold">Events</h1>
-        </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <ToggleGroup
-            type="single"
-            value={viewMode}
-            onValueChange={(value) =>
-              value && eventList.setViewMode(value as 'list' | 'calendar' | 'matrix' | 'templates')
-            }
-            className="!border !border-black dark:!border-white rounded-full p-1 gap-1"
-          >
-            <ToggleGroupItem
-              value="list"
-              aria-label="List view"
-              className="!rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
-            >
-              <List className="w-4 h-4" />
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="calendar"
-              aria-label="Calendar view"
-              className="!rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
-            >
-              <CalendarDays className="w-4 h-4" />
-            </ToggleGroupItem>
-            {canManageContent && (
-              <ToggleGroupItem
-                value="matrix"
-                aria-label="Scheduling matrix"
-                className="!rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
-              >
-                <Grid3X3 className="w-4 h-4" />
-              </ToggleGroupItem>
-            )}
-            {canManageContent && (
-              <ToggleGroupItem
-                value="templates"
-                aria-label="Templates"
-                className="!rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
-              >
-                <FileText className="w-4 h-4" />
-              </ToggleGroupItem>
-            )}
-          </ToggleGroup>
-          {canManage && (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                className="rounded-full !border !border-black dark:!border-white hidden md:flex"
-                onClick={() => dialogs.setTemplatePickerOpen(true)}
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                From Template
-              </Button>
-              <Button
-                variant="outline"
-                className="rounded-full !border !border-black dark:!border-white"
-                onClick={() => dialogs.openCreateDialog()}
-              >
-                <Plus className="w-4 h-4 md:mr-2" />
-                <span className="hidden md:inline">Add</span>
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
+      <EventsHeader
+        viewMode={viewMode}
+        onViewModeChange={eventList.setViewMode}
+        canManage={canManage}
+        canManageContent={canManageContent}
+        onOpenTemplatePicker={() => dialogs.setTemplatePickerOpen(true)}
+        onOpenCreateDialog={() => dialogs.openCreateDialog()}
+      />
 
       {error && (
         <Alert variant="destructive" className="mb-6 flex-shrink-0">
@@ -244,50 +210,8 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
               firstDayOfWeek={firstDayOfWeek}
               onEventSelect={handlers.handleSelectEvent}
               leftPanelContent={
-                selectedEvent ? (
-                  <EventDetailPanel
-                    selectedEvent={selectedEvent}
-                    sortedAgendaItems={sortedAgendaItems}
-                    totalDuration={totalDuration}
-                    positionsByMinistry={positionsByMinistry}
-                    detailTab={detailTab}
-                    setDetailTab={setDetailTab}
-                    canManage={canManage}
-                    canManageContent={canManageContent}
-                    canDelete={canDelete}
-                    sensors={sensors}
-                    formatDuration={formatDuration}
-                    onClose={eventDetail.closeEventDetail}
-                    onEdit={() => dialogs.openEditDialog(selectedEvent)}
-                    onDelete={() => dialogs.openDeleteDialog(selectedEvent)}
-                    onDragEnd={eventDetail.handleDragEnd}
-                    onAddAgendaItem={() => dialogs.setAgendaPickerOpen(true)}
-                    onAddSong={() => {
-                      dialogs.closeSongPicker()
-                      dialogs.setSongPickerOpen(true)
-                    }}
-                    onEditAgendaItem={handlers.handleEditAgendaItem}
-                    onDeleteAgendaItem={(item) => dialogs.openDeleteAgendaItemDialog(item)}
-                    onAgendaKeyChange={handlers.handleAgendaKeyChange}
-                    onAgendaLeaderChange={handlers.handleAgendaLeaderChange}
-                    onAgendaDurationChange={handlers.handleAgendaDurationChange}
-                    onAgendaDescriptionChange={handlers.handleAgendaDescriptionChange}
-                    onSongPlaceholderClick={handlers.handleSongPlaceholderClick}
-                    onAddPosition={() => dialogs.setPositionPickerOpen(true)}
-                    onEditPosition={(position) => dialogs.openEditPositionDialog(position)}
-                    onDeletePosition={(position) => dialogs.openDeletePositionDialog(position)}
-                    onAssignVolunteer={(position) => dialogs.openVolunteerPicker(position)}
-                    onUnassign={(assignment, positionTitle) =>
-                      dialogs.openUnassignDialog(assignment, positionTitle)
-                    }
-                    onSendInvitations={() => dialogs.setSendInvitationsDialogOpen(true)}
-                    onAddTask={handlers.handleAddTask}
-                    taskRefreshKey={handlers.taskRefreshKey}
-                    taskMembers={initialData.churchMembers}
-                    taskMinistries={initialData.ministries}
-                    taskCampuses={initialData.campuses}
-                    weekStartsOn={firstDayOfWeek as 0 | 1 | 2 | 3 | 4 | 5 | 6}
-                  />
+                detailPanelProps ? (
+                  <EventDetailPanel {...detailPanelProps} />
                 ) : undefined
               }
             />
@@ -304,49 +228,9 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
             onSelectEvent={handlers.handleSelectEvent}
             onClearSelection={eventDetail.closeEventDetail}
             detailContent={
-              <EventDetailPanel
-                selectedEvent={selectedEvent!}
-                sortedAgendaItems={sortedAgendaItems}
-                totalDuration={totalDuration}
-                positionsByMinistry={positionsByMinistry}
-                detailTab={detailTab}
-                setDetailTab={setDetailTab}
-                canManage={canManage}
-                canManageContent={canManageContent}
-                canDelete={canDelete}
-                sensors={sensors}
-                formatDuration={formatDuration}
-                onClose={eventDetail.closeEventDetail}
-                onEdit={() => dialogs.openEditDialog(selectedEvent!)}
-                onDelete={() => dialogs.openDeleteDialog(selectedEvent!)}
-                onDragEnd={eventDetail.handleDragEnd}
-                onAddAgendaItem={() => dialogs.setAgendaPickerOpen(true)}
-                onAddSong={() => {
-                  dialogs.closeSongPicker()
-                  dialogs.setSongPickerOpen(true)
-                }}
-                onEditAgendaItem={handlers.handleEditAgendaItem}
-                onDeleteAgendaItem={(item) => dialogs.openDeleteAgendaItemDialog(item)}
-                onAgendaKeyChange={handlers.handleAgendaKeyChange}
-                onAgendaLeaderChange={handlers.handleAgendaLeaderChange}
-                onAgendaDurationChange={handlers.handleAgendaDurationChange}
-                onAgendaDescriptionChange={handlers.handleAgendaDescriptionChange}
-                onSongPlaceholderClick={handlers.handleSongPlaceholderClick}
-                onAddPosition={() => dialogs.setPositionPickerOpen(true)}
-                onEditPosition={(position) => dialogs.openEditPositionDialog(position)}
-                onDeletePosition={(position) => dialogs.openDeletePositionDialog(position)}
-                onAssignVolunteer={(position) => dialogs.openVolunteerPicker(position)}
-                onUnassign={(assignment, positionTitle) =>
-                  dialogs.openUnassignDialog(assignment, positionTitle)
-                }
-                onSendInvitations={() => dialogs.setSendInvitationsDialogOpen(true)}
-                onAddTask={handlers.handleAddTask}
-                taskRefreshKey={handlers.taskRefreshKey}
-                taskMembers={initialData.churchMembers}
-                taskMinistries={initialData.ministries}
-                taskCampuses={initialData.campuses}
-                weekStartsOn={firstDayOfWeek as 0 | 1 | 2 | 3 | 4 | 5 | 6}
-              />
+              detailPanelProps ? (
+                <EventDetailPanel {...detailPanelProps} />
+              ) : null
             }
             emptyDetailContent={
               <EmptyState

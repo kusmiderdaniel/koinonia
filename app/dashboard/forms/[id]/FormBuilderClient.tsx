@@ -37,7 +37,7 @@ import { updateForm, publishForm, unpublishForm, closeForm } from '../actions'
 import { bulkSaveFormFields } from '../actions/fields'
 import { bulkSaveFormConditions } from '../actions/conditions'
 import { FormBuilder } from './builder/FormBuilder'
-import { PreviewPanel } from './builder/PreviewPanel'
+import { PreviewPanel } from './builder/preview-panel'
 import { ResponsesTable } from './responses/ResponsesTable'
 import type { Form, FormField, FormCondition, BuilderField, BuilderCondition } from '../types'
 

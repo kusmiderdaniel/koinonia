@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Plus, Search, FileText } from 'lucide-react'
 import { getEventTemplates, getEventTemplate, deleteEventTemplate } from './actions'
-import { TemplateDialog } from './TemplateDialog'
+import { TemplateDialog } from './template-dialog'
 import { DetailPanelSkeleton } from '@/components/DynamicLoadingFallback'
 import { EventTypeBadge } from '@/components/EventTypeBadge'
 import { CampusBadge } from '@/components/CampusBadge'
