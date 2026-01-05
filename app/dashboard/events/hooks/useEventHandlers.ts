@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 import type { QueryClient } from '@tanstack/react-query'
 import type { useEventList } from './useEventList'
 import type { useEventDetail } from './useEventDetail'
-import type { useEventDialogs } from './useEventDialogs'
+import type { useEventDialogs } from './event-dialogs'
 import type { Event, AgendaItem } from '../types'
 
 interface UseEventHandlersOptions {

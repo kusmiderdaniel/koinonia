@@ -1,5 +1,5 @@
 export { useEventList, type ViewMode } from './useEventList'
 export { useEventDetail } from './useEventDetail'
-export { useEventDialogs } from './useEventDialogs'
+export { useEventDialogs } from './event-dialogs'
 export { useEventHandlers } from './useEventHandlers'
 export { useEventDetailPanelProps } from './useEventDetailPanelProps'

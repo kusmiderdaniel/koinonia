@@ -26,7 +26,7 @@ import { User, CalendarDays } from 'lucide-react'
 import { toast } from 'sonner'
 import { createTask, updateTask } from './actions'
 import { MemberPicker } from './components/MemberPicker'
-import { EventPicker } from './components/EventPicker'
+import { EventPicker } from './components/event-picker'
 import type { Task, TaskMinistry, TaskCampus, Person, TaskPriority, TaskStatus } from './types'
 
 interface TaskDialogProps {

@@ -16,7 +16,7 @@ import { User, CalendarDays } from 'lucide-react'
 import { format, formatDistanceToNow, parseISO } from 'date-fns'
 import { TaskStatusBadge, TaskPriorityBadge } from '@/app/dashboard/tasks/components/TaskBadges'
 import { MemberPicker } from '@/app/dashboard/tasks/components/MemberPicker'
-import { EventPicker } from '@/app/dashboard/tasks/components/EventPicker'
+import { EventPicker } from '@/app/dashboard/tasks/components/event-picker'
 import type { Task, Person, TaskMinistry, TaskCampus, TaskHandlers } from './types'
 
 interface TaskDetailsTabProps {
