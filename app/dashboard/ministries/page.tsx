@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
-import { MinistriesPageClient } from './MinistriesPageClient'
+import { MinistriesPageClient } from './ministries-page'
 import { hasPageAccess } from '@/lib/permissions'
 import type { Ministry } from './types'
 
