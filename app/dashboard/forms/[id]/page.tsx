@@ -1,7 +1,7 @@
 import { redirect, notFound } from 'next/navigation'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { hasPageAccess } from '@/lib/permissions'
-import { FormBuilderClient } from './FormBuilderClient'
+import { FormBuilderClient } from './form-builder-client'
 import type { Form, FormField, FormCondition } from '../types'
 
 interface FormPageProps {
