@@ -9,7 +9,10 @@ function getRedirectUrl(request: Request, path: string) {
 }
 
 export async function GET(request: Request) {
-  console.log('[Invitation API] Received request:', request.url)
+  console.log('[Invitation API] === REQUEST START ===')
+  console.log('[Invitation API] URL:', request.url)
+
+  try {
 
   const { searchParams } = new URL(request.url)
   const token = searchParams.get('token')
@@ -137,5 +140,11 @@ export async function GET(request: Request) {
     position: positionTitle || '',
   })
 
+  console.log('[Invitation API] === SUCCESS - Redirecting to success page ===')
   return NextResponse.redirect(getRedirectUrl(request, `/invitation/success?${params.toString()}`))
+
+  } catch (error) {
+    console.error('[Invitation API] === UNHANDLED ERROR ===', error)
+    return NextResponse.redirect(getRedirectUrl(request, '/invitation/error?reason=server_error'))
+  }
 }

@@ -13,6 +13,7 @@ const reasonMessages: Record<string, string> = {
   token_not_found: 'This invitation link is no longer valid or has already been used.',
   no_assignment: 'The assignment associated with this invitation could not be found.',
   update_failed: 'We encountered an error processing your response. Please try again.',
+  server_error: 'An unexpected server error occurred. Please try again.',
   default: 'Something went wrong processing your invitation.',
 }
 
