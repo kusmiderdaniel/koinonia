@@ -154,7 +154,7 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
     } else {
       setIsLoading(false)
       // Pass the new ministry ID for auto-selection
-      const newMinistryId = !ministry && result.data ? result.data.id : undefined
+      const newMinistryId = !ministry && 'data' in result && result.data ? result.data.id : undefined
       onSuccess(newMinistryId)
     }
   }
