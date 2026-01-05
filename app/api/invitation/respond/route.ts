@@ -87,8 +87,13 @@ export async function GET(request: Request) {
     // Don't fail - assignment is already updated
   }
 
-  // Notify ministry leader about the response
-  await notifyMinistryLeaderOfResponse(supabase, notification.assignment_id, response)
+  // Notify ministry leader about the response (don't let this break the flow)
+  try {
+    await notifyMinistryLeaderOfResponse(supabase, notification.assignment_id, response)
+  } catch (err) {
+    console.error('[Invitation] Failed to notify ministry leader:', err)
+    // Don't fail - assignment is already updated
+  }
 
   // Get event and position details for the success page
   const { data: assignment } = await supabase
