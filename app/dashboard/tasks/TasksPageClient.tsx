@@ -28,6 +28,7 @@ interface TasksPageClientProps {
     firstDayOfWeek: 0 | 1 | 2 | 3 | 4 | 5 | 6
     savedViews: SavedView[]
     canManageViews: boolean
+    defaultCampusId?: string
   }
 }
 
@@ -210,6 +211,7 @@ export function TasksPageClient({ initialData }: TasksPageClientProps) {
         members={initialData.members}
         events={initialData.events}
         weekStartsOn={initialData.firstDayOfWeek}
+        defaultCampusId={initialData.defaultCampusId}
       />
 
       <ConfirmDialog

@@ -79,7 +79,7 @@ export default async function TasksPage() {
       .order('name'),
     adminClient
       .from('campuses')
-      .select('id, name, color')
+      .select('id, name, color, is_default')
       .eq('church_id', profile.church_id)
       .eq('is_active', true)
       .order('name'),
@@ -107,12 +107,17 @@ export default async function TasksPage() {
 
   const canManageViews = ['owner', 'admin', 'leader'].includes(profile.role)
 
+  // Find default campus
+  const campuses = (campusesResult.data || []) as TaskCampus[]
+  const defaultCampus = campuses.find((c) => c.is_default)
+  const defaultCampusId = defaultCampus?.id || (campuses.length === 1 ? campuses[0].id : undefined)
+
   return (
     <TasksPageClient
       initialData={{
         tasks: (tasksResult.data || []) as Task[],
         ministries: (ministriesResult.data || []) as TaskMinistry[],
-        campuses: (campusesResult.data || []) as TaskCampus[],
+        campuses,
         members: membersResult.data || [],
         events: eventsResult.data || [],
         currentUserId: profile.id,
@@ -120,6 +125,7 @@ export default async function TasksPage() {
         firstDayOfWeek,
         savedViews: (savedViewsResult.data || []) as SavedView[],
         canManageViews,
+        defaultCampusId,
       }}
     />
   )

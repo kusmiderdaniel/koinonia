@@ -14,6 +14,7 @@ export interface TaskCampus {
   id: string
   name: string
   color: string | null
+  is_default?: boolean | null
 }
 
 // Brief event reference
