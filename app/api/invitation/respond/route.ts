@@ -1,6 +1,12 @@
-import { redirect } from 'next/navigation'
+import { NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { notifyMinistryLeaderOfResponse } from '@/app/dashboard/events/actions/invitations'
+
+// Helper to create redirect URL
+function getRedirectUrl(request: Request, path: string) {
+  const url = new URL(request.url)
+  return new URL(path, url.origin).toString()
+}
 
 export async function GET(request: Request) {
   console.log('[Invitation API] Received request:', request.url)
@@ -14,11 +20,11 @@ export async function GET(request: Request) {
   // Validate parameters
   if (!token || token.length < 20) {
     console.log('[Invitation API] Invalid token')
-    return redirect('/invitation/error?reason=invalid_token')
+    return NextResponse.redirect(getRedirectUrl(request, '/invitation/error?reason=invalid_token'))
   }
 
   if (!action || !['accept', 'decline'].includes(action)) {
-    return redirect('/invitation/error?reason=invalid_action')
+    return NextResponse.redirect(getRedirectUrl(request, '/invitation/error?reason=invalid_action'))
   }
 
   const supabase = createServiceRoleClient()
@@ -39,23 +45,23 @@ export async function GET(request: Request) {
 
   if (lookupError || !notification) {
     console.error('[Invitation] Token not found:', lookupError?.message)
-    return redirect('/invitation/error?reason=token_not_found')
+    return NextResponse.redirect(getRedirectUrl(request, '/invitation/error?reason=token_not_found'))
   }
 
   // Check if already expired
   if (notification.expires_at && new Date(notification.expires_at) < new Date()) {
-    return redirect('/invitation/expired')
+    return NextResponse.redirect(getRedirectUrl(request, '/invitation/expired'))
   }
 
   // Check if already responded
   if (notification.is_actioned) {
     const previous = notification.action_taken || 'unknown'
-    return redirect(`/invitation/already-responded?previous=${previous}`)
+    return NextResponse.redirect(getRedirectUrl(request, `/invitation/already-responded?previous=${previous}`))
   }
 
   // Validate assignment exists
   if (!notification.assignment_id) {
-    return redirect('/invitation/error?reason=no_assignment')
+    return NextResponse.redirect(getRedirectUrl(request, '/invitation/error?reason=no_assignment'))
   }
 
   const response = action === 'accept' ? 'accepted' : 'declined'
@@ -72,7 +78,7 @@ export async function GET(request: Request) {
 
   if (updateError) {
     console.error('[Invitation] Failed to update assignment:', updateError)
-    return redirect('/invitation/error?reason=update_failed')
+    return NextResponse.redirect(getRedirectUrl(request, '/invitation/error?reason=update_failed'))
   }
 
   // Mark notification as actioned and read
@@ -131,5 +137,5 @@ export async function GET(request: Request) {
     position: positionTitle || '',
   })
 
-  return redirect(`/invitation/success?${params.toString()}`)
+  return NextResponse.redirect(getRedirectUrl(request, `/invitation/success?${params.toString()}`))
 }
