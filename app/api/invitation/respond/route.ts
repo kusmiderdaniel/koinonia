@@ -3,12 +3,17 @@ import { createServiceRoleClient } from '@/lib/supabase/server'
 import { notifyMinistryLeaderOfResponse } from '@/app/dashboard/events/actions/invitations'
 
 export async function GET(request: Request) {
+  console.log('[Invitation API] Received request:', request.url)
+
   const { searchParams } = new URL(request.url)
   const token = searchParams.get('token')
   const action = searchParams.get('action') as 'accept' | 'decline' | null
 
+  console.log('[Invitation API] Token:', token?.substring(0, 10) + '...', 'Action:', action)
+
   // Validate parameters
   if (!token || token.length < 20) {
+    console.log('[Invitation API] Invalid token')
     return redirect('/invitation/error?reason=invalid_token')
   }
 
