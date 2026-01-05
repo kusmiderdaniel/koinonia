@@ -22,6 +22,7 @@ export const PAGE_ACCESS = {
   people: ['owner', 'admin', 'leader'] as UserRole[],
   ministries: ['owner', 'admin', 'leader'] as UserRole[],
   songs: ['owner', 'admin', 'leader'] as UserRole[],
+  forms: ['owner', 'admin', 'leader'] as UserRole[], // Leaders+ can manage forms
   settings: ['owner', 'admin'] as UserRole[],
   profile: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[],
   availability: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[],
@@ -62,6 +63,14 @@ export const FEATURE_PERMISSIONS = {
 
   // Songs permissions
   manageSongs: ['owner', 'admin', 'leader'] as UserRole[],
+
+  // Forms permissions
+  createForm: ['owner', 'admin', 'leader'] as UserRole[],
+  editForm: ['owner', 'admin', 'leader'] as UserRole[],
+  deleteForm: ['owner', 'admin', 'leader'] as UserRole[],
+  viewFormResponses: ['owner', 'admin', 'leader'] as UserRole[],
+  exportFormResponses: ['owner', 'admin', 'leader'] as UserRole[],
+  submitInternalForm: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[],
 
   // Settings permissions
   viewSettings: ['owner', 'admin'] as UserRole[],

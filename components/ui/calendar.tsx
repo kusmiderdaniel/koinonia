@@ -20,50 +20,40 @@ function Calendar({
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{
-        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
-        month: "space-y-4 w-full",
-        month_caption: "flex justify-center pt-1 relative items-center",
-        caption_label: "hidden",
-        nav: "space-x-1 flex items-center",
+        months: "flex flex-col",
+        month: "space-y-4",
+        month_caption: "flex justify-center relative items-center h-9",
+        caption_label: "text-sm font-medium",
+        nav: "absolute inset-x-0 flex items-center justify-between",
         button_previous: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-1"
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
         ),
         button_next: cn(
           buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-1"
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"
         ),
-        month_grid: "w-full border-collapse space-y-1",
-        weekdays: "flex w-full",
-        weekday:
-          "text-muted-foreground rounded-md flex-1 text-center font-normal text-[0.8rem]",
-        week: "flex w-full mt-2",
-        day: "relative p-0 text-center text-sm flex-1 focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-brand [&:has([aria-selected])]:rounded-md",
-        day_button: cn(
-          buttonVariants({ variant: "ghost" }),
-          "h-10 w-full p-0 font-normal aria-selected:opacity-100 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
-        ),
+        month_grid: "w-full border-collapse",
+        weekdays: "flex justify-between",
+        weekday: "text-muted-foreground w-9 font-normal text-[0.8rem] text-center",
+        week: "flex justify-between mt-2",
+        day: "text-center text-sm h-9 w-9 p-0 relative [&:has([aria-selected])]:bg-accent [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:rounded-md",
+        day_button: "h-9 w-9 p-0 font-normal rounded-md transition-colors hover:!bg-zinc-200 dark:hover:!bg-zinc-700 cursor-pointer",
         range_start: "day-range-start",
         range_end: "day-range-end",
         selected:
-          "!bg-brand !text-white hover:!bg-brand hover:!text-white focus:!bg-brand focus:!text-white rounded-md font-semibold",
-        today: "bg-gray-100 dark:bg-zinc-800 text-foreground rounded-md font-medium",
-        outside:
-          "text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground",
+          "!bg-black !text-white hover:!bg-black hover:!text-white focus:!bg-black focus:!text-white dark:!bg-white dark:!text-black dark:hover:!bg-white dark:hover:!text-black rounded-md",
+        today: "bg-accent text-accent-foreground rounded-md",
+        outside: "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground",
         disabled: "text-muted-foreground opacity-50",
-        range_middle:
-          "aria-selected:bg-accent aria-selected:text-accent-foreground",
+        range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
         hidden: "invisible",
-        dropdowns: "flex gap-2 justify-center items-center",
-        dropdown: "appearance-none bg-white dark:bg-zinc-950 border border-gray-200 dark:border-gray-700 rounded-md px-2 py-1 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-900",
         ...classNames,
       }}
       components={{
-        Chevron: ({ orientation }) => {
-          if (orientation === "left") {
-            return <ChevronLeftIcon className="h-4 w-4" />
-          }
-          return <ChevronRightIcon className="h-4 w-4" />
+        Chevron: ({ orientation, className, ...props }) => {
+          const Icon = orientation === "left" ? ChevronLeftIcon : ChevronRightIcon
+          return <Icon className={cn("h-4 w-4", className)} {...props} />
         },
       }}
       {...props}

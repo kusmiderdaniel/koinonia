@@ -840,6 +840,225 @@ export type Database = {
           },
         ]
       }
+      form_conditions: {
+        Row: {
+          action: string
+          created_at: string | null
+          form_id: string
+          id: string
+          operator: string
+          source_field_id: string
+          target_field_id: string
+          value: string | null
+        }
+        Insert: {
+          action?: string
+          created_at?: string | null
+          form_id: string
+          id?: string
+          operator: string
+          source_field_id: string
+          target_field_id: string
+          value?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          form_id?: string
+          id?: string
+          operator?: string
+          source_field_id?: string
+          target_field_id?: string
+          value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_conditions_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "forms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "form_conditions_source_field_id_fkey"
+            columns: ["source_field_id"]
+            isOneToOne: false
+            referencedRelation: "form_fields"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "form_conditions_target_field_id_fkey"
+            columns: ["target_field_id"]
+            isOneToOne: false
+            referencedRelation: "form_fields"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      form_fields: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          form_id: string
+          id: string
+          label: string
+          options: Json | null
+          placeholder: string | null
+          required: boolean | null
+          settings: Json | null
+          sort_order: number
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          form_id: string
+          id?: string
+          label: string
+          options?: Json | null
+          placeholder?: string | null
+          required?: boolean | null
+          settings?: Json | null
+          sort_order?: number
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          form_id?: string
+          id?: string
+          label?: string
+          options?: Json | null
+          placeholder?: string | null
+          required?: boolean | null
+          settings?: Json | null
+          sort_order?: number
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_fields_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      form_submissions: {
+        Row: {
+          form_id: string
+          id: string
+          ip_address: unknown
+          respondent_email: string | null
+          respondent_id: string | null
+          responses: Json
+          submitted_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          form_id: string
+          id?: string
+          ip_address?: unknown
+          respondent_email?: string | null
+          respondent_id?: string | null
+          responses: Json
+          submitted_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          form_id?: string
+          id?: string
+          ip_address?: unknown
+          respondent_email?: string | null
+          respondent_id?: string | null
+          responses?: Json
+          submitted_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_submissions_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "forms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "form_submissions_respondent_id_fkey"
+            columns: ["respondent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forms: {
+        Row: {
+          access_type: string
+          church_id: string
+          closed_at: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          public_token: string | null
+          published_at: string | null
+          settings: Json | null
+          status: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          access_type?: string
+          church_id: string
+          closed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          public_token?: string | null
+          published_at?: string | null
+          settings?: Json | null
+          status?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          access_type?: string
+          church_id?: string
+          closed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          public_token?: string | null
+          published_at?: string | null
+          settings?: Json | null
+          status?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forms_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "forms_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           address: string | null

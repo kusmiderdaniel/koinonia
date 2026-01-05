@@ -3,11 +3,8 @@
 import { memo, ReactNode } from 'react'
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
@@ -70,23 +67,25 @@ export const ConfirmDialog = memo(function ConfirmDialog({
             <div>{description}</div>
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-          <AlertDialogCancel
-            className="rounded-full border-input bg-white dark:bg-zinc-950 px-4 py-2"
+        <div className="flex justify-end gap-3 pt-4 border-t mt-4">
+          <button
+            type="button"
+            onClick={() => onOpenChange(false)}
             disabled={isLoading}
+            className="px-4 py-2 rounded-full border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 disabled:opacity-50"
           >
             {cancelLabel}
-          </AlertDialogCancel>
-          <AlertDialogAction
+          </button>
+          <button
+            type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className={destructive
-              ? '!rounded-full !bg-red-600 hover:!bg-red-700 !text-white !px-4 !py-2 disabled:!opacity-50'
-              : '!rounded-full !bg-brand hover:!bg-brand/90 !text-white !px-4 !py-2 disabled:!opacity-50'}
+            className="px-4 py-2 rounded-full text-white disabled:opacity-50 hover:opacity-90"
+            style={{ backgroundColor: destructive ? '#dc2626' : '#f49f1e' }}
           >
             {isLoading ? 'Processing...' : confirmLabel}
-          </AlertDialogAction>
-        </AlertDialogFooter>
+          </button>
+        </div>
       </AlertDialogContent>
     </AlertDialog>
   )
