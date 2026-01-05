@@ -672,5 +672,134 @@ export async function respondToInvitation(
   revalidatePath('/dashboard')
   revalidatePath('/dashboard/events')
 
+  // Notify ministry leader about the response
+  await notifyMinistryLeaderOfResponse(adminClient, assignmentId, response)
+
   return { success: true, response }
+}
+
+/**
+ * Notify the ministry leader when a volunteer accepts or declines an invitation.
+ * This is called from both the in-app response and email-based response.
+ */
+export async function notifyMinistryLeaderOfResponse(
+  adminClient: Awaited<ReturnType<typeof import('@/lib/supabase/server').createServiceRoleClient>>,
+  assignmentId: string,
+  response: 'accepted' | 'declined',
+  responder?: { id: string; first_name: string; last_name: string }
+) {
+  // Get assignment with position, ministry leader, and event details
+  const { data: assignment, error: fetchError } = await adminClient
+    .from('event_assignments')
+    .select(`
+      id,
+      profile_id,
+      profile:profiles!event_assignments_profile_id_fkey (
+        id,
+        first_name,
+        last_name
+      ),
+      position:event_positions!inner (
+        id,
+        title,
+        ministry:ministries (
+          id,
+          name,
+          leader_id,
+          leader:profiles!ministries_leader_id_fkey (
+            id,
+            first_name,
+            email,
+            receive_email_notifications
+          )
+        ),
+        event:events!inner (
+          id,
+          title,
+          start_time,
+          church_id
+        )
+      )
+    `)
+    .eq('id', assignmentId)
+    .single()
+
+  if (fetchError || !assignment) {
+    console.error('[Notification] Failed to fetch assignment for leader notification:', fetchError)
+    return
+  }
+
+  // Type the nested data
+  type ProfileData = { id: string; first_name: string; last_name: string }
+  type LeaderData = { id: string; first_name: string; email: string | null; receive_email_notifications: boolean }
+  type MinistryData = { id: string; name: string; leader_id: string | null; leader: LeaderData | LeaderData[] | null }
+  type EventData = { id: string; title: string; start_time: string; church_id: string }
+  type PositionData = { id: string; title: string; ministry: MinistryData | MinistryData[] | null; event: EventData | EventData[] }
+
+  const position = assignment.position as unknown as PositionData
+  const ministry = Array.isArray(position.ministry) ? position.ministry[0] : position.ministry
+  const event = Array.isArray(position.event) ? position.event[0] : position.event
+  const leader = ministry?.leader
+    ? (Array.isArray(ministry.leader) ? ministry.leader[0] : ministry.leader)
+    : null
+
+  // If there's no ministry leader, nothing to notify
+  if (!leader?.id) {
+    return
+  }
+
+  // Get the responder's name
+  let responderName: string
+  if (responder) {
+    responderName = `${responder.first_name} ${responder.last_name}`
+  } else {
+    const profile = assignment.profile as unknown as ProfileData | ProfileData[] | null
+    const profileData = Array.isArray(profile) ? profile[0] : profile
+    responderName = profileData ? `${profileData.first_name} ${profileData.last_name}` : 'A volunteer'
+  }
+
+  const responseVerb = response === 'accepted' ? 'accepted' : 'declined'
+  const responseEmoji = response === 'accepted' ? '✅' : '❌'
+
+  // Create notification for the ministry leader
+  const { error: notifyError } = await adminClient
+    .from('notifications')
+    .insert({
+      church_id: event.church_id,
+      recipient_id: leader.id,
+      type: 'invitation_response',
+      title: `${responseEmoji} Invitation ${responseVerb}`,
+      message: `${responderName} has ${responseVerb} the invitation to serve as "${position.title}" for "${event.title}"`,
+      event_id: event.id,
+      assignment_id: assignmentId,
+    })
+
+  if (notifyError) {
+    console.error('[Notification] Failed to create leader notification:', notifyError)
+  }
+
+  // Send email notification to leader if they have email notifications enabled
+  if (leader.email && leader.receive_email_notifications) {
+    const { sendEmail } = await import('@/lib/email/config')
+    const { InvitationResponseEmail } = await import('@/emails/InvitationResponseEmail')
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    const startDate = new Date(event.start_time)
+    const eventDate = format(startDate, 'EEEE, MMMM d, yyyy')
+
+    sendEmail({
+      to: leader.email,
+      subject: `${responseEmoji} ${responderName} ${responseVerb} invitation for ${position.title}`,
+      react: InvitationResponseEmail({
+        leaderName: leader.first_name,
+        volunteerName: responderName,
+        response: responseVerb,
+        positionTitle: position.title,
+        eventTitle: event.title,
+        eventDate,
+        ministryName: ministry?.name || 'Ministry',
+        viewEventUrl: `${siteUrl}/dashboard/events/${event.id}`,
+      }),
+    }).catch((err) => console.error('[Email] Failed to send leader notification email:', err))
+  }
 }

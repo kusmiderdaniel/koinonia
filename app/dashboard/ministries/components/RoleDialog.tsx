@@ -74,14 +74,15 @@ export function RoleDialog({
             variant="outline-pill"
             onClick={onCancel}
             disabled={isSaving}
-            className="!border !border-gray-300 dark:!border-gray-600"
+            className="!border !border-black dark:!border-white"
           >
             Cancel
           </Button>
           <Button
+            variant="outline-pill"
             onClick={onSave}
             disabled={isSaving || !roleName.trim()}
-            className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white"
+            className="!bg-brand hover:!bg-brand/90 !text-white !border-0"
           >
             {isSaving ? 'Saving...' : editingRole ? 'Save Changes' : 'Add Role'}
           </Button>

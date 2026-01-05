@@ -55,16 +55,16 @@ export const AgendaTab = memo(function AgendaTab({
             <Button
               variant="outline-pill"
               size="sm"
-              className="!border !border-gray-300 dark:!border-zinc-600"
+              className="!border !border-black dark:!border-white"
               onClick={onAddAgendaItem}
             >
               <Plus className="w-4 h-4 mr-1" />
               Add Item
             </Button>
             <Button
-              variant="outline"
+              variant="outline-pill"
               size="sm"
-              className="!rounded-full !border !border-purple-400 text-purple-600 hover:bg-purple-50 dark:text-purple-400 dark:!border-purple-600 dark:hover:bg-purple-950"
+              className="!border !border-purple-400 text-purple-600 hover:bg-purple-50 dark:text-purple-400 dark:!border-purple-600 dark:hover:bg-purple-950"
               onClick={onAddSong}
             >
               <Music className="w-4 h-4 mr-1" />

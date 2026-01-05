@@ -120,7 +120,7 @@ export const MemberPicker = memo(function MemberPicker({
 
   return (
     <>
-      <Button variant="ghost" className="rounded-full !border !border-gray-300 dark:!border-gray-600" size="sm" onClick={() => setOpen(true)}>
+      <Button variant="ghost" className="rounded-full !border !border-black dark:!border-white" size="sm" onClick={() => setOpen(true)}>
         <UserPlus className="w-4 h-4 mr-1" />
         Add Member
       </Button>
@@ -220,10 +220,10 @@ export const MemberPicker = memo(function MemberPicker({
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline" onClick={handleCancel} disabled={isAdding}>
+            <Button variant="outline-pill" onClick={handleCancel} disabled={isAdding} className="!border !border-black dark:!border-white">
               Cancel
             </Button>
-            <Button onClick={handleAdd} disabled={!selectedMemberId || isAdding}>
+            <Button variant="outline-pill" onClick={handleAdd} disabled={!selectedMemberId || isAdding} className="!bg-brand hover:!bg-brand/90 !text-white !border-0">
               {isAdding ? 'Adding...' : 'Add Member'}
             </Button>
           </div>

@@ -64,7 +64,7 @@ interface MinistryDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   ministry: Ministry | null
-  onSuccess: () => void
+  onSuccess: (newMinistryId?: string) => void
 }
 
 const PRESET_COLORS = [
@@ -153,7 +153,9 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
       setIsLoading(false)
     } else {
       setIsLoading(false)
-      onSuccess()
+      // Pass the new ministry ID for auto-selection
+      const newMinistryId = !ministry && result.data ? result.data.id : undefined
+      onSuccess(newMinistryId)
     }
   }
 

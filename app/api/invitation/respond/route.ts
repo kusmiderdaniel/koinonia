@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createServiceRoleClient } from '@/lib/supabase/server'
+import { notifyMinistryLeaderOfResponse } from '@/app/dashboard/events/actions/invitations'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -85,6 +86,9 @@ export async function GET(request: Request) {
     console.error('[Invitation] Failed to update notification:', notifyError)
     // Don't fail - assignment is already updated
   }
+
+  // Notify ministry leader about the response
+  await notifyMinistryLeaderOfResponse(supabase, notification.assignment_id, response)
 
   // Get event and position details for the success page
   const { data: assignment } = await supabase

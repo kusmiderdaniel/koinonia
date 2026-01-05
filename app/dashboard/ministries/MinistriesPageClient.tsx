@@ -78,9 +78,13 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
     }
   }, [dialogs, list])
 
-  const handleDialogClose = useCallback(async () => {
+  const handleDialogClose = useCallback(async (newMinistryId?: string) => {
     dialogs.closeDialog()
     await list.refreshMinistries()
+    // Auto-select the newly created ministry
+    if (newMinistryId) {
+      list.setSelectedMinistryId(newMinistryId)
+    }
   }, [dialogs, list])
 
   const handleSaveRole = useCallback(async () => {
@@ -172,19 +176,20 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
   // Mobile: Show detail view with back button
   if (isMobile && selectedMinistryId && selectedMinistry) {
     return (
-      <div className="p-4">
+      <div className="flex flex-col h-[calc(100vh-3.5rem)] p-4">
         <MobileBackHeader
           title={selectedMinistry.name}
           onBack={handleClearSelection}
         />
 
         {error && (
-          <Alert variant="destructive" className="mb-4">
+          <Alert variant="destructive" className="mb-4 shrink-0">
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
-        <MinistryDetailPanel
+        <div className="flex-1 min-h-0 overflow-auto">
+          <MinistryDetailPanel
           ministry={selectedMinistry}
           roles={roles}
           members={members}
@@ -200,7 +205,8 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
           onAddMember={handleAddMember}
           onUpdateMemberRoles={handleUpdateMemberRoles}
           onRemoveMember={(member) => dialogs.openRemoveMemberDialog(member)}
-        />
+          />
+        </div>
 
         {/* Dialogs */}
         <MinistryDialog
@@ -256,8 +262,8 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
   }
 
   return (
-    <div className="p-4 md:p-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <div className="flex flex-col h-[calc(100vh-3.5rem)] md:h-screen p-4 md:p-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 shrink-0">
         <div>
           <h1 className="text-2xl font-bold">Ministries</h1>
           <p className="text-muted-foreground">
@@ -265,7 +271,7 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
           </p>
         </div>
         {canManage && (
-          <Button variant="ghost" className="rounded-full !border !border-gray-300 dark:!border-gray-600" onClick={dialogs.openCreateDialog}>
+          <Button variant="ghost" className="rounded-full !border !border-black dark:!border-white" onClick={dialogs.openCreateDialog}>
             <Plus className="w-4 h-4 mr-2" />
             New Ministry
           </Button>
@@ -273,12 +279,12 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
       </div>
 
       {error && (
-        <Alert variant="destructive" className="mb-6">
+        <Alert variant="destructive" className="mb-6 shrink-0">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
-      <div className="flex flex-col md:flex-row gap-6 h-[calc(100vh-220px)]">
+      <div className="flex flex-col md:flex-row gap-6 flex-1 min-h-0">
         {/* Ministry List */}
         <MinistriesListView
           searchQuery={searchQuery}

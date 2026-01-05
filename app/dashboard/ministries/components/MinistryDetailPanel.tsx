@@ -134,7 +134,7 @@ export function MinistryDetailPanel({
           <TabsContent value="roles" className="flex-1 overflow-y-auto px-6 pt-4 pb-6 mt-0">
             <div className="flex justify-end mb-4">
               {canManage && (
-                <Button variant="outline-pill" className="!border !border-gray-300 dark:!border-gray-600" size="sm" onClick={onAddRole}>
+                <Button variant="outline-pill" className="!border !border-black dark:!border-white" size="sm" onClick={onAddRole}>
                   <Plus className="w-4 h-4 mr-1" />
                   Add Role
                 </Button>
