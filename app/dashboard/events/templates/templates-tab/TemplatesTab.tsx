@@ -80,6 +80,9 @@ export const TemplatesTab = memo(function TemplatesTab() {
           onSearchChange={state.setSearchQuery}
           onSelectTemplate={state.handleSelectTemplate}
           onCreateTemplate={state.handleCreateTemplate}
+          onEditTemplate={state.handleEditTemplateFromList}
+          onDuplicateTemplate={state.handleDuplicateTemplate}
+          onDeleteTemplate={state.handleDeleteClick}
         />
         {dialogs}
       </div>
@@ -100,6 +103,9 @@ export const TemplatesTab = memo(function TemplatesTab() {
         onSearchChange={state.setSearchQuery}
         onSelectTemplate={state.handleSelectTemplate}
         onCreateTemplate={state.handleCreateTemplate}
+        onEditTemplate={state.handleEditTemplateFromList}
+        onDuplicateTemplate={state.handleDuplicateTemplate}
+        onDeleteTemplate={state.handleDeleteClick}
       />
 
       {/* Right Panel - Template Detail */}

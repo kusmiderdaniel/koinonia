@@ -110,8 +110,8 @@ export function PresetPickerContent({
 
       <DialogFooter className="!bg-transparent !border-0 flex justify-between items-center pt-4">
         <Button
-          variant="outline-pill-muted"
-          className="border border-black/20 dark:border-white/20"
+          variant="outline-pill"
+          className="!border !border-black dark:!border-white"
           asChild
         >
           <Link
@@ -123,8 +123,8 @@ export function PresetPickerContent({
           </Link>
         </Button>
         <Button
-          variant="outline-pill-muted"
-          className="border border-black/20 dark:border-white/20"
+          variant="outline-pill"
+          className="!border !border-black dark:!border-white"
           onClick={onClose}
         >
           Cancel

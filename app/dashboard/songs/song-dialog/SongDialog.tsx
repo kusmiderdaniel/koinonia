@@ -22,15 +22,18 @@ export const SongDialog = memo(function SongDialog({
   onOpenChange,
   song,
   onSuccess,
+  customAction,
+  title: dialogTitle,
+  submitText,
 }: SongDialogProps) {
-  const state = useSongDialogState(open, song)
+  const state = useSongDialogState(open, song, { customAction })
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {state.isEditing ? 'Edit Song' : 'Add Song'}
+            {dialogTitle ?? (state.isEditing ? 'Edit Song' : 'Add Song')}
           </DialogTitle>
         </DialogHeader>
 
@@ -119,6 +122,7 @@ export const SongDialog = memo(function SongDialog({
             <Button
               type="button"
               variant="outline-pill"
+              className="!border-black dark:!border-white"
               onClick={() => onOpenChange(false)}
               disabled={state.isLoading}
             >
@@ -126,14 +130,13 @@ export const SongDialog = memo(function SongDialog({
             </Button>
             <Button
               type="submit"
+              variant="outline-pill"
               disabled={state.isLoading}
-              className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white"
+              className="!bg-brand hover:!bg-brand/90 !text-white !border-brand"
             >
               {state.isLoading
                 ? 'Saving...'
-                : state.isEditing
-                  ? 'Save Changes'
-                  : 'Add Song'}
+                : submitText ?? (state.isEditing ? 'Save Changes' : 'Add Song')}
             </Button>
           </DialogFooter>
         </form>

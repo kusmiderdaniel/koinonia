@@ -96,7 +96,7 @@ export const ArtistPicker = memo(function ArtistPicker({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-[var(--radix-popover-trigger-width)] p-0 bg-white dark:bg-zinc-950 border border-gray-200 dark:border-gray-700"
+        className="w-[var(--radix-popover-trigger-width)] p-0 bg-white dark:bg-zinc-950 border border-black dark:border-zinc-700"
         align="start"
       >
         {/* Search Input */}

@@ -132,7 +132,7 @@ export function SongList({
           onClick={onCreateNew}
           disabled={isAdding}
           variant="outline"
-          className="w-full rounded-full"
+          className="w-full rounded-full !border-black dark:!border-white"
         >
           <Plus className="w-4 h-4 mr-2" />
           Create New Song
@@ -140,7 +140,7 @@ export function SongList({
       </div>
 
       <DialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-        <Button variant="outline-pill-muted" onClick={onClose}>
+        <Button variant="outline-pill-muted" onClick={onClose} className="!border-black dark:!border-white">
           Cancel
         </Button>
       </DialogFooter>

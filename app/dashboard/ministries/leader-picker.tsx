@@ -18,6 +18,7 @@ interface Leader {
   last_name: string
   email: string | null
   role: string
+  campus_ids: string[]
 }
 
 interface Ministry {
@@ -85,7 +86,7 @@ export const LeaderPicker = memo(function LeaderPicker({
             type="button"
             variant="outline"
             onClick={() => setOpen(true)}
-            className="shrink-0 !border !border-gray-300 dark:!border-gray-600"
+            className="shrink-0 !border !border-black dark:!border-white"
           >
             Change
           </Button>
@@ -95,7 +96,7 @@ export const LeaderPicker = memo(function LeaderPicker({
           type="button"
           variant="outline"
           onClick={() => setOpen(true)}
-          className="w-full justify-start text-muted-foreground !border !border-gray-300 dark:!border-gray-600"
+          className="w-full justify-start text-muted-foreground !border !border-black dark:!border-white"
         >
           <User className="w-4 h-4 mr-2" />
           Choose a Leader
@@ -134,7 +135,7 @@ export const LeaderPicker = memo(function LeaderPicker({
                       key={leader.id}
                       type="button"
                       onClick={() => handleSelect(leader.id)}
-                      className={`w-full text-left p-3 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-zinc-800 ${
+                      className={`w-full text-left p-3 rounded-lg transition-colors border border-black dark:border-white hover:bg-gray-100 dark:hover:bg-zinc-800 ${
                         isSelected ? 'bg-gray-100 dark:bg-zinc-800' : ''
                       }`}
                     >

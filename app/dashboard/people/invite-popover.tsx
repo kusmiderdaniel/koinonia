@@ -25,7 +25,7 @@ export function InvitePopover({ joinCode }: InvitePopoverProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="!border !border-gray-300">
+        <Button variant="outline" className="!border !border-black dark:!border-white">
           Invite Members
         </Button>
       </PopoverTrigger>

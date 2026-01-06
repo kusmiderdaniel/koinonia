@@ -1,9 +1,11 @@
 // Events module types
 // Import shared types
 import type { Location, Person, PersonBrief, Member, MinistryBrief, RoleBrief, Campus, SongBrief } from '@/lib/types'
+import type { Task } from '@/app/dashboard/tasks/types'
 
 // Re-export shared types for convenience
 export type { Location, Person, PersonBrief, Member }
+export type { Task }
 
 // Use shared types with domain-specific aliases
 export type Ministry = MinistryBrief
@@ -77,6 +79,7 @@ export interface Event {
 export interface EventDetail extends Event {
   event_agenda_items: AgendaItem[]
   event_positions: Position[]
+  tasks?: Task[]
 }
 
 // Component prop types

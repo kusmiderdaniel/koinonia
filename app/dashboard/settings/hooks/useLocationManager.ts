@@ -21,7 +21,7 @@ interface UseLocationManagerReturn {
   setLocationAddress: (address: string) => void
   setLocationNotes: (notes: string) => void
   setLocationCampusId: (campusId: string | null) => void
-  openLocationDialog: (location?: Location) => void
+  openLocationDialog: (location?: Location, defaultCampusId?: string | null) => void
   closeLocationDialog: () => void
   openDeleteLocationDialog: (location: Location) => void
   closeDeleteLocationDialog: () => void
@@ -50,7 +50,7 @@ export function useLocationManager(): UseLocationManagerReturn {
   const [deleteLocationDialogOpen, setDeleteLocationDialogOpen] = useState(false)
   const [locationToDelete, setLocationToDelete] = useState<Location | null>(null)
 
-  const openLocationDialog = useCallback((location?: Location) => {
+  const openLocationDialog = useCallback((location?: Location, defaultCampusId?: string | null) => {
     if (location) {
       setEditingLocation(location)
       setLocationName(location.name)
@@ -62,7 +62,7 @@ export function useLocationManager(): UseLocationManagerReturn {
       setLocationName('')
       setLocationAddress('')
       setLocationNotes('')
-      setLocationCampusId(null)
+      setLocationCampusId(defaultCampusId ?? null)
     }
     setLocationDialogOpen(true)
   }, [])

@@ -41,7 +41,7 @@ export const InviteMembersTab = memo(function InviteMembersTab({
   }
 
   return (
-    <Card>
+    <Card className="min-w-[28rem]">
       <CardHeader>
         <CardTitle>Invite Members</CardTitle>
         <CardDescription>
@@ -53,7 +53,7 @@ export const InviteMembersTab = memo(function InviteMembersTab({
           <div className="text-sm font-medium">Church Join Code</div>
 
           {/* Join code display */}
-          <div className="flex items-center justify-center py-4 bg-muted rounded-lg border border-black/10 dark:border-zinc-700">
+          <div className="flex items-center justify-center py-4 bg-muted rounded-lg border border-black dark:border-white">
             <span className="text-2xl md:text-3xl font-mono font-bold tracking-[0.2em] md:tracking-[0.3em] text-foreground">
               {joinCode || '------'}
             </span>
@@ -65,7 +65,7 @@ export const InviteMembersTab = memo(function InviteMembersTab({
               onClick={onCopyJoinCode}
               variant="outline-pill"
               size="sm"
-              className="flex-1 sm:flex-none"
+              className="flex-1 sm:flex-none !border-black dark:!border-white"
             >
               <Copy className="h-4 w-4 mr-2" />
               {joinCodeCopied ? 'Copied!' : 'Copy Code'}
@@ -77,7 +77,7 @@ export const InviteMembersTab = memo(function InviteMembersTab({
                     variant="outline-pill"
                     size="sm"
                     disabled={isRegeneratingCode}
-                    className="flex-1 sm:flex-none"
+                    className="flex-1 sm:flex-none !border-black dark:!border-white"
                   >
                     <RefreshCw className={`h-4 w-4 mr-2 ${isRegeneratingCode ? 'animate-spin' : ''}`} />
                     {isRegeneratingCode ? 'Regenerating...' : 'Regenerate'}

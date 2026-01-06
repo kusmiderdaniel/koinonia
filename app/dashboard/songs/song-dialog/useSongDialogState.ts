@@ -2,9 +2,17 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { getTags, getArtists, createSong, updateSong } from '../actions'
-import type { Tag, Song } from './types'
+import type { Tag, Song, SongInput } from './types'
 
-export function useSongDialogState(open: boolean, song: Song | null) {
+interface UseSongDialogStateOptions {
+  customAction?: (data: SongInput) => Promise<{ error?: string }>
+}
+
+export function useSongDialogState(
+  open: boolean,
+  song: Song | null | undefined,
+  options?: UseSongDialogStateOptions
+) {
   const [title, setTitle] = useState('')
   const [artist, setArtist] = useState('')
   const [defaultKey, setDefaultKey] = useState('')
@@ -126,7 +134,7 @@ export function useSongDialogState(open: boolean, song: Song | null) {
 
       setIsLoading(true)
 
-      const data = {
+      const data: SongInput = {
         title: title.trim(),
         artist: artist.trim() || undefined,
         defaultKey: defaultKey || undefined,
@@ -134,9 +142,12 @@ export function useSongDialogState(open: boolean, song: Song | null) {
         tagIds: selectedTagIds,
       }
 
-      const result = isEditing
-        ? await updateSong(song!.id, data)
-        : await createSong(data)
+      // Use custom action if provided, otherwise use default create/update
+      const result = options?.customAction
+        ? await options.customAction(data)
+        : isEditing
+          ? await updateSong(song!.id, data)
+          : await createSong(data)
 
       if ('error' in result && result.error) {
         setError(result.error)
@@ -156,6 +167,7 @@ export function useSongDialogState(open: boolean, song: Song | null) {
       selectedTagIds,
       isEditing,
       song,
+      options,
     ]
   )
 

@@ -192,7 +192,7 @@ export const TagPicker = memo(function TagPicker({
               <Button
                 type="button"
                 size="sm"
-                className="flex-1"
+                className="flex-1 !bg-brand hover:!bg-brand/90 !text-white"
                 onClick={handleCreateTag}
                 disabled={!newTagName.trim() || isCreating}
               >

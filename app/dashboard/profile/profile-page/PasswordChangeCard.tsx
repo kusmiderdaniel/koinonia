@@ -159,9 +159,10 @@ export function PasswordChangeCard({
               </Button>
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline-pill"
                 onClick={onCancel}
                 disabled={isChangingPassword}
+                className="!border !border-black dark:!border-white"
               >
                 Cancel
               </Button>

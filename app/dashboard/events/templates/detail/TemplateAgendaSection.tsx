@@ -2,7 +2,7 @@
 
 import { memo } from 'react'
 import { Button } from '@/components/ui/button'
-import { Plus, Music } from 'lucide-react'
+import { ListOrdered, Plus, Music } from 'lucide-react'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { SortableTemplateAgendaItem } from '../SortableTemplateAgendaItem'
@@ -17,79 +17,69 @@ export const TemplateAgendaSection = memo(function TemplateAgendaSection({
   onEditItem,
   onRemoveItem,
 }: TemplateAgendaSectionProps) {
-  if (agendaItems.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <Music className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
-        <p className="text-sm text-muted-foreground mb-3">No agenda items yet</p>
+  return (
+    <div className="flex flex-col h-full">
+      {/* Fixed header */}
+      <div className="flex-shrink-0 flex items-center justify-between py-4 min-h-[72px]">
+        <div className="flex items-center gap-3">
+          {agendaItems.length > 0 && (
+            <p className="text-sm text-muted-foreground">
+              {agendaItems.length} items
+            </p>
+          )}
+        </div>
         {canManage && (
-          <div className="flex justify-center gap-2">
+          <div className="flex gap-2 ml-auto">
             <Button
               variant="outline-pill"
               size="sm"
-              className="!border !border-gray-300 dark:!border-zinc-600"
+              className="!border !border-black dark:!border-white"
               onClick={() => onAddItem(false)}
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4 mr-1" />
               Add Item
             </Button>
             <Button
-              variant="outline"
+              variant="outline-pill"
               size="sm"
-              className="!rounded-full !border !border-purple-400 text-purple-600 hover:bg-purple-50 dark:text-purple-400 dark:!border-purple-600 dark:hover:bg-purple-950"
+              className="!border !border-purple-400 text-purple-600 hover:bg-purple-50 dark:text-purple-400 dark:!border-purple-600 dark:hover:bg-purple-950"
               onClick={() => onAddItem(true)}
             >
-              <Music className="w-4 h-4 mr-2" />
+              <Music className="w-4 h-4 mr-1" />
               Add Song
             </Button>
           </div>
         )}
       </div>
-    )
-  }
 
-  return (
-    <>
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-        <SortableContext
-          items={agendaItems.map((item) => item.id)}
-          strategy={verticalListSortingStrategy}
-        >
-          <div className="space-y-2">
-            {agendaItems.map((item) => (
-              <SortableTemplateAgendaItem
-                key={item.id}
-                item={item}
-                canManage={canManage}
-                onEdit={onEditItem}
-                onRemove={onRemoveItem}
-              />
-            ))}
+      {/* Scrollable content */}
+      <div className="flex-1 min-h-0 overflow-y-auto pb-6 scrollbar-minimal">
+        {agendaItems.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <ListOrdered className="w-10 h-10 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">No agenda items yet</p>
           </div>
-        </SortableContext>
-      </DndContext>
-      {canManage && (
-        <div className="flex justify-center gap-2 pt-2">
-          <Button
-            variant="outline-pill"
-            size="sm"
-            className="!border !border-gray-300 dark:!border-zinc-600"
-            onClick={() => onAddItem(false)}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Item
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="!rounded-full !border !border-purple-400 text-purple-600 hover:bg-purple-50 dark:text-purple-400 dark:!border-purple-600 dark:hover:bg-purple-950"
-            onClick={() => onAddItem(true)}
-          >
-            <Music className="w-4 h-4 mr-2" />
-            Add Song
-          </Button>
-        </div>
-      )}
-    </>
+        ) : (
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+            <SortableContext
+              items={agendaItems.map((item) => item.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-2">
+                {agendaItems.map((item) => (
+                  <SortableTemplateAgendaItem
+                    key={item.id}
+                    item={item}
+                    canManage={canManage}
+                    onEdit={onEditItem}
+                    onRemove={onRemoveItem}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        )}
+      </div>
+    </div>
   )
 })

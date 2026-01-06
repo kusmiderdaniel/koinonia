@@ -1,6 +1,6 @@
 import type { useSensors } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
-import type { EventDetail, AgendaItem, Position, Assignment, Member } from '../../types'
+import type { EventDetail, AgendaItem, Position, Assignment, Member, Task } from '../../types'
 
 // Types for task-related data
 export interface TaskMember {
@@ -61,6 +61,7 @@ export interface EventDetailPanelProps {
   taskMinistries?: TaskMinistry[]
   taskCampuses?: TaskCampus[]
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  initialTasks?: Task[]
 }
 
 export interface AgendaTabProps {

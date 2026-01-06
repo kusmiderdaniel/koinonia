@@ -11,6 +11,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
+import { CalendarOff, ArrowRight } from 'lucide-react'
 import { toDateString, formatDate } from '../types'
 
 export interface AddDialogProps {
@@ -46,20 +47,49 @@ export const AddDialog = memo(function AddDialog({
         </DialogHeader>
 
         <div className="py-4">
-          <div className="mb-4 p-3 bg-muted rounded-lg text-sm text-center">
-            {selectedStart && selectedEnd && (
-              <>
-                {toDateString(selectedStart) === toDateString(selectedEnd) ? (
-                  <span className="font-medium">{formatDate(toDateString(selectedStart))}</span>
-                ) : (
-                  <span className="font-medium">
-                    {formatDate(toDateString(selectedStart))} -{' '}
-                    {formatDate(toDateString(selectedEnd))}
-                  </span>
-                )}
-              </>
-            )}
-          </div>
+          {selectedStart && selectedEnd && (
+            <div className="mb-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="flex items-center gap-2 text-red-700 dark:text-red-300 mb-3">
+                <CalendarOff className="h-4 w-4" />
+                <span className="text-sm font-medium">Marking as unavailable</span>
+              </div>
+              {toDateString(selectedStart) === toDateString(selectedEnd) ? (
+                <div className="flex justify-center">
+                  <div className="bg-white dark:bg-zinc-900 border border-red-300 dark:border-red-700 rounded-lg px-4 py-2 text-center">
+                    <div className="text-xs text-muted-foreground uppercase">
+                      {selectedStart.toLocaleDateString('en-US', { weekday: 'short' })}
+                    </div>
+                    <div className="text-2xl font-bold">{selectedStart.getDate()}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {selectedStart.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-3">
+                  <div className="bg-white dark:bg-zinc-900 border border-red-300 dark:border-red-700 rounded-lg px-4 py-2 text-center">
+                    <div className="text-xs text-muted-foreground uppercase">
+                      {selectedStart.toLocaleDateString('en-US', { weekday: 'short' })}
+                    </div>
+                    <div className="text-2xl font-bold">{selectedStart.getDate()}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {selectedStart.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                    </div>
+                  </div>
+                  <ArrowRight className="h-5 w-5 text-red-400" />
+                  <div className="bg-white dark:bg-zinc-900 border border-red-300 dark:border-red-700 rounded-lg px-4 py-2 text-center">
+                    <div className="text-xs text-muted-foreground uppercase">
+                      {selectedEnd.toLocaleDateString('en-US', { weekday: 'short' })}
+                    </div>
+                    <div className="text-2xl font-bold">{selectedEnd.getDate()}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {selectedEnd.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="reason">Reason (optional)</Label>
@@ -78,8 +108,8 @@ export const AddDialog = memo(function AddDialog({
 
         <DialogFooter>
           <Button
-            variant="ghost"
-            className="!border !border-gray-300 dark:!border-gray-600"
+            variant="outline-pill"
+            className="!border !border-black dark:!border-white"
             onClick={onCancel}
             disabled={isSaving}
           >

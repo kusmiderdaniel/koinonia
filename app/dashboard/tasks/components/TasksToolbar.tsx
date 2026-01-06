@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
 import { TaskSortBuilder } from '../sort-builder'
@@ -75,6 +76,13 @@ export function TasksToolbar({
   builtInViews,
   onSelectBuiltInView,
 }: TasksToolbarProps) {
+  const [mounted, setMounted] = useState(false)
+
+  // Prevent hydration mismatch from Radix UI random IDs
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
       <div className="flex flex-col md:flex-row gap-2">
@@ -87,34 +95,36 @@ export function TasksToolbar({
             className="pl-10"
           />
         </div>
-        <div className="grid grid-cols-4 sm:flex sm:items-center gap-2">
-          <GroupBySelector value={groupBy} onChange={onGroupByChange} />
-          <TaskSortBuilder sortState={sortState} onChange={onSortChange} />
-          <TaskFilterBuilder
-            filterState={filterState}
-            onChange={onFilterChange}
-            ministries={ministries}
-            campuses={campuses}
-            members={members}
-            events={events}
-          />
-          <ViewSelector
-            viewType="tasks"
-            views={views}
-            selectedViewId={selectedViewId}
-            onSelectView={onSelectView}
-            onCreateView={onCreateView}
-            onEditView={onEditView}
-            onDeleteView={onDeleteView}
-            onSetDefault={onSetDefault}
-            canManageViews={canManageViews}
-            hasUnsavedChanges={hasUnsavedChanges}
-            onSaveChanges={onSaveChanges}
-            isSavingChanges={isSavingChanges}
-            builtInViews={builtInViews}
-            onSelectBuiltInView={onSelectBuiltInView}
-          />
-        </div>
+        {mounted && (
+          <div className="grid grid-cols-4 sm:flex sm:items-center gap-2">
+            <GroupBySelector value={groupBy} onChange={onGroupByChange} />
+            <TaskSortBuilder sortState={sortState} onChange={onSortChange} />
+            <TaskFilterBuilder
+              filterState={filterState}
+              onChange={onFilterChange}
+              ministries={ministries}
+              campuses={campuses}
+              members={members}
+              events={events}
+            />
+            <ViewSelector
+              viewType="tasks"
+              views={views}
+              selectedViewId={selectedViewId}
+              onSelectView={onSelectView}
+              onCreateView={onCreateView}
+              onEditView={onEditView}
+              onDeleteView={onDeleteView}
+              onSetDefault={onSetDefault}
+              canManageViews={canManageViews}
+              hasUnsavedChanges={hasUnsavedChanges}
+              onSaveChanges={onSaveChanges}
+              isSavingChanges={isSavingChanges}
+              builtInViews={builtInViews}
+              onSelectBuiltInView={onSelectBuiltInView}
+            />
+          </div>
+        )}
       </div>
     </div>
   )

@@ -23,7 +23,7 @@ function Calendar({
         months: "flex flex-col",
         month: "space-y-4",
         month_caption: "flex justify-center relative items-center h-9",
-        caption_label: "text-sm font-medium hidden",
+        caption_label: "text-sm font-medium",
         dropdowns: "flex gap-2 justify-center",
         dropdown: "appearance-none bg-transparent border border-input rounded-md px-2 py-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer",
         months_dropdown: "appearance-none bg-transparent border border-input rounded-md px-2 py-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer",

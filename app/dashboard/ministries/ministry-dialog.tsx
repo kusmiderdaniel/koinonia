@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, memo } from 'react'
+import { useState, useEffect, memo, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -23,6 +23,7 @@ interface Leader {
   last_name: string
   email: string | null
   role: string
+  campus_ids: string[]
 }
 
 interface Campus {
@@ -110,6 +111,13 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
       getCampuses().then((result) => {
         if (result.data) {
           setCampuses(result.data)
+          // Set default campus for new ministries
+          if (!ministry) {
+            const defaultCampus = result.data.find((c: Campus) => c.is_default)
+            if (defaultCampus) {
+              setCampusId(defaultCampus.id)
+            }
+          }
         }
       })
 
@@ -125,7 +133,7 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
         setDescription('')
         setColor('#3B82F6')
         setLeaderId('')
-        setCampusId(null)
+        // campusId will be set by getCampuses callback above
       }
       setError(null)
     }
@@ -160,6 +168,25 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
   }
 
   const isEditing = !!ministry
+
+  // Filter leaders by selected campus (or show all if no campus selected)
+  // Show leaders who have no campus (church-wide) or belong to the selected campus
+  const filteredLeaders = useMemo(() => {
+    if (!campusId) return leaders
+    return leaders.filter(leader =>
+      leader.campus_ids.length === 0 || leader.campus_ids.includes(campusId)
+    )
+  }, [leaders, campusId])
+
+  // Clear leader selection if they don't belong to the selected campus
+  useEffect(() => {
+    if (campusId && leaderId) {
+      const selectedLeader = leaders.find(l => l.id === leaderId)
+      if (selectedLeader && selectedLeader.campus_ids.length > 0 && !selectedLeader.campus_ids.includes(campusId)) {
+        setLeaderId('')
+      }
+    }
+  }, [campusId, leaderId, leaders])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -222,11 +249,24 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
           </div>
 
           <div className="space-y-2">
+            <Label>Campus</Label>
+            <SingleCampusPicker
+              campuses={campuses}
+              selectedCampusId={campusId}
+              onChange={setCampusId}
+              placeholder="All campuses"
+            />
+            <p className="text-sm text-muted-foreground">
+              Leave empty for a church-wide ministry
+            </p>
+          </div>
+
+          <div className="space-y-2">
             <Label>Ministry Leader *</Label>
             <LeaderPicker
               selectedLeaderId={leaderId}
               onSelect={setLeaderId}
-              leaders={leaders}
+              leaders={filteredLeaders}
               ministries={allMinistries}
               currentMinistryId={ministry?.id}
             />
@@ -237,35 +277,21 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
             )}
           </div>
 
-          {campuses.length > 1 && (
-            <div className="space-y-2">
-              <Label>Campus</Label>
-              <SingleCampusPicker
-                campuses={campuses}
-                selectedCampusId={campusId}
-                onChange={setCampusId}
-                placeholder="All campuses"
-              />
-              <p className="text-sm text-muted-foreground">
-                Leave empty for a church-wide ministry
-              </p>
-            </div>
-          )}
-
           <DialogFooter className="!bg-transparent !border-0 !p-0 !mx-0 !mb-0 !mt-6">
             <Button
               type="button"
               variant="outline-pill"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
-              className="!border !border-gray-300 dark:!border-gray-600"
+              className="!border !border-black dark:!border-white"
             >
               Cancel
             </Button>
             <Button
               type="submit"
+              variant="outline-pill"
               disabled={isLoading || !name.trim() || (!isEditing && !leaderId)}
-              className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white"
+              className="!bg-brand hover:!bg-brand/90 !text-white !border-brand"
             >
               {isLoading
                 ? isEditing

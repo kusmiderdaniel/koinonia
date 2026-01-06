@@ -56,7 +56,7 @@ export const UnavailabilityList = memo(function UnavailabilityList({
 
   return (
     <Tabs value={activeTab} onValueChange={onTabChange}>
-      <TabsList className="w-full bg-muted/50">
+      <TabsList className="w-full bg-muted/50 border border-black dark:border-white">
         <TabsTrigger
           value="upcoming"
           className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"

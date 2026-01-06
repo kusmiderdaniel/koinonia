@@ -30,7 +30,7 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
   setSuccess,
 }: TransferOwnershipTabProps) {
   return (
-    <Card className="border-orange-200">
+    <Card className="min-w-[28rem] border-orange-200">
       <CardHeader>
         <CardTitle className="text-orange-700">Transfer Ownership</CardTitle>
         <CardDescription>
@@ -88,7 +88,7 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
               <AlertDialogTrigger asChild>
                 <Button
                   variant="outline"
-                  className="border-orange-300 text-orange-700 hover:bg-orange-50"
+                  className="!rounded-full border-orange-500 text-orange-700 hover:bg-orange-50"
                   disabled={!ownershipTransfer.selectedNewOwner || ownershipTransfer.isTransferring}
                 >
                   Transfer Ownership
@@ -108,7 +108,7 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-                  <AlertDialogCancel disabled={ownershipTransfer.isTransferring} className="rounded-full border-input bg-white dark:bg-zinc-950 px-4 py-2">
+                  <AlertDialogCancel disabled={ownershipTransfer.isTransferring} className="rounded-full border-black dark:border-white bg-white dark:bg-zinc-950 px-4 py-2">
                     Cancel
                   </AlertDialogCancel>
                   <AlertDialogAction

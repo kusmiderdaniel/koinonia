@@ -28,7 +28,7 @@ export const PreferencesTab = memo(function PreferencesTab({
   setSuccess,
 }: PreferencesTabProps) {
   return (
-    <Card>
+    <Card className="min-w-[28rem]">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Globe className="w-5 h-5" />
@@ -108,7 +108,11 @@ export const PreferencesTab = memo(function PreferencesTab({
             }
           >
             <SelectTrigger className="bg-white dark:bg-zinc-950 border border-input w-[250px]">
-              <SelectValue placeholder="Select visibility" />
+              <SelectValue placeholder="Select visibility">
+                {preferencesManager.defaultEventVisibility === 'members' && 'All Members'}
+                {preferencesManager.defaultEventVisibility === 'volunteers' && 'Volunteers+'}
+                {preferencesManager.defaultEventVisibility === 'leaders' && 'Leaders+'}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent
               align="start"

@@ -52,7 +52,7 @@ export const FormsListView = memo(function FormsListView({
           className="cursor-pointer hover:shadow-md transition-shadow border border-black dark:border-white"
           onClick={() => onFormClick(form)}
         >
-          <CardContent className="p-1">
+          <CardContent className="p-4">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-start gap-2 min-w-0 flex-1">
                 <div className="p-1.5 rounded-md bg-muted">

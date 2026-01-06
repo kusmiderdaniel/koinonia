@@ -102,6 +102,19 @@ export function InlineDueDateEditor({
           onSelect={handleSelect}
           defaultMonth={dateInfo?.date || new Date()}
           weekStartsOn={weekStartsOn}
+          className="p-2"
+          classNames={{
+            caption_label: "text-sm font-medium",
+            month_caption: "flex justify-center relative items-center h-7",
+            nav: "absolute inset-x-0 flex items-center justify-between",
+            button_previous: "h-6 w-6 bg-transparent p-0 opacity-50 hover:opacity-100",
+            button_next: "h-6 w-6 bg-transparent p-0 opacity-50 hover:opacity-100",
+            day: "text-center text-sm h-8 w-8 p-0",
+            day_button: "h-8 w-8 p-0 font-normal text-sm",
+            weekday: "text-muted-foreground w-8 font-normal text-xs text-center",
+            week: "flex justify-between mt-1",
+            month: "space-y-2",
+          }}
         />
         {dateInfo && (
           <div className="p-2 border-t">

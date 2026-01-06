@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { MoreHorizontal, Trash2 } from 'lucide-react'
+import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
 import { InlineStatusEditor } from './InlineStatusEditor'
 import { InlinePriorityEditor } from './InlinePriorityEditor'
 import { InlineMinistryEditor } from './InlineMinistryEditor'
@@ -148,6 +148,7 @@ export const TaskRow = memo(function TaskRow({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => onEdit(task)}>
+              <Pencil className="h-4 w-4 mr-2" />
               Edit
             </DropdownMenuItem>
             <DropdownMenuItem

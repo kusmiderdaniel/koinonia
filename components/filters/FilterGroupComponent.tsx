@@ -112,9 +112,9 @@ export const FilterGroupComponent = memo(function FilterGroupComponent({
         ))}
 
         <Button
-          variant="ghost"
+          variant="outline"
           size="sm"
-          className="text-muted-foreground hover:text-foreground gap-1 text-xs"
+          className="text-muted-foreground hover:text-foreground gap-1 text-xs !border !border-black dark:!border-white"
           onClick={handleAddRule}
         >
           <Plus className="h-3 w-3" />

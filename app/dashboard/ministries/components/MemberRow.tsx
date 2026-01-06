@@ -67,7 +67,7 @@ export const MemberRow = memo(function MemberRow({
         {canManage && allRoles.length > 0 ? (
           <Popover open={isOpen} onOpenChange={setIsOpen}>
             <PopoverTrigger asChild>
-              <Button variant="ghost" className="justify-between min-w-[80px] md:min-w-[140px] !border !border-gray-300 dark:!border-gray-600 text-sm">
+              <Button variant="ghost" className="justify-between min-w-[80px] md:min-w-[140px] !border !border-black dark:!border-white text-sm">
                 {member.roles.length === 0 ? (
                   <span className="text-muted-foreground">No roles</span>
                 ) : member.roles.length === 1 ? (
@@ -78,7 +78,7 @@ export const MemberRow = memo(function MemberRow({
                 <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-56 p-3 bg-white dark:bg-zinc-950 border border-gray-300 dark:border-zinc-700" align="end">
+            <PopoverContent className="w-56 p-3 bg-white dark:bg-zinc-950 border border-black dark:border-white" align="end">
               <div className="space-y-2">
                 {allRoles.map((role) => (
                   <div key={role.id} className="flex items-center space-x-2">
@@ -97,7 +97,7 @@ export const MemberRow = memo(function MemberRow({
                 ))}
               </div>
               <div className="flex justify-end gap-2 mt-3 pt-3 border-t">
-                <Button variant="ghost" size="sm" onClick={handleCancel}>
+                <Button variant="ghost" size="sm" onClick={handleCancel} className="!border !border-black dark:!border-white">
                   Cancel
                 </Button>
                 <Button size="sm" onClick={handleSave} className="!bg-brand hover:!bg-brand/90 !text-white">

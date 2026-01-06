@@ -188,9 +188,9 @@ export const SortBuilder = memo(function SortBuilder({
           {/* Add sort button */}
           <div className="pt-2 border-t">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className="text-muted-foreground hover:text-foreground gap-1"
+              className="text-muted-foreground hover:text-foreground gap-1 !border !border-black dark:!border-white"
               onClick={handleAddSort}
               disabled={sortState.length >= sortFields.length}
             >

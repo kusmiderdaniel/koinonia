@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { MembersTable } from './members-table'
 import { OfflineMemberDialog } from './offline-member-dialog'
@@ -208,41 +207,35 @@ export default async function PeoplePage() {
     : members
 
   return (
-    <div className="p-4 md:p-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8">
-        <div>
-          <h1 className="text-2xl font-bold">People</h1>
-          <p className="text-muted-foreground">
-            {filteredMembers?.length || 0} member{filteredMembers?.length !== 1 ? 's' : ''} {isLeader ? 'in your campus' : 'in your church'}
-          </p>
-        </div>
-        {(isAdmin || isLeader) && (
-          <div className="flex items-center gap-2 flex-wrap">
-            {pendingCount > 0 && (
-              <Button variant="outline" asChild className="!border !border-gray-300">
-                <Link href="/dashboard/people/pending" className="flex items-center gap-2">
-                  <UserPlus className="h-4 w-4" />
-                  <span className="hidden md:inline">Pending</span>
-                  <Badge variant="destructive" className="bg-red-500 text-white rounded-full">
-                    {pendingCount}
-                  </Badge>
-                </Link>
-              </Button>
-            )}
-            <OfflineMemberDialog weekStartsOn={firstDayOfWeek} />
-            {joinCode && <InvitePopover joinCode={joinCode} />}
+    <div className="flex h-[calc(100vh-3.5rem)] md:h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+          <div>
+            <h1 className="text-2xl font-bold">{isLeader ? 'Campus Members' : 'Church Members'}</h1>
+            <p className="text-muted-foreground">
+              {isLeader ? 'Members in your campus.' : 'All members who have joined your church.'} {isAdmin && 'Click on a role to change it.'}
+            </p>
           </div>
-        )}
-      </div>
+          {(isAdmin || isLeader) && (
+            <div className="flex items-center gap-2 flex-wrap">
+              {pendingCount > 0 && (
+                <Button variant="outline" asChild className="!border !border-black dark:!border-white">
+                  <Link href="/dashboard/people/pending" className="flex items-center gap-2">
+                    <UserPlus className="h-4 w-4" />
+                    <span className="hidden md:inline">Pending</span>
+                    <Badge variant="destructive" className="bg-red-500 text-white rounded-full">
+                      {pendingCount}
+                    </Badge>
+                  </Link>
+                </Button>
+              )}
+              <OfflineMemberDialog weekStartsOn={firstDayOfWeek} />
+              {joinCode && <InvitePopover joinCode={joinCode} />}
+            </div>
+          )}
+        </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{isLeader ? 'Campus Members' : 'Church Members'}</CardTitle>
-          <CardDescription>
-            {isLeader ? 'Members in your campus.' : 'All members who have joined your church.'} {isAdmin && 'Click on a role to change it.'}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
           {filteredMembers && filteredMembers.length > 0 ? (
             <MembersTable
               members={filteredMembers}
@@ -256,8 +249,8 @@ export default async function PeoplePage() {
               {isLeader ? 'No members in your campus yet.' : 'No members yet. Share your invite link to get started!'}
             </p>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Plus, Search, FileText } from 'lucide-react'
+import { Plus, Search, FileText, Copy, Pencil, Trash2 } from 'lucide-react'
 import { EventTypeBadge } from '@/components/EventTypeBadge'
 import { CampusBadge } from '@/components/CampusBadge'
 import { formatTimeString, formatDurationMinutes } from '@/lib/utils/format'
@@ -19,6 +19,9 @@ interface TemplatesListProps {
   onSearchChange: (query: string) => void
   onSelectTemplate: (template: Template) => void
   onCreateTemplate: () => void
+  onEditTemplate: (template: Template) => void
+  onDuplicateTemplate: (template: Template) => void
+  onDeleteTemplate: (template: Template) => void
 }
 
 export function TemplatesList({
@@ -32,6 +35,9 @@ export function TemplatesList({
   onSearchChange,
   onSelectTemplate,
   onCreateTemplate,
+  onEditTemplate,
+  onDuplicateTemplate,
+  onDeleteTemplate,
 }: TemplatesListProps) {
   return (
     <div
@@ -54,7 +60,7 @@ export function TemplatesList({
           <Button
             variant="outline"
             size="icon"
-            className="flex-shrink-0 rounded-full"
+            className="flex-shrink-0 rounded-full !border !border-black dark:!border-white"
             onClick={onCreateTemplate}
             title="Create template"
           >
@@ -81,7 +87,7 @@ export function TemplatesList({
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-3 rounded-full"
+                className="mt-3 rounded-full !border !border-black dark:!border-white"
                 onClick={onCreateTemplate}
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -93,35 +99,79 @@ export function TemplatesList({
           filteredTemplates.map((template) => {
             const isSelected = selectedTemplate?.id === template.id
             return (
-              <button
+              <div
                 key={template.id}
-                onClick={() => onSelectTemplate(template)}
-                className={`w-full text-left p-3 rounded-lg transition-colors ${
+                className={`flex rounded-lg border border-black dark:border-white transition-colors ${
                   isSelected
-                    ? 'bg-gray-100 dark:bg-zinc-800 font-medium'
+                    ? 'bg-gray-100 dark:bg-zinc-800'
                     : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'
                 }`}
               >
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <EventTypeBadge type={template.event_type} />
-                  {template.campus && (
-                    <CampusBadge
-                      name={template.campus.name}
-                      color={template.campus.color}
-                      size="sm"
-                    />
-                  )}
-                </div>
-                <p className="font-medium truncate">{template.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {formatTimeString(template.default_start_time)} •{' '}
-                  {formatDurationMinutes(template.default_duration_minutes)}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {template.agendaItemCount} items • {template.positionCount}{' '}
-                  positions
-                </p>
-              </button>
+                <button
+                  onClick={() => onSelectTemplate(template)}
+                  className="flex-1 text-left p-3 min-w-0"
+                >
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <EventTypeBadge type={template.event_type} />
+                    {template.campus && (
+                      <CampusBadge
+                        name={template.campus.name}
+                        color={template.campus.color}
+                        size="sm"
+                      />
+                    )}
+                  </div>
+                  <p className={`truncate ${isSelected ? 'font-medium' : ''}`}>{template.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatTimeString(template.default_start_time)} •{' '}
+                    {formatDurationMinutes(template.default_duration_minutes)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {template.agendaItemCount} items • {template.positionCount}{' '}
+                    positions
+                  </p>
+                </button>
+                {canManage && (
+                  <div className="flex flex-col justify-center gap-0.5 pr-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onDuplicateTemplate(template)
+                      }}
+                      title="Duplicate"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onEditTemplate(template)
+                      }}
+                      title="Edit"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onDeleteTemplate(template)
+                      }}
+                      title="Delete"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                )}
+              </div>
             )
           })
         )}

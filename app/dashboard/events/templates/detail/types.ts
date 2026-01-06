@@ -22,7 +22,7 @@ export interface Position {
   title: string
   quantity_needed: number
   notes: string | null
-  ministry: { id: string; name: string } | null
+  ministry: { id: string; name: string; color: string } | null
   role: { id: string; name: string } | null
   sort_order: number | null
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Loader2, UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -33,6 +33,7 @@ interface OfflineMemberDialogProps {
 
 export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMemberDialogProps) {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
@@ -43,6 +44,11 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
     dateOfBirth: '',
     sex: '',
   })
+
+  // Prevent hydration mismatch from Radix UI random IDs
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -80,11 +86,21 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
     }
   }
 
+  // Show placeholder button until mounted to prevent hydration mismatch
+  if (!mounted) {
+    return trigger || (
+      <Button variant="outline" className="!border !border-black dark:!border-white">
+        <UserPlus className="h-4 w-4 mr-2" />
+        Add Offline Member
+      </Button>
+    )
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button variant="outline" className="!border !border-gray-300">
+          <Button variant="outline" className="!border !border-black dark:!border-white">
             <UserPlus className="h-4 w-4 mr-2" />
             Add Offline Member
           </Button>
@@ -171,7 +187,7 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" className="!border !border-gray-300" onClick={() => setOpen(false)}>
+            <Button type="button" variant="outline" className="!border !border-black dark:!border-white" onClick={() => setOpen(false)}>
               Cancel
             </Button>
             <Button type="submit" disabled={loading} className="!bg-brand hover:!bg-brand/90 !text-white !border !border-brand">

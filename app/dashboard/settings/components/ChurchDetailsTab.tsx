@@ -89,68 +89,70 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
   }
 
   return (
-    <Card>
+    <Card className="min-w-[28rem]">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <CardContent className="flex justify-center">
-          <div className="space-y-6 w-full max-w-md">
+        <CardContent>
+          <div className="space-y-4">
           {/* Logo Upload Section */}
           <div className="space-y-2">
             <Label>Church Logo</Label>
-            <div className="flex items-center gap-4">
-              {/* Logo Preview */}
-              <div className="relative w-20 h-20 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center bg-muted/30 overflow-hidden">
-                {logoUrl ? (
-                  <img
-                    src={logoUrl}
-                    alt="Church logo"
-                    className="w-full h-full object-contain"
-                  />
-                ) : (
-                  <Church className="w-8 h-8 text-muted-foreground/50" />
-                )}
-              </div>
-
-              {/* Upload/Remove Buttons */}
-              {isAdmin && (
-                <div className="flex flex-col gap-2">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp,image/gif"
-                    onChange={handleLogoUpload}
-                    className="hidden"
-                    disabled={isUploadingLogo || isRemovingLogo}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploadingLogo || isRemovingLogo}
-                    className="!rounded-full"
-                  >
-                    <Upload className="w-4 h-4 mr-2" />
-                    {isUploadingLogo ? 'Uploading...' : 'Upload Logo'}
-                  </Button>
-                  {logoUrl && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleRemoveLogo}
-                      disabled={isUploadingLogo || isRemovingLogo}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50 !rounded-full"
-                    >
-                      <X className="w-4 h-4 mr-2" />
-                      {isRemovingLogo ? 'Removing...' : 'Remove'}
-                    </Button>
+            <div className="border border-black dark:border-white rounded-lg p-3 space-y-3">
+              <div className="flex items-center gap-4">
+                {/* Logo Preview */}
+                <div className="relative w-20 h-20 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center bg-muted/30 overflow-hidden">
+                  {logoUrl ? (
+                    <img
+                      src={logoUrl}
+                      alt="Church logo"
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <Church className="w-8 h-8 text-muted-foreground/50" />
                   )}
                 </div>
-              )}
+
+                {/* Upload/Remove Buttons */}
+                {isAdmin && (
+                  <div className="flex flex-col gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                      disabled={isUploadingLogo || isRemovingLogo}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploadingLogo || isRemovingLogo}
+                      className="!rounded-full !border-black dark:!border-white"
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      {isUploadingLogo ? 'Uploading...' : 'Upload Logo'}
+                    </Button>
+                    {logoUrl && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleRemoveLogo}
+                        disabled={isUploadingLogo || isRemovingLogo}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 !rounded-full"
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        {isRemovingLogo ? 'Removing...' : 'Remove'}
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Recommended: Square image, at least 200x200px. Max 5MB. Supported formats: JPEG, PNG, WebP, GIF.
+              </p>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Recommended: Square image, at least 200x200px. Max 5MB. Supported formats: JPEG, PNG, WebP, GIF.
-            </p>
           </div>
 
           <Separator />
@@ -228,7 +230,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
           </div>
 
           {isAdmin && (
-            <div className="flex justify-end pt-4">
+            <div className="flex justify-end pt-2">
               <Button type="submit" disabled={isLoading} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white">
                 {isLoading ? 'Saving...' : 'Save Changes'}
               </Button>

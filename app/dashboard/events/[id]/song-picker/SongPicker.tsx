@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -9,11 +8,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Music, ArrowLeft } from 'lucide-react'
+import { Music } from 'lucide-react'
 import { getSongsForAgenda, getSongTags, addSongToAgenda, createSongAndAddToAgenda, replaceSongPlaceholder } from '../../actions'
 import { SongList } from './SongList'
-import { CreateSongForm } from './CreateSongForm'
-import { PRESET_COLORS } from './constants'
+import { SongDialog } from '@/app/dashboard/songs/song-dialog/SongDialog'
+import type { SongInput } from '@/app/dashboard/songs/song-dialog/types'
 import type { Song, Tag, SongPickerProps } from './types'
 
 export function SongPicker({
@@ -90,75 +89,34 @@ export function SongPicker({
     setIsCreatingNew(false)
   }
 
-  const handleCreateAndAdd = async (data: {
-    title: string
-    artist: string
-    key: string
-    durationMinutes: string
-    durationSeconds: string
-    tagIds: string[]
-  }) => {
-    if (!data.title.trim()) return
-
-    setIsAdding(true)
-    setError(null)
-
-    // Calculate duration in seconds
-    const mins = parseInt(data.durationMinutes, 10) || 0
-    const secs = parseInt(data.durationSeconds, 10) || 0
-    const totalSecs = mins * 60 + secs
-
+  const handleCreateAndAdd = useCallback(async (data: SongInput): Promise<{ error?: string }> => {
     const result = await createSongAndAddToAgenda(eventId, {
-      title: data.title.trim(),
-      artist: data.artist.trim() || undefined,
-      defaultKey: data.key || undefined,
-      durationSeconds: totalSecs > 0 ? totalSecs : undefined,
+      title: data.title,
+      artist: data.artist,
+      defaultKey: data.defaultKey,
+      durationSeconds: data.durationSeconds,
       tagIds: data.tagIds,
       replaceAgendaItemId: replaceAgendaItemId || undefined,
     })
 
     if (result.error) {
-      setError(result.error)
-      setIsAdding(false)
-      return
+      return { error: result.error }
     }
 
-    setIsAdding(false)
     onSuccess()
-  }
-
-  const handleTagCreated = (tag: Tag) => {
-    setAllTags((prev) => [...prev, tag])
-  }
+    return {}
+  }, [eventId, replaceAgendaItemId, onSuccess])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-white dark:bg-zinc-950 max-w-xl w-[95vw] max-h-[80vh] flex flex-col overflow-hidden" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            {isCreatingNew ? (
-              <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 -ml-2"
-                  onClick={handleBackToList}
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                </Button>
-                Add New Song
-              </>
-            ) : (
-              <>
-                <Music className="w-5 h-5" />
-                Add Song to Agenda
-              </>
-            )}
+            <Music className="w-5 h-5" />
+            Add Song to Agenda
           </DialogTitle>
           <DialogDescription>
-            {isCreatingNew
-              ? 'Create a new song and add it to the agenda.'
-              : replaceAgendaItemId
+            {replaceAgendaItemId
               ? 'Select a song to replace this placeholder.'
               : 'Select a song from your library or create a new one.'}
           </DialogDescription>
@@ -170,31 +128,34 @@ export function SongPicker({
           </div>
         )}
 
-        {isCreatingNew ? (
-          <CreateSongForm
-            initialTitle={searchQuery.trim()}
-            allTags={allTags}
-            isAdding={isAdding}
-            onBack={handleBackToList}
-            onSubmit={handleCreateAndAdd}
-            onTagCreated={handleTagCreated}
-          />
-        ) : (
-          <SongList
-            songs={songs}
-            allTags={allTags}
-            isLoading={isLoading}
-            isAdding={isAdding}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            filterTagIds={filterTagIds}
-            onFilterTagsChange={setFilterTagIds}
-            onSelectSong={handleSelectSong}
-            onCreateNew={handleStartCreateNew}
-            onClose={() => onOpenChange(false)}
-          />
-        )}
+        <SongList
+          songs={songs}
+          allTags={allTags}
+          isLoading={isLoading}
+          isAdding={isAdding}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          filterTagIds={filterTagIds}
+          onFilterTagsChange={setFilterTagIds}
+          onSelectSong={handleSelectSong}
+          onCreateNew={handleStartCreateNew}
+          onClose={() => onOpenChange(false)}
+        />
       </DialogContent>
+
+      {/* Song creation dialog - opens when creating new song */}
+      <SongDialog
+        open={isCreatingNew}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleBackToList()
+          }
+        }}
+        onSuccess={() => {}}
+        customAction={handleCreateAndAdd}
+        title="Add New Song"
+        submitText="Create & Add"
+      />
     </Dialog>
   )
 }

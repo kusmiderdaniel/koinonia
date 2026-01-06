@@ -127,7 +127,7 @@ export function ResponsiblePersonPicker({
                     key={person.id}
                     type="button"
                     onClick={() => handleSelect(person)}
-                    className={`w-full text-left p-3 rounded-lg transition-all ${
+                    className={`w-full text-left p-3 rounded-lg transition-all border border-black dark:border-white ${
                       isSelected
                         ? 'bg-gray-100 dark:bg-zinc-800 font-medium'
                         : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'

@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useDebouncedValue } from '@/lib/hooks'
+import { toast } from 'sonner'
 import {
   getEventTemplates,
   getEventTemplate,
   deleteEventTemplate,
+  duplicateEventTemplate,
 } from '../actions'
 import type { Template, TemplateDetail } from './types'
 
@@ -67,6 +69,25 @@ export function useTemplatesTabState() {
       setTemplateDialogOpen(true)
     }
   }, [selectedTemplate])
+
+  const handleEditTemplateFromList = useCallback(async (template: Template) => {
+    // Load full template details then open edit dialog
+    const result = await getEventTemplate(template.id)
+    if (result.data) {
+      setEditingTemplate(result.data)
+      setTemplateDialogOpen(true)
+    }
+  }, [])
+
+  const handleDuplicateTemplate = useCallback(async (template: Template) => {
+    const result = await duplicateEventTemplate(template.id)
+    if (result.error) {
+      toast.error(result.error)
+    } else {
+      toast.success(`Template duplicated as "${template.name} - copy"`)
+      await loadTemplates()
+    }
+  }, [loadTemplates])
 
   const handleDeleteClick = useCallback((template: Template) => {
     setTemplateToDelete(template)
@@ -140,6 +161,8 @@ export function useTemplatesTabState() {
     handleSelectTemplate,
     handleCreateTemplate,
     handleEditTemplate,
+    handleEditTemplateFromList,
+    handleDuplicateTemplate,
     handleDeleteClick,
     handleConfirmDelete,
     handleDialogSuccess,

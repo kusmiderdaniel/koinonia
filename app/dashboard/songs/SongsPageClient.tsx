@@ -105,7 +105,7 @@ export function SongsPageClient({ initialData }: SongsPageClientProps) {
         </p>
       </div>
       {canManage && (
-        <Button variant="ghost" className="rounded-full !border !border-gray-300 dark:!border-gray-600" onClick={dialogs.openCreateDialog}>
+        <Button variant="ghost" className="rounded-full !border !border-black dark:!border-white" onClick={dialogs.openCreateDialog}>
           <Plus className="w-4 h-4 mr-2" />
           New Song
         </Button>

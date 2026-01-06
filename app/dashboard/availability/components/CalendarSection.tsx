@@ -50,7 +50,7 @@ export const CalendarSection = memo(function CalendarSection({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 !border !border-gray-300 dark:!border-gray-600"
+              className="h-8 w-8 !border !border-black dark:!border-white"
               onClick={onPrevMonth}
               disabled={!canGoPrevious}
             >
@@ -60,7 +60,7 @@ export const CalendarSection = memo(function CalendarSection({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 !border !border-gray-300 dark:!border-gray-600"
+              className="h-8 w-8 !border !border-black dark:!border-white"
               onClick={onNextMonth}
             >
               <ChevronRight className="h-4 w-4" />
@@ -89,7 +89,11 @@ export const CalendarSection = memo(function CalendarSection({
               selectedRange:
                 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg',
             }}
-            className="rounded-md w-full [&_table]:w-full"
+            classNames={{
+              caption_label: "hidden",
+              month_caption: "hidden",
+            }}
+            className="rounded-md w-full [&_table]:w-full !p-0"
           />
 
           {/* Selection indicator */}

@@ -25,50 +25,62 @@ export function CalendarIntegrationPageClient() {
 
   if (isLoading) {
     return (
-      <div className="p-8 flex items-center justify-center min-h-[50vh]">
+      <div className="flex h-[calc(100vh-3.5rem)] md:h-screen items-center justify-center">
         <LoadingState message="Loading calendar settings..." />
       </div>
     )
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-3xl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">Calendar Integration</h1>
-        <p className="text-muted-foreground">
-          Subscribe to church calendars in Google Calendar, Apple Calendar, or
-          any other calendar app
-        </p>
-      </div>
+    <div className="flex h-[calc(100vh-3.5rem)] md:h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 shrink-0">
+          <div>
+            <h1 className="text-2xl font-bold">Calendar Integration</h1>
+            <p className="text-muted-foreground">
+              Subscribe to church calendars in Google Calendar, Apple Calendar, or
+              any other calendar app
+            </p>
+          </div>
+        </div>
 
-      {error && (
-        <Alert variant="destructive" className="mb-6">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+        {error && (
+          <Alert variant="destructive" className="mb-4 shrink-0">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
-      <div className="space-y-6">
-        <PersonalCalendarCard
-          calendarUrl={personalCalendarUrl}
-          webcalUrl={personalWebcalUrl}
-          copied={copiedPersonal}
-          isRegenerating={isRegenerating}
-          onCopy={() =>
-            personalCalendarUrl &&
-            copyToClipboard(personalCalendarUrl, 'personal')
-          }
-          onRegenerate={handleRegenerate}
-        />
+        <div className="flex-1 min-h-0 overflow-auto">
+          <div className="border border-black dark:border-zinc-700 rounded-lg px-3 md:px-4 py-4 md:py-6 w-fit">
+            <PersonalCalendarCard
+              calendarUrl={personalCalendarUrl}
+              webcalUrl={personalWebcalUrl}
+              copied={copiedPersonal}
+              isRegenerating={isRegenerating}
+              onCopy={() =>
+                personalCalendarUrl &&
+                copyToClipboard(personalCalendarUrl, 'personal')
+              }
+              onRegenerate={handleRegenerate}
+            />
 
-        <PublicCalendarsCard
-          campuses={campuses}
-          copiedCampusId={copiedCampusId}
-          getPublicCalendarUrl={getPublicCalendarUrl}
-          getPublicWebcalUrl={getPublicWebcalUrl}
-          onCopy={copyToClipboard}
-        />
+            {campuses.length > 0 && (
+              <>
+                <div className="border-t border-black dark:border-zinc-700 my-6" />
+                <PublicCalendarsCard
+                  campuses={campuses}
+                  copiedCampusId={copiedCampusId}
+                  getPublicCalendarUrl={getPublicCalendarUrl}
+                  getPublicWebcalUrl={getPublicWebcalUrl}
+                  onCopy={copyToClipboard}
+                />
+              </>
+            )}
 
-        <HelpCard />
+            <div className="border-t border-black dark:border-zinc-700 my-6" />
+            <HelpCard />
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -2,7 +2,6 @@
 
 import { memo } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import {
   Dialog,
@@ -12,6 +11,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
+import { DatePicker } from '@/components/ui/date-picker'
 import { Trash2 } from 'lucide-react'
 
 export interface EditDialogProps {
@@ -22,6 +22,7 @@ export interface EditDialogProps {
   reason: string
   error: string
   isSaving: boolean
+  firstDayOfWeek?: 0 | 1 | 2 | 3 | 4 | 5 | 6
   onOpenChange: (open: boolean) => void
   onStartDateChange: (date: string) => void
   onEndDateChange: (date: string) => void
@@ -39,6 +40,7 @@ export const EditDialog = memo(function EditDialog({
   reason,
   error,
   isSaving,
+  firstDayOfWeek = 0,
   onOpenChange,
   onStartDateChange,
   onEndDateChange,
@@ -57,21 +59,21 @@ export const EditDialog = memo(function EditDialog({
         <div className="space-y-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="editStartDate">Start Date</Label>
-              <Input
-                id="editStartDate"
-                type="date"
+              <Label>Start Date</Label>
+              <DatePicker
                 value={startDate}
-                onChange={(e) => onStartDateChange(e.target.value)}
+                onChange={onStartDateChange}
+                placeholder="Select date"
+                weekStartsOn={firstDayOfWeek}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="editEndDate">End Date</Label>
-              <Input
-                id="editEndDate"
-                type="date"
+              <Label>End Date</Label>
+              <DatePicker
                 value={endDate}
-                onChange={(e) => onEndDateChange(e.target.value)}
+                onChange={onEndDateChange}
+                placeholder="Select date"
+                weekStartsOn={firstDayOfWeek}
               />
             </div>
           </div>
@@ -92,7 +94,8 @@ export const EditDialog = memo(function EditDialog({
 
         <DialogFooter className="flex justify-between sm:justify-between">
           <Button
-            variant="destructive"
+            variant="outline-pill"
+            className="!border !border-red-600 text-red-600 hover:!bg-red-50 dark:hover:!bg-red-950"
             onClick={() => editingId && onDelete(editingId)}
             disabled={isSaving}
           >
@@ -100,10 +103,19 @@ export const EditDialog = memo(function EditDialog({
             Delete
           </Button>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={onCancel} disabled={isSaving}>
+            <Button
+              variant="outline-pill"
+              className="!border !border-black dark:!border-white"
+              onClick={onCancel}
+              disabled={isSaving}
+            >
               Cancel
             </Button>
-            <Button onClick={onSave} disabled={isSaving}>
+            <Button
+              className="!bg-brand hover:!bg-brand/90 !text-brand-foreground"
+              onClick={onSave}
+              disabled={isSaving}
+            >
               {isSaving ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>

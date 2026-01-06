@@ -64,7 +64,7 @@ export const CampusPicker = memo(function CampusPicker({
           aria-expanded={open}
           disabled={disabled}
           className={cn(
-            'w-full justify-start text-left h-auto min-h-10 py-2 px-3 rounded-lg !border !border-gray-300 dark:!border-zinc-700',
+            'w-full justify-start text-left h-auto min-h-10 py-2 px-3 rounded-lg !border !border-black dark:!border-white',
             !selectedCampuses.length && 'text-muted-foreground',
             className
           )}
@@ -83,6 +83,35 @@ export const CampusPicker = memo(function CampusPicker({
       </PopoverTrigger>
       <PopoverContent className="w-[250px] p-2 bg-white dark:bg-zinc-950 border" align="start">
         <div className="space-y-1">
+          {/* "All campuses" option for single-select mode */}
+          {!multiple && (
+            <button
+              type="button"
+              onClick={() => {
+                onChange([])
+                setOpen(false)
+              }}
+              className={cn(
+                'w-full flex items-center gap-2 p-2 rounded-md transition-colors text-left',
+                selectedCampusIds.length === 0
+                  ? 'bg-gray-100 dark:bg-zinc-800'
+                  : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'
+              )}
+            >
+              <div
+                className={cn(
+                  'w-4 h-4 rounded border flex items-center justify-center flex-shrink-0',
+                  selectedCampusIds.length === 0 ? 'bg-primary border-primary' : 'border-input'
+                )}
+              >
+                {selectedCampusIds.length === 0 && <Check className="w-3 h-3 text-primary-foreground" />}
+              </div>
+              <Building2 className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+              <span className="text-sm font-medium flex-1 truncate">
+                All campuses
+              </span>
+            </button>
+          )}
           {campuses.map((campus) => {
             const isSelected = selectedCampusIds.includes(campus.id)
             return (

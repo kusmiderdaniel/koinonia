@@ -69,7 +69,7 @@ export const MembersTable = memo(function MembersTable({
   const activeSortCount = countActiveSorts(sortState)
 
   return (
-    <div className="space-y-4">
+    <div className="flex-1 flex flex-col space-y-4 min-h-0">
       {/* Filter and Sort toolbar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
         <div className="grid grid-cols-3 sm:flex sm:items-center gap-2 w-full sm:w-auto">
@@ -123,30 +123,32 @@ export const MembersTable = memo(function MembersTable({
       ) : (
         /* Desktop: Table view */
         <TooltipProvider>
-          <Table>
-            <MembersTableHeader />
-            <TableBody>
-              {filteredAndSortedMembers.map((member) => (
-                <MemberRow
-                  key={member.id}
-                  member={member}
-                  currentUserId={currentUserId}
-                  canEditRole={canEditRole(member)}
-                  canEditActiveStatus={canEditActiveStatus(member)}
-                  canEditDeparture={canEditDeparture(member)}
-                  canEditFields={canEditFields}
-                  isUpdatingRole={updatingId === member.id}
-                  isUpdatingActive={updatingActiveId === member.id}
-                  isUpdatingDeparture={updatingDepartureId === member.id}
-                  isUpdatingBaptism={updatingBaptismId === member.id}
-                  onRoleChange={handleRoleChange}
-                  onActiveChange={handleActiveChange}
-                  onDepartureChange={handleDepartureChange}
-                  onBaptismChange={handleBaptismChange}
-                />
-              ))}
-            </TableBody>
-          </Table>
+          <div className="flex-1 border border-black dark:border-white rounded-lg overflow-auto">
+            <Table>
+              <MembersTableHeader />
+              <TableBody>
+                {filteredAndSortedMembers.map((member) => (
+                  <MemberRow
+                    key={member.id}
+                    member={member}
+                    currentUserId={currentUserId}
+                    canEditRole={canEditRole(member)}
+                    canEditActiveStatus={canEditActiveStatus(member)}
+                    canEditDeparture={canEditDeparture(member)}
+                    canEditFields={canEditFields}
+                    isUpdatingRole={updatingId === member.id}
+                    isUpdatingActive={updatingActiveId === member.id}
+                    isUpdatingDeparture={updatingDepartureId === member.id}
+                    isUpdatingBaptism={updatingBaptismId === member.id}
+                    onRoleChange={handleRoleChange}
+                    onActiveChange={handleActiveChange}
+                    onDepartureChange={handleDepartureChange}
+                    onBaptismChange={handleBaptismChange}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </TooltipProvider>
       )}
 

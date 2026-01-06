@@ -91,88 +91,95 @@ export function InboxPageClient({
   })
 
   return (
-    <div className="container max-w-4xl py-6 px-4 sm:px-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <Inbox className="h-7 w-7" />
-          <div>
-            <h1 className="text-2xl font-bold">Inbox</h1>
-            <p className="text-sm text-muted-foreground">
-              {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}
-              {actionableCount > 0 && ` · ${actionableCount} pending response`}
-            </p>
+    <div className="flex h-[calc(100vh-3.5rem)] md:h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4 shrink-0">
+          <div className="flex items-center gap-3">
+            <Inbox className="h-7 w-7" />
+            <div>
+              <h1 className="text-2xl font-bold">Inbox</h1>
+              <p className="text-sm text-muted-foreground">
+                {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}
+                {actionableCount > 0 && ` · ${actionableCount} pending response`}
+              </p>
+            </div>
+          </div>
+          {unreadCount > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleMarkAllAsRead}
+              disabled={isMarkingAllRead}
+              className="gap-2 !rounded-full !border-black dark:!border-white"
+            >
+              {isMarkingAllRead ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <CheckCheck className="h-4 w-4" />
+              )}
+              Mark all read
+            </Button>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-h-0 overflow-auto">
+          <div className="border border-black dark:border-zinc-700 rounded-lg p-4 max-w-2xl">
+            {/* Tabs */}
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+              <TabsList className="mb-4 w-full border border-black dark:border-zinc-700">
+                <TabsTrigger value="all" className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-white">
+                  All
+                </TabsTrigger>
+                <TabsTrigger value="unread" className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-white">
+                  Unread
+                </TabsTrigger>
+                <TabsTrigger value="actionable" className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-white">
+                  Needs Response
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value={activeTab} className="mt-0">
+                {filteredNotifications.length === 0 ? (
+                  <Card>
+                    <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                      <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
+                        {activeTab === 'actionable' ? (
+                          <Check className="h-6 w-6 text-muted-foreground" />
+                        ) : (
+                          <Inbox className="h-6 w-6 text-muted-foreground" />
+                        )}
+                      </div>
+                      <h3 className="font-medium mb-1">
+                        {activeTab === 'all' && 'No notifications yet'}
+                        {activeTab === 'unread' && 'All caught up!'}
+                        {activeTab === 'actionable' && 'No pending invitations'}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {activeTab === 'all' && "You'll receive notifications for event invitations, task assignments, and more."}
+                        {activeTab === 'unread' && "You've read all your notifications."}
+                        {activeTab === 'actionable' && "You've responded to all invitations."}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="space-y-3">
+                    {filteredNotifications.map((notification) => (
+                      <NotificationItem
+                        key={notification.id}
+                        notification={notification}
+                        onActionComplete={handleActionComplete}
+                        onNavigateToEvent={notification.event_id ? () => handleNavigateToEvent(notification.event_id) : undefined}
+                      />
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
-        {unreadCount > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleMarkAllAsRead}
-            disabled={isMarkingAllRead}
-            className="gap-2"
-          >
-            {isMarkingAllRead ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <CheckCheck className="h-4 w-4" />
-            )}
-            Mark all read
-          </Button>
-        )}
       </div>
-
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-        <TabsList className="mb-4 w-full">
-          <TabsTrigger value="all" className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-white">
-            All
-          </TabsTrigger>
-          <TabsTrigger value="unread" className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-white">
-            Unread
-          </TabsTrigger>
-          <TabsTrigger value="actionable" className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-white">
-            Needs Response
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value={activeTab} className="mt-0">
-          {filteredNotifications.length === 0 ? (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
-                  {activeTab === 'actionable' ? (
-                    <Check className="h-6 w-6 text-muted-foreground" />
-                  ) : (
-                    <Inbox className="h-6 w-6 text-muted-foreground" />
-                  )}
-                </div>
-                <h3 className="font-medium mb-1">
-                  {activeTab === 'all' && 'No notifications yet'}
-                  {activeTab === 'unread' && 'All caught up!'}
-                  {activeTab === 'actionable' && 'No pending invitations'}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {activeTab === 'all' && "You'll receive notifications for event invitations, task assignments, and more."}
-                  {activeTab === 'unread' && "You've read all your notifications."}
-                  {activeTab === 'actionable' && "You've responded to all invitations."}
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-3">
-              {filteredNotifications.map((notification) => (
-                <NotificationItem
-                  key={notification.id}
-                  notification={notification}
-                  onActionComplete={handleActionComplete}
-                  onNavigateToEvent={notification.event_id ? () => handleNavigateToEvent(notification.event_id) : undefined}
-                />
-              ))}
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
     </div>
   )
 }

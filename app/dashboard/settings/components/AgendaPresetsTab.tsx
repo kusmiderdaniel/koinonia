@@ -4,20 +4,6 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -27,7 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Plus, MoreVertical, Pencil, Trash2, ListChecks } from 'lucide-react'
+import { Plus, Pencil, Trash2, ListChecks } from 'lucide-react'
 import { toast } from 'sonner'
 import { deleteAgendaPreset } from '../agenda-presets/actions'
 import { AgendaPresetDialog } from '../agenda-presets/AgendaPresetDialog'
@@ -114,96 +100,77 @@ export function AgendaPresetsTab({
 
   return (
     <>
-      <Card>
-        <CardHeader className="flex flex-row items-start justify-between">
-          <div>
-            <CardTitle>Agenda Items</CardTitle>
-            <CardDescription>
-              Reusable agenda items for your events and templates. Items are automatically added here when you create new agenda items.
-            </CardDescription>
+      <Card className="min-w-[28rem]">
+        <CardHeader>
+          <div className="flex items-center justify-between gap-6">
+            <div>
+              <CardTitle>Agenda Items</CardTitle>
+              <CardDescription>
+                Reusable agenda items for your events and templates
+              </CardDescription>
+            </div>
+            <Button onClick={handleAddPreset} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0">
+              <Plus className="w-4 h-4 mr-2" />
+              Add Agenda Item
+            </Button>
           </div>
-          <Button onClick={handleAddPreset} className="rounded-full bg-brand hover:bg-brand/90 text-brand-foreground border border-black/20 dark:border-white/20">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Agenda Item
-          </Button>
         </CardHeader>
         <CardContent>
           {presets.length === 0 ? (
-            <div className="text-center py-12">
-              <ListChecks className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />
-              <h3 className="text-lg font-medium mb-2">No agenda items yet</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Agenda items are created automatically when you add them to events or templates.
-                You can also create them manually here.
-              </p>
-              <Button onClick={handleAddPreset} className="rounded-full bg-brand hover:bg-brand/90 text-brand-foreground border border-black/20 dark:border-white/20">
-                <Plus className="w-4 h-4 mr-2" />
-                Create your first agenda item
-              </Button>
+            <div className="text-center py-8 text-muted-foreground">
+              <ListChecks className="w-12 h-12 mx-auto mb-4 opacity-50" />
+              <p>No agenda items yet</p>
+              <p className="text-sm">Add your first agenda item to use in events</p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Duration</TableHead>
-                  <TableHead>Ministry</TableHead>
-                  <TableHead className="w-[50px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {presets.map((preset) => (
-                  <TableRow key={preset.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{preset.title}</div>
-                        {preset.description && (
-                          <div className="text-sm text-muted-foreground truncate max-w-[300px]">
-                            {preset.description}
+            <div className="space-y-2">
+              {presets.map((preset) => (
+                <div
+                  key={preset.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-start gap-3">
+                    <ListChecks className="w-5 h-5 mt-0.5 text-muted-foreground" />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{preset.title}</span>
+                        <span className="text-sm text-muted-foreground">
+                          ({formatDuration(preset.duration_seconds)})
+                        </span>
+                        {preset.ministry && (
+                          <div className="flex items-center gap-1">
+                            <div
+                              className="w-3 h-3 rounded-full"
+                              style={{ backgroundColor: preset.ministry.color }}
+                            />
+                            <span className="text-sm text-muted-foreground">{preset.ministry.name}</span>
                           </div>
                         )}
                       </div>
-                    </TableCell>
-                    <TableCell>{formatDuration(preset.duration_seconds)}</TableCell>
-                    <TableCell>
-                      {preset.ministry ? (
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: preset.ministry.color }}
-                          />
-                          <span>{preset.ministry.name}</span>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">—</span>
+                      {preset.description && (
+                        <div className="text-sm text-muted-foreground">{preset.description}</div>
                       )}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="rounded-full">
-                            <MoreVertical className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleEditPreset(preset)}>
-                            <Pencil className="w-4 h-4 mr-2" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDeleteClick(preset)}
-                            className="text-red-600"
-                          >
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEditPreset(preset)}
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDeleteClick(preset)}
+                    >
+                      <Trash2 className="w-4 h-4 text-red-500" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </CardContent>
       </Card>
@@ -227,12 +194,12 @@ export function AgendaPresetsTab({
               Items already added to events or templates will not be affected.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+          <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
+            <AlertDialogCancel className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               disabled={isDeleting}
-              className="rounded-full bg-red-600 hover:bg-red-700 text-white"
+              className="rounded-full !border !border-red-600 !bg-red-600 hover:!bg-red-700 !text-white px-4 py-2"
             >
               {isDeleting ? 'Deleting...' : 'Delete'}
             </AlertDialogAction>

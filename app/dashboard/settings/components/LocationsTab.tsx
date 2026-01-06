@@ -39,18 +39,20 @@ export const LocationsTab = memo(function LocationsTab({
   setError,
   setSuccess,
 }: LocationsTabProps) {
+  const defaultCampus = campuses.find(c => c.is_default)
+
   return (
     <>
-      <Card>
+      <Card className="min-w-[28rem]">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-6">
             <div>
               <CardTitle>Locations</CardTitle>
               <CardDescription>
                 Manage your church's venues and rooms for events
               </CardDescription>
             </div>
-            <Button onClick={() => locationManager.openLocationDialog()} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white">
+            <Button onClick={() => locationManager.openLocationDialog(undefined, defaultCampus?.id)} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0">
               <Plus className="w-4 h-4 mr-2" />
               Add Location
             </Button>
@@ -167,13 +169,13 @@ export const LocationsTab = memo(function LocationsTab({
             )}
           </div>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-            <AlertDialogCancel disabled={locationManager.isSavingLocation} className="rounded-full border-input bg-white dark:bg-zinc-950 px-4 py-2">Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={locationManager.isSavingLocation} className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() =>
                 locationManager.handleSaveLocation(locations, setLocations, setError, setSuccess)
               }
               disabled={locationManager.isSavingLocation || !locationManager.locationName.trim()}
-              className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white !px-4 !py-2 disabled:!opacity-50"
+              className="rounded-full !border !border-brand !bg-brand hover:!bg-brand/90 !text-white px-4 py-2 disabled:!opacity-50"
             >
               {locationManager.isSavingLocation
                 ? 'Saving...'
@@ -199,7 +201,7 @@ export const LocationsTab = memo(function LocationsTab({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-            <AlertDialogCancel className="rounded-full border-input bg-white dark:bg-zinc-950 px-4 py-2">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() =>
                 locationManager.handleDeleteLocation(locations, setLocations, setError, setSuccess)

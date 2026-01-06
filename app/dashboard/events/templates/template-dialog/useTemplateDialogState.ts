@@ -47,6 +47,13 @@ export function useTemplateDialogState({ open, template, onSuccess }: UseTemplat
       getCampuses().then((result) => {
         if (result.data) {
           setCampuses(result.data)
+          // Set default campus for new templates
+          if (!template) {
+            const defaultCampus = result.data.find((c) => c.is_default)
+            if (defaultCampus) {
+              setFormData(prev => ({ ...prev, campusId: defaultCampus.id }))
+            }
+          }
         }
       })
 

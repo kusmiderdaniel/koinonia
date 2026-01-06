@@ -65,7 +65,7 @@ export const TemplateHeader = memo(function TemplateHeader({
           <Button
             variant="outline-pill"
             size="sm"
-            className="!border !border-gray-300 dark:!border-zinc-600"
+            className="!border !border-black dark:!border-white"
             onClick={onCreateEvent}
           >
             <CalendarPlus className="w-4 h-4 mr-2" />

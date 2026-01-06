@@ -103,7 +103,8 @@ export async function getEventTemplate(templateId: string) {
         *,
         ministry:ministries (
           id,
-          name
+          name,
+          color
         ),
         role:ministry_roles (
           id,

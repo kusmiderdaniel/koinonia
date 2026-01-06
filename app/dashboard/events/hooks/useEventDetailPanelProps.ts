@@ -139,6 +139,7 @@ export function useEventDetailPanelProps(
       taskMinistries,
       taskCampuses,
       weekStartsOn,
+      initialTasks: selectedEvent.tasks,
     }
   }, [
     selectedEvent,

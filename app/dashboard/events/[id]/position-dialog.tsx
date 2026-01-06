@@ -246,16 +246,22 @@ export function PositionDialog({
             />
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="!bg-transparent !border-0">
             <Button
               type="button"
-              variant="outline"
+              variant="outline-pill"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
+              className="!border !border-black dark:!border-white"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading || !title.trim() || !ministryId}>
+            <Button
+              type="submit"
+              disabled={isLoading || !title.trim() || !ministryId}
+              variant="outline-pill"
+              className="!border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
+            >
               {isLoading
                 ? isEditing
                   ? 'Saving...'

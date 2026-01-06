@@ -85,33 +85,35 @@ export const ListDetailLayout = memo(function ListDetailLayout({
 
   // Desktop: Side-by-side layout
   return (
-    <div className={cn('flex flex-col h-screen p-4 md:p-8', className)}>
-      {header && <div className="mb-6 shrink-0">{header}</div>}
+    <div className={cn('flex h-[calc(100vh-3.5rem)] md:h-screen overflow-hidden', className)}>
+      <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
+        {header && <div className="mb-4 shrink-0">{header}</div>}
 
-      <div className="flex flex-col md:flex-row gap-6 flex-1 min-h-0">
-        {/* List Panel */}
-        <div className={cn('w-full md:flex-shrink-0 h-full', `md:${listWidth}`)}>
-          {listView}
+        <div className="flex flex-col md:flex-row gap-6 flex-1 min-h-0">
+          {/* List Panel */}
+          <div className={cn('w-full md:flex-shrink-0 h-full', `md:${listWidth}`)}>
+            {listView}
+          </div>
+
+          {/* Detail Panel */}
+          <div className="flex-1 min-w-0 h-full">
+            {hasSelection ? (
+              detailView
+            ) : (
+              <Card className="h-full flex items-center justify-center border border-black dark:border-zinc-700">
+                <EmptyState
+                  icon={emptyIcon}
+                  title={emptyTitle}
+                  description={emptyDescription}
+                  size="sm"
+                />
+              </Card>
+            )}
+          </div>
         </div>
 
-        {/* Detail Panel */}
-        <div className="flex-1 min-w-0 h-full">
-          {hasSelection ? (
-            detailView
-          ) : (
-            <Card className="h-full flex items-center justify-center border border-black dark:border-zinc-700">
-              <EmptyState
-                icon={emptyIcon}
-                title={emptyTitle}
-                description={emptyDescription}
-                size="sm"
-              />
-            </Card>
-          )}
-        </div>
+        {dialogs}
       </div>
-
-      {dialogs}
     </div>
   )
 })

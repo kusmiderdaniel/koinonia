@@ -114,83 +114,89 @@ export default function AvailabilityPage() {
   }, [dialogs, data])
 
   return (
-    <div className="container max-w-5xl py-6">
-      <div className="flex items-center gap-3 mb-6">
-        <CalendarOff className="h-6 w-6 text-muted-foreground" />
-        <h1 className="text-2xl font-bold">My Unavailability</h1>
-      </div>
-
-      <p className="text-muted-foreground mb-6">
-        Click on a date to mark it as unavailable. Click a second date to select a range. Click on
-        an existing unavailable date to edit it.
-      </p>
-
-      <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 items-center lg:items-start">
-        {/* Calendar Section */}
-        <div className="w-full max-w-md lg:max-w-none pb-8 lg:pb-0 lg:pr-8 border-b lg:border-b-0 lg:border-r border-border">
-          <CalendarSection
-            calendarMonth={calendar.calendarMonth}
-            firstDayOfWeek={data.firstDayOfWeek}
-            unavailableDates={data.unavailableDates}
-            selectedStart={calendar.selectedStart}
-            selectedEnd={calendar.selectedEnd}
-            selectedRange={calendar.selectedRange}
-            canGoPrevious={calendar.canGoPrevious}
-            disabledDays={calendar.disabledDays}
-            onDayClick={handleDayClick}
-            onPrevMonth={handlePrevMonth}
-            onNextMonth={handleNextMonth}
-            onClearSelection={handleClearSelection}
-            onAddSingleDay={handleAddSingleDay}
-          />
+    <div className="flex h-[calc(100vh-3.5rem)] md:h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 shrink-0">
+          <div>
+            <h1 className="text-2xl font-bold">My Unavailability</h1>
+            <p className="text-muted-foreground">
+              Click on a date to mark it as unavailable. Click a second date to select a range.
+            </p>
+          </div>
         </div>
 
-        {/* Unavailability List */}
-        <div className="w-full max-w-md lg:max-w-none">
-        <UnavailabilityList
-          isLoading={data.isLoading}
-          unavailability={data.unavailability}
-          upcomingItems={data.upcomingItems}
-          pastItems={data.pastItems}
-          activeTab={dialogs.activeTab}
-          onTabChange={dialogs.setActiveTab}
-          onEdit={dialogs.openEditDialog}
-          onDelete={handleDelete}
+        <div className="flex-1 min-h-0 overflow-auto">
+          <div className="border border-black dark:border-zinc-700 rounded-lg p-4 md:p-6 w-fit">
+            <div className="flex flex-col lg:flex-row gap-8 items-start">
+              {/* Calendar Section */}
+              <div className="w-[320px] pb-8 lg:pb-0 lg:pr-8 border-b lg:border-b-0 lg:border-r border-border">
+                <CalendarSection
+                  calendarMonth={calendar.calendarMonth}
+                  firstDayOfWeek={data.firstDayOfWeek}
+                  unavailableDates={data.unavailableDates}
+                  selectedStart={calendar.selectedStart}
+                  selectedEnd={calendar.selectedEnd}
+                  selectedRange={calendar.selectedRange}
+                  canGoPrevious={calendar.canGoPrevious}
+                  disabledDays={calendar.disabledDays}
+                  onDayClick={handleDayClick}
+                  onPrevMonth={handlePrevMonth}
+                  onNextMonth={handleNextMonth}
+                  onClearSelection={handleClearSelection}
+                  onAddSingleDay={handleAddSingleDay}
+                />
+              </div>
+
+              {/* Unavailability List */}
+              <div className="w-[320px]">
+                <UnavailabilityList
+                  isLoading={data.isLoading}
+                  unavailability={data.unavailability}
+                  upcomingItems={data.upcomingItems}
+                  pastItems={data.pastItems}
+                  activeTab={dialogs.activeTab}
+                  onTabChange={dialogs.setActiveTab}
+                  onEdit={dialogs.openEditDialog}
+                  onDelete={handleDelete}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Add Unavailability Dialog */}
+        <AddDialog
+          open={dialogs.addDialogOpen}
+          selectedStart={calendar.selectedStart}
+          selectedEnd={calendar.selectedEnd}
+          reason={dialogs.reason}
+          error={data.error}
+          isSaving={data.isSaving}
+          onOpenChange={dialogs.setAddDialogOpen}
+          onReasonChange={dialogs.setReason}
+          onSave={handleSave}
+          onCancel={handleAddCancel}
         />
-        </div>
+
+        {/* Edit Unavailability Dialog */}
+        <EditDialog
+          open={dialogs.editDialogOpen}
+          editingId={dialogs.editingId}
+          startDate={dialogs.editStartDate}
+          endDate={dialogs.editEndDate}
+          reason={dialogs.editReason}
+          error={data.error}
+          isSaving={data.isSaving}
+          firstDayOfWeek={data.firstDayOfWeek}
+          onOpenChange={dialogs.setEditDialogOpen}
+          onStartDateChange={dialogs.setEditStartDate}
+          onEndDateChange={dialogs.setEditEndDate}
+          onReasonChange={dialogs.setEditReason}
+          onSave={handleSaveEdit}
+          onDelete={handleDelete}
+          onCancel={handleEditCancel}
+        />
       </div>
-
-      {/* Add Unavailability Dialog */}
-      <AddDialog
-        open={dialogs.addDialogOpen}
-        selectedStart={calendar.selectedStart}
-        selectedEnd={calendar.selectedEnd}
-        reason={dialogs.reason}
-        error={data.error}
-        isSaving={data.isSaving}
-        onOpenChange={dialogs.setAddDialogOpen}
-        onReasonChange={dialogs.setReason}
-        onSave={handleSave}
-        onCancel={handleAddCancel}
-      />
-
-      {/* Edit Unavailability Dialog */}
-      <EditDialog
-        open={dialogs.editDialogOpen}
-        editingId={dialogs.editingId}
-        startDate={dialogs.editStartDate}
-        endDate={dialogs.editEndDate}
-        reason={dialogs.editReason}
-        error={data.error}
-        isSaving={data.isSaving}
-        onOpenChange={dialogs.setEditDialogOpen}
-        onStartDateChange={dialogs.setEditStartDate}
-        onEndDateChange={dialogs.setEditEndDate}
-        onReasonChange={dialogs.setEditReason}
-        onSave={handleSaveEdit}
-        onDelete={handleDelete}
-        onCancel={handleEditCancel}
-      />
     </div>
   )
 }

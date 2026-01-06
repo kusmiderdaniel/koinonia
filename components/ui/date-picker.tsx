@@ -68,7 +68,7 @@ export function DatePicker({
           {selectedDate ? format(selectedDate, "dd/MM/yyyy") : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 bg-white dark:bg-zinc-950 border border-gray-200 dark:border-gray-700 shadow-lg" align="start">
+      <PopoverContent className="w-auto p-0 bg-white dark:bg-zinc-950 border border-black dark:border-white shadow-lg" align="start">
         <Calendar
           mode="single"
           selected={selectedDate}
@@ -78,6 +78,9 @@ export function DatePicker({
           toYear={new Date().getFullYear() + 5}
           captionLayout="dropdown"
           weekStartsOn={weekStartsOn}
+          classNames={{
+            caption_label: "hidden",
+          }}
         />
       </PopoverContent>
     </Popover>

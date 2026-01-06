@@ -4,6 +4,7 @@ import { memo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { DateTimePicker } from '@/components/ui/datetime-picker'
 import {
   Select,
   SelectContent,
@@ -65,11 +66,11 @@ export const EventFormFields = memo(function EventFormFields({
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="eventType">Event Type *</Label>
           <Select value={eventType} onValueChange={setEventType}>
-            <SelectTrigger className="bg-white dark:bg-zinc-950 border border-input">
+            <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
               <SelectValue />
             </SelectTrigger>
             <SelectContent
@@ -92,7 +93,7 @@ export const EventFormFields = memo(function EventFormFields({
         <div className="space-y-2">
           <Label htmlFor="visibility">Visibility</Label>
           <Select value={visibility} onValueChange={setVisibility}>
-            <SelectTrigger className="bg-white dark:bg-zinc-950 border border-input [&_[data-description]]:hidden">
+            <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white [&_[data-description]]:hidden">
               <div className="flex items-center gap-2">
                 {visibility === 'hidden' ? (
                   <Lock className="w-4 h-4 text-muted-foreground" />
@@ -183,7 +184,7 @@ export const EventFormFields = memo(function EventFormFields({
           <Button
             type="button"
             variant="outline"
-            className="w-full justify-start text-muted-foreground rounded-lg !border !border-gray-300 dark:!border-zinc-700"
+            className="w-full justify-start text-muted-foreground rounded-lg !border !border-black dark:!border-white"
             onClick={() => setLocationPickerOpen(true)}
           >
             <MapPin className="w-4 h-4 mr-2" />
@@ -229,7 +230,7 @@ export const EventFormFields = memo(function EventFormFields({
           <Button
             type="button"
             variant="outline"
-            className="w-full justify-start text-muted-foreground rounded-lg !border !border-gray-300 dark:!border-zinc-700"
+            className="w-full justify-start text-muted-foreground rounded-lg !border !border-black dark:!border-white"
             onClick={() => setResponsiblePersonPickerOpen(true)}
           >
             <User className="w-4 h-4 mr-2" />
@@ -248,25 +249,23 @@ export const EventFormFields = memo(function EventFormFields({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="startTime">Start Time *</Label>
-          <Input
+          <DateTimePicker
             id="startTime"
-            type="datetime-local"
             value={startTime}
-            onChange={(e) => onStartTimeChange(e.target.value)}
-            className="rounded-lg"
-            required
+            onChange={onStartTimeChange}
+            placeholder="Select start time"
+            label="Start Time"
           />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="endTime">End Time *</Label>
-          <Input
+          <DateTimePicker
             id="endTime"
-            type="datetime-local"
             value={endTime}
-            onChange={(e) => setEndTime(e.target.value)}
-            className="rounded-lg"
-            required
+            onChange={setEndTime}
+            placeholder="Select end time"
+            label="End Time"
           />
         </div>
       </div>

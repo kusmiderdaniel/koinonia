@@ -24,9 +24,11 @@ export function TemplateAgendaItemDialog({
   templateId,
   item,
   onSuccess,
+  ministries: preloadedMinistries,
+  presets: preloadedPresets,
 }: TemplateAgendaItemDialogProps) {
-  const [ministries, setMinistries] = useState<Ministry[]>([])
-  const [presets, setPresets] = useState<Preset[]>([])
+  const [ministries, setMinistries] = useState<Ministry[]>(preloadedMinistries || [])
+  const [presets, setPresets] = useState<Preset[]>(preloadedPresets || [])
   const [searchQuery, setSearchQuery] = useState('')
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 300)
   const [isLoading, setIsLoading] = useState(false)
@@ -49,9 +51,21 @@ export function TemplateAgendaItemDialog({
   const isSongPlaceholder = item?.is_song_placeholder || false
   const isEditing = !!item?.id
 
+  // Update state when preloaded data changes
+  useEffect(() => {
+    if (preloadedMinistries) setMinistries(preloadedMinistries)
+  }, [preloadedMinistries])
+
+  useEffect(() => {
+    if (preloadedPresets) setPresets(preloadedPresets)
+  }, [preloadedPresets])
+
   useEffect(() => {
     if (open) {
-      loadData()
+      // Only load data if not preloaded
+      if (!preloadedMinistries || !preloadedPresets) {
+        loadData()
+      }
       setSearchQuery('')
       setIsCreatingNew(false)
       setNewMinistryId('')
@@ -66,7 +80,7 @@ export function TemplateAgendaItemDialog({
         setEditDurationSeconds(seconds)
       }
     }
-  }, [open, item])
+  }, [open, item, preloadedMinistries, preloadedPresets])
 
   const loadData = async () => {
     setIsLoading(true)

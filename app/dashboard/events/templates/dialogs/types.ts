@@ -29,6 +29,8 @@ export interface TemplateAgendaItemDialogProps {
   templateId: string
   item: AgendaItem | null
   onSuccess: () => void
+  ministries?: Ministry[]
+  presets?: Preset[]
 }
 
 export interface DialogState {

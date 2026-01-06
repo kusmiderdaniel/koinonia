@@ -28,6 +28,7 @@ interface EventTasksTabProps {
   ministries?: TaskMinistry[]
   campuses?: TaskCampus[]
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  initialTasks?: Task[]
 }
 
 export function EventTasksTab({
@@ -39,17 +40,22 @@ export function EventTasksTab({
   ministries = [],
   campuses = [],
   weekStartsOn = 0,
+  initialTasks,
 }: EventTasksTabProps) {
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [tasks, setTasks] = useState<Task[]>(initialTasks || [])
+  const [isLoading, setIsLoading] = useState(!initialTasks)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [detailSheetOpen, setDetailSheetOpen] = useState(false)
 
-  // Fetch tasks for this event
+  // Fetch tasks for this event (only when refreshKey changes or no initialTasks provided)
   useEffect(() => {
+    // Skip initial fetch if we have pre-loaded tasks
+    if (initialTasks && refreshKey === undefined) {
+      return
+    }
     setIsLoading(true)
     getTasksForEvent(eventId).then((result) => {
       if (result.data) {
@@ -57,7 +63,7 @@ export function EventTasksTab({
       }
       setIsLoading(false)
     })
-  }, [eventId, refreshKey])
+  }, [eventId, refreshKey, initialTasks])
 
   const handleStatusChange = useCallback(async (taskId: string, newStatus: TaskStatus) => {
     const result = await updateTaskStatus(taskId, newStatus)
@@ -156,7 +162,7 @@ export function EventTasksTab({
             <Button
               variant="outline-pill"
               size="sm"
-              className="!border !border-gray-300 dark:!border-zinc-600"
+              className="!border !border-black dark:!border-white"
               onClick={onAddTask}
             >
               <Plus className="w-4 h-4 mr-1" />
@@ -173,7 +179,7 @@ export function EventTasksTab({
           <CheckSquare className="w-10 h-10 mx-auto mb-2 opacity-50" />
           <p className="text-sm">No tasks linked to this event</p>
           {canManage && (
-            <Button variant="outline" size="sm" className="mt-4" onClick={onAddTask}>
+            <Button variant="outline" size="sm" className="mt-4 !rounded-full !border-black dark:!border-white" onClick={onAddTask}>
               <Plus className="w-4 h-4 mr-1" />
               Add a task
             </Button>

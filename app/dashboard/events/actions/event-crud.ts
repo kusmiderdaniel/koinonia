@@ -152,7 +152,15 @@ export async function getEvent(eventId: string) {
         )
       ),
       event_invitations (profile_id, profile:profiles (id, first_name, last_name)),
-      event_campuses (campus:campuses (id, name, color))
+      event_campuses (campus:campuses (id, name, color)),
+      tasks (
+        *,
+        assignee:profiles!assigned_to (id, first_name, last_name, email),
+        ministry:ministries!ministry_id (id, name, color),
+        campus:campuses!campus_id (id, name, color),
+        created_by_profile:profiles!created_by (id, first_name, last_name),
+        completed_by_profile:profiles!completed_by (id, first_name, last_name)
+      )
     `)
     .eq('id', eventId)
     .eq('church_id', profile.church_id)
@@ -340,4 +348,110 @@ export async function deleteEvent(eventId: string) {
 
   revalidatePath('/dashboard/events')
   return { success: true }
+}
+
+export async function duplicateEvent(eventId: string) {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  const permError = requireAdminPermission(profile.role, 'create events')
+  if (permError) return { error: permError }
+
+  // Fetch the original event with all related data
+  const { data: original, error: fetchError } = await adminClient
+    .from('events')
+    .select(`
+      *,
+      event_campuses (campus_id),
+      event_agenda_items (*),
+      event_positions (*)
+    `)
+    .eq('id', eventId)
+    .eq('church_id', profile.church_id)
+    .single()
+
+  if (fetchError || !original) {
+    console.error('Error fetching event to duplicate:', fetchError)
+    return { error: 'Event not found' }
+  }
+
+  // Create the new event with "(copy)" suffix
+  const { data: newEvent, error: createError } = await adminClient
+    .from('events')
+    .insert({
+      church_id: profile.church_id,
+      title: `${original.title} (copy)`,
+      description: original.description,
+      start_time: original.start_time,
+      end_time: original.end_time,
+      is_all_day: original.is_all_day,
+      location_id: original.location_id,
+      event_type: original.event_type,
+      visibility: original.visibility,
+      status: 'draft',
+      created_by: profile.id,
+    })
+    .select('id')
+    .single()
+
+  if (createError || !newEvent) {
+    console.error('Error creating duplicate event:', createError)
+    return { error: 'Failed to duplicate event' }
+  }
+
+  // Duplicate campuses
+  if (original.event_campuses && original.event_campuses.length > 0) {
+    const campuses = original.event_campuses.map((c: { campus_id: string }) => ({
+      event_id: newEvent.id,
+      campus_id: c.campus_id,
+    }))
+    await adminClient.from('event_campuses').insert(campuses)
+  }
+
+  // Duplicate agenda items (without song assignments or leaders)
+  if (original.event_agenda_items && original.event_agenda_items.length > 0) {
+    const agendaItems = original.event_agenda_items.map((item: {
+      title: string
+      description: string | null
+      duration_seconds: number
+      sort_order: number
+      is_song_placeholder: boolean
+      ministry_id: string | null
+    }) => ({
+      event_id: newEvent.id,
+      title: item.title,
+      description: item.description,
+      duration_seconds: item.duration_seconds,
+      sort_order: item.sort_order,
+      is_song_placeholder: item.is_song_placeholder,
+      ministry_id: item.ministry_id,
+    }))
+    await adminClient.from('event_agenda_items').insert(agendaItems)
+  }
+
+  // Duplicate positions (without assignments)
+  if (original.event_positions && original.event_positions.length > 0) {
+    const positions = original.event_positions.map((pos: {
+      ministry_id: string
+      role_id: string | null
+      title: string
+      quantity_needed: number
+      notes: string | null
+      sort_order: number | null
+    }) => ({
+      event_id: newEvent.id,
+      ministry_id: pos.ministry_id,
+      role_id: pos.role_id,
+      title: pos.title,
+      quantity_needed: pos.quantity_needed,
+      notes: pos.notes,
+      sort_order: pos.sort_order,
+    }))
+    await adminClient.from('event_positions').insert(positions)
+  }
+
+  revalidatePath('/dashboard/events')
+  return { data: { eventId: newEvent.id } }
 }

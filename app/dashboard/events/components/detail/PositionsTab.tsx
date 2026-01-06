@@ -95,7 +95,7 @@ export const PositionsTab = memo(function PositionsTab({
             <Button
               variant="outline-pill"
               size="sm"
-              className="!border !border-gray-300 dark:!border-zinc-600"
+              className="!border !border-black dark:!border-white"
               onClick={onAddPosition}
             >
               <Plus className="w-4 h-4 mr-1" />
@@ -126,7 +126,14 @@ export const PositionsTab = memo(function PositionsTab({
                   const assignment = hasAssignment ? position.event_assignments[0] : null
 
                   return (
-                    <div key={position.id} className="border rounded-lg p-3">
+                    <div
+                      key={position.id}
+                      className="rounded-lg p-3 border"
+                      style={{
+                        backgroundColor: `${ministry.color}15`,
+                        borderColor: `${ministry.color}40`,
+                      }}
+                    >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-sm">{position.title}</span>

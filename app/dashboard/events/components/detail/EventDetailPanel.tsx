@@ -47,6 +47,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
   taskMinistries = [],
   taskCampuses = [],
   weekStartsOn = 0,
+  initialTasks,
 }: EventDetailPanelProps) {
   // Track volunteers assigned to multiple positions
   const multiAssignedProfiles = useMemo(() => {
@@ -176,6 +177,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
             ministries={taskMinistries}
             campuses={taskCampuses}
             weekStartsOn={weekStartsOn}
+            initialTasks={initialTasks}
           />
         </TabsContent>
       </Tabs>

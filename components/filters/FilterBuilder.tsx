@@ -193,18 +193,18 @@ export const FilterBuilder = memo(function FilterBuilder({
           {/* Add buttons */}
           <div className="flex items-center gap-2 pt-2 border-t">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className="text-muted-foreground hover:text-foreground gap-1"
+              className="text-muted-foreground hover:text-foreground gap-1 !border !border-black dark:!border-white"
               onClick={handleAddRule}
             >
               <Plus className="h-4 w-4" />
               Add filter rule
             </Button>
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className="text-muted-foreground hover:text-foreground gap-1"
+              className="text-muted-foreground hover:text-foreground gap-1 !border !border-black dark:!border-white"
               onClick={handleAddGroup}
             >
               <Plus className="h-4 w-4" />
@@ -216,9 +216,9 @@ export const FilterBuilder = memo(function FilterBuilder({
           {activeFilterCount > 0 && (
             <div className="border-t pt-2">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                className="text-red-600 hover:text-red-700 hover:bg-red-50 gap-1"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 gap-1 !border !border-red-600"
                 onClick={handleClearAll}
               >
                 <Trash2 className="h-4 w-4" />

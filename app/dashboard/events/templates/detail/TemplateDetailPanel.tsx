@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, memo } from 'react'
+import { useState, useEffect, memo } from 'react'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Music, Users } from 'lucide-react'
@@ -18,7 +18,9 @@ import {
   removeTemplatePosition,
   updateTemplatePosition,
   duplicateEventTemplate,
+  getMinistries,
 } from '../actions'
+import { getAgendaPresets } from '@/app/dashboard/settings/agenda-presets/actions'
 import { toast } from 'sonner'
 import { TemplateAgendaItemDialog } from '../TemplateAgendaItemDialog'
 import { TemplatePositionPicker } from '../TemplatePositionPicker'
@@ -27,6 +29,21 @@ import { TemplateHeader } from './TemplateHeader'
 import { TemplateAgendaSection } from './TemplateAgendaSection'
 import { TemplatePositionsSection } from './TemplatePositionsSection'
 import type { TemplateDetailPanelProps, AgendaItem } from './types'
+
+interface Ministry {
+  id: string
+  name: string
+  color: string
+}
+
+interface Preset {
+  id: string
+  title: string
+  description: string | null
+  duration_seconds: number
+  ministry_id: string | null
+  ministry: Ministry | null
+}
 
 export const TemplateDetailPanel = memo(function TemplateDetailPanel({
   template,
@@ -43,6 +60,20 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
   const [positionPickerOpen, setPositionPickerOpen] = useState(false)
   const [createEventDialogOpen, setCreateEventDialogOpen] = useState(false)
   const [isDuplicating, setIsDuplicating] = useState(false)
+
+  // Pre-load ministries and presets for instant dialog opening
+  const [ministries, setMinistries] = useState<Ministry[]>([])
+  const [presets, setPresets] = useState<Preset[]>([])
+
+  useEffect(() => {
+    // Load data on mount so dialogs open instantly
+    Promise.all([getMinistries(), getAgendaPresets()]).then(
+      ([ministriesResult, presetsResult]) => {
+        if (ministriesResult.data) setMinistries(ministriesResult.data)
+        if (presetsResult.data) setPresets(presetsResult.data as Preset[])
+      }
+    )
+  }, [])
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -131,7 +162,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
   const positions = template.event_template_positions || []
 
   return (
-    <Card className="h-full flex flex-col border border-black dark:border-zinc-700 gap-0">
+    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-zinc-700 !gap-0 !py-0">
       <TemplateHeader
         template={template}
         canManage={canManage}
@@ -147,20 +178,20 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
-        className="flex-1 flex flex-col overflow-hidden gap-0"
+        className="flex-1 flex flex-col min-h-0 overflow-hidden gap-0"
       >
-        <div className="px-6 py-1 border-b">
+        <div className="px-6 py-3 border-b">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger
               value="agenda"
-              className="gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+              className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
             >
               <Music className="w-4 h-4" />
               Agenda
             </TabsTrigger>
             <TabsTrigger
               value="positions"
-              className="gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+              className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
             >
               <Users className="w-4 h-4" />
               Positions
@@ -168,36 +199,26 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
           </TabsList>
         </div>
 
-        <TabsContent
-          value="agenda"
-          className="flex-1 overflow-y-auto px-6 pt-4 pb-6 mt-0 min-h-0"
-        >
-          <div className="space-y-2">
-            <TemplateAgendaSection
-              agendaItems={agendaItems}
-              canManage={canManage}
-              sensors={sensors}
-              onDragEnd={handleDragEnd}
-              onAddItem={handleAddAgendaItem}
-              onEditItem={handleEditAgendaItem}
-              onRemoveItem={handleRemoveAgendaItem}
-            />
-          </div>
+        <TabsContent value="agenda" className="flex flex-col min-h-0 overflow-hidden mt-0 px-6">
+          <TemplateAgendaSection
+            agendaItems={agendaItems}
+            canManage={canManage}
+            sensors={sensors}
+            onDragEnd={handleDragEnd}
+            onAddItem={handleAddAgendaItem}
+            onEditItem={handleEditAgendaItem}
+            onRemoveItem={handleRemoveAgendaItem}
+          />
         </TabsContent>
 
-        <TabsContent
-          value="positions"
-          className="flex-1 overflow-y-auto px-6 pt-4 pb-6 mt-0 min-h-0"
-        >
-          <div className="space-y-2">
-            <TemplatePositionsSection
-              positions={positions}
-              canManage={canManage}
-              onAddPosition={() => setPositionPickerOpen(true)}
-              onRemovePosition={handleRemovePosition}
-              onUpdateQuantity={handleUpdatePositionQuantity}
-            />
-          </div>
+        <TabsContent value="positions" className="flex flex-col min-h-0 overflow-hidden mt-0 px-6">
+          <TemplatePositionsSection
+            positions={positions}
+            canManage={canManage}
+            onAddPosition={() => setPositionPickerOpen(true)}
+            onRemovePosition={handleRemovePosition}
+            onUpdateQuantity={handleUpdatePositionQuantity}
+          />
         </TabsContent>
       </Tabs>
 
@@ -206,6 +227,8 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
         onOpenChange={setAgendaItemDialogOpen}
         templateId={template.id}
         item={editingAgendaItem}
+        ministries={ministries}
+        presets={presets}
         onSuccess={() => {
           setAgendaItemDialogOpen(false)
           setEditingAgendaItem(null)

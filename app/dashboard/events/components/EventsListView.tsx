@@ -1,9 +1,10 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { Calendar, Search } from 'lucide-react'
+import { Calendar, Plus, Search } from 'lucide-react'
 import { EmptyState } from '@/components/EmptyState'
 import { MobileBackHeader } from '@/components/MobileBackHeader'
 import { useIsMobile } from '@/lib/hooks'
@@ -19,6 +20,11 @@ interface EventsListViewProps {
   pastEvents: Event[]
   selectedEvent: EventDetail | null
   onSelectEvent: (event: Event) => void
+  canManage?: boolean
+  onCreateEvent?: () => void
+  onDuplicateEvent?: (event: Event) => void
+  onEditEvent?: (event: Event) => void
+  onDeleteEvent?: (event: Event) => void
   className?: string
 }
 
@@ -31,13 +37,18 @@ export function EventsListView({
   pastEvents,
   selectedEvent,
   onSelectEvent,
+  canManage,
+  onCreateEvent,
+  onDuplicateEvent,
+  onEditEvent,
+  onDeleteEvent,
   className,
 }: EventsListViewProps) {
   return (
     <div className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card overflow-hidden ${className ?? 'w-full md:w-80 md:flex-shrink-0'}`}>
-      {/* Search */}
-      <div className="p-3 border-b">
-        <div className="relative">
+      {/* Search + Add Button */}
+      <div className="p-3 border-b flex gap-2">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Search events..."
@@ -46,6 +57,17 @@ export function EventsListView({
             className="pl-9"
           />
         </div>
+        {canManage && onCreateEvent && (
+          <Button
+            variant="outline"
+            size="icon"
+            className="flex-shrink-0 rounded-full !border !border-black dark:!border-white"
+            onClick={onCreateEvent}
+            title="Create event"
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+        )}
       </div>
 
       {/* Upcoming/Past Toggle */}
@@ -82,6 +104,10 @@ export function EventsListView({
                   event={event}
                   isSelected={selectedEvent?.id === event.id}
                   onClick={() => onSelectEvent(event)}
+                  canManage={canManage}
+                  onDuplicate={onDuplicateEvent}
+                  onEdit={onEditEvent}
+                  onDelete={onDeleteEvent}
                 />
               ))}
             </div>
@@ -101,6 +127,10 @@ export function EventsListView({
                   event={event}
                   isSelected={selectedEvent?.id === event.id}
                   onClick={() => onSelectEvent(event)}
+                  canManage={canManage}
+                  onDuplicate={onDuplicateEvent}
+                  onEdit={onEditEvent}
+                  onDelete={onDeleteEvent}
                 />
               ))}
             </div>

@@ -248,6 +248,7 @@ export const MemberRow = memo(function MemberRow({
                   <Button
                     variant="outline"
                     size="sm"
+                    className="!border !border-black dark:!border-white"
                     onClick={() => setDeparturePopoverOpen(false)}
                   >
                     Cancel

@@ -13,11 +13,25 @@ export interface Song {
   tags?: Tag[]
 }
 
+export interface SongInput {
+  title: string
+  artist?: string
+  defaultKey?: string
+  durationSeconds?: number
+  tagIds: string[]
+}
+
 export interface SongDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  song: Song | null
+  song?: Song | null
   onSuccess: () => void
+  /** Custom action to run instead of default createSong/updateSong. Used for "create and add to agenda" flow. */
+  customAction?: (data: SongInput) => Promise<{ error?: string }>
+  /** Custom title for the dialog */
+  title?: string
+  /** Custom submit button text */
+  submitText?: string
 }
 
 export const MAJOR_KEYS = [

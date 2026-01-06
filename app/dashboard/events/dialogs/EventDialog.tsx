@@ -197,7 +197,8 @@ export const EventDialog = memo(function EventDialog({
           <DialogFooter className="flex justify-end gap-3 pt-4 !bg-transparent !border-0 !mx-0 !mb-0 !p-0">
             <Button
               type="button"
-              variant="outline-pill-muted"
+              variant="outline-pill"
+              className="!border !border-black dark:!border-white"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
             >
@@ -205,8 +206,9 @@ export const EventDialog = memo(function EventDialog({
             </Button>
             <Button
               type="submit"
+              variant="outline-pill"
               disabled={isLoading || !title.trim()}
-              className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white !px-4 !py-2 disabled:!opacity-50"
+              className="!border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
             >
               {isLoading
                 ? isEditing

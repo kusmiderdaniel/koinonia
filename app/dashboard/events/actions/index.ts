@@ -8,6 +8,7 @@ export {
   createEvent,
   updateEvent,
   deleteEvent,
+  duplicateEvent,
 } from './event-crud'
 
 // Positions

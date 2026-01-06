@@ -281,7 +281,7 @@ export function LocationPicker({
                 type="button"
                 variant="outline"
                 size="sm"
-                className="rounded-full"
+                className="rounded-full !border !border-black dark:!border-white"
                 onClick={() => setShowNewForm(true)}
               >
                 <Plus className="w-4 h-4 mr-2" />

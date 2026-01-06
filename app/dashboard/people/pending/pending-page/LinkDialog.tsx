@@ -94,7 +94,7 @@ export function LinkDialog({
         <DialogFooter>
           <Button
             variant="outline"
-            className="!border !border-gray-300"
+            className="!border !border-black dark:!border-white"
             onClick={() => onOpenChange(false)}
           >
             Cancel

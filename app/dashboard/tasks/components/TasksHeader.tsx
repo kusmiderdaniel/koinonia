@@ -20,7 +20,7 @@ export function TasksHeader({ taskCount, onCreateTask }: TasksHeaderProps) {
       <Button
         onClick={onCreateTask}
         variant="outline"
-        className="rounded-full !border !border-gray-300 dark:!border-gray-600"
+        className="rounded-full !border !border-black dark:!border-white"
       >
         <Plus className="h-4 w-4 mr-2" />
         New Task

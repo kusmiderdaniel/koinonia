@@ -182,6 +182,7 @@ export async function getChurchLeaders() {
 
   const { profile, adminClient } = auth
 
+  // Fetch leaders
   const { data: leaders } = await adminClient
     .from('profiles')
     .select('id, first_name, last_name, email, role')
@@ -189,5 +190,30 @@ export async function getChurchLeaders() {
     .in('role', ['owner', 'admin', 'leader', 'volunteer'])
     .order('first_name')
 
-  return { data: leaders || [] }
+  if (!leaders || leaders.length === 0) {
+    return { data: [] }
+  }
+
+  // Fetch campus assignments for all leaders
+  const leaderIds = leaders.map(l => l.id)
+  const { data: profileCampuses } = await adminClient
+    .from('profile_campuses')
+    .select('profile_id, campus_id')
+    .in('profile_id', leaderIds)
+
+  // Build a map of profile_id -> campus_ids
+  const campusesByProfile = new Map<string, string[]>()
+  for (const pc of profileCampuses || []) {
+    const existing = campusesByProfile.get(pc.profile_id) || []
+    existing.push(pc.campus_id)
+    campusesByProfile.set(pc.profile_id, existing)
+  }
+
+  // Combine leaders with their campus IDs
+  const leadersWithCampuses = leaders.map(leader => ({
+    ...leader,
+    campus_ids: campusesByProfile.get(leader.id) || [],
+  }))
+
+  return { data: leadersWithCampuses }
 }

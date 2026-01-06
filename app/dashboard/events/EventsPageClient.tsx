@@ -63,6 +63,8 @@ import {
 } from './hooks'
 import { EventsListViewWithDetail, EventDialogs, EventsHeader } from './components'
 import { TaskDialog } from '@/app/dashboard/tasks/task-dialog'
+import { duplicateEvent } from './actions'
+import { toast } from 'sonner'
 import type { Event, Member } from './types'
 
 export interface EventsInitialData {
@@ -164,8 +166,9 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
   })
 
   return (
-    <div className="h-[calc(100vh-56px)] md:h-screen flex flex-col p-6">
-      <EventsHeader
+    <div className="flex h-[calc(100vh-3.5rem)] md:h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
+        <EventsHeader
         viewMode={viewMode}
         onViewModeChange={eventList.setViewMode}
         canManage={canManage}
@@ -227,6 +230,19 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
             selectedEvent={selectedEvent}
             onSelectEvent={handlers.handleSelectEvent}
             onClearSelection={eventDetail.closeEventDetail}
+            canManage={canManage}
+            onCreateEvent={() => dialogs.openCreateDialog()}
+            onDuplicateEvent={async (event) => {
+              const result = await duplicateEvent(event.id)
+              if (result.error) {
+                toast.error(result.error)
+              } else {
+                toast.success(`Event duplicated as "${event.title} (copy)"`)
+                eventList.refreshEvents()
+              }
+            }}
+            onEditEvent={(event) => dialogs.openEditDialog(event)}
+            onDeleteEvent={(event) => dialogs.openDeleteDialog(event)}
             detailContent={
               detailPanelProps ? (
                 <EventDetailPanel {...detailPanelProps} />
@@ -347,6 +363,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
         defaultCampusId={selectedEvent?.campuses?.[0]?.id}
         weekStartsOn={firstDayOfWeek as 0 | 1 | 2 | 3 | 4 | 5 | 6}
       />
+      </div>
     </div>
   )
 }

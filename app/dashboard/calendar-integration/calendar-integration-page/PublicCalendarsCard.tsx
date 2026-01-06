@@ -1,14 +1,7 @@
 'use client'
 
-import { Copy, Check, ExternalLink } from 'lucide-react'
+import { Copy, Check, ExternalLink, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import type { Campus } from './types'
 
 interface PublicCalendarsCardProps {
@@ -31,19 +24,21 @@ export function PublicCalendarsCard({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Public Campus Calendars</CardTitle>
-        <CardDescription>
-          Subscribe to see all public events for a campus. Anyone can subscribe
-          to these calendars.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div>
+      <div className="flex items-center gap-2 mb-2">
+        <Globe className="h-5 w-5" />
+        <h2 className="text-lg font-semibold">Public Campus Calendars</h2>
+      </div>
+      <p className="text-sm text-muted-foreground mb-4">
+        Subscribe to see all public events for a campus. Anyone can subscribe
+        to these calendars.
+      </p>
+
+      <div className="space-y-3">
         {campuses.map((campus) => (
           <div
             key={campus.id}
-            className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 border rounded-lg"
+            className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 border border-black dark:border-zinc-700 rounded-lg"
           >
             <div className="flex items-center gap-2 flex-1 min-w-0">
               {campus.color && (
@@ -61,7 +56,7 @@ export function PublicCalendarsCard({
                 onClick={() =>
                   onCopy(getPublicCalendarUrl(campus.id), campus.id)
                 }
-                className="gap-1"
+                className="gap-1 !border !border-black dark:!border-white"
               >
                 {copiedCampusId === campus.id ? (
                   <Check className="h-3 w-3 text-green-600" />
@@ -76,7 +71,7 @@ export function PublicCalendarsCard({
                 onClick={() =>
                   window.open(getPublicWebcalUrl(campus.id), '_blank')
                 }
-                className="gap-1"
+                className="gap-1 !border !border-black dark:!border-white"
               >
                 <ExternalLink className="h-3 w-3" />
                 Add
@@ -84,7 +79,7 @@ export function PublicCalendarsCard({
             </div>
           </div>
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

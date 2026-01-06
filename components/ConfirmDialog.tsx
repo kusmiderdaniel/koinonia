@@ -8,6 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 
 interface ConfirmDialogProps {
   /** Whether the dialog is open */
@@ -67,24 +68,28 @@ export const ConfirmDialog = memo(function ConfirmDialog({
             <div>{description}</div>
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="flex justify-end gap-3 pt-4 border-t mt-4">
-          <button
-            type="button"
+        <div className="flex justify-end gap-2 pt-4 border-t mt-4">
+          <Button
+            variant="outline-pill"
+            size="sm"
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
-            className="px-4 py-2 rounded-full border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 disabled:opacity-50"
+            className="!border !border-black dark:!border-white"
           >
             {cancelLabel}
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="outline-pill"
+            size="sm"
             onClick={onConfirm}
             disabled={isLoading}
-            className="px-4 py-2 rounded-full text-white disabled:opacity-50 hover:opacity-90"
-            style={{ backgroundColor: destructive ? '#dc2626' : '#f49f1e' }}
+            className={destructive
+              ? "!border !border-red-600 !bg-red-600 !text-white hover:!bg-red-700"
+              : "!border !border-brand !bg-brand !text-brand-foreground hover:!bg-brand/90"
+            }
           >
             {isLoading ? 'Processing...' : confirmLabel}
-          </button>
+          </Button>
         </div>
       </AlertDialogContent>
     </AlertDialog>

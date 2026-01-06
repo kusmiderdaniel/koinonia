@@ -141,7 +141,7 @@ export function TemplatePicker({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="mt-3 rounded-full"
+                    className="mt-3 rounded-full !border !border-black dark:!border-white"
                     onClick={handleGoToTemplates}
                   >
                     <Settings className="w-4 h-4 mr-2" />
@@ -154,7 +154,7 @@ export function TemplatePicker({
                 <button
                   key={template.id}
                   onClick={() => handleSelectTemplate(template)}
-                  className="w-full text-left p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-muted/50 transition-colors"
+                  className="w-full text-left p-4 rounded-lg border border-black dark:border-white hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <EventTypeBadge type={template.event_type} />
@@ -200,17 +200,17 @@ export function TemplatePicker({
           {/* Footer */}
           <div className="flex justify-between items-center pt-3 border-t">
             <Button
-              variant="ghost"
+              variant="outline-pill"
               size="sm"
               onClick={handleGoToTemplates}
-              className="text-muted-foreground"
+              className="!border !border-black dark:!border-white"
             >
               <Settings className="w-4 h-4 mr-2" />
               Manage Templates
             </Button>
             <Button
-              variant="outline"
-              className="rounded-full"
+              variant="outline-pill"
+              className="!border !border-black dark:!border-white"
               onClick={() => onOpenChange(false)}
             >
               Cancel
