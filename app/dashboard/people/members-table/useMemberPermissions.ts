@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react'
-import { type Role, roleHierarchy } from '../components/member-table-types'
+import { isLeaderOrAbove, ROLE_HIERARCHY, type UserRole } from '@/lib/permissions'
 import type { Member } from './types'
 
 interface UseMemberPermissionsOptions {
@@ -12,12 +12,12 @@ export function useMemberPermissions({
   currentUserRole,
 }: UseMemberPermissionsOptions) {
   const canEditActive = useMemo(
-    () => ['owner', 'admin', 'leader'].includes(currentUserRole),
+    () => isLeaderOrAbove(currentUserRole),
     [currentUserRole]
   )
 
   const canEditFields = useMemo(
-    () => ['owner', 'admin', 'leader'].includes(currentUserRole),
+    () => isLeaderOrAbove(currentUserRole),
     [currentUserRole]
   )
 
@@ -27,8 +27,8 @@ export function useMemberPermissions({
     if (member.role === 'owner') return false
     if (currentUserRole !== 'owner' && currentUserRole !== 'admin') return false
 
-    const currentLevel = roleHierarchy[currentUserRole as Role] || 0
-    const memberLevel = roleHierarchy[member.role as Role] || 0
+    const currentLevel = ROLE_HIERARCHY[currentUserRole as UserRole] || 0
+    const memberLevel = ROLE_HIERARCHY[member.role as UserRole] || 0
     return currentLevel > memberLevel
   }, [currentUserId, currentUserRole])
 
@@ -37,8 +37,8 @@ export function useMemberPermissions({
     if (member.role === 'owner') return false
     if (!canEditActive) return false
 
-    const currentLevel = roleHierarchy[currentUserRole as Role] || 0
-    const memberLevel = roleHierarchy[member.role as Role] || 0
+    const currentLevel = ROLE_HIERARCHY[currentUserRole as UserRole] || 0
+    const memberLevel = ROLE_HIERARCHY[member.role as UserRole] || 0
     return currentLevel > memberLevel
   }, [currentUserId, currentUserRole, canEditActive])
 
@@ -47,8 +47,8 @@ export function useMemberPermissions({
     if (member.role === 'owner') return false
     if (!canEditFields) return false
 
-    const currentLevel = roleHierarchy[currentUserRole as Role] || 0
-    const memberLevel = roleHierarchy[member.role as Role] || 0
+    const currentLevel = ROLE_HIERARCHY[currentUserRole as UserRole] || 0
+    const memberLevel = ROLE_HIERARCHY[member.role as UserRole] || 0
     return currentLevel > memberLevel
   }, [currentUserId, currentUserRole, canEditFields])
 

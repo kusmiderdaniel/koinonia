@@ -100,13 +100,8 @@ export function useJoinChurchPageState() {
           }
         }
 
-        // If multiple campuses, show campus selection step
-        if (result.campuses.length > 1) {
-          setStep('campus')
-        } else {
-          // Only one campus, submit directly
-          await submitRegistration(result.campuses[0]?.id)
-        }
+        // Always show the profile step so users can fill in their info
+        setStep('campus')
       }
     } catch {
       setError('An unexpected error occurred')

@@ -22,7 +22,7 @@ export const PEOPLE_SORT_FIELDS: SortFieldDefinition[] = [
   { id: 'email', label: 'Email', icon: 'text' },
   { id: 'role', label: 'Role', icon: 'select' },
   { id: 'active', label: 'Active', icon: 'boolean' },
-  { id: 'sex', label: 'Sex', icon: 'select' },
+  { id: 'sex', label: 'Gender', icon: 'select' },
   { id: 'date_of_birth', label: 'Date of Birth', icon: 'date' },
   { id: 'age', label: 'Age', icon: 'number' },
   { id: 'baptism', label: 'Baptized', icon: 'boolean' },

@@ -8,6 +8,7 @@ export interface EventPickerProps {
   currentEventId: string | null
   onSelect: (eventId: string | null) => void
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  timeFormat?: '12h' | '24h'
 }
 
 export interface EventPickerFilterState {

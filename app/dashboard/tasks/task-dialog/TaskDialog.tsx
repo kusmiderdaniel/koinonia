@@ -24,6 +24,7 @@ export function TaskDialog({
   defaultEventId,
   defaultCampusId,
   weekStartsOn = 0,
+  timeFormat,
 }: TaskDialogProps) {
   const state = useTaskDialogState({
     open,
@@ -58,6 +59,7 @@ export function TaskDialog({
             members={members}
             events={events}
             weekStartsOn={weekStartsOn}
+            timeFormat={timeFormat}
             showMemberPicker={state.showMemberPicker}
             showEventPicker={state.showEventPicker}
             setTitle={state.setTitle}

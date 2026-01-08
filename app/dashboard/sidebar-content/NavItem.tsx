@@ -13,6 +13,7 @@ interface NavItemProps {
   item: NavItemData
   isActive: boolean
   collapsed: boolean
+  isMobile?: boolean
   onNavigate?: () => void
   onPrefetch?: () => void
 }
@@ -21,6 +22,7 @@ export function NavItem({
   item,
   isActive,
   collapsed,
+  isMobile = false,
   onNavigate,
   onPrefetch,
 }: NavItemProps) {
@@ -30,16 +32,17 @@ export function NavItem({
       onClick={onNavigate}
       onMouseEnter={onPrefetch}
       className={cn(
-        'flex items-center rounded-lg text-sm font-medium transition-colors py-2',
+        'flex items-center rounded-lg text-sm font-medium transition-colors',
+        isMobile ? 'py-3 min-h-12' : 'py-2',
         isActive
           ? 'bg-brand text-brand-foreground'
           : 'text-muted-foreground hover:bg-gray-50 dark:hover:bg-zinc-900 hover:text-foreground'
       )}
     >
       <div className="w-12 flex items-center justify-center flex-shrink-0">
-        <item.icon className="w-5 h-5" />
+        <item.icon className={isMobile ? 'w-6 h-6' : 'w-5 h-5'} />
       </div>
-      {!collapsed && <span className="pr-3">{item.label}</span>}
+      {!collapsed && <span className={cn('pr-3', isMobile && 'text-base')}>{item.label}</span>}
     </ProgressLink>
   )
 

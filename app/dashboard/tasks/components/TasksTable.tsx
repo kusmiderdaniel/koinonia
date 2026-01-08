@@ -71,7 +71,7 @@ export const TasksTable = memo(function TasksTable({
   }
 
   return (
-    <Table>
+    <Table className="min-w-[1000px]">
       <TableHeader>
         <TableRow>
           <TableHead className="w-[40px]"></TableHead>

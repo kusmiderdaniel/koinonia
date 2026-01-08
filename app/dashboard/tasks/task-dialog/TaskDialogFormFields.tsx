@@ -35,6 +35,7 @@ interface TaskDialogFormFieldsProps {
   members: Person[]
   events: { id: string; title: string; start_time: string }[]
   weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  timeFormat?: '12h' | '24h'
   showMemberPicker: boolean
   showEventPicker: boolean
   setTitle: (value: string) => void
@@ -58,6 +59,7 @@ export function TaskDialogFormFields({
   members,
   events,
   weekStartsOn,
+  timeFormat,
   showMemberPicker,
   showEventPicker,
   setTitle,
@@ -103,7 +105,7 @@ export function TaskDialogFormFields({
           >
             <SelectTrigger
               centered
-              className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
+              className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
             >
               <SelectValue />
             </SelectTrigger>
@@ -135,7 +137,7 @@ export function TaskDialogFormFields({
           >
             <SelectTrigger
               centered
-              className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
+              className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
             >
               <SelectValue placeholder="None" />
             </SelectTrigger>
@@ -171,7 +173,7 @@ export function TaskDialogFormFields({
           >
             <SelectTrigger
               centered
-              className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
+              className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
             >
               <SelectValue placeholder="None" />
             </SelectTrigger>
@@ -258,6 +260,7 @@ export function TaskDialogFormFields({
             currentEventId={formState.eventId || null}
             onSelect={(id) => setEventId(id || '')}
             weekStartsOn={weekStartsOn}
+            timeFormat={timeFormat}
           />
         </div>
         <div className="grid gap-2">
@@ -268,7 +271,7 @@ export function TaskDialogFormFields({
           >
             <SelectTrigger
               centered
-              className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
+              className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
             >
               <SelectValue />
             </SelectTrigger>

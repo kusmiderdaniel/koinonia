@@ -9,6 +9,7 @@ import {
   type JoinChurchInput,
   type CompleteProfileInput,
 } from '@/lib/validations/onboarding'
+import { notifyLeadersOfPendingMember } from '@/lib/notifications/pending-member'
 
 // Helper function to generate a URL-safe slug from a string
 function slugify(text: string): string {
@@ -29,6 +30,40 @@ function generateRandomCode(length: number): string {
     result += chars.charAt(Math.floor(Math.random() * chars.length))
   }
   return result
+}
+
+// Check if a subdomain is available
+export async function checkSubdomainAvailability(subdomain: string): Promise<{ available: boolean; error?: string }> {
+  // Basic validation
+  if (!subdomain || subdomain.length < 3) {
+    return { available: false, error: 'Subdomain must be at least 3 characters' }
+  }
+
+  if (subdomain.length > 30) {
+    return { available: false, error: 'Subdomain must be 30 characters or less' }
+  }
+
+  // Check format
+  const validFormat = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(subdomain)
+  if (!validFormat) {
+    return { available: false, error: 'Invalid format' }
+  }
+
+  // Reserved subdomains that shouldn't be used
+  const reserved = ['www', 'api', 'app', 'admin', 'dashboard', 'mail', 'email', 'help', 'support', 'blog', 'dev', 'staging', 'test']
+  if (reserved.includes(subdomain)) {
+    return { available: false, error: 'This subdomain is reserved' }
+  }
+
+  const adminClient = createServiceRoleClient()
+
+  const { data: existing } = await adminClient
+    .from('churches')
+    .select('id')
+    .eq('subdomain', subdomain)
+    .single()
+
+  return { available: !existing }
 }
 
 export async function createChurch(data: CreateChurchInput) {
@@ -72,10 +107,14 @@ export async function createChurch(data: CreateChurchInput) {
     return { error: 'You are already a member of a church.' }
   }
 
-  // Auto-generate subdomain from church name with random suffix for uniqueness
-  const baseSubdomain = slugify(validatedChurch.data.name)
-  const randomSuffix = generateRandomCode(4).toLowerCase()
-  const subdomain = `${baseSubdomain}-${randomSuffix}`
+  // Use user-provided subdomain (already validated)
+  const subdomain = validatedChurch.data.subdomain
+
+  // Double-check subdomain availability before creating
+  const availabilityCheck = await checkSubdomainAvailability(subdomain)
+  if (!availabilityCheck.available) {
+    return { error: availabilityCheck.error || 'This subdomain is not available' }
+  }
 
   // Generate a unique join code using the database function
   const { data: joinCodeResult, error: joinCodeError } = await adminClient
@@ -342,6 +381,12 @@ export async function joinChurch(data: JoinChurchInput & {
     console.error('Pending registration creation error:', pendingError)
     return { error: 'Failed to submit your registration. Please try again.' }
   }
+
+  // Notify church leaders about the new pending member
+  notifyLeadersOfPendingMember(
+    { id: church.id, name: church.name },
+    { firstName, lastName, email: user.email! }
+  ).catch((err) => console.error('[Notification] Error notifying leaders of pending member:', err))
 
   return { success: true, pending: true }
 }

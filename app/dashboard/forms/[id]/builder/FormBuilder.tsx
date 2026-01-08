@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -17,19 +17,30 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import { useState } from 'react'
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useFormBuilder } from '../../hooks/useFormBuilder'
 import { FieldPalette } from './FieldPalette'
 import { SortableField } from './SortableField'
 import { FieldEditor } from './FieldEditor'
 import { EmptyState } from '@/components/EmptyState'
-import { FileText } from 'lucide-react'
+import { useIsMobile } from '@/lib/hooks'
+import { FileText, Plus } from 'lucide-react'
 import type { FieldType } from '@/lib/validations/forms'
 import type { BuilderField } from '../../types'
 
 export function FormBuilder() {
+  const [mounted, setMounted] = useState(false)
+  const isMobile = useIsMobile()
   const { fields, selectedFieldId, addField, reorderFields, selectField } = useFormBuilder()
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false)
+
+  // Prevent hydration mismatch by waiting for client mount
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -75,12 +86,109 @@ export function FormBuilder() {
   const handleAddField = useCallback(
     (type: FieldType) => {
       addField(type)
+      if (isMobile) {
+        setIsPaletteOpen(false)
+      }
     },
-    [addField]
+    [addField, isMobile]
   )
 
   const activeField = activeId ? fields.find((f) => f.id === activeId) : null
 
+  // Show loading skeleton until mounted to prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="flex h-full">
+        <div className="w-64 border-r bg-muted/30 p-4 space-y-2">
+          <Skeleton className="h-6 w-32" />
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} className="h-12 w-full" />
+          ))}
+        </div>
+        <div className="flex-1 p-6 bg-muted/10">
+          <div className="max-w-2xl mx-auto space-y-3">
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </div>
+        </div>
+        <div className="w-80 border-l p-4">
+          <Skeleton className="h-6 w-24" />
+        </div>
+      </div>
+    )
+  }
+
+  // Mobile layout
+  if (isMobile) {
+    return (
+      <>
+        <div className="flex flex-col h-full">
+          {/* Mobile Canvas */}
+          <div className="flex-1 overflow-y-auto p-3 bg-muted/10">
+            {fields.length === 0 ? (
+              <EmptyState
+                icon={FileText}
+                title="Start building your form"
+                description="Tap the + button to add fields to your form."
+                size="sm"
+              />
+            ) : (
+              <div className="space-y-2">
+                {fields.map((field, index) => (
+                  <SortableField
+                    key={field.id}
+                    field={field}
+                    isSelected={selectedFieldId === field.id}
+                    onClick={() => selectField(field.id)}
+                    index={index}
+                    totalFields={fields.length}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Add Field Button */}
+          <div className="shrink-0 p-3 border-t bg-background">
+            <Button
+              variant="outline"
+              className="w-full !border !border-black dark:!border-white"
+              onClick={() => setIsPaletteOpen(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Field
+            </Button>
+          </div>
+        </div>
+
+        {/* Field Palette Sheet */}
+        <Sheet open={isPaletteOpen} onOpenChange={setIsPaletteOpen}>
+          <SheetContent side="bottom" className="h-[70vh] bg-white dark:bg-zinc-950">
+            <SheetHeader>
+              <SheetTitle>Add Field</SheetTitle>
+            </SheetHeader>
+            <div className="overflow-y-auto mt-4">
+              <FieldPalette onAddField={handleAddField} />
+            </div>
+          </SheetContent>
+        </Sheet>
+
+        {/* Field Editor Sheet */}
+        <Sheet open={!!selectedFieldId} onOpenChange={(open) => !open && selectField(null)}>
+          <SheetContent side="bottom" className="h-[70vh] bg-white dark:bg-zinc-950 px-0">
+            <SheetHeader className="sr-only">
+              <SheetTitle>Edit Field</SheetTitle>
+            </SheetHeader>
+            <div className="overflow-y-auto h-full">
+              <FieldEditor />
+            </div>
+          </SheetContent>
+        </Sheet>
+      </>
+    )
+  }
+
+  // Desktop layout
   return (
     <DndContext
       sensors={sensors}

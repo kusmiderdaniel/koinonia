@@ -9,13 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { LocationPicker } from '../../location-picker'
-import { ResponsiblePersonPicker } from '../../responsible-person-picker'
+import { LocationPicker } from '../../LocationPicker'
+import { ResponsiblePersonPicker } from '../../ResponsiblePersonPicker'
 import { useTemplateDialogState } from './useTemplateDialogState'
 import { TemplateFormFields } from './TemplateFormFields'
 import type { TemplateDialogProps, Person } from './types'
 
-export function TemplateDialog({ open, onOpenChange, template, onSuccess }: TemplateDialogProps) {
+export function TemplateDialog({ open, onOpenChange, template, onSuccess, timeFormat }: TemplateDialogProps) {
   const {
     formData,
     updateField,
@@ -44,7 +44,7 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess }: Temp
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 overflow-hidden">
           {error && (
             <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
               {error}
@@ -58,6 +58,7 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess }: Temp
             onCampusChange={handleCampusChange}
             onOpenLocationPicker={() => setLocationPickerOpen(true)}
             onOpenResponsiblePersonPicker={() => setResponsiblePersonPickerOpen(true)}
+            timeFormat={timeFormat}
           />
 
           <LocationPicker
@@ -75,11 +76,11 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess }: Temp
             onSelect={(person) => updateField('selectedResponsiblePerson', person as Person | null)}
           />
 
-          <DialogFooter className="flex justify-end gap-3 pt-4 !bg-transparent !border-0">
+          <DialogFooter className="!flex-row gap-3 pt-4 !bg-transparent !border-0">
             <Button
               type="button"
               variant="outline-pill"
-              className="!border !border-black dark:!border-white"
+              className="flex-1 !border !border-black dark:!border-white"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
             >
@@ -89,15 +90,15 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess }: Temp
               type="submit"
               variant="outline-pill"
               disabled={isLoading || !formData.name.trim()}
-              className="!border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
+              className="flex-1 !border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
             >
               {isLoading
                 ? isEditing
                   ? 'Saving...'
                   : 'Creating...'
                 : isEditing
-                ? 'Save Changes'
-                : 'Create Template'}
+                ? 'Save'
+                : 'Create'}
             </Button>
           </DialogFooter>
         </form>

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getTaskComments } from '@/app/dashboard/tasks/actions'
+import { useIsMobile } from '@/lib/hooks'
 import { TaskDetailHeader } from './TaskDetailHeader'
 import { TaskDetailsTab } from './TaskDetailsTab'
 import { TaskActivityTab } from './TaskActivityTab'
@@ -22,6 +23,7 @@ export function TaskDetailSheet({
   weekStartsOn = 0,
   canDelete = true,
 }: TaskDetailSheetProps) {
+  const isMobile = useIsMobile()
   const [comments, setComments] = useState<TaskComment[]>([])
   const [isLoadingComments, setIsLoadingComments] = useState(true)
   const [activeTab, setActiveTab] = useState('details')
@@ -68,7 +70,13 @@ export function TaskDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-lg overflow-y-auto bg-white dark:bg-zinc-950 px-6 pt-4" showCloseButton={false}>
+      <SheetContent
+        className={`overflow-y-auto bg-white dark:bg-zinc-950 ${
+          isMobile ? 'px-4 pt-3' : 'w-full sm:max-w-lg px-6 pt-4'
+        }`}
+        showCloseButton={false}
+        fullScreen={isMobile}
+      >
         <TaskDetailHeader
           task={task}
           onTitleChange={handlers.handleTitleChange}

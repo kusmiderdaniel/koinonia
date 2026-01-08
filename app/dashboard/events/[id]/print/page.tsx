@@ -2,6 +2,7 @@ import { redirect, notFound } from 'next/navigation'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { canUserSeeEvent } from '../../actions/helpers'
 import { getUserCampusIds } from '@/lib/utils/campus'
+import { isVolunteer, isLeader } from '@/lib/permissions'
 import { AgendaPrintView } from './AgendaPrintView'
 
 interface PageProps {
@@ -23,13 +24,17 @@ export default async function EventPrintPage({ params }: PageProps) {
   const adminClient = createServiceRoleClient()
   const { data: profile } = await adminClient
     .from('profiles')
-    .select('id, church_id, role')
+    .select('id, church_id, role, church:churches(time_format)')
     .eq('user_id', user.id)
     .single()
 
   if (!profile) {
     redirect('/onboarding')
   }
+
+  // Handle Supabase join result which may be array or object
+  const church = Array.isArray(profile.church) ? profile.church[0] : profile.church
+  const timeFormat = ((church as { time_format: string } | null)?.time_format ?? '24h') as '12h' | '24h'
 
   // Fetch event with agenda items
   const { data: event, error } = await adminClient
@@ -73,7 +78,7 @@ export default async function EventPrintPage({ params }: PageProps) {
   }
 
   // For volunteers and leaders, check campus access
-  if (profile.role === 'volunteer' || profile.role === 'leader') {
+  if (isVolunteer(profile.role) || isLeader(profile.role)) {
     const campuses: { id: string }[] = []
     for (const ec of event.event_campuses || []) {
       const campus = Array.isArray(ec.campus) ? ec.campus[0] : ec.campus
@@ -121,5 +126,5 @@ export default async function EventPrintPage({ params }: PageProps) {
     })),
   }
 
-  return <AgendaPrintView event={transformedEvent} />
+  return <AgendaPrintView event={transformedEvent} timeFormat={timeFormat} />
 }

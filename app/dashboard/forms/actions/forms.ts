@@ -6,6 +6,7 @@ import {
   getAuthenticatedUserWithProfile,
   isAuthError,
   requireManagePermission,
+  verifyChurchOwnership,
 } from '@/lib/utils/server-auth'
 import { formSchema, type FormInput } from '@/lib/validations/forms'
 import type { FormStatus, FormAccessType } from '@/lib/validations/forms'
@@ -165,15 +166,10 @@ export async function updateForm(id: string, data: Partial<FormInput>) {
   if (permError) return { error: permError }
 
   // Verify form belongs to church
-  const { data: existingForm } = await adminClient
-    .from('forms')
-    .select('church_id, status')
-    .eq('id', id)
-    .single()
-
-  if (!existingForm || existingForm.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', id, profile.church_id, 'church_id', 'Form not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   const updateData: Record<string, unknown> = {}
   if (data.title !== undefined) updateData.title = data.title
@@ -206,15 +202,10 @@ export async function deleteForm(id: string) {
   if (permError) return { error: permError }
 
   // Verify form belongs to church
-  const { data: existingForm } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', id)
-    .single()
-
-  if (!existingForm || existingForm.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', id, profile.church_id, 'church_id', 'Form not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   const { error } = await adminClient.from('forms').delete().eq('id', id)
 
@@ -238,15 +229,10 @@ export async function publishForm(id: string) {
   if (permError) return { error: permError }
 
   // Get form with fields
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id, status, access_type, public_token')
-    .eq('id', id)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { data: form, error: ownershipError } = await verifyChurchOwnership<{
+    church_id: string; status: string; access_type: string; public_token: string | null
+  }>(adminClient, 'forms', id, profile.church_id, 'church_id, status, access_type, public_token', 'Form not found')
+  if (ownershipError || !form) return { error: ownershipError || 'Form not found' }
 
   // Check if form has at least one field
   const { count } = await adminClient
@@ -293,15 +279,10 @@ export async function unpublishForm(id: string) {
   const permError = requireManagePermission(profile.role, 'unpublish forms')
   if (permError) return { error: permError }
 
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', id)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', id, profile.church_id, 'church_id', 'Form not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   const { error } = await adminClient
     .from('forms')
@@ -330,15 +311,10 @@ export async function closeForm(id: string) {
   const permError = requireManagePermission(profile.role, 'close forms')
   if (permError) return { error: permError }
 
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', id)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', id, profile.church_id, 'church_id', 'Form not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   const { error } = await adminClient
     .from('forms')

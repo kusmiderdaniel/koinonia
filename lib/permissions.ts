@@ -13,19 +13,21 @@ export const ROLE_HIERARCHY: Record<UserRole, number> = {
 }
 
 // Page access permissions by role
+// Note: Members only have access to dashboard - all other pages are restricted
 export const PAGE_ACCESS = {
   home: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[],
   dashboard: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[], // alias for home
-  inbox: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[], // Everyone has inbox
+  inbox: ['owner', 'admin', 'leader', 'volunteer'] as UserRole[],
   events: ['owner', 'admin', 'leader', 'volunteer'] as UserRole[],
-  tasks: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[], // Everyone can access tasks
+  tasks: ['owner', 'admin', 'leader', 'volunteer'] as UserRole[],
   people: ['owner', 'admin', 'leader'] as UserRole[],
   ministries: ['owner', 'admin', 'leader'] as UserRole[],
   songs: ['owner', 'admin', 'leader'] as UserRole[],
-  forms: ['owner', 'admin', 'leader'] as UserRole[], // Leaders+ can manage forms
+  forms: ['owner', 'admin', 'leader'] as UserRole[],
+  links: ['owner', 'admin'] as UserRole[],
   settings: ['owner', 'admin'] as UserRole[],
-  profile: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[],
-  availability: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[],
+  profile: ['owner', 'admin', 'leader', 'volunteer'] as UserRole[],
+  availability: ['owner', 'admin', 'leader', 'volunteer'] as UserRole[],
 } as const
 
 export type PageKey = keyof typeof PAGE_ACCESS
@@ -110,6 +112,13 @@ export function isVolunteerOrBelow(role: string): boolean {
  */
 export function isMember(role: string): boolean {
   return role === 'member'
+}
+
+/**
+ * Check if role is volunteer
+ */
+export function isVolunteer(role: string): boolean {
+  return role === 'volunteer'
 }
 
 /**

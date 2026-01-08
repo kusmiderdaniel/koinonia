@@ -41,7 +41,7 @@ export function MembersTableHeader() {
         <TableHead>Campus</TableHead>
         <TableHead>Ministry Roles</TableHead>
         <TableHead>
-          <HeaderWithTooltip label="Sex" tooltip="Can be changed in user's profile settings" />
+          <HeaderWithTooltip label="Gender" tooltip="Can be changed in user's profile settings" />
         </TableHead>
         <TableHead>
           <HeaderWithTooltip label="Date of Birth" tooltip="Can be changed in user's profile settings" />

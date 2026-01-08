@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Plus, Search, FileText, Copy, Pencil, Trash2 } from 'lucide-react'
 import { EventTypeBadge } from '@/components/EventTypeBadge'
 import { CampusBadge } from '@/components/CampusBadge'
-import { formatTimeString, formatDurationMinutes } from '@/lib/utils/format'
+import { formatTime, formatDurationMinutes } from '@/lib/utils/format'
 import type { Template, TemplateDetail } from './types'
 
 interface TemplatesListProps {
@@ -16,6 +16,7 @@ interface TemplatesListProps {
   isLoading: boolean
   canManage: boolean
   isMobile: boolean
+  timeFormat?: '12h' | '24h'
   onSearchChange: (query: string) => void
   onSelectTemplate: (template: Template) => void
   onCreateTemplate: () => void
@@ -32,6 +33,7 @@ export function TemplatesList({
   isLoading,
   canManage,
   isMobile,
+  timeFormat,
   onSearchChange,
   onSelectTemplate,
   onCreateTemplate,
@@ -123,7 +125,7 @@ export function TemplatesList({
                   </div>
                   <p className={`truncate ${isSelected ? 'font-medium' : ''}`}>{template.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {formatTimeString(template.default_start_time)} •{' '}
+                    {formatTime(template.default_start_time, timeFormat)} •{' '}
                     {formatDurationMinutes(template.default_duration_minutes)}
                   </p>
                   <p className="text-xs text-muted-foreground">

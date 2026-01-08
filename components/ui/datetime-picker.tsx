@@ -1,19 +1,24 @@
 "use client"
 
 import * as React from "react"
-import { format, parse, isValid, setHours, setMinutes } from "date-fns"
+import { format, isValid, setHours, setMinutes } from "date-fns"
 import { CalendarIcon, Clock } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface DateTimePickerProps {
   value?: string // ISO datetime string or datetime-local format
@@ -23,7 +28,31 @@ interface DateTimePickerProps {
   className?: string
   id?: string
   label?: string
+  timeFormat?: '12h' | '24h'
 }
+
+// Generate hour options based on format
+function getHourOptions(timeFormat: '12h' | '24h') {
+  if (timeFormat === '12h') {
+    // 12-hour format: 01, 02, ..., 11, 12 (sorted numerically, zero-padded)
+    return Array.from({ length: 12 }, (_, i) => {
+      const displayHour = i + 1 // 1-12
+      const internalHour = displayHour === 12 ? 0 : displayHour // internal: 0 = 12, 1-11 = 1-11
+      return { value: internalHour.toString(), label: displayHour.toString().padStart(2, '0') }
+    })
+  }
+  // 24-hour format: 00, 01, ..., 23
+  return Array.from({ length: 24 }, (_, i) => ({
+    value: i.toString(),
+    label: i.toString().padStart(2, '0'),
+  }))
+}
+
+// Generate minute options (00, 05, 10, ..., 55 for easier selection)
+const MINUTE_OPTIONS = Array.from({ length: 12 }, (_, i) => ({
+  value: (i * 5).toString(),
+  label: (i * 5).toString().padStart(2, '0'),
+}))
 
 export function DateTimePicker({
   value,
@@ -33,6 +62,7 @@ export function DateTimePicker({
   className,
   id,
   label,
+  timeFormat = '24h',
 }: DateTimePickerProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -43,12 +73,29 @@ export function DateTimePicker({
     return isValid(date) ? date : undefined
   }, [value])
 
-  // Get time string from date
-  const timeValue = React.useMemo(() => {
-    if (!dateValue) return ""
-    const hours = dateValue.getHours().toString().padStart(2, "0")
-    const minutes = dateValue.getMinutes().toString().padStart(2, "0")
-    return `${hours}:${minutes}`
+  // Get hour in 12h or 24h format
+  const getHourValue = React.useCallback(() => {
+    if (!dateValue) return "9" // default to 9
+    const hours = dateValue.getHours()
+    if (timeFormat === '12h') {
+      return (hours % 12).toString()
+    }
+    return hours.toString()
+  }, [dateValue, timeFormat])
+
+  // Get minute value (rounded to nearest 5)
+  const getMinuteValue = React.useCallback(() => {
+    if (!dateValue) return "0"
+    const minutes = dateValue.getMinutes()
+    // Round to nearest 5
+    const rounded = Math.round(minutes / 5) * 5
+    return (rounded >= 60 ? 55 : rounded).toString()
+  }, [dateValue])
+
+  // Get AM/PM value
+  const getPeriodValue = React.useCallback(() => {
+    if (!dateValue) return "AM"
+    return dateValue.getHours() >= 12 ? "PM" : "AM"
   }, [dateValue])
 
   // Handle date selection from calendar
@@ -62,25 +109,58 @@ export function DateTimePicker({
     }
   }
 
-  // Handle time change
-  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const time = e.target.value
-    if (time && dateValue) {
-      const [hours, minutes] = time.split(":").map(Number)
-      const newDate = setMinutes(setHours(dateValue, hours), minutes)
-      onChange?.(format(newDate, "yyyy-MM-dd'T'HH:mm"))
-    } else if (time && !dateValue) {
-      // If no date selected, use today
-      const today = new Date()
-      const [hours, minutes] = time.split(":").map(Number)
-      const newDate = setMinutes(setHours(today, hours), minutes)
-      onChange?.(format(newDate, "yyyy-MM-dd'T'HH:mm"))
+  // Handle hour change
+  const handleHourChange = (hourValue: string) => {
+    let hours = parseInt(hourValue, 10)
+
+    if (timeFormat === '12h') {
+      const currentPeriod = getPeriodValue()
+      if (currentPeriod === 'PM' && hours !== 12) {
+        hours += 12
+      } else if (currentPeriod === 'AM' && hours === 12) {
+        hours = 0
+      }
     }
+
+    const baseDate = dateValue || new Date()
+    const minutes = dateValue?.getMinutes() ?? 0
+    const newDate = setMinutes(setHours(baseDate, hours), minutes)
+    onChange?.(format(newDate, "yyyy-MM-dd'T'HH:mm"))
+  }
+
+  // Handle minute change
+  const handleMinuteChange = (minuteValue: string) => {
+    const minutes = parseInt(minuteValue, 10)
+    const baseDate = dateValue || new Date()
+    const hours = baseDate.getHours()
+    const newDate = setMinutes(setHours(baseDate, hours), minutes)
+    onChange?.(format(newDate, "yyyy-MM-dd'T'HH:mm"))
+  }
+
+  // Handle AM/PM change
+  const handlePeriodChange = (period: string) => {
+    if (!dateValue) return
+
+    let hours = dateValue.getHours()
+    const currentPeriod = hours >= 12 ? 'PM' : 'AM'
+
+    if (period !== currentPeriod) {
+      if (period === 'PM') {
+        hours = hours === 0 ? 12 : hours + 12
+      } else {
+        hours = hours === 12 ? 0 : hours - 12
+      }
+    }
+
+    const newDate = setHours(dateValue, hours)
+    onChange?.(format(newDate, "yyyy-MM-dd'T'HH:mm"))
   }
 
   const displayValue = dateValue
-    ? format(dateValue, "dd/MM/yyyy HH:mm")
+    ? format(dateValue, timeFormat === '12h' ? "dd/MM/yyyy h:mm a" : "dd/MM/yyyy HH:mm")
     : placeholder
+
+  const hourOptions = React.useMemo(() => getHourOptions(timeFormat), [timeFormat])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -100,8 +180,12 @@ export function DateTimePicker({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-auto p-2 bg-white dark:bg-zinc-950 border border-black dark:border-white shadow-lg"
+        className="w-auto max-w-[calc(100vw-32px)] p-2 bg-white dark:bg-zinc-950 border border-black dark:border-white shadow-lg overflow-hidden"
         align="start"
+        side="bottom"
+        sideOffset={4}
+        collisionPadding={16}
+        avoidCollisions={true}
       >
         <Calendar
           mode="single"
@@ -125,16 +209,50 @@ export function DateTimePicker({
         />
         <div className="border-t border-border mt-2 pt-2">
           <div className="flex items-center gap-2">
-            <Label className="text-xs font-medium text-muted-foreground whitespace-nowrap">{label || "Time"}</Label>
-            <div className="relative flex-1">
-              <Clock className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-              <Input
-                type="time"
-                value={timeValue}
-                onChange={handleTimeChange}
-                className="pl-7 h-8 text-sm !border !border-black dark:!border-white bg-zinc-100 dark:bg-zinc-800"
-              />
-            </div>
+            <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+
+            {/* Hour Select */}
+            <Select value={getHourValue()} onValueChange={handleHourChange}>
+              <SelectTrigger className="w-[70px] h-8 text-sm !border !border-black dark:!border-white bg-zinc-100 dark:bg-zinc-800">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="max-h-[200px] !border !border-black dark:!border-white">
+                {hourOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <span className="text-muted-foreground">:</span>
+
+            {/* Minute Select */}
+            <Select value={getMinuteValue()} onValueChange={handleMinuteChange}>
+              <SelectTrigger className="w-[60px] h-8 text-sm !border !border-black dark:!border-white bg-zinc-100 dark:bg-zinc-800">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="max-h-[200px] !border !border-black dark:!border-white">
+                {MINUTE_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* AM/PM Select (only for 12h format) */}
+            {timeFormat === '12h' && (
+              <Select value={getPeriodValue()} onValueChange={handlePeriodChange}>
+                <SelectTrigger className="w-[65px] h-8 text-sm !border !border-black dark:!border-white bg-zinc-100 dark:bg-zinc-800">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="!border !border-black dark:!border-white">
+                  <SelectItem value="AM">AM</SelectItem>
+                  <SelectItem value="PM">PM</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
           </div>
         </div>
       </PopoverContent>

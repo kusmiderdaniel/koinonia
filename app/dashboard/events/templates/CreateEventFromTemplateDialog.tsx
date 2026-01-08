@@ -16,7 +16,7 @@ import { Clock, MapPin, CalendarDays, Music, Users } from 'lucide-react'
 import { createEventFromTemplate, getChurchSettings } from './actions'
 import { format } from 'date-fns'
 import { EventTypeBadge } from '@/components/EventTypeBadge'
-import { formatTimeString, formatDurationMinutes } from '@/lib/utils/format'
+import { formatTime, formatDurationMinutes } from '@/lib/utils/format'
 
 interface Template {
   id: string
@@ -103,59 +103,41 @@ export function CreateEventFromTemplateDialog({
         <DialogHeader>
           <DialogTitle>Create Event from Template</DialogTitle>
           <DialogDescription>
-            Select dates for the new events. Hold Cmd/Ctrl to select multiple dates.
+            Select one or more dates for the new events.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4 space-y-4">
+        <div className="py-2 space-y-3">
           {error && (
-            <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
+            <div className="text-sm text-red-600 bg-red-50 p-2 rounded-md">
               {error}
             </div>
           )}
 
-          {/* Template Summary */}
-          <div className="p-4 rounded-lg border bg-muted/30">
-            <div className="flex items-center gap-2 mb-2">
+          {/* Template Summary - Compact */}
+          <div className="p-3 rounded-lg border bg-muted/30">
+            <div className="flex items-center gap-2">
               <EventTypeBadge type={template.event_type} />
+              <h3 className="font-semibold text-sm truncate">{template.name}</h3>
             </div>
-            <h3 className="font-semibold">{template.name}</h3>
-            {template.description && (
-              <p className="text-sm text-muted-foreground mt-1">
-                {template.description}
-              </p>
-            )}
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
-                <span>{formatTimeString(template.default_start_time)}</span>
-                <span>•</span>
-                <span>{formatDurationMinutes(template.default_duration_minutes)}</span>
-              </div>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                {formatTime(template.default_start_time)} • {formatDurationMinutes(template.default_duration_minutes)}
+              </span>
               {template.location && (
-                <div className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  <span>{template.location.name}</span>
-                </div>
+                <span className="flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  {template.location.name}
+                </span>
               )}
-            </div>
-            <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Music className="w-3.5 h-3.5" />
-                <span>{agendaCount} agenda items</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Users className="w-3.5 h-3.5" />
-                <span>{positionCount} positions</span>
-              </div>
             </div>
           </div>
 
-          {/* Date Picker */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium flex items-center gap-2">
-              <CalendarDays className="w-4 h-4" />
-              Select Event Date{selectedDates.length > 1 ? 's' : ''} *
+          {/* Date Picker - Compact */}
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted-foreground">
+              Tap to select/deselect dates
             </label>
             <div className="flex justify-center">
               <Calendar
@@ -164,11 +146,22 @@ export function CreateEventFromTemplateDialog({
                 onSelect={(dates) => setSelectedDates(dates || [])}
                 disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                 weekStartsOn={firstDayOfWeek}
-                className="rounded-md border"
+                className="rounded-md border !p-2"
                 classNames={{
-                  selected: "bg-brand text-brand-foreground hover:bg-brand hover:text-brand-foreground focus:bg-brand focus:text-brand-foreground rounded-md",
+                  months: "flex flex-col",
+                  month: "space-y-2",
+                  month_caption: "flex justify-center relative items-center h-7",
+                  caption_label: "text-xs font-medium",
+                  nav: "absolute inset-x-0 flex items-center justify-between",
+                  button_previous: "h-6 w-6 bg-transparent p-0 opacity-50 hover:opacity-100",
+                  button_next: "h-6 w-6 bg-transparent p-0 opacity-50 hover:opacity-100",
+                  weekday: "text-muted-foreground w-8 font-normal text-[10px]",
+                  week: "flex mt-1",
+                  day: "text-center text-xs p-0 h-8 w-8 [&:has([aria-selected])]:!bg-brand [&:has([aria-selected])]:rounded-md",
+                  day_button: "h-8 w-8 p-0 font-normal text-xs rounded-md",
+                  selected: "!bg-brand !text-brand-foreground hover:!bg-brand hover:!text-brand-foreground focus:!bg-brand focus:!text-brand-foreground rounded-md",
                   today: "bg-accent text-accent-foreground",
-                  outside: "day-outside text-muted-foreground aria-selected:bg-brand aria-selected:text-brand-foreground",
+                  outside: "day-outside text-muted-foreground opacity-50",
                 }}
               />
             </div>
@@ -180,11 +173,11 @@ export function CreateEventFromTemplateDialog({
           </div>
         </div>
 
-        <DialogFooter className="flex justify-end gap-3 pt-4 !bg-transparent !border-0">
+        <DialogFooter className="!flex-row gap-3 pt-4 !bg-transparent !border-0">
           <Button
             type="button"
             variant="outline-pill"
-            className="!border !border-black dark:!border-white"
+            className="flex-1 !border !border-black dark:!border-white"
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
           >
@@ -194,13 +187,13 @@ export function CreateEventFromTemplateDialog({
             variant="outline-pill"
             onClick={handleCreate}
             disabled={isLoading || selectedDates.length === 0}
-            className="!border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
+            className="flex-1 !border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
           >
             {isLoading
               ? 'Creating...'
               : selectedDates.length > 1
-              ? `Create ${selectedDates.length} Events`
-              : 'Create Event'}
+              ? `Create ${selectedDates.length}`
+              : 'Create'}
           </Button>
         </DialogFooter>
       </DialogContent>

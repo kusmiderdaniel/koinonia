@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Plus } from 'lucide-react'
 import { TasksTable } from './TasksTable'
 import { TaskCard } from './TaskCard'
+import { useIsMobile } from '@/lib/hooks'
 import type { Task, TaskMinistry, TaskCampus, Person, TaskStatus, TaskPriority } from '../types'
 
 interface TaskGroup {
@@ -101,40 +102,40 @@ export function TasksContent({
   }
 
   return (
-    <Card className="flex-1 overflow-hidden border rounded-lg">
-      <ScrollArea className="h-full">
-        <TasksTable
-          tasks={tasks}
-          groups={groups}
-          showGroupHeaders={showGroupHeaders}
-          ministries={ministries}
-          campuses={campuses}
-          members={members}
-          selectedTaskId={selectedTaskId}
-          onTitleClick={onTitleClick}
-          onStatusChange={onStatusChange}
-          onPriorityChange={onPriorityChange}
-          onAssigneeChange={onAssigneeChange}
-          onMinistryChange={onMinistryChange}
-          onCampusChange={onCampusChange}
-          onDueDateChange={onDueDateChange}
-          onCompletionToggle={onCompletionToggle}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          onCreateTask={onCreateTask}
-          weekStartsOn={weekStartsOn}
-        />
-      </ScrollArea>
+    <Card className="flex-1 overflow-auto border rounded-lg">
+      <TasksTable
+        tasks={tasks}
+        groups={groups}
+        showGroupHeaders={showGroupHeaders}
+        ministries={ministries}
+        campuses={campuses}
+        members={members}
+        selectedTaskId={selectedTaskId}
+        onTitleClick={onTitleClick}
+        onStatusChange={onStatusChange}
+        onPriorityChange={onPriorityChange}
+        onAssigneeChange={onAssigneeChange}
+        onMinistryChange={onMinistryChange}
+        onCampusChange={onCampusChange}
+        onDueDateChange={onDueDateChange}
+        onCompletionToggle={onCompletionToggle}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onCreateTask={onCreateTask}
+        weekStartsOn={weekStartsOn}
+      />
     </Card>
   )
 }
 
 function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
+  const isMobile = useIsMobile()
+
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-      <div className="text-muted-foreground mb-4">No tasks found</div>
-      <Button onClick={onCreateTask} variant="outline">
-        <Plus className="h-4 w-4 mr-2" />
+    <div className={`flex flex-col items-center justify-center px-4 text-center ${isMobile ? 'py-8' : 'py-16'}`}>
+      <div className={`text-muted-foreground ${isMobile ? 'text-sm mb-3' : 'mb-4'}`}>No tasks found</div>
+      <Button onClick={onCreateTask} variant="outline" size={isMobile ? 'sm' : 'default'}>
+        <Plus className={isMobile ? 'h-3.5 w-3.5 mr-1' : 'h-4 w-4 mr-2'} />
         Create your first task
       </Button>
     </div>
@@ -154,20 +155,22 @@ function GroupedMobileView({
   groups,
   ...props
 }: MobileViewProps & { groups: TaskGroup[] }) {
+  const isMobile = useIsMobile()
+
   return (
     <div>
       {groups.map((group) => (
         <div key={group.id}>
-          <div className="sticky top-0 z-10 bg-muted/80 backdrop-blur-sm px-4 py-2 border-b">
-            <div className="flex items-center gap-2 font-medium">
+          <div className={`sticky top-0 z-10 bg-muted/80 backdrop-blur-sm border-b ${isMobile ? 'px-3 py-1.5' : 'px-4 py-2'}`}>
+            <div className={`flex items-center gap-2 font-medium ${isMobile ? 'text-sm' : ''}`}>
               {group.color && (
                 <span
-                  className="w-3 h-3 rounded-full"
+                  className={`rounded-full ${isMobile ? 'w-2.5 h-2.5' : 'w-3 h-3'}`}
                   style={{ backgroundColor: group.color }}
                 />
               )}
               <span>{group.label}</span>
-              <span className="text-muted-foreground font-normal text-sm">
+              <span className={`text-muted-foreground font-normal ${isMobile ? 'text-xs' : 'text-sm'}`}>
                 ({group.tasks.length})
               </span>
             </div>

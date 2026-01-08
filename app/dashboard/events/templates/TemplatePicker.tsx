@@ -17,7 +17,7 @@ import { getEventTemplates } from './actions'
 import { CreateEventFromTemplateDialog } from './CreateEventFromTemplateDialog'
 import { EventTypeBadge } from '@/components/EventTypeBadge'
 import { CampusBadge } from '@/components/CampusBadge'
-import { formatTimeString, formatDurationMinutes } from '@/lib/utils/format'
+import { formatTime, formatDurationMinutes } from '@/lib/utils/format'
 
 interface Location {
   id: string
@@ -171,7 +171,7 @@ export function TemplatePicker({
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />
-                      <span>{formatTimeString(template.default_start_time)}</span>
+                      <span>{formatTime(template.default_start_time)}</span>
                       <span>•</span>
                       <span>{formatDurationMinutes(template.default_duration_minutes)}</span>
                     </div>

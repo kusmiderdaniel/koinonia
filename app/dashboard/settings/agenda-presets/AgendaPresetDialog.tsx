@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/select'
 import { toast } from 'sonner'
 import { createAgendaPreset, updateAgendaPreset } from './actions'
+import { formatDurationInputs } from '@/lib/utils/format'
 
 interface Ministry {
   id: string
@@ -68,11 +69,9 @@ export function AgendaPresetDialog({
       if (preset) {
         setTitle(preset.title)
         setDescription(preset.description || '')
-        const totalSeconds = preset.duration_seconds
-        const mins = Math.floor(totalSeconds / 60)
-        const secs = totalSeconds % 60
-        setDurationMinutes(mins.toString())
-        setDurationSeconds(secs.toString().padStart(2, '0'))
+        const { minutes, seconds } = formatDurationInputs(preset.duration_seconds)
+        setDurationMinutes(minutes)
+        setDurationSeconds(seconds)
         setMinistryId(preset.ministry_id || 'none')
       } else {
         setTitle('')

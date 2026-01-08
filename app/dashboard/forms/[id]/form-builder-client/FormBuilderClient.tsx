@@ -12,10 +12,12 @@ import { PreviewPanel } from '../builder/preview-panel'
 import { ResponsesTable } from '../responses/ResponsesTable'
 import { useFormBuilderClientState } from './useFormBuilderClientState'
 import { FormBuilderHeader } from './FormBuilderHeader'
+import { useIsMobile } from '@/lib/hooks'
 import type { FormBuilderClientProps } from './types'
 
 export function FormBuilderClient({ initialData }: FormBuilderClientProps) {
   const state = useFormBuilderClientState({ initialData })
+  const isMobile = useIsMobile()
 
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem)] md:h-screen">
@@ -85,6 +87,7 @@ export function FormBuilderClient({ initialData }: FormBuilderClientProps) {
       <Sheet open={state.isPreviewOpen} onOpenChange={state.setIsPreviewOpen}>
         <SheetContent
           side="right"
+          fullScreen={isMobile}
           className="w-full sm:max-w-lg p-0 !bg-white dark:!bg-zinc-950"
           showCloseButton={false}
         >

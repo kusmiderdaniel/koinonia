@@ -13,6 +13,7 @@ export interface TaskDialogProps {
   defaultEventId?: string
   defaultCampusId?: string
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  timeFormat?: '12h' | '24h'
 }
 
 export interface TaskFormState {

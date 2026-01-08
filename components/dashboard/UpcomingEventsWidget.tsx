@@ -5,18 +5,20 @@ import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CalendarDays, ChevronRight, MapPin } from 'lucide-react'
+import { getDateTimeFormatPattern } from '@/lib/utils/format'
 import type { DashboardEvent } from '@/app/dashboard/actions'
 
 interface UpcomingEventsWidgetProps {
   events: DashboardEvent[]
+  timeFormat?: '12h' | '24h'
 }
 
-export function UpcomingEventsWidget({ events }: UpcomingEventsWidgetProps) {
+export function UpcomingEventsWidget({ events, timeFormat = '24h' }: UpcomingEventsWidgetProps) {
   const router = useRouter()
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    return format(date, "EEE, MMM d 'at' h:mm a")
+    return format(date, getDateTimeFormatPattern(timeFormat))
   }
 
   const getEventTypeIcon = (eventType: string) => {

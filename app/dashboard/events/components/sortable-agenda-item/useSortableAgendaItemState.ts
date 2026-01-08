@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react'
 import { getMinistryMembersForAgenda } from '../../actions'
+import { getArrangementsForSong } from '../../actions/agenda/songs'
 import type { AgendaItem, Member } from './types'
+import type { ArrangementOption } from './AgendaItemPopovers'
 
 interface UseSortableAgendaItemStateOptions {
   item: AgendaItem
@@ -8,6 +10,7 @@ interface UseSortableAgendaItemStateOptions {
   onLeaderChange: (itemId: string, leaderId: string | null) => Promise<void>
   onDurationChange: (itemId: string, durationSeconds: number) => Promise<void>
   onDescriptionChange: (itemId: string, description: string | null) => Promise<void>
+  onArrangementChange: (itemId: string, arrangementId: string | null) => Promise<void>
 }
 
 export function useSortableAgendaItemState({
@@ -16,12 +19,14 @@ export function useSortableAgendaItemState({
   onLeaderChange,
   onDurationChange,
   onDescriptionChange,
+  onArrangementChange,
 }: UseSortableAgendaItemStateOptions) {
   // Popover states
   const [keyPopoverOpen, setKeyPopoverOpen] = useState(false)
   const [leaderPopoverOpen, setLeaderPopoverOpen] = useState(false)
   const [durationPopoverOpen, setDurationPopoverOpen] = useState(false)
   const [descriptionPopoverOpen, setDescriptionPopoverOpen] = useState(false)
+  const [arrangementPopoverOpen, setArrangementPopoverOpen] = useState(false)
 
   // Edit states
   const [editMinutes, setEditMinutes] = useState('')
@@ -32,6 +37,8 @@ export function useSortableAgendaItemState({
   const [isUpdating, setIsUpdating] = useState(false)
   const [ministryMembers, setMinistryMembers] = useState<Member[]>([])
   const [isLoadingMembers, setIsLoadingMembers] = useState(false)
+  const [arrangements, setArrangements] = useState<ArrangementOption[]>([])
+  const [isLoadingArrangements, setIsLoadingArrangements] = useState(false)
 
   // Key handlers
   const handleKeyChange = useCallback(async (key: string) => {
@@ -120,6 +127,26 @@ export function useSortableAgendaItemState({
     setEditDescription('')
   }, [])
 
+  // Arrangement handlers
+  const handleArrangementPopoverOpen = useCallback(async (open: boolean) => {
+    setArrangementPopoverOpen(open)
+    if (open && item.song_id) {
+      setIsLoadingArrangements(true)
+      const result = await getArrangementsForSong(item.song_id)
+      if (result.data) {
+        setArrangements(result.data)
+      }
+      setIsLoadingArrangements(false)
+    }
+  }, [item.song_id])
+
+  const handleArrangementChange = useCallback(async (arrangementId: string | null) => {
+    setIsUpdating(true)
+    await onArrangementChange(item.id, arrangementId)
+    setArrangementPopoverOpen(false)
+    setIsUpdating(false)
+  }, [item.id, onArrangementChange])
+
   return {
     // Popover states
     keyPopoverOpen,
@@ -127,6 +154,7 @@ export function useSortableAgendaItemState({
     leaderPopoverOpen,
     durationPopoverOpen,
     descriptionPopoverOpen,
+    arrangementPopoverOpen,
 
     // Edit states
     editMinutes,
@@ -138,6 +166,8 @@ export function useSortableAgendaItemState({
     isUpdating,
     ministryMembers,
     isLoadingMembers,
+    arrangements,
+    isLoadingArrangements,
 
     // Handlers
     handleKeyChange,
@@ -150,5 +180,7 @@ export function useSortableAgendaItemState({
     handleDescriptionPopoverOpen,
     handleDescriptionSave,
     handleClearDescription,
+    handleArrangementPopoverOpen,
+    handleArrangementChange,
   }
 }

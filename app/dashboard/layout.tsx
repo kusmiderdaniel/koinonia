@@ -39,7 +39,7 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-muted/30">
       {/* Mobile Header - shown only on mobile */}
-      <MobileHeader churchName={profile.church.name} />
+      <MobileHeader churchName={profile.church.name} churchLogoUrl={profile.church.logo_url} />
 
       {/* Desktop Sidebar - hidden on mobile */}
       <Sidebar

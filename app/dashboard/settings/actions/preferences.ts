@@ -30,6 +30,7 @@ export async function updateChurchPreferences(data: ChurchPreferencesInput) {
     .update({
       timezone: validated.data.timezone,
       first_day_of_week: validated.data.firstDayOfWeek,
+      time_format: validated.data.timeFormat,
       default_event_visibility: validated.data.defaultEventVisibility,
     })
     .eq('id', profile.church_id)

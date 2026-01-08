@@ -96,7 +96,7 @@ export function SongsListView({
             size="sm"
           />
         ) : (
-          <div className="space-y-1">
+          <div className="space-y-2">
             {filteredSongs.map((song) => (
               <SongCard
                 key={song.id}

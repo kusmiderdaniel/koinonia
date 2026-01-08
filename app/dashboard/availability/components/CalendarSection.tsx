@@ -42,9 +42,9 @@ export const CalendarSection = memo(function CalendarSection({
   const monthName = calendarMonth.toLocaleString('default', { month: 'long', year: 'numeric' })
 
   return (
-    <div>
-      <Card>
-        <CardContent className="p-4">
+    <div className="w-full">
+      <Card className="w-full">
+        <CardContent className="p-3 md:p-4">
           {/* Month navigation - above calendar */}
           <div className="flex items-center justify-between mb-3">
             <Button
@@ -98,9 +98,9 @@ export const CalendarSection = memo(function CalendarSection({
 
           {/* Selection indicator */}
           {selectedStart && (
-            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
+            <div className="mt-3 md:mt-4 p-2 md:p-3 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
               <div className="flex items-center justify-between">
-                <div className="text-sm">
+                <div className="text-xs md:text-sm">
                   <span className="font-medium">Selected: </span>
                   {selectedEnd ? (
                     <span>
@@ -116,11 +116,12 @@ export const CalendarSection = memo(function CalendarSection({
               </div>
 
               {!selectedEnd && (
-                <div className="mt-2 flex items-center gap-2">
+                <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-2">
                   <span className="text-xs text-muted-foreground">
-                    Click another date for a range, or
+                    <span className="hidden sm:inline">Click another date for a range, or</span>
+                    <span className="sm:hidden">Tap another date for range, or</span>
                   </span>
-                  <Button size="sm" onClick={onAddSingleDay}>
+                  <Button size="sm" className="w-full sm:w-auto text-xs h-7" onClick={onAddSingleDay}>
                     Add Single Day
                   </Button>
                 </div>

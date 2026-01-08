@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { isLeaderOrAbove } from '@/lib/permissions'
+import { verifyChurchOwnership } from '@/lib/utils/server-auth'
 import { format } from 'date-fns'
 
 interface RouteContext {
@@ -38,14 +39,11 @@ export async function GET(request: Request, context: RouteContext) {
       return NextResponse.json({ error: 'Permission denied' }, { status: 403 })
     }
 
-    // Get form
-    const { data: form } = await adminClient
-      .from('forms')
-      .select('id, title, church_id')
-      .eq('id', formId)
-      .single()
-
-    if (!form || form.church_id !== profile.church_id) {
+    // Get form and verify ownership
+    const { data: form, error: ownershipError } = await verifyChurchOwnership<{
+      church_id: string; id: string; title: string
+    }>(adminClient, 'forms', formId, profile.church_id, 'id, title, church_id', 'Form not found')
+    if (ownershipError || !form) {
       return NextResponse.json({ error: 'Form not found' }, { status: 404 })
     }
 

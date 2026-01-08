@@ -6,6 +6,7 @@ import {
   isAuthError,
   requireAdminPermission,
 } from '@/lib/utils/server-auth'
+import { isAdminOrOwner } from '@/lib/permissions'
 import { templateSchema, type TemplateInput } from './schemas'
 
 export async function getEventTemplates() {
@@ -62,7 +63,7 @@ export async function getEventTemplates() {
 
   return {
     data: transformedTemplates,
-    canManage: ['owner', 'admin'].includes(profile.role),
+    canManage: isAdminOrOwner(profile.role),
   }
 }
 
@@ -130,8 +131,8 @@ export async function getEventTemplate(templateId: string) {
 
   return {
     data: template,
-    canManage: ['owner', 'admin'].includes(profile.role),
-    canDelete: ['owner', 'admin'].includes(profile.role),
+    canManage: isAdminOrOwner(profile.role),
+    canDelete: isAdminOrOwner(profile.role),
   }
 }
 

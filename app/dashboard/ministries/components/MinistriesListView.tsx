@@ -56,7 +56,7 @@ export function MinistriesListView({
             size="sm"
           />
         ) : (
-          <div className="space-y-1">
+          <div className="space-y-2">
             {filteredMinistries.map((ministry) => (
               <MinistryCard
                 key={ministry.id}

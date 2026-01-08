@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { TimePicker } from '@/components/ui/time-picker'
 import { MapPin, X, Eye, Lock, User } from 'lucide-react'
 import { SingleCampusPicker } from '@/components/CampusPicker'
 import type { TemplateFormData, Location, Person, Campus } from './types'
@@ -23,6 +24,7 @@ interface TemplateFormFieldsProps {
   onCampusChange: (campusId: string | null) => void
   onOpenLocationPicker: () => void
   onOpenResponsiblePersonPicker: () => void
+  timeFormat?: '12h' | '24h'
 }
 
 export function TemplateFormFields({
@@ -32,6 +34,7 @@ export function TemplateFormFields({
   onCampusChange,
   onOpenLocationPicker,
   onOpenResponsiblePersonPicker,
+  timeFormat = '24h',
 }: TemplateFormFieldsProps) {
   return (
     <>
@@ -103,19 +106,18 @@ export function TemplateFormFields({
 
       {/* Start Time & Duration */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="defaultStartTime">Default Start Time *</Label>
-          <Input
+        <div className="space-y-2 min-w-0">
+          <Label htmlFor="defaultStartTime">Start Time *</Label>
+          <TimePicker
             id="defaultStartTime"
-            type="time"
             value={formData.defaultStartTime}
-            onChange={(e) => updateField('defaultStartTime', e.target.value)}
-            className="w-full rounded-lg !border !border-black dark:!border-white"
-            required
+            onChange={(value) => updateField('defaultStartTime', value)}
+            timeFormat={timeFormat}
+            placeholder="Select time"
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 min-w-0">
           <Label htmlFor="duration">Duration</Label>
           <Select
             value={formData.defaultDurationMinutes.toString()}

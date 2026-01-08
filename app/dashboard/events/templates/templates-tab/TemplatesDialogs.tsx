@@ -22,6 +22,7 @@ interface TemplatesDialogsProps {
   onDeleteDialogOpenChange: (open: boolean) => void
   templateToDelete: Template | null
   onConfirmDelete: () => void
+  timeFormat?: '12h' | '24h'
 }
 
 export function TemplatesDialogs({
@@ -33,6 +34,7 @@ export function TemplatesDialogs({
   onDeleteDialogOpenChange,
   templateToDelete,
   onConfirmDelete,
+  timeFormat,
 }: TemplatesDialogsProps) {
   return (
     <>
@@ -42,6 +44,7 @@ export function TemplatesDialogs({
         onOpenChange={onTemplateDialogOpenChange}
         template={editingTemplate}
         onSuccess={onDialogSuccess}
+        timeFormat={timeFormat}
       />
 
       {/* Delete Confirmation Dialog */}

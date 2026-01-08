@@ -6,8 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Users, Pencil, Plus, Trash2 } from 'lucide-react'
 import { LoadingState } from '@/components/LoadingState'
 import { CampusBadge } from '@/components/CampusBadge'
-import { MemberPicker } from '../member-picker'
+import { MemberPicker } from '../MemberPicker'
 import { MemberRow } from './MemberRow'
+import { useIsMobile } from '@/lib/hooks'
 import type { Ministry, Role, MinistryMember } from '../types'
 
 interface ChurchMember {
@@ -62,12 +63,14 @@ export function MinistryDetailPanel({
   onUpdateMemberRoles,
   onRemoveMember,
 }: MinistryDetailPanelProps) {
+  const isMobile = useIsMobile()
+
   if (!ministry) {
     return (
       <Card className="border border-black dark:border-zinc-700">
-        <div className="flex flex-col items-center justify-center py-12">
-          <Users className="w-12 h-12 text-muted-foreground mb-4 opacity-50" />
-          <p className="text-muted-foreground">Select a ministry to view details</p>
+        <div className={`flex flex-col items-center justify-center ${isMobile ? 'py-8' : 'py-12'}`}>
+          <Users className={`text-muted-foreground mb-4 opacity-50 ${isMobile ? 'w-10 h-10' : 'w-12 h-12'}`} />
+          <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>Select a ministry to view details</p>
         </div>
       </Card>
     )
@@ -76,14 +79,14 @@ export function MinistryDetailPanel({
   return (
     <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-zinc-700 !gap-0">
       {/* Ministry Header */}
-      <div className="px-6 pt-2 pb-3 border-b">
-        <div className="flex items-center gap-3">
+      <div className={`border-b ${isMobile ? 'px-3 pt-2 pb-2' : 'px-6 pt-2 pb-3'}`}>
+        <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-3'}`}>
           <div
-            className="w-3 h-3 rounded-full flex-shrink-0"
+            className={`rounded-full flex-shrink-0 ${isMobile ? 'w-2.5 h-2.5' : 'w-3 h-3'}`}
             style={{ backgroundColor: ministry.color }}
           />
           <div className="flex-1 min-w-0">
-            <h2 className="text-xl font-bold flex items-center gap-2 flex-wrap">
+            <h2 className={`font-bold flex items-center gap-2 flex-wrap ${isMobile ? 'text-base' : 'text-xl'}`}>
               {ministry.name}
               {ministry.campus && (
                 <CampusBadge name={ministry.campus.name} color={ministry.campus.color} size="sm" />
@@ -92,18 +95,18 @@ export function MinistryDetailPanel({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7"
+                  className={isMobile ? 'h-6 w-6' : 'h-7 w-7'}
                   onClick={(e) => onEditMinistry(ministry, e)}
                 >
-                  <Pencil className="w-3 h-3" />
+                  <Pencil className={isMobile ? 'w-3 h-3' : 'w-3 h-3'} />
                 </Button>
               )}
             </h2>
-            {ministry.description && (
+            {ministry.description && !isMobile && (
               <p className="text-sm text-muted-foreground">{ministry.description}</p>
             )}
             {ministry.leader && (
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm mt-1'}`}>
                 Led by <span className="font-medium text-foreground">
                   {ministry.leader.first_name} {ministry.leader.last_name}
                 </span>
@@ -120,41 +123,41 @@ export function MinistryDetailPanel({
         </div>
       ) : (
         <Tabs defaultValue="roles" className="flex-1 flex flex-col overflow-hidden !gap-0">
-          <div className="px-6 py-0 pt-0 pb-0 mt-0 border-b">
+          <div className={`py-0 pt-0 pb-0 mt-0 border-b ${isMobile ? 'px-3' : 'px-6'}`}>
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="roles" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground">
+              <TabsTrigger value="roles" className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-sm' : ''}`}>
                 Roles ({roles.length})
               </TabsTrigger>
-              <TabsTrigger value="members" className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground">
+              <TabsTrigger value="members" className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-sm' : ''}`}>
                 Members ({members.length})
               </TabsTrigger>
             </TabsList>
           </div>
 
-          <TabsContent value="roles" className="flex-1 overflow-y-auto px-6 pt-4 pb-6 mt-0">
-            <div className="flex justify-end mb-4">
+          <TabsContent value="roles" className={`flex-1 overflow-y-auto mt-0 ${isMobile ? 'px-3 pt-3 pb-3' : 'px-6 pt-4 pb-6'}`}>
+            <div className={`flex justify-end ${isMobile ? 'mb-2' : 'mb-4'}`}>
               {canManage && (
                 <Button variant="outline-pill" className="!border !border-black dark:!border-white" size="sm" onClick={onAddRole}>
-                  <Plus className="w-4 h-4 mr-1" />
+                  <Plus className={isMobile ? 'w-3.5 h-3.5 mr-1' : 'w-4 h-4 mr-1'} />
                   Add Role
                 </Button>
               )}
             </div>
             {roles.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Users className="w-10 h-10 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">No roles defined yet</p>
+              <div className={`text-center text-muted-foreground ${isMobile ? 'py-6' : 'py-8'}`}>
+                <Users className={`mx-auto mb-2 opacity-50 ${isMobile ? 'w-8 h-8' : 'w-10 h-10'}`} />
+                <p className={isMobile ? 'text-xs' : 'text-sm'}>No roles defined yet</p>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className={isMobile ? 'space-y-1.5' : 'space-y-2'}>
                 {roles.map((role) => (
                   <div
                     key={role.id}
-                    className="flex items-center justify-between p-3 rounded-lg border"
+                    className={`flex items-center justify-between rounded-lg border ${isMobile ? 'p-2' : 'p-3'}`}
                   >
                     <div>
-                      <p className="font-medium">{role.name}</p>
-                      {role.description && (
+                      <p className={`font-medium ${isMobile ? 'text-sm' : ''}`}>{role.name}</p>
+                      {role.description && !isMobile && (
                         <p className="text-sm text-muted-foreground">{role.description}</p>
                       )}
                     </div>
@@ -163,18 +166,18 @@ export function MinistryDetailPanel({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8"
+                          className={isMobile ? 'h-7 w-7' : 'h-8 w-8'}
                           onClick={() => onEditRole(role)}
                         >
-                          <Pencil className="w-4 h-4" />
+                          <Pencil className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+                          className={`text-red-600 hover:text-red-700 hover:bg-red-50 ${isMobile ? 'h-7 w-7' : 'h-8 w-8'}`}
                           onClick={() => onDeleteRole(role)}
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
                         </Button>
                       </div>
                     )}
@@ -184,8 +187,8 @@ export function MinistryDetailPanel({
             )}
           </TabsContent>
 
-          <TabsContent value="members" className="flex-1 overflow-y-auto px-6 pt-4 pb-6 mt-0">
-            <div className="flex justify-end mb-4">
+          <TabsContent value="members" className={`flex-1 overflow-y-auto mt-0 ${isMobile ? 'px-3 pt-3 pb-3' : 'px-6 pt-4 pb-6'}`}>
+            <div className={`flex justify-end ${isMobile ? 'mb-2' : 'mb-4'}`}>
               {canManage && (
                 <MemberPicker
                   availableMembers={availableMembers}
@@ -198,12 +201,12 @@ export function MinistryDetailPanel({
               )}
             </div>
             {members.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Users className="w-10 h-10 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">No members assigned yet</p>
+              <div className={`text-center text-muted-foreground ${isMobile ? 'py-6' : 'py-8'}`}>
+                <Users className={`mx-auto mb-2 opacity-50 ${isMobile ? 'w-8 h-8' : 'w-10 h-10'}`} />
+                <p className={isMobile ? 'text-xs' : 'text-sm'}>No members assigned yet</p>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className={isMobile ? 'space-y-1.5' : 'space-y-2'}>
                 {members.map((member) => (
                   <MemberRow
                     key={member.id}

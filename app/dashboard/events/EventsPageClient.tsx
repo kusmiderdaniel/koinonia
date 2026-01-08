@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Calendar } from 'lucide-react'
 import { EmptyState } from '@/components/EmptyState'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { useMobileHeaderContent, useIsMobile } from '@/lib/hooks'
 import {
   CalendarViewSkeleton,
   TemplatesTabSkeleton,
@@ -16,6 +17,7 @@ import {
 import {
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
@@ -61,11 +63,12 @@ import {
   useEventHandlers,
   useEventDetailPanelProps,
 } from './hooks'
-import { EventsListViewWithDetail, EventDialogs, EventsHeader } from './components'
+import { EventsListViewWithDetail, EventDialogs, EventsHeader, EventsViewModeToggle } from './components'
+import { SongLyricsDialog } from './components/SongLyricsDialog'
 import { TaskDialog } from '@/app/dashboard/tasks/task-dialog'
 import { duplicateEvent } from './actions'
 import { toast } from 'sonner'
-import type { Event, Member } from './types'
+import type { Event, Member, AgendaItem } from './types'
 
 export interface EventsInitialData {
   events: Event[]
@@ -74,6 +77,7 @@ export interface EventsInitialData {
   campuses: { id: string; name: string; color: string }[]
   role: string
   firstDayOfWeek: number
+  timeFormat: '12h' | '24h'
 }
 
 interface EventsPageClientProps {
@@ -92,23 +96,51 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
 
   const [listFilter, setListFilter] = useState<'upcoming' | 'past'>('upcoming')
 
+  // Song lyrics dialog state
+  const [songLyricsDialogOpen, setSongLyricsDialogOpen] = useState(false)
+  const [songLyricsAgendaItem, setSongLyricsAgendaItem] = useState<AgendaItem | null>(null)
+
+  const handleSongClick = (item: AgendaItem) => {
+    if (item.song_id) {
+      setSongLyricsAgendaItem(item)
+      setSongLyricsDialogOpen(true)
+    }
+  }
+
   // Handle event query param from notification navigation
   useEffect(() => {
     const eventId = searchParams.get('event')
     if (eventId && !hasHandledUrlParam.current) {
       hasHandledUrlParam.current = true
       eventDetail.loadEventDetail(eventId)
-      router.replace('/dashboard/events', { scroll: false })
+      // Remove event param but preserve view param
+      const params = new URLSearchParams(searchParams.toString())
+      params.delete('event')
+      const newUrl = params.toString() ? `/dashboard/events?${params.toString()}` : '/dashboard/events'
+      router.replace(newUrl, { scroll: false })
     }
   }, [searchParams, eventDetail, router])
 
-  // Drag and drop sensors
+  // Drag and drop sensors (with touch support for mobile)
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   )
+
+  // Check if on mobile
+  const isMobile = useIsMobile()
 
   // Destructure commonly used values
   const { selectedEvent } = eventDetail
@@ -116,7 +148,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
     events,
     error,
     searchQuery,
-    viewMode,
+    viewMode: rawViewMode,
     upcomingEvents,
     pastEvents,
     canManage,
@@ -124,6 +156,27 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
     canDelete,
     firstDayOfWeek,
   } = eventList
+
+  // On mobile, force list view if calendar/matrix is selected (they don't work well on small screens)
+  const viewMode = isMobile && (rawViewMode === 'calendar' || rawViewMode === 'matrix')
+    ? 'list'
+    : rawViewMode
+
+  // Set mobile header content with view mode toggle
+  const { setContent: setMobileHeaderContent, clear: clearMobileHeaderContent } = useMobileHeaderContent()
+
+  useEffect(() => {
+    setMobileHeaderContent(
+      <EventsViewModeToggle
+        viewMode={viewMode}
+        onViewModeChange={eventList.setViewMode}
+        canManageContent={canManageContent}
+        compact
+        mobileOnly
+      />
+    )
+    return () => clearMobileHeaderContent()
+  }, [viewMode, canManageContent, eventList.setViewMode, setMobileHeaderContent, clearMobileHeaderContent])
 
   // Build EventDetailPanel props using shared hook
   const detailPanelProps = useEventDetailPanelProps({
@@ -156,13 +209,18 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
     handleAgendaLeaderChange: handlers.handleAgendaLeaderChange,
     handleAgendaDurationChange: handlers.handleAgendaDurationChange,
     handleAgendaDescriptionChange: handlers.handleAgendaDescriptionChange,
+    handleAgendaArrangementChange: handlers.handleAgendaArrangementChange,
     handleSongPlaceholderClick: handlers.handleSongPlaceholderClick,
+    handleSongClick,
+    handleMoveAgendaItemUp: eventDetail.handleMoveAgendaItemUp,
+    handleMoveAgendaItemDown: eventDetail.handleMoveAgendaItemDown,
     handleAddTask: handlers.handleAddTask,
     taskRefreshKey: handlers.taskRefreshKey,
     taskMembers: initialData.churchMembers,
     taskMinistries: initialData.ministries,
     taskCampuses: initialData.campuses,
     weekStartsOn: firstDayOfWeek as 0 | 1 | 2 | 3 | 4 | 5 | 6,
+    timeFormat: initialData.timeFormat,
   })
 
   return (
@@ -186,7 +244,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
       <div className="flex-1 min-h-0">
         {viewMode === 'templates' ? (
           <ErrorBoundary>
-            <TemplatesTab />
+            <TemplatesTab timeFormat={initialData.timeFormat} />
           </ErrorBoundary>
         ) : viewMode === 'matrix' ? (
           <ErrorBoundary>
@@ -211,6 +269,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
             <CalendarView
               events={events}
               firstDayOfWeek={firstDayOfWeek}
+              timeFormat={initialData.timeFormat}
               onEventSelect={handlers.handleSelectEvent}
               leftPanelContent={
                 detailPanelProps ? (
@@ -231,6 +290,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
             onSelectEvent={handlers.handleSelectEvent}
             onClearSelection={eventDetail.closeEventDetail}
             canManage={canManage}
+            timeFormat={initialData.timeFormat}
             onCreateEvent={() => dialogs.openCreateDialog()}
             onDuplicateEvent={async (event) => {
               const result = await duplicateEvent(event.id)
@@ -262,6 +322,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
       {/* Dialogs */}
       <EventDialogs
         selectedEvent={selectedEvent}
+        timeFormat={initialData.timeFormat}
         dialogOpen={dialogs.dialogOpen}
         setDialogOpen={dialogs.setDialogOpen}
         editingEvent={dialogs.editingEvent}
@@ -335,6 +396,15 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
         onSongEditorReplaceSong={handlers.handleSongEditorReplaceSong}
       />
 
+      {/* Song Lyrics Dialog */}
+      <SongLyricsDialog
+        open={songLyricsDialogOpen}
+        onOpenChange={setSongLyricsDialogOpen}
+        songId={songLyricsAgendaItem?.song_id || null}
+        songTitle={songLyricsAgendaItem?.title || ''}
+        arrangementId={songLyricsAgendaItem?.arrangement_id || null}
+      />
+
       {/* Task Dialog for adding tasks to events */}
       <TaskDialog
         open={handlers.taskDialogOpen}
@@ -362,6 +432,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
         defaultEventId={selectedEvent?.id}
         defaultCampusId={selectedEvent?.campuses?.[0]?.id}
         weekStartsOn={firstDayOfWeek as 0 | 1 | 2 | 3 | 4 | 5 | 6}
+        timeFormat={initialData.timeFormat}
       />
       </div>
     </div>

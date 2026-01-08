@@ -11,12 +11,14 @@ import type { Event } from '../types'
 interface SelectedDayPanelProps {
   selectedDate: Date | null
   events: Event[]
+  timeFormat?: '12h' | '24h'
   onEventSelect?: (event: Event) => void
 }
 
 export function SelectedDayPanel({
   selectedDate,
   events,
+  timeFormat = '24h',
   onEventSelect,
 }: SelectedDayPanelProps) {
   return (
@@ -66,7 +68,7 @@ export function SelectedDayPanel({
                             )}
                           </div>
                           <p className="text-sm text-muted-foreground">
-                            {formatTimeFromDate(startTime)}
+                            {formatTimeFromDate(startTime, timeFormat)}
                             {event.location && ` • ${event.location.name}`}
                           </p>
                           {event.totalPositions > 0 && (

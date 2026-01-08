@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { Layers, Check } from 'lucide-react'
+import { useIsMobile } from '@/lib/hooks'
 
 export type GroupByField = 'none' | 'priority' | 'assignee' | 'ministry' | 'campus'
 
@@ -16,15 +17,16 @@ interface GroupBySelectorProps {
   onChange: (value: GroupByField) => void
 }
 
-const groupByOptions: { value: GroupByField; label: string }[] = [
-  { value: 'none', label: 'No grouping' },
-  { value: 'priority', label: 'Priority' },
-  { value: 'assignee', label: 'Assignee' },
-  { value: 'ministry', label: 'Ministry' },
-  { value: 'campus', label: 'Campus' },
+const groupByOptions: { value: GroupByField; label: string; shortLabel: string }[] = [
+  { value: 'none', label: 'No grouping', shortLabel: 'None' },
+  { value: 'priority', label: 'Priority', shortLabel: 'Pri' },
+  { value: 'assignee', label: 'Assignee', shortLabel: 'Asgn' },
+  { value: 'ministry', label: 'Ministry', shortLabel: 'Min' },
+  { value: 'campus', label: 'Campus', shortLabel: 'Cmp' },
 ]
 
 export function GroupBySelector({ value, onChange }: GroupBySelectorProps) {
+  const isMobile = useIsMobile()
   const currentOption = groupByOptions.find((opt) => opt.value === value)
   const hasGrouping = value !== 'none'
 
@@ -34,17 +36,15 @@ export function GroupBySelector({ value, onChange }: GroupBySelectorProps) {
         <Button
           variant="outline"
           size="sm"
-          className={`gap-2 w-full sm:w-auto justify-center !border !border-black dark:!border-zinc-700 ${hasGrouping ? '!border-brand text-brand' : ''}`}
+          className={`gap-1.5 w-full sm:w-auto justify-center !border !border-black dark:!border-zinc-700 ${hasGrouping ? '!border-brand text-brand' : ''}`}
         >
-          <Layers className="h-4 w-4" />
+          <Layers className={isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
           {hasGrouping ? (
-            <span className="inline-flex items-center gap-1">
-              <span className="bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded">
-                {currentOption?.label}
-              </span>
+            <span className={`bg-primary text-primary-foreground px-1.5 py-0.5 rounded ${isMobile ? 'text-[10px]' : 'text-xs'}`}>
+              {isMobile ? currentOption?.shortLabel : currentOption?.label}
             </span>
           ) : (
-            'Group'
+            <span className={isMobile ? 'text-xs' : ''}>Group</span>
           )}
         </Button>
       </DropdownMenuTrigger>

@@ -5,6 +5,7 @@ import {
   getAuthenticatedUserWithProfile,
   isAuthError,
   requireManagePermission,
+  verifyChurchOwnership,
 } from '@/lib/utils/server-auth'
 import { formFieldSchema, type FormFieldInput } from '@/lib/validations/forms'
 
@@ -15,15 +16,10 @@ export async function getFormFields(formId: string) {
   const { profile, adminClient } = auth
 
   // Verify form belongs to church
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', formId)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', formId, profile.church_id, 'church_id', 'Form not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   const { data: fields, error } = await adminClient
     .from('form_fields')
@@ -55,16 +51,11 @@ export async function createFormField(formId: string, data: Omit<FormFieldInput,
   const permError = requireManagePermission(profile.role, 'edit forms')
   if (permError) return { error: permError }
 
-  // Verify form belongs to church and is not published
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id, status')
-    .eq('id', formId)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  // Verify form belongs to church
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', formId, profile.church_id, 'church_id', 'Form not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   const { data: field, error } = await adminClient
     .from('form_fields')
@@ -112,15 +103,10 @@ export async function updateFormField(fieldId: string, data: Partial<FormFieldIn
   }
 
   // Verify form belongs to church
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', field.form_id)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Field not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', field.form_id, profile.church_id, 'church_id', 'Field not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   const updateData: Record<string, unknown> = {}
   if (data.type !== undefined) updateData.type = data.type
@@ -167,15 +153,10 @@ export async function deleteFormField(fieldId: string) {
   }
 
   // Verify form belongs to church
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', field.form_id)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Field not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', field.form_id, profile.church_id, 'church_id', 'Field not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   const formId = field.form_id
 
@@ -204,15 +185,10 @@ export async function reorderFormFields(formId: string, fieldIds: string[]) {
   if (permError) return { error: permError }
 
   // Verify form belongs to church
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', formId)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', formId, profile.church_id, 'church_id', 'Form not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   // Update sort_order for each field
   const updates = fieldIds.map((id, index) =>
@@ -249,15 +225,10 @@ export async function bulkSaveFormFields(
   if (permError) return { error: permError }
 
   // Verify form belongs to church
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', formId)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', formId, profile.church_id, 'church_id', 'Form not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   // Process fields
   const toCreate: typeof fields = []

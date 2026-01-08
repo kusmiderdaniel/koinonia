@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { InboxPageClient } from './InboxPageClient'
 import { getNotifications, getUnreadCount, getActionableCount } from '@/app/dashboard/notifications/actions'
+import { hasPageAccess } from '@/lib/permissions'
 
 export default async function InboxPage() {
   const supabase = await createClient()
@@ -9,6 +10,18 @@ export default async function InboxPage() {
 
   if (!user) {
     redirect('/auth/signin')
+  }
+
+  // Check page access
+  const adminClient = createServiceRoleClient()
+  const { data: profile } = await adminClient
+    .from('profiles')
+    .select('role')
+    .eq('user_id', user.id)
+    .single()
+
+  if (!profile || !hasPageAccess(profile.role, 'inbox')) {
+    redirect('/dashboard')
   }
 
   // Fetch notifications and counts in parallel

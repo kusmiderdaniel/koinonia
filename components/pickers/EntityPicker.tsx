@@ -111,7 +111,7 @@ function EntityPickerInner<T extends EntityBase>({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className={cn('sm:max-w-md bg-white dark:bg-zinc-950', className)}>
+      <DialogContent className={cn('sm:max-w-md bg-white dark:bg-zinc-950', className)} onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && (
@@ -127,6 +127,7 @@ function EntityPickerInner<T extends EntityBase>({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
+            autoFocus={false}
           />
         </div>
 
@@ -177,7 +178,7 @@ function EntityPickerInner<T extends EntityBase>({
 
         {/* Actions */}
         <div className="flex justify-end pt-2">
-          <Button variant="outline" onClick={() => handleOpenChange(false)}>
+          <Button variant="outline-pill" className="!border !border-black dark:!border-white" onClick={() => handleOpenChange(false)}>
             Cancel
           </Button>
         </div>

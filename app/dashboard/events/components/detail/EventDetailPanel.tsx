@@ -4,6 +4,7 @@ import { memo, useMemo } from 'react'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ListOrdered, Users, CheckSquare } from 'lucide-react'
+import { useIsMobile } from '@/lib/hooks'
 import { EventHeader } from './EventHeader'
 import { AgendaTab } from './AgendaTab'
 import { PositionsTab } from './PositionsTab'
@@ -20,6 +21,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
   canManage,
   canManageContent,
   canDelete,
+  timeFormat = '24h',
   sensors,
   formatDuration,
   onClose,
@@ -34,7 +36,11 @@ export const EventDetailPanel = memo(function EventDetailPanel({
   onAgendaLeaderChange,
   onAgendaDurationChange,
   onAgendaDescriptionChange,
+  onAgendaArrangementChange,
   onSongPlaceholderClick,
+  onSongClick,
+  onMoveAgendaItemUp,
+  onMoveAgendaItemDown,
   onAddPosition,
   onEditPosition,
   onDeletePosition,
@@ -49,6 +55,8 @@ export const EventDetailPanel = memo(function EventDetailPanel({
   weekStartsOn = 0,
   initialTasks,
 }: EventDetailPanelProps) {
+  const isMobile = useIsMobile()
+
   // Track volunteers assigned to multiple positions
   const multiAssignedProfiles = useMemo(() => {
     const profileAssignments = new Map<string, string[]>()
@@ -95,6 +103,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
         selectedEvent={selectedEvent}
         canManage={canManage}
         canDelete={canDelete}
+        timeFormat={timeFormat}
         onClose={onClose}
         onEdit={onEdit}
         onDelete={onDelete}
@@ -105,27 +114,27 @@ export const EventDetailPanel = memo(function EventDetailPanel({
         onValueChange={setDetailTab}
         className="flex-1 flex flex-col min-h-0 overflow-hidden gap-0"
       >
-        <div className="px-6 py-3 border-b">
+        <div className={`border-b ${isMobile ? 'px-2 py-1' : 'px-6 py-3'}`}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger
               value="agenda"
-              className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
-              <ListOrdered className="w-4 h-4" />
+              <ListOrdered className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
               Agenda
             </TabsTrigger>
             <TabsTrigger
               value="positions"
-              className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
-              <Users className="w-4 h-4" />
+              <Users className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
               Positions
             </TabsTrigger>
             <TabsTrigger
               value="tasks"
-              className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
-              <CheckSquare className="w-4 h-4" />
+              <CheckSquare className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
               Tasks
             </TabsTrigger>
           </TabsList>
@@ -148,7 +157,11 @@ export const EventDetailPanel = memo(function EventDetailPanel({
             onAgendaLeaderChange={onAgendaLeaderChange}
             onAgendaDurationChange={onAgendaDurationChange}
             onAgendaDescriptionChange={onAgendaDescriptionChange}
+            onAgendaArrangementChange={onAgendaArrangementChange}
             onSongPlaceholderClick={onSongPlaceholderClick}
+            onSongClick={onSongClick}
+            onMoveAgendaItemUp={onMoveAgendaItemUp}
+            onMoveAgendaItemDown={onMoveAgendaItemDown}
           />
         </TabsContent>
 

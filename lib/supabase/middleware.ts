@@ -43,6 +43,7 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/api') &&
     !request.nextUrl.pathname.startsWith('/invitation') &&
     !request.nextUrl.pathname.startsWith('/forms') &&
+    !request.nextUrl.pathname.startsWith('/links') &&
     request.nextUrl.pathname !== '/'
   ) {
     const url = request.nextUrl.clone()
@@ -59,6 +60,7 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/api') &&
     !request.nextUrl.pathname.startsWith('/invitation') &&
     !request.nextUrl.pathname.startsWith('/forms') &&
+    !request.nextUrl.pathname.startsWith('/links') &&
     request.nextUrl.pathname !== '/'
   ) {
     // Check for approved profile (using user_id)

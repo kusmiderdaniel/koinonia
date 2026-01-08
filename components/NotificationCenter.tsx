@@ -20,6 +20,7 @@ import {
 } from '@/app/dashboard/notifications/actions'
 import type { Notification } from '@/types/notifications'
 import { toast } from 'sonner'
+import { onNotificationRefresh } from '@/lib/events/notifications'
 
 export function NotificationCenter() {
   const router = useRouter()
@@ -90,6 +91,27 @@ export function NotificationCenter() {
     const interval = setInterval(fetchCounts, 30000)
     return () => clearInterval(interval)
   }, [])
+
+  // Listen for notification refresh events (e.g., when invitation is responded to)
+  useEffect(() => {
+    const fetchCounts = async () => {
+      const [unreadResult, actionableResult] = await Promise.all([
+        getUnreadCount(),
+        getActionableCount(),
+      ])
+      if (typeof unreadResult.count === 'number') {
+        setUnreadBadgeCount(unreadResult.count)
+      }
+      if (typeof actionableResult.count === 'number') {
+        setActionableCount(actionableResult.count)
+      }
+      // Also refresh notifications if dropdown is open
+      if (isOpen) {
+        fetchNotifications()
+      }
+    }
+    return onNotificationRefresh(fetchCounts)
+  }, [isOpen, fetchNotifications])
 
   const handleMarkAllRead = async () => {
     setIsMarkingAllRead(true)

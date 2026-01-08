@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic'
 import { Card } from '@/components/ui/card'
 import { FileText } from 'lucide-react'
 import { DetailPanelSkeleton } from '@/components/DynamicLoadingFallback'
-import { MobileBackHeader } from '@/components/MobileBackHeader'
 import { useIsMobile } from '@/lib/hooks'
 import { useTemplatesTabState } from './useTemplatesTabState'
 import { TemplatesList } from './TemplatesList'
@@ -21,7 +20,11 @@ const TemplateDetailPanel = dynamic(
   { loading: () => <DetailPanelSkeleton />, ssr: false }
 )
 
-export const TemplatesTab = memo(function TemplatesTab() {
+interface TemplatesTabProps {
+  timeFormat?: '12h' | '24h'
+}
+
+export const TemplatesTab = memo(function TemplatesTab({ timeFormat }: TemplatesTabProps) {
   const isMobile = useIsMobile()
   const state = useTemplatesTabState()
 
@@ -35,6 +38,7 @@ export const TemplatesTab = memo(function TemplatesTab() {
       onDeleteDialogOpenChange={state.setDeleteDialogOpen}
       templateToDelete={state.templateToDelete}
       onConfirmDelete={state.handleConfirmDelete}
+      timeFormat={timeFormat}
     />
   )
 
@@ -43,6 +47,7 @@ export const TemplatesTab = memo(function TemplatesTab() {
       template={state.selectedTemplate}
       canManage={state.canManage}
       canDelete={state.canDelete}
+      timeFormat={timeFormat}
       onEdit={state.handleEditTemplate}
       onDelete={() =>
         state.handleDeleteClick(state.selectedTemplate as unknown as Template)
@@ -57,11 +62,7 @@ export const TemplatesTab = memo(function TemplatesTab() {
     if (state.selectedTemplate) {
       return (
         <div className="h-full flex flex-col">
-          <MobileBackHeader
-            title={state.selectedTemplate.name}
-            onBack={state.handleCloseDetail}
-          />
-          <div className="flex-1 min-h-0">{detailContent}</div>
+          {detailContent}
           {dialogs}
         </div>
       )
@@ -77,6 +78,7 @@ export const TemplatesTab = memo(function TemplatesTab() {
           isLoading={state.isLoading}
           canManage={state.canManage}
           isMobile={isMobile}
+          timeFormat={timeFormat}
           onSearchChange={state.setSearchQuery}
           onSelectTemplate={state.handleSelectTemplate}
           onCreateTemplate={state.handleCreateTemplate}
@@ -100,6 +102,7 @@ export const TemplatesTab = memo(function TemplatesTab() {
         isLoading={state.isLoading}
         canManage={state.canManage}
         isMobile={isMobile}
+        timeFormat={timeFormat}
         onSearchChange={state.setSearchQuery}
         onSelectTemplate={state.handleSelectTemplate}
         onCreateTemplate={state.handleCreateTemplate}

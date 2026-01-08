@@ -7,11 +7,13 @@ import { Music, Users } from 'lucide-react'
 import {
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
+import { useIsMobile } from '@/lib/hooks'
 import {
   removeTemplateAgendaItem,
   reorderTemplateAgendaItems,
@@ -49,11 +51,13 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
   template,
   canManage,
   canDelete,
+  timeFormat,
   onEdit,
   onDelete,
   onClose,
   onTemplateUpdated,
 }: TemplateDetailPanelProps) {
+  const isMobile = useIsMobile()
   const [activeTab, setActiveTab] = useState('agenda')
   const [agendaItemDialogOpen, setAgendaItemDialogOpen] = useState(false)
   const [editingAgendaItem, setEditingAgendaItem] = useState<AgendaItem | null>(null)
@@ -79,6 +83,12 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -158,6 +168,40 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
     }
   }
 
+  const handleMoveItemUp = async (itemId: string) => {
+    const items = [...template.event_template_agenda_items].sort((a, b) => a.sort_order - b.sort_order)
+    const index = items.findIndex((item) => item.id === itemId)
+    if (index <= 0) return
+
+    // Swap with previous item
+    const temp = items[index]
+    items[index] = items[index - 1]
+    items[index - 1] = temp
+
+    const newOrder = items.map((item) => item.id)
+    const result = await reorderTemplateAgendaItems(template.id, newOrder)
+    if (!result.error) {
+      onTemplateUpdated()
+    }
+  }
+
+  const handleMoveItemDown = async (itemId: string) => {
+    const items = [...template.event_template_agenda_items].sort((a, b) => a.sort_order - b.sort_order)
+    const index = items.findIndex((item) => item.id === itemId)
+    if (index === -1 || index >= items.length - 1) return
+
+    // Swap with next item
+    const temp = items[index]
+    items[index] = items[index + 1]
+    items[index + 1] = temp
+
+    const newOrder = items.map((item) => item.id)
+    const result = await reorderTemplateAgendaItems(template.id, newOrder)
+    if (!result.error) {
+      onTemplateUpdated()
+    }
+  }
+
   const agendaItems = template.event_template_agenda_items || []
   const positions = template.event_template_positions || []
 
@@ -168,6 +212,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
         canManage={canManage}
         canDelete={canDelete}
         isDuplicating={isDuplicating}
+        timeFormat={timeFormat}
         onEdit={onEdit}
         onDelete={onDelete}
         onClose={onClose}
@@ -180,26 +225,26 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
         onValueChange={setActiveTab}
         className="flex-1 flex flex-col min-h-0 overflow-hidden gap-0"
       >
-        <div className="px-6 py-3 border-b">
+        <div className={`border-b ${isMobile ? 'px-2 py-1' : 'px-6 py-3'}`}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger
               value="agenda"
-              className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
-              <Music className="w-4 h-4" />
+              <Music className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
               Agenda
             </TabsTrigger>
             <TabsTrigger
               value="positions"
-              className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
-              <Users className="w-4 h-4" />
+              <Users className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
               Positions
             </TabsTrigger>
           </TabsList>
         </div>
 
-        <TabsContent value="agenda" className="flex flex-col min-h-0 overflow-hidden mt-0 px-6">
+        <TabsContent value="agenda" className={`flex flex-col min-h-0 overflow-hidden mt-0 ${isMobile ? 'px-3' : 'px-6'}`}>
           <TemplateAgendaSection
             agendaItems={agendaItems}
             canManage={canManage}
@@ -208,10 +253,12 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
             onAddItem={handleAddAgendaItem}
             onEditItem={handleEditAgendaItem}
             onRemoveItem={handleRemoveAgendaItem}
+            onMoveItemUp={handleMoveItemUp}
+            onMoveItemDown={handleMoveItemDown}
           />
         </TabsContent>
 
-        <TabsContent value="positions" className="flex flex-col min-h-0 overflow-hidden mt-0 px-6">
+        <TabsContent value="positions" className={`flex flex-col min-h-0 overflow-hidden mt-0 ${isMobile ? 'px-3' : 'px-6'}`}>
           <TemplatePositionsSection
             positions={positions}
             canManage={canManage}

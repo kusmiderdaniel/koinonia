@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { queryKeys, useCacheInvalidation } from '@/lib/hooks'
+import { isLeaderOrAbove, isAdminOrOwner } from '@/lib/permissions'
 import { getMinistries } from '../actions'
 import type { Ministry } from '../types'
 
@@ -96,12 +97,12 @@ export function useMinistryList(initialData?: MinistriesInitialData): UseMinistr
   )
 
   const canManage = useMemo(
-    () => userRole === 'admin' || userRole === 'owner',
+    () => isAdminOrOwner(userRole),
     [userRole]
   )
 
   const canManageDetail = useMemo(
-    () => ['owner', 'admin', 'leader'].includes(userRole),
+    () => isLeaderOrAbove(userRole),
     [userRole]
   )
 

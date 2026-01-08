@@ -5,9 +5,8 @@ import { UseFormReturn } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { ChevronRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Loader2, KeyRound } from 'lucide-react'
 import type { FormData } from './types'
 
 interface JoinCodeStepProps {
@@ -34,15 +33,23 @@ export function JoinCodeStep({
   } = form
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <CardContent className="space-y-6">
-        {error && (
-          <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
-        <div className="space-y-2">
+      {/* Join Code Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3 pb-2 border-b">
+          <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+            <KeyRound className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          </div>
+          <h3 className="font-semibold">Enter Join Code</h3>
+        </div>
+
+        <div className="space-y-3">
           <Label htmlFor="joinCode" className="sr-only">
             Join Code
           </Label>
@@ -53,13 +60,13 @@ export function JoinCodeStep({
             onChange={onJoinCodeChange}
             value={joinCodeValue}
             disabled={isLoading}
-            className="text-center text-2xl font-mono tracking-[0.5em] uppercase h-14"
+            className="text-center text-2xl font-mono tracking-[0.5em] uppercase h-16 border-2"
             maxLength={6}
             autoComplete="off"
             autoCapitalize="characters"
           />
-          <p className="text-xs text-muted-foreground text-center">
-            Example: 6YU94P
+          <p className="text-sm text-muted-foreground text-center">
+            Ask your church admin for the 6-character code
           </p>
           {errors.joinCode && (
             <p className="text-sm text-red-500 text-center">
@@ -67,26 +74,41 @@ export function JoinCodeStep({
             </p>
           )}
         </div>
+      </div>
 
-        <div className="flex gap-4 pt-4">
-          <Button
-            type="button"
-            variant="outline-pill"
-            className="flex-1"
-            asChild
-          >
-            <Link href="/onboarding">Back</Link>
-          </Button>
-          <Button
-            type="submit"
-            className="flex-1 !rounded-full !bg-brand hover:!bg-brand/90 text-white"
-            disabled={isLoading || joinCodeValue.length !== 6}
-          >
-            {isLoading ? 'Validating...' : 'Continue'}
-            {!isLoading && <ChevronRight className="ml-1 h-4 w-4" />}
-          </Button>
-        </div>
-      </CardContent>
+      {/* Actions */}
+      <div className="flex flex-col sm:flex-row gap-4 pt-4">
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          className="sm:flex-1 h-14 text-base !rounded-full !border-2 !border-black dark:!border-white gap-2 order-2 sm:order-1"
+          asChild
+        >
+          <Link href="/onboarding">
+            <ArrowLeft className="w-5 h-5" />
+            Back
+          </Link>
+        </Button>
+        <Button
+          type="submit"
+          size="lg"
+          className="sm:flex-1 h-14 text-base !rounded-full !bg-brand hover:!bg-brand/90 text-white gap-2 order-1 sm:order-2"
+          disabled={isLoading || joinCodeValue.length !== 6}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Validating...
+            </>
+          ) : (
+            <>
+              Continue
+              <ArrowRight className="w-5 h-5" />
+            </>
+          )}
+        </Button>
+      </div>
     </form>
   )
 }

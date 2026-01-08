@@ -28,25 +28,11 @@ export function handleSecondsChange(
 }
 
 /**
- * Parse duration from minutes and seconds inputs
+ * Parse duration from minutes and seconds form inputs
+ * Note: Different from parseDuration in format.ts which parses MM:SS strings
  */
 export function parseDuration(minutes: string, seconds: string): number {
   const mins = parseInt(minutes, 10) || 0
   const secs = parseInt(seconds, 10) || 0
   return mins * 60 + secs
-}
-
-/**
- * Format total seconds to minutes and seconds strings
- */
-export function formatDurationInputs(totalSeconds: number): {
-  minutes: string
-  seconds: string
-} {
-  const mins = Math.floor(totalSeconds / 60)
-  const secs = totalSeconds % 60
-  return {
-    minutes: mins.toString(),
-    seconds: secs.toString().padStart(2, '0'),
-  }
 }

@@ -10,6 +10,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { ChevronDown, Trash2 } from 'lucide-react'
+import { useIsMobile } from '@/lib/hooks'
 import type { Role, MinistryMember } from '../types'
 
 interface MemberRowProps {
@@ -27,6 +28,7 @@ export const MemberRow = memo(function MemberRow({
   onUpdateRoles,
   onRemove,
 }: MemberRowProps) {
+  const isMobile = useIsMobile()
   const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>(
     member.roles.map((r) => r.id)
   )
@@ -50,32 +52,32 @@ export const MemberRow = memo(function MemberRow({
   }
 
   return (
-    <div className="flex items-center justify-between p-3 rounded-lg border gap-2">
-      <div className="flex items-center gap-3 min-w-0 flex-1">
+    <div className={`flex items-center justify-between rounded-lg border gap-2 ${isMobile ? 'p-2' : 'p-3'}`}>
+      <div className="flex items-center gap-2 min-w-0 flex-1">
         <div className="min-w-0">
-          <p className="font-medium truncate">
+          <p className={`font-medium truncate ${isMobile ? 'text-sm' : ''}`}>
             {member.profile.first_name} {member.profile.last_name}
           </p>
-          {member.profile.email && (
+          {member.profile.email && !isMobile && (
             <p className="text-sm text-muted-foreground truncate hidden md:block">
               {member.profile.email}
             </p>
           )}
         </div>
       </div>
-      <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+      <div className="flex items-center gap-1 flex-shrink-0">
         {canManage && allRoles.length > 0 ? (
           <Popover open={isOpen} onOpenChange={setIsOpen}>
             <PopoverTrigger asChild>
-              <Button variant="ghost" className="justify-between min-w-[80px] md:min-w-[140px] !border !border-black dark:!border-white text-sm">
+              <Button variant="ghost" className={`justify-between !border !border-black dark:!border-white ${isMobile ? 'min-w-[70px] text-xs h-8' : 'min-w-[140px] text-sm'}`}>
                 {member.roles.length === 0 ? (
                   <span className="text-muted-foreground">No roles</span>
                 ) : member.roles.length === 1 ? (
-                  <span>{member.roles[0].name}</span>
+                  <span className="truncate">{member.roles[0].name}</span>
                 ) : (
                   <span>{member.roles.length} roles</span>
                 )}
-                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                <ChevronDown className={`shrink-0 opacity-50 ${isMobile ? 'ml-1 h-3 w-3' : 'ml-2 h-4 w-4'}`} />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-56 p-3 bg-white dark:bg-zinc-950 border border-black dark:border-white" align="end">
@@ -109,10 +111,10 @@ export const MemberRow = memo(function MemberRow({
         ) : (
           <div className="flex flex-wrap gap-1">
             {member.roles.length === 0 ? (
-              <span className="text-sm text-muted-foreground">No roles</span>
+              <span className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>No roles</span>
             ) : (
               member.roles.map((role) => (
-                <Badge key={role.id} variant="secondary">
+                <Badge key={role.id} variant="secondary" className={isMobile ? 'text-xs' : ''}>
                   {role.name}
                 </Badge>
               ))
@@ -123,10 +125,10 @@ export const MemberRow = memo(function MemberRow({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+            className={`text-red-600 hover:text-red-700 hover:bg-red-50 ${isMobile ? 'h-7 w-7' : 'h-8 w-8'}`}
             onClick={onRemove}
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
           </Button>
         )}
       </div>

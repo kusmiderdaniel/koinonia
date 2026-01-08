@@ -11,8 +11,8 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { TagPicker } from '../tag-picker'
-import { ArtistPicker } from '../artist-picker'
+import { TagPicker } from '../TagPicker'
+import { ArtistPicker } from '../ArtistPicker'
 import { KeyPicker } from './KeyPicker'
 import { useSongDialogState } from './useSongDialogState'
 import type { SongDialogProps } from './types'

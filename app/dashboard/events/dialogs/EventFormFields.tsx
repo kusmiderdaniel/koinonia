@@ -14,8 +14,9 @@ import {
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { MapPin, X, User, Eye, Lock, Building2 } from 'lucide-react'
-import { LocationPicker } from '../location-picker'
-import { ResponsiblePersonPicker } from '../responsible-person-picker'
+import { useIsMobile } from '@/lib/hooks'
+import { LocationPicker } from '../LocationPicker'
+import { ResponsiblePersonPicker } from '../ResponsiblePersonPicker'
 import { CampusPicker } from '@/components/CampusPicker'
 import { InviteUsersPicker } from './InviteUsersPicker'
 import { EVENT_TYPES, VISIBILITY_LEVELS } from './constants'
@@ -47,16 +48,19 @@ export const EventFormFields = memo(function EventFormFields({
   endTime,
   onStartTimeChange,
   setEndTime,
+  timeFormat = '24h',
   error,
 }: EventFormFieldsProps) {
+  const isMobile = useIsMobile()
+
   return (
-    <div className="space-y-4">
+    <div className={isMobile ? 'space-y-3' : 'space-y-4'}>
       {error && (
-        <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">{error}</div>
+        <div className={`text-red-600 bg-red-50 rounded-md ${isMobile ? 'text-xs p-2' : 'text-sm p-3'}`}>{error}</div>
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="title">Event Title *</Label>
+      <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
+        <Label htmlFor="title" className={isMobile ? 'text-sm' : ''}>Event Title *</Label>
         <Input
           id="title"
           value={title}
@@ -66,9 +70,9 @@ export const EventFormFields = memo(function EventFormFields({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="eventType">Event Type *</Label>
+      <div className={`grid grid-cols-2 ${isMobile ? 'gap-3' : 'gap-4'}`}>
+        <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
+          <Label htmlFor="eventType" className={isMobile ? 'text-sm' : ''}>Event Type *</Label>
           <Select value={eventType} onValueChange={setEventType}>
             <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
               <SelectValue />
@@ -90,8 +94,8 @@ export const EventFormFields = memo(function EventFormFields({
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="visibility">Visibility</Label>
+        <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
+          <Label htmlFor="visibility" className={isMobile ? 'text-sm' : ''}>Visibility</Label>
           <Select value={visibility} onValueChange={setVisibility}>
             <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white [&_[data-description]]:hidden">
               <div className="flex items-center gap-2">
@@ -131,8 +135,8 @@ export const EventFormFields = memo(function EventFormFields({
       </div>
 
       {/* Campus Selection */}
-      <div className="space-y-2">
-        <Label>Campus</Label>
+      <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
+        <Label className={isMobile ? 'text-sm' : ''}>Campus</Label>
         {campusesLoading ? (
           <div className="flex items-center gap-2 h-10 px-3 border border-gray-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-950">
             <Building2 className="w-4 h-4 text-muted-foreground" />
@@ -157,10 +161,10 @@ export const EventFormFields = memo(function EventFormFields({
         />
       )}
 
-      <div className="space-y-2">
-        <Label>Location</Label>
+      <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
+        <Label className={isMobile ? 'text-sm' : ''}>Location</Label>
         {selectedLocation ? (
-          <div className="flex items-center gap-2 p-3 border border-gray-300 dark:border-zinc-700 rounded-lg bg-muted/50">
+          <div className="flex items-center gap-2 p-3 border border-black dark:border-white rounded-lg bg-muted/50">
             <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="font-medium truncate">{selectedLocation.name}</div>
@@ -201,10 +205,10 @@ export const EventFormFields = memo(function EventFormFields({
         filterByCampusIds={selectedCampusIds}
       />
 
-      <div className="space-y-2">
-        <Label>Responsible Person</Label>
+      <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
+        <Label className={isMobile ? 'text-sm' : ''}>Responsible Person</Label>
         {selectedResponsiblePerson ? (
-          <div className="flex items-center gap-2 p-3 border border-gray-300 dark:border-zinc-700 rounded-lg bg-muted/50">
+          <div className="flex items-center gap-2 p-3 border border-black dark:border-white rounded-lg bg-muted/50">
             <User className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="font-medium truncate">
@@ -246,26 +250,28 @@ export const EventFormFields = memo(function EventFormFields({
         onSelect={setSelectedResponsiblePerson}
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="startTime">Start Time *</Label>
+      <div className={`grid grid-cols-1 sm:grid-cols-2 ${isMobile ? 'gap-3' : 'gap-4'}`}>
+        <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
+          <Label htmlFor="startTime" className={isMobile ? 'text-sm' : ''}>Start Time *</Label>
           <DateTimePicker
             id="startTime"
             value={startTime}
             onChange={onStartTimeChange}
             placeholder="Select start time"
             label="Start Time"
+            timeFormat={timeFormat}
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="endTime">End Time *</Label>
+        <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
+          <Label htmlFor="endTime" className={isMobile ? 'text-sm' : ''}>End Time *</Label>
           <DateTimePicker
             id="endTime"
             value={endTime}
             onChange={setEndTime}
             placeholder="Select end time"
             label="End Time"
+            timeFormat={timeFormat}
           />
         </div>
       </div>

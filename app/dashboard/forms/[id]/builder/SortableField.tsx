@@ -16,8 +16,10 @@ import {
   ChevronDown,
   CheckSquare,
   Square,
+  ChevronUp,
 } from 'lucide-react'
 import { useFormBuilder } from '../../hooks/useFormBuilder'
+import { useIsMobile } from '@/lib/hooks'
 import type { BuilderField } from '../../types'
 import type { FieldType } from '@/lib/validations/forms'
 import type { LucideIcon } from 'lucide-react'
@@ -26,6 +28,8 @@ interface SortableFieldProps {
   field: BuilderField
   isSelected: boolean
   onClick: () => void
+  index?: number
+  totalFields?: number
 }
 
 const FIELD_ICONS: Record<FieldType, LucideIcon> = {
@@ -54,8 +58,11 @@ export const SortableField = memo(function SortableField({
   field,
   isSelected,
   onClick,
+  index = 0,
+  totalFields = 0,
 }: SortableFieldProps) {
-  const { deleteField, duplicateField } = useFormBuilder()
+  const { fields, deleteField, duplicateField, reorderFields } = useFormBuilder()
+  const isMobile = useIsMobile()
   const {
     attributes,
     listeners,
@@ -82,11 +89,32 @@ export const SortableField = memo(function SortableField({
     duplicateField(field.id)
   }
 
+  const handleMoveUp = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (index > 0) {
+      const prevField = fields[index - 1]
+      reorderFields(field.id, prevField.id)
+    }
+  }
+
+  const handleMoveDown = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (index < fields.length - 1) {
+      const nextField = fields[index + 1]
+      reorderFields(field.id, nextField.id)
+    }
+  }
+
+  const canMoveUp = index > 0
+  const canMoveDown = index < (totalFields || fields.length) - 1
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`group relative bg-white dark:bg-zinc-900 border rounded-lg p-4 cursor-pointer transition-all ${
+      className={`group relative bg-white dark:bg-zinc-900 border rounded-lg cursor-pointer transition-all ${
+        isMobile ? 'p-3' : 'p-4'
+      } ${
         isDragging ? 'opacity-50 shadow-lg z-50' : ''
       } ${
         isSelected
@@ -95,37 +123,65 @@ export const SortableField = memo(function SortableField({
       }`}
       onClick={onClick}
     >
-      {/* Drag Handle */}
-      <button
-        className="absolute left-2 top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
-        {...attributes}
-        {...listeners}
-      >
-        <GripVertical className="h-5 w-5" />
-      </button>
+      {/* Drag Handle - Desktop only */}
+      {!isMobile && (
+        <button
+          className="absolute left-2 top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+          {...attributes}
+          {...listeners}
+        >
+          <GripVertical className="h-5 w-5" />
+        </button>
+      )}
+
+      {/* Mobile Reorder Buttons */}
+      {isMobile && (
+        <div className="absolute left-1 top-1/2 -translate-y-1/2 flex flex-col">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-muted-foreground"
+            onClick={handleMoveUp}
+            disabled={!canMoveUp}
+          >
+            <ChevronUp className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 text-muted-foreground"
+            onClick={handleMoveDown}
+            disabled={!canMoveDown}
+          >
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
 
       {/* Action Buttons */}
-      <div className="absolute right-2 top-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className={`absolute right-2 top-2 flex items-center gap-1 ${isMobile ? '' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}>
+        {!isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted"
+            onClick={handleDuplicate}
+          >
+            <Copy className="h-4 w-4" />
+          </Button>
+        )}
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7 text-muted-foreground hover:text-foreground hover:bg-muted"
-          onClick={handleDuplicate}
-        >
-          <Copy className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7 text-muted-foreground hover:text-red-600 hover:bg-red-50"
+          className={`text-muted-foreground hover:text-red-600 hover:bg-red-50 ${isMobile ? 'h-6 w-6' : 'h-7 w-7'}`}
           onClick={handleDelete}
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className={isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
         </Button>
       </div>
 
       {/* Field Content */}
-      <div className="pl-6 pr-8">
+      <div className={isMobile ? 'pl-7 pr-6' : 'pl-6 pr-8'}>
         <div className="flex items-center gap-1.5">
           <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
           <span className="text-sm font-medium">{field.label || FIELD_LABELS[field.type]}</span>

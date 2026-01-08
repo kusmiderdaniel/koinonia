@@ -11,7 +11,7 @@ import { useSongList, useSongDetail, useSongDialogs } from './hooks'
 import type { Song } from './types'
 
 // Dynamic import for dialog (only loaded when opened)
-const SongDialog = dynamic(() => import('./song-dialog').then(mod => ({ default: mod.SongDialog })), { ssr: false })
+const SongDialog = dynamic(() => import('./song-dialog/SongDialog').then(mod => ({ default: mod.SongDialog })), { ssr: false })
 
 export interface SongsInitialData {
   songs: Song[]
@@ -91,6 +91,12 @@ export function SongsPageClient({ initialData }: SongsPageClientProps) {
     e.target.value = ''
   }, [detail, list.selectedSongId])
 
+  const handleSongUpdated = useCallback(async () => {
+    if (list.selectedSongId) {
+      await detail.loadSongDetail(list.selectedSongId)
+    }
+  }, [detail, list.selectedSongId])
+
   // Destructure commonly used values
   const { filteredSongs, songs, tags, selectedSongId, canManage, search, filterTagIds } = list
   const { selectedSong, isUploading, isDeletingAttachment } = detail
@@ -164,6 +170,7 @@ export function SongsPageClient({ initialData }: SongsPageClientProps) {
           onUploadAttachment={handleUploadAttachment}
           onDownloadAttachment={handleDownloadAttachment}
           onDeleteAttachment={handleDeleteAttachment}
+          onSongUpdated={handleSongUpdated}
         />
       }
       hasSelection={!!selectedSongId && !!selectedSong}

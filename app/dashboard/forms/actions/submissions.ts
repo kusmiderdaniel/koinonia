@@ -5,6 +5,7 @@ import {
   getAuthenticatedUserWithProfile,
   isAuthError,
   requireManagePermission,
+  verifyChurchOwnership,
 } from '@/lib/utils/server-auth'
 import { internalFormSubmissionSchema } from '@/lib/validations/forms'
 
@@ -24,15 +25,10 @@ export async function getFormSubmissions(
   if (permError) return { error: permError }
 
   // Verify form belongs to church
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', formId)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', formId, profile.church_id, 'church_id', 'Form not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   const limit = options?.limit || PAGE_SIZE
 
@@ -137,15 +133,10 @@ export async function deleteSubmission(submissionId: string) {
   }
 
   // Verify form belongs to church
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', submission.form_id)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Submission not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', submission.form_id, profile.church_id, 'church_id', 'Submission not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   const formId = submission.form_id
 
@@ -175,19 +166,10 @@ export async function submitInternalForm(data: { formId: string; responses: Reco
   const { profile, adminClient } = auth
 
   // Verify form is published and internal
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id, status, access_type')
-    .eq('id', validated.data.formId)
-    .single()
-
-  if (!form) {
-    return { error: 'Form not found' }
-  }
-
-  if (form.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { data: form, error: ownershipError } = await verifyChurchOwnership<{
+    church_id: string; status: string; access_type: string
+  }>(adminClient, 'forms', validated.data.formId, profile.church_id, 'church_id, status, access_type', 'Form not found')
+  if (ownershipError || !form) return { error: ownershipError || 'Form not found' }
 
   if (form.status !== 'published') {
     return { error: 'This form is not accepting responses' }
@@ -227,15 +209,10 @@ export async function getSubmissionStats(formId: string) {
   if (permError) return { error: permError }
 
   // Verify form belongs to church
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', formId)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', formId, profile.church_id, 'church_id', 'Form not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   // Get total count
   const { count: totalCount } = await adminClient

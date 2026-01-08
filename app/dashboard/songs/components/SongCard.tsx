@@ -15,7 +15,7 @@ interface SongCardProps {
 
 export const SongCard = memo(function SongCard({ song, isSelected, onClick }: SongCardProps) {
   return (
-    <SelectableCard isSelected={isSelected} onClick={onClick}>
+    <SelectableCard isSelected={isSelected} onClick={onClick} variant="bordered">
       <p className="font-medium truncate">{song.title}</p>
       {song.artist && (
         <p className="text-sm text-muted-foreground truncate">{song.artist}</p>

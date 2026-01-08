@@ -8,6 +8,7 @@ import {
   requireManagePermission,
 } from '@/lib/utils/server-auth'
 import { getUserCampusIds } from '@/lib/utils/campus'
+import { isAdminOrOwner, isLeader } from '@/lib/permissions'
 
 export async function getPendingRegistrations() {
   const auth = await getAuthenticatedUserWithProfile()
@@ -19,12 +20,12 @@ export async function getPendingRegistrations() {
   const permError = requireManagePermission(profile.role, 'view pending registrations')
   if (permError) return { error: permError }
 
-  const isAdmin = profile.role === 'admin' || profile.role === 'owner'
-  const isLeader = profile.role === 'leader'
+  const userIsAdmin = isAdminOrOwner(profile.role)
+  const userIsLeader = isLeader(profile.role)
 
   // For leaders, get their campus IDs for filtering
   let leaderCampusIds: string[] = []
-  if (isLeader) {
+  if (userIsLeader) {
     leaderCampusIds = await getUserCampusIds(profile.id, adminClient)
     if (leaderCampusIds.length === 0) {
       // Leader has no campus, return empty data
@@ -47,7 +48,7 @@ export async function getPendingRegistrations() {
     .order('created_at', { ascending: false })
 
   // Leaders can only see registrations for their campus
-  if (isLeader) {
+  if (userIsLeader) {
     query = query.in('campus_id', leaderCampusIds)
   }
 
@@ -58,7 +59,7 @@ export async function getPendingRegistrations() {
     return { error: 'Failed to fetch pending registrations' }
   }
 
-  return { data, isAdmin }
+  return { data, isAdmin: userIsAdmin }
 }
 
 export async function approveRegistration(registrationId: string, campusId?: string) {
@@ -71,7 +72,7 @@ export async function approveRegistration(registrationId: string, campusId?: str
   const permError = requireManagePermission(profile.role, 'approve registrations')
   if (permError) return { error: permError }
 
-  const isLeader = profile.role === 'leader'
+  const userIsLeader = isLeader(profile.role)
 
   // Get the pending registration
   const { data: registration, error: fetchError } = await adminClient
@@ -90,7 +91,7 @@ export async function approveRegistration(registrationId: string, campusId?: str
   }
 
   // For leaders, verify they can only approve registrations for their campus
-  if (isLeader) {
+  if (userIsLeader) {
     const leaderCampusIds = await getUserCampusIds(profile.id, adminClient)
     if (!registration.campus_id || !leaderCampusIds.includes(registration.campus_id)) {
       return { error: 'You can only approve registrations for your campus' }
@@ -181,7 +182,7 @@ export async function rejectRegistration(registrationId: string, reason?: string
   const permError = requireManagePermission(profile.role, 'reject registrations')
   if (permError) return { error: permError }
 
-  const isLeader = profile.role === 'leader'
+  const userIsLeader = isLeader(profile.role)
 
   // Get the pending registration
   const { data: registration, error: fetchError } = await adminClient
@@ -200,7 +201,7 @@ export async function rejectRegistration(registrationId: string, reason?: string
   }
 
   // For leaders, verify they can only reject registrations for their campus
-  if (isLeader) {
+  if (userIsLeader) {
     const leaderCampusIds = await getUserCampusIds(profile.id, adminClient)
     if (!registration.campus_id || !leaderCampusIds.includes(registration.campus_id)) {
       return { error: 'You can only reject registrations for your campus' }

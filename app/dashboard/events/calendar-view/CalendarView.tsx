@@ -13,6 +13,7 @@ import type { CalendarViewProps } from './types'
 export const CalendarView = memo(function CalendarView({
   events,
   firstDayOfWeek = 1,
+  timeFormat = '24h',
   onEventSelect,
   leftPanelContent,
 }: CalendarViewProps) {
@@ -41,7 +42,7 @@ export const CalendarView = memo(function CalendarView({
         {leftPanelContent ? (
           leftPanelContent
         ) : (
-          <Card className="h-full overflow-auto">
+          <Card className="h-full overflow-auto border border-black dark:border-zinc-700">
             <CardContent className="p-4">
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
@@ -119,6 +120,7 @@ export const CalendarView = memo(function CalendarView({
         <SelectedDayPanel
           selectedDate={selectedDate}
           events={selectedDateEvents}
+          timeFormat={timeFormat}
           onEventSelect={onEventSelect}
         />
       </div>

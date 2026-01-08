@@ -20,6 +20,7 @@ import type { SidebarUser } from './types'
 interface UserDropdownProps {
   user: SidebarUser
   collapsed: boolean
+  isMobile?: boolean
   onNavigate?: () => void
   onSignOut: () => void
 }
@@ -27,6 +28,7 @@ interface UserDropdownProps {
 export function UserDropdown({
   user,
   collapsed,
+  isMobile = false,
   onNavigate,
   onSignOut,
 }: UserDropdownProps) {
@@ -36,11 +38,11 @@ export function UserDropdown({
     <button
       className={`flex items-center rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors ${
         collapsed ? 'justify-center' : 'w-full'
-      }`}
+      } ${isMobile ? 'min-h-14' : ''}`}
       suppressHydrationWarning
     >
-      <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
-        <Avatar className="h-9 w-9">
+      <div className={`flex items-center justify-center flex-shrink-0 ${isMobile ? 'w-14 h-14' : 'w-12 h-12'}`}>
+        <Avatar className={isMobile ? 'h-10 w-10' : 'h-9 w-9'}>
           <AvatarFallback className="bg-primary text-primary-foreground text-sm">
             {initials}
           </AvatarFallback>
@@ -48,7 +50,7 @@ export function UserDropdown({
       </div>
       {!collapsed && (
         <div className="flex-1 text-left min-w-0 pr-2">
-          <p className="text-sm font-medium truncate">
+          <p className={`font-medium truncate ${isMobile ? 'text-base' : 'text-sm'}`}>
             {user.firstName} {user.lastName}
           </p>
           <p className="text-xs text-muted-foreground truncate">{user.email}</p>
@@ -58,7 +60,7 @@ export function UserDropdown({
   )
 
   return (
-    <div className="border-t h-[72px] flex items-center p-2">
+    <div className={`border-t flex items-center p-2 ${isMobile ? 'h-[80px]' : 'h-[72px]'}`}>
       <DropdownMenu>
         {collapsed ? (
           <Tooltip>

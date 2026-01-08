@@ -41,34 +41,34 @@ export const InviteMembersTab = memo(function InviteMembersTab({
   }
 
   return (
-    <Card className="min-w-[28rem]">
-      <CardHeader>
-        <CardTitle>Invite Members</CardTitle>
-        <CardDescription>
-          Share the join code with people to invite them to your church
+    <Card className="w-full md:min-w-[28rem]">
+      <CardHeader className="p-4 md:p-6">
+        <CardTitle className="text-lg md:text-xl">Invite Members</CardTitle>
+        <CardDescription className="text-sm">
+          Share the join code to invite people to your church
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="border border-black dark:border-zinc-700 rounded-lg p-4 space-y-4">
+      <CardContent className="p-4 md:p-6 pt-0 md:pt-0">
+        <div className="border border-black dark:border-zinc-700 rounded-lg p-3 md:p-4 space-y-3 md:space-y-4">
           <div className="text-sm font-medium">Church Join Code</div>
 
           {/* Join code display */}
-          <div className="flex items-center justify-center py-4 bg-muted rounded-lg border border-black dark:border-white">
-            <span className="text-2xl md:text-3xl font-mono font-bold tracking-[0.2em] md:tracking-[0.3em] text-foreground">
+          <div className="flex items-center justify-center py-3 md:py-4 bg-muted rounded-lg border border-black dark:border-white">
+            <span className="text-xl md:text-3xl font-mono font-bold tracking-[0.15em] md:tracking-[0.3em] text-foreground">
               {joinCode || '------'}
             </span>
           </div>
 
           {/* Buttons */}
-          <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex gap-2">
             <Button
               onClick={onCopyJoinCode}
               variant="outline-pill"
               size="sm"
-              className="flex-1 sm:flex-none !border-black dark:!border-white"
+              className="flex-1 !border-black dark:!border-white text-xs md:text-sm"
             >
-              <Copy className="h-4 w-4 mr-2" />
-              {joinCodeCopied ? 'Copied!' : 'Copy Code'}
+              <Copy className="h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5 md:mr-2" />
+              {joinCodeCopied ? 'Copied!' : 'Copy'}
             </Button>
             {isAdmin && (
               <AlertDialog open={showRegenerateConfirm} onOpenChange={setShowRegenerateConfirm}>
@@ -77,18 +77,18 @@ export const InviteMembersTab = memo(function InviteMembersTab({
                     variant="outline-pill"
                     size="sm"
                     disabled={isRegeneratingCode}
-                    className="flex-1 sm:flex-none !border-black dark:!border-white"
+                    className="flex-1 !border-black dark:!border-white text-xs md:text-sm"
                   >
-                    <RefreshCw className={`h-4 w-4 mr-2 ${isRegeneratingCode ? 'animate-spin' : ''}`} />
+                    <RefreshCw className={`h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5 md:mr-2 ${isRegeneratingCode ? 'animate-spin' : ''}`} />
                     {isRegeneratingCode ? 'Regenerating...' : 'Regenerate'}
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="max-w-[90vw] md:max-w-lg">
                   <AlertDialogHeader>
                     <AlertDialogTitle>Regenerate Join Code?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will create a new join code and immediately invalidate the current one.
-                      Anyone with the old code will no longer be able to join.
+                      This will create a new code and invalidate the current one.
+                      Anyone with the old code won&apos;t be able to join.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -105,8 +105,8 @@ export const InviteMembersTab = memo(function InviteMembersTab({
             )}
           </div>
 
-          <p className="text-sm text-muted-foreground">
-            Share this 6-character code with new members. They can enter it when joining to connect to your church.
+          <p className="text-xs md:text-sm text-muted-foreground">
+            Share this code with new members to connect them to your church.
           </p>
         </div>
       </CardContent>

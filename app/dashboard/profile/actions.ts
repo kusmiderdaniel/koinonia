@@ -7,6 +7,11 @@ import {
   getAuthenticatedUserWithProfile,
   isAuthError,
 } from '@/lib/utils/server-auth'
+import {
+  type NotificationPreferences,
+  DEFAULT_NOTIFICATION_PREFERENCES,
+} from '@/types/notification-preferences'
+import { parseNotificationPreferences } from '@/lib/notifications/preferences'
 
 const profileSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -26,7 +31,7 @@ export async function getProfile() {
 
   const { data: profileData, error } = await adminClient
     .from('profiles')
-    .select('first_name, last_name, email, phone, avatar_url, date_of_birth, sex')
+    .select('first_name, last_name, email, phone, avatar_url, date_of_birth, sex, role, notification_preferences')
     .eq('id', profile.id)
     .single()
 
@@ -41,8 +46,17 @@ export async function getProfile() {
     .eq('id', profile.church_id)
     .single()
 
+  // Parse notification preferences with defaults
+  const notificationPreferences = parseNotificationPreferences(
+    profileData.notification_preferences
+  )
+
   return {
-    data: profileData,
+    data: {
+      ...profileData,
+      notification_preferences: notificationPreferences,
+    },
+    role: profileData.role,
     firstDayOfWeek: churchData?.first_day_of_week ?? 0 // Default to Sunday (0)
   }
 }
@@ -235,5 +249,29 @@ export async function changePassword(currentPassword: string, newPassword: strin
     return { error: 'Failed to update password' }
   }
 
+  return { success: true }
+}
+
+export async function updateNotificationPreferences(
+  preferences: NotificationPreferences
+) {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  const { error } = await adminClient
+    .from('profiles')
+    .update({
+      notification_preferences: preferences,
+    })
+    .eq('id', profile.id)
+
+  if (error) {
+    console.error('Error updating notification preferences:', error)
+    return { error: 'Failed to update notification settings' }
+  }
+
+  revalidatePath('/dashboard/profile')
   return { success: true }
 }

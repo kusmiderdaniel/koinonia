@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Music,
   Clock,
@@ -13,9 +14,11 @@ import {
   Upload,
   X,
 } from 'lucide-react'
+import { useIsMobile } from '@/lib/hooks'
 import { EmptyState } from '@/components/EmptyState'
 import { DetailPanelHeader } from '@/components/panels'
 import { formatDuration } from '@/lib/utils/format'
+import { SongLyricsTab, ArrangementsList } from './lyrics'
 import type { Song } from '../types'
 
 interface SongDetailPanelProps {
@@ -28,6 +31,7 @@ interface SongDetailPanelProps {
   onUploadAttachment: (e: React.ChangeEvent<HTMLInputElement>) => void
   onDownloadAttachment: (attachmentId: string) => void
   onDeleteAttachment: (attachmentId: string) => void
+  onSongUpdated?: () => void
 }
 
 function formatFileSize(bytes: number) {
@@ -46,7 +50,10 @@ export function SongDetailPanel({
   onUploadAttachment,
   onDownloadAttachment,
   onDeleteAttachment,
+  onSongUpdated,
 }: SongDetailPanelProps) {
+  const isMobile = useIsMobile()
+
   if (!song) {
     return (
       <Card className="h-full flex items-center justify-center border border-black dark:border-zinc-700">
@@ -77,130 +84,173 @@ export function SongDetailPanel({
         onDelete={() => onDelete(song)}
       />
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-4">
-        <div className="space-y-6">
-          {/* Song Details */}
-          <div className="flex flex-wrap gap-6">
-            {song.default_key && (
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Default Key
-                </label>
-                <p className="text-lg font-medium flex items-center gap-2 mt-1">
-                  <Key className="w-4 h-4 text-muted-foreground" />
-                  {song.default_key}
-                </p>
-              </div>
-            )}
-            {song.duration_seconds && (
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Duration
-                </label>
-                <p className="text-lg font-medium flex items-center gap-2 mt-1">
-                  <Clock className="w-4 h-4 text-muted-foreground" />
-                  {formatDuration(song.duration_seconds)}
-                </p>
-              </div>
-            )}
-          </div>
+      {/* Tabbed Content */}
+      <Tabs defaultValue="details" className="flex-1 flex flex-col overflow-hidden">
+        <div className={`border-b ${isMobile ? 'px-2 py-1' : 'px-6 py-3'}`}>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger
+              value="details"
+              className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : ''}`}
+            >
+              Details
+            </TabsTrigger>
+            <TabsTrigger
+              value="lyrics"
+              className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : ''}`}
+            >
+              Lyrics
+            </TabsTrigger>
+            <TabsTrigger
+              value="arrangements"
+              className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : ''}`}
+            >
+              Arrangements
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-          {/* Tags */}
-          <div>
-            <label className="text-sm font-medium text-muted-foreground mb-2 block">
-              Tags
-            </label>
-            {song.tags && song.tags.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {song.tags.map((tag) => (
-                  <Badge
-                    key={tag.id}
-                    style={{ backgroundColor: tag.color }}
-                    className="text-white rounded-full px-3"
-                  >
-                    {tag.name}
-                  </Badge>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">No tags</p>
-            )}
-          </div>
-
-          {/* Attachments */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-muted-foreground">
-                Attachments
-              </label>
-              {canManage && (
-                <label className="cursor-pointer">
-                  <input
-                    type="file"
-                    accept="application/pdf"
-                    className="hidden"
-                    onChange={onUploadAttachment}
-                    disabled={isUploading}
-                  />
-                  <Button variant="outline-pill" size="sm" className="!border !border-gray-300 dark:!border-gray-600" asChild disabled={isUploading}>
-                    <span>
-                      <Upload className="w-4 h-4 mr-1" />
-                      {isUploading ? 'Uploading...' : 'Upload PDF'}
-                    </span>
-                  </Button>
-                </label>
+        <TabsContent value="details" className={`flex-1 overflow-y-auto mt-0 ${isMobile ? 'px-3 py-3' : 'px-6 py-4'}`}>
+          <div className={isMobile ? 'space-y-4' : 'space-y-6'}>
+            {/* Song Details */}
+            <div className="flex flex-wrap gap-6">
+              {song.default_key && (
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Default Key
+                  </label>
+                  <p className="text-lg font-medium flex items-center gap-2 mt-1">
+                    <Key className="w-4 h-4 text-muted-foreground" />
+                    {song.default_key}
+                  </p>
+                </div>
+              )}
+              {song.duration_seconds && (
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Duration
+                  </label>
+                  <p className="text-lg font-medium flex items-center gap-2 mt-1">
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    {formatDuration(song.duration_seconds)}
+                  </p>
+                </div>
               )}
             </div>
-            {song.song_attachments && song.song_attachments.length > 0 ? (
-              <div className="space-y-2">
-                {song.song_attachments.map((attachment) => (
-                  <div
-                    key={attachment.id}
-                    className="flex items-center justify-between p-3 border rounded-lg"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <FileText className="w-5 h-5 text-red-500 flex-shrink-0" />
-                      <div className="min-w-0">
-                        <p className="font-medium truncate">{attachment.file_name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatFileSize(attachment.file_size)}
-                        </p>
+
+            {/* Tags */}
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                Tags
+              </label>
+              {song.tags && song.tags.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {song.tags.map((tag) => (
+                    <Badge
+                      key={tag.id}
+                      style={{ backgroundColor: tag.color }}
+                      className="text-white rounded-full px-3"
+                    >
+                      {tag.name}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">No tags</p>
+              )}
+            </div>
+
+            {/* Attachments */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium text-muted-foreground">
+                  Attachments
+                </label>
+                {canManage && (
+                  <label className="cursor-pointer">
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      className="hidden"
+                      onChange={onUploadAttachment}
+                      disabled={isUploading}
+                    />
+                    <Button variant="outline-pill" size="sm" className="!border !border-gray-300 dark:!border-gray-600" asChild disabled={isUploading}>
+                      <span>
+                        <Upload className="w-4 h-4 mr-1" />
+                        {isUploading ? 'Uploading...' : 'Upload PDF'}
+                      </span>
+                    </Button>
+                  </label>
+                )}
+              </div>
+              {song.song_attachments && song.song_attachments.length > 0 ? (
+                <div className="space-y-2">
+                  {song.song_attachments.map((attachment) => (
+                    <div
+                      key={attachment.id}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <FileText className="w-5 h-5 text-red-500 flex-shrink-0" />
+                        <div className="min-w-0">
+                          <p className="font-medium truncate">{attachment.file_name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {formatFileSize(attachment.file_size)}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => onDownloadAttachment(attachment.id)}
-                      >
-                        <Download className="w-4 h-4" />
-                      </Button>
-                      {canManage && (
+                      <div className="flex items-center gap-1">
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => onDeleteAttachment(attachment.id)}
-                          disabled={isDeletingAttachment === attachment.id}
-                          className="text-destructive hover:text-destructive"
+                          onClick={() => onDownloadAttachment(attachment.id)}
                         >
-                          {isDeletingAttachment === attachment.id ? (
-                            <span className="w-4 h-4">...</span>
-                          ) : (
-                            <X className="w-4 h-4" />
-                          )}
+                          <Download className="w-4 h-4" />
                         </Button>
-                      )}
+                        {canManage && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onDeleteAttachment(attachment.id)}
+                            disabled={isDeletingAttachment === attachment.id}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            {isDeletingAttachment === attachment.id ? (
+                              <span className="w-4 h-4">...</span>
+                            ) : (
+                              <X className="w-4 h-4" />
+                            )}
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">No attachments</p>
-            )}
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">No attachments</p>
+              )}
+            </div>
           </div>
-        </div>
-      </div>
+        </TabsContent>
+
+        <TabsContent value="lyrics" className={`flex-1 overflow-y-auto mt-0 ${isMobile ? 'px-3 py-3' : 'px-6 py-4'}`}>
+          <SongLyricsTab
+            song={song}
+            canManage={canManage}
+            onSongUpdated={onSongUpdated || (() => {})}
+          />
+        </TabsContent>
+
+        <TabsContent value="arrangements" className={`flex-1 overflow-y-auto mt-0 ${isMobile ? 'px-3 py-3' : 'px-6 py-4'}`}>
+          <ArrangementsList
+            songId={song.id}
+            sections={song.song_sections || []}
+            arrangements={song.song_arrangements || []}
+            canManage={canManage}
+            onArrangementUpdated={onSongUpdated || (() => {})}
+          />
+        </TabsContent>
+      </Tabs>
     </Card>
   )
 }

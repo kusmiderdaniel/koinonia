@@ -8,8 +8,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { Loader2 } from 'lucide-react'
+import { formatDurationShort } from '@/lib/utils/format'
 import { MAJOR_KEYS, MINOR_KEYS } from './types'
 import type { Member } from './types'
+
+export interface ArrangementOption {
+  id: string
+  name: string
+  is_default: boolean
+  duration_seconds: number | null
+}
 
 // Key Popover - for setting musical key on songs
 interface KeyPopoverProps {
@@ -315,6 +324,86 @@ export function LeaderPopover({
                   }`}
                 >
                   {member.first_name} {member.last_name}
+                </button>
+              ))}
+            </div>
+          )}
+        </PopoverContent>
+      )}
+    </Popover>
+  )
+}
+
+// Arrangement Popover - for changing song arrangement
+interface ArrangementPopoverProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  currentArrangement: ArrangementOption | null
+  arrangements: ArrangementOption[]
+  isLoadingArrangements: boolean
+  canManage: boolean
+  isUpdating: boolean
+  onArrangementChange: (arrangementId: string | null) => void
+}
+
+export function ArrangementPopover({
+  open,
+  onOpenChange,
+  currentArrangement,
+  arrangements,
+  isLoadingArrangements,
+  canManage,
+  isUpdating,
+  onArrangementChange,
+}: ArrangementPopoverProps) {
+  const displayName = currentArrangement?.name || 'Default'
+
+  return (
+    <Popover open={open} onOpenChange={onOpenChange}>
+      <PopoverTrigger asChild>
+        <button
+          className={`text-xs transition-colors ${
+            canManage ? 'hover:underline cursor-pointer' : ''
+          } text-muted-foreground`}
+          disabled={!canManage || isUpdating}
+        >
+          {displayName}
+        </button>
+      </PopoverTrigger>
+      {canManage && (
+        <PopoverContent className="w-[220px] p-2 bg-white dark:bg-zinc-950 border max-h-[200px] overflow-y-auto" align="start">
+          {isLoadingArrangements ? (
+            <div className="flex items-center justify-center py-3">
+              <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+            </div>
+          ) : arrangements.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-2">No arrangements available</p>
+          ) : (
+            <div className="space-y-1">
+              {arrangements.map((arr) => (
+                <button
+                  key={arr.id}
+                  onClick={() => onArrangementChange(arr.id)}
+                  disabled={isUpdating}
+                  className={`w-full text-left px-2 py-1.5 text-sm rounded transition-colors ${
+                    currentArrangement?.id === arr.id
+                      ? 'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300'
+                      : 'hover:bg-gray-50 dark:hover:bg-zinc-800'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span>
+                      {arr.name}
+                      {arr.is_default && (
+                        <span className="text-xs text-muted-foreground ml-1">(default)</span>
+                      )}
+                    </span>
+                    {arr.duration_seconds && (
+                      <span className="text-xs text-muted-foreground">
+                        {formatDurationShort(arr.duration_seconds)}
+                      </span>
+                    )}
+                  </div>
                 </button>
               ))}
             </div>

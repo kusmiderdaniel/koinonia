@@ -7,6 +7,7 @@ import {
   isAuthError,
   requireAdminPermission,
 } from './helpers'
+import { isAdminOrOwner } from '@/lib/permissions'
 import type { MinistryInput } from './helpers'
 
 export async function getMinistries() {
@@ -108,10 +109,9 @@ export async function updateMinistry(id: string, data: MinistryInput) {
   }
 
   // Check permissions: admin/owner or ministry leader
-  const isAdmin = profile.role === 'admin' || profile.role === 'owner'
-  const isLeader = ministry.leader_id === user.id
+  const isMinistryLeader = ministry.leader_id === user.id
 
-  if (!isAdmin && !isLeader) {
+  if (!isAdminOrOwner(profile.role) && !isMinistryLeader) {
     return { error: 'You do not have permission to edit this ministry' }
   }
 

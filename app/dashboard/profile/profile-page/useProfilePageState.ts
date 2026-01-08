@@ -1,8 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { getProfile, updateProfile, changePassword } from '../actions'
+import { getProfile, updateProfile, changePassword, updateNotificationPreferences } from '../actions'
 import { profileSchema, type ProfileInput } from './types'
+import {
+  type NotificationPreferences,
+  DEFAULT_NOTIFICATION_PREFERENCES,
+} from '@/types/notification-preferences'
 
 export function useProfilePageState() {
   // Profile state
@@ -14,6 +18,15 @@ export function useProfilePageState() {
   const [sex, setSex] = useState<string | undefined>(undefined)
   const [dateOfBirth, setDateOfBirth] = useState<string>('')
   const [firstDayOfWeek, setFirstDayOfWeek] = useState<0 | 1 | 2 | 3 | 4 | 5 | 6>(0)
+  const [userRole, setUserRole] = useState<string>('')
+
+  // Notification preferences state
+  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>(
+    DEFAULT_NOTIFICATION_PREFERENCES
+  )
+  const [isUpdatingNotifications, setIsUpdatingNotifications] = useState(false)
+  const [notificationSuccess, setNotificationSuccess] = useState<string | null>(null)
+  const [notificationError, setNotificationError] = useState<string | null>(null)
 
   // Password change state
   const [showPasswordForm, setShowPasswordForm] = useState(false)
@@ -43,6 +56,12 @@ export function useProfilePageState() {
         setDateOfBirth(result.data.date_of_birth || '')
         if (result.firstDayOfWeek !== undefined) {
           setFirstDayOfWeek(result.firstDayOfWeek as 0 | 1 | 2 | 3 | 4 | 5 | 6)
+        }
+        if (result.role) {
+          setUserRole(result.role)
+        }
+        if (result.data.notification_preferences) {
+          setNotificationPreferences(result.data.notification_preferences)
         }
         reset({
           firstName: result.data.first_name,
@@ -145,6 +164,34 @@ export function useProfilePageState() {
     [setValue]
   )
 
+  const handleNotificationPreferencesChange = useCallback(
+    (preferences: NotificationPreferences) => {
+      setNotificationPreferences(preferences)
+    },
+    []
+  )
+
+  const handleSaveNotificationPreferences = useCallback(async () => {
+    setNotificationError(null)
+    setNotificationSuccess(null)
+    setIsUpdatingNotifications(true)
+
+    try {
+      const result = await updateNotificationPreferences(notificationPreferences)
+      if (result.error) {
+        setNotificationError(result.error)
+      } else {
+        setNotificationSuccess('Notification settings saved!')
+        // Clear success message after 3 seconds
+        setTimeout(() => setNotificationSuccess(null), 3000)
+      }
+    } catch {
+      setNotificationError('Failed to save notification settings')
+    } finally {
+      setIsUpdatingNotifications(false)
+    }
+  }, [notificationPreferences])
+
   return {
     // Form
     form,
@@ -159,10 +206,21 @@ export function useProfilePageState() {
     sex,
     dateOfBirth,
     firstDayOfWeek,
+    userRole,
 
     // Profile handlers
     handleDateOfBirthChange,
     handleSexChange,
+
+    // Notification preferences state
+    notificationPreferences,
+    isUpdatingNotifications,
+    notificationSuccess,
+    notificationError,
+
+    // Notification preferences handlers
+    handleNotificationPreferencesChange,
+    handleSaveNotificationPreferences,
 
     // Password state
     showPasswordForm,

@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { isLeaderOrAbove, isAdminOrOwner } from '@/lib/permissions'
 import {
   taskSchema,
   taskStatusSchema,
@@ -97,7 +98,7 @@ export async function updateTask(id: string, data: Partial<TaskInput>) {
   // Check permissions: creator, assignee, or admin/leader
   const isCreator = currentTask.created_by === user.id
   const isAssignee = currentTask.assigned_to === user.id
-  const isAdminOrLeader = ['owner', 'admin', 'leader'].includes(profile.role)
+  const isAdminOrLeader = isLeaderOrAbove(profile.role)
 
   if (!isCreator && !isAssignee && !isAdminOrLeader) {
     return { error: 'You do not have permission to edit this task' }
@@ -243,9 +244,8 @@ export async function deleteTask(id: string) {
 
   // Check permissions: creator or admin
   const isCreator = task.created_by === user.id
-  const isAdmin = ['owner', 'admin'].includes(profile.role)
 
-  if (!isCreator && !isAdmin) {
+  if (!isCreator && !isAdminOrOwner(profile.role)) {
     return { error: 'You do not have permission to delete this task' }
   }
 

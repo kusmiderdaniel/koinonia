@@ -5,6 +5,7 @@ import { format } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Printer, Clock, MapPin, User, Music } from 'lucide-react'
 import Link from 'next/link'
+import { getTimeFormatPattern, formatRunningTime } from '@/lib/utils/format'
 
 interface Location {
   id: string
@@ -59,6 +60,7 @@ interface EventData {
 
 interface AgendaPrintViewProps {
   event: EventData
+  timeFormat?: '12h' | '24h'
 }
 
 function formatDuration(seconds: number): string {
@@ -70,16 +72,7 @@ function formatDuration(seconds: number): string {
   return `${mins}:${secs.toString().padStart(2, '0')}`
 }
 
-function formatRunningTime(totalSeconds: number): string {
-  const hours = Math.floor(totalSeconds / 3600)
-  const mins = Math.floor((totalSeconds % 3600) / 60)
-  if (hours > 0) {
-    return `${hours}h ${mins}m`
-  }
-  return `${mins}m`
-}
-
-export function AgendaPrintView({ event }: AgendaPrintViewProps) {
+export function AgendaPrintView({ event, timeFormat = '24h' }: AgendaPrintViewProps) {
   const totalDuration = useMemo(() => {
     return event.agenda_items.reduce((sum, item) => sum + item.duration_seconds, 0)
   }, [event.agenda_items])
@@ -95,7 +88,7 @@ export function AgendaPrintView({ event }: AgendaPrintViewProps) {
   }, [event.agenda_items])
 
   const eventDate = new Date(event.start_time)
-  const eventTime = format(eventDate, 'h:mm a')
+  const eventTime = format(eventDate, getTimeFormatPattern(timeFormat))
   const eventDateFormatted = format(eventDate, 'EEEE, MMMM d, yyyy')
 
   const handlePrint = () => {

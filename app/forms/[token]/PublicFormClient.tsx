@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useIsMobile } from '@/lib/hooks'
 import {
   FormFields,
   useFormConditions,
@@ -32,6 +33,7 @@ export function PublicFormClient({
   weekStartsOn = 0,
 }: PublicFormClientProps) {
   const router = useRouter()
+  const isMobile = useIsMobile()
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -144,7 +146,7 @@ export function PublicFormClient({
                 Provide your email if you&apos;d like to receive updates about
                 this submission
               </p>
-              <div className="w-1/2">
+              <div className={isMobile ? '' : 'w-1/2'}>
                 <Input
                   id="respondent-email"
                   type="email"

@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { useIsMobile } from '@/lib/hooks'
 import { createEvent, updateEvent, getChurchMembers, getCampuses } from '../actions'
 import { EventFormFields } from './EventFormFields'
 import { formatDateTimeLocal, getDefaultStartTime, getDefaultEndTime } from './constants'
@@ -20,7 +21,9 @@ export const EventDialog = memo(function EventDialog({
   onOpenChange,
   event,
   onSuccess,
+  timeFormat = '24h',
 }: EventDialogProps) {
+  const isMobile = useIsMobile()
   const [title, setTitle] = useState('')
   const [eventType, setEventType] = useState('service')
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
@@ -151,19 +154,21 @@ export const EventDialog = memo(function EventDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl bg-white dark:bg-zinc-950 max-h-[100dvh] sm:max-h-[90vh] flex flex-col w-full h-full sm:h-auto sm:w-auto fixed inset-0 sm:inset-auto sm:top-[50%] sm:left-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] rounded-none sm:rounded-lg overflow-x-hidden">
-        <DialogHeader>
-          <DialogTitle>{isEditing ? 'Edit Event' : 'Create Event'}</DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? 'Update the event details below.'
-              : 'Add a new event to your church calendar.'}
-          </DialogDescription>
+      <DialogContent className={`sm:max-w-xl bg-white dark:bg-zinc-950 max-h-[100dvh] sm:max-h-[90vh] flex flex-col justify-start w-full sm:w-auto fixed inset-x-0 top-0 bottom-auto sm:inset-auto sm:top-[50%] sm:left-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] rounded-none sm:rounded-lg overflow-x-hidden ${isMobile ? 'p-3 gap-1' : ''}`}>
+        <DialogHeader className={isMobile ? 'gap-0' : ''}>
+          <DialogTitle className={isMobile ? 'text-base' : ''}>{isEditing ? 'Edit Event' : 'Create Event'}</DialogTitle>
+          {!isMobile && (
+            <DialogDescription>
+              {isEditing
+                ? 'Update the event details below.'
+                : 'Add a new event to your church calendar.'}
+            </DialogDescription>
+          )}
         </DialogHeader>
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-4 overflow-y-auto overflow-x-hidden flex-1"
+          className={`overflow-y-auto overflow-x-hidden min-h-0 ${isMobile ? 'space-y-3' : 'space-y-4 flex-1'}`}
         >
           <EventFormFields
             title={title}
@@ -191,13 +196,15 @@ export const EventDialog = memo(function EventDialog({
             endTime={endTime}
             onStartTimeChange={handleStartTimeChange}
             setEndTime={setEndTime}
+            timeFormat={timeFormat}
             error={error}
           />
 
-          <DialogFooter className="flex justify-end gap-3 pt-4 !bg-transparent !border-0 !mx-0 !mb-0 !p-0">
+          <DialogFooter className={`flex justify-end gap-3 !bg-transparent !border-0 !mx-0 !p-0 ${isMobile ? '!mb-0 pt-2' : '!mb-0 pt-4'}`}>
             <Button
               type="button"
               variant="outline-pill"
+              size={isMobile ? 'sm' : 'default'}
               className="!border !border-black dark:!border-white"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
@@ -207,6 +214,7 @@ export const EventDialog = memo(function EventDialog({
             <Button
               type="submit"
               variant="outline-pill"
+              size={isMobile ? 'sm' : 'default'}
               disabled={isLoading || !title.trim()}
               className="!border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
             >

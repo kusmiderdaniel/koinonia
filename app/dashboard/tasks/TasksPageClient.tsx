@@ -26,6 +26,7 @@ interface TasksPageClientProps {
     currentUserId: string
     role: string
     firstDayOfWeek: 0 | 1 | 2 | 3 | 4 | 5 | 6
+    timeFormat?: '12h' | '24h'
     savedViews: SavedView[]
     canManageViews: boolean
     defaultCampusId?: string
@@ -67,6 +68,16 @@ export function TasksPageClient({ initialData }: TasksPageClientProps) {
     () => tasks.find((t) => t.id === selectedTaskId) || null,
     [tasks, selectedTaskId]
   )
+
+  // Current view name for header
+  const currentViewName = useMemo(() => {
+    if (!viewManager.selectedViewId) return null
+    const savedView = viewManager.views.find((v) => v.id === viewManager.selectedViewId)
+    if (savedView) return savedView.name
+    const builtInView = viewManager.builtInViews.find((v) => v.id === viewManager.selectedViewId)
+    if (builtInView) return builtInView.name
+    return null
+  }, [viewManager.selectedViewId, viewManager.views, viewManager.builtInViews])
 
   // Apply filters and sorts to tasks
   const filteredAndSortedTasks = useMemo(() => {
@@ -142,10 +153,11 @@ export function TasksPageClient({ initialData }: TasksPageClientProps) {
 
   return (
     <div className="flex h-[calc(100vh-3.5rem)] md:h-screen overflow-hidden">
-      <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
+      <div className={`flex-1 flex flex-col overflow-hidden ${isMobile ? 'p-3' : 'p-4 md:p-6'}`}>
         <TasksHeader
           taskCount={filteredAndSortedTasks.length}
           onCreateTask={handlers.handleCreateTask}
+          currentViewName={currentViewName}
         />
 
         <TasksToolbar
@@ -211,6 +223,7 @@ export function TasksPageClient({ initialData }: TasksPageClientProps) {
         members={initialData.members}
         events={initialData.events}
         weekStartsOn={initialData.firstDayOfWeek}
+        timeFormat={initialData.timeFormat}
         defaultCampusId={initialData.defaultCampusId}
       />
 

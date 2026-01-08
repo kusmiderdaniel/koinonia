@@ -41,16 +41,16 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
+    <div className="flex min-h-[100dvh] items-center justify-center p-4 sm:p-6">
+      <Card className="w-full max-w-md border-0 shadow-none sm:border sm:shadow-sm">
+        <CardHeader className="space-y-1 px-0 sm:px-6 sm:pt-6">
           <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
           <CardDescription>
             Enter your email and password to sign in to your account
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 px-0 sm:px-6">
             {error && (
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
@@ -63,6 +63,7 @@ export default function SignInPage() {
                 id="email"
                 type="email"
                 placeholder="you@example.com"
+                className="h-11"
                 {...register('email')}
                 disabled={isLoading}
               />
@@ -77,7 +78,7 @@ export default function SignInPage() {
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                className="focus:placeholder-transparent"
+                className="h-11 focus:placeholder-transparent"
                 {...register('password')}
                 disabled={isLoading}
               />
@@ -93,13 +94,13 @@ export default function SignInPage() {
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-4 border-t-0 bg-transparent">
-            <Button type="submit" className="w-full !rounded-full !bg-brand hover:!bg-brand/90 text-white" disabled={isLoading}>
+          <CardFooter className="flex flex-col space-y-4 border-t-0 bg-transparent px-0 sm:px-6 pt-2">
+            <Button type="submit" className="w-full h-11 !rounded-full !bg-brand hover:!bg-brand/90 text-white" disabled={isLoading}>
               {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href="/auth/signup" className="text-brand font-semibold hover:underline">
                 Sign up
               </Link>

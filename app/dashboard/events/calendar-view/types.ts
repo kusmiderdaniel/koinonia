@@ -3,6 +3,7 @@ import type { Event } from '../types'
 export interface CalendarViewProps {
   events: Event[]
   firstDayOfWeek?: number // 0 = Sunday, 1 = Monday (default)
+  timeFormat?: '12h' | '24h'
   onEventSelect?: (event: Event) => void
   leftPanelContent?: React.ReactNode
 }

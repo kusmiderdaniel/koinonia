@@ -43,7 +43,11 @@ interface UseEventDetailPanelPropsOptions {
   handleAgendaLeaderChange: (itemId: string, leaderId: string | null) => Promise<void>
   handleAgendaDurationChange: (itemId: string, durationSeconds: number) => Promise<void>
   handleAgendaDescriptionChange: (itemId: string, description: string | null) => Promise<void>
+  handleAgendaArrangementChange: (itemId: string, arrangementId: string | null) => Promise<void>
   handleSongPlaceholderClick: (item: AgendaItem) => void
+  handleSongClick: (item: AgendaItem) => void
+  handleMoveAgendaItemUp: (itemId: string) => void
+  handleMoveAgendaItemDown: (itemId: string) => void
   handleAddTask: () => void
   taskRefreshKey: number
 
@@ -52,6 +56,9 @@ interface UseEventDetailPanelPropsOptions {
   taskMinistries: { id: string; name: string; color: string; campus_id: string | null }[]
   taskCampuses: { id: string; name: string; color: string }[]
   weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6
+
+  // Time format preference
+  timeFormat?: '12h' | '24h'
 }
 
 export function useEventDetailPanelProps(
@@ -87,13 +94,18 @@ export function useEventDetailPanelProps(
     handleAgendaLeaderChange,
     handleAgendaDurationChange,
     handleAgendaDescriptionChange,
+    handleAgendaArrangementChange,
     handleSongPlaceholderClick,
+    handleSongClick,
+    handleMoveAgendaItemUp,
+    handleMoveAgendaItemDown,
     handleAddTask,
     taskRefreshKey,
     taskMembers,
     taskMinistries,
     taskCampuses,
     weekStartsOn,
+    timeFormat,
   } = options
 
   return useMemo(() => {
@@ -109,6 +121,7 @@ export function useEventDetailPanelProps(
       canManage,
       canManageContent,
       canDelete,
+      timeFormat,
       sensors,
       formatDuration,
       onClose: closeEventDetail,
@@ -126,7 +139,11 @@ export function useEventDetailPanelProps(
       onAgendaLeaderChange: handleAgendaLeaderChange,
       onAgendaDurationChange: handleAgendaDurationChange,
       onAgendaDescriptionChange: handleAgendaDescriptionChange,
+      onAgendaArrangementChange: handleAgendaArrangementChange,
       onSongPlaceholderClick: handleSongPlaceholderClick,
+      onSongClick: handleSongClick,
+      onMoveAgendaItemUp: handleMoveAgendaItemUp,
+      onMoveAgendaItemDown: handleMoveAgendaItemDown,
       onAddPosition: () => setPositionPickerOpen(true),
       onEditPosition: (position) => openEditPositionDialog(position),
       onDeletePosition: (position) => openDeletePositionDialog(position),
@@ -151,6 +168,7 @@ export function useEventDetailPanelProps(
     canManage,
     canManageContent,
     canDelete,
+    timeFormat,
     sensors,
     closeEventDetail,
     openEditDialog,
@@ -165,7 +183,11 @@ export function useEventDetailPanelProps(
     handleAgendaLeaderChange,
     handleAgendaDurationChange,
     handleAgendaDescriptionChange,
+    handleAgendaArrangementChange,
     handleSongPlaceholderClick,
+    handleSongClick,
+    handleMoveAgendaItemUp,
+    handleMoveAgendaItemDown,
     setPositionPickerOpen,
     openEditPositionDialog,
     openDeletePositionDialog,

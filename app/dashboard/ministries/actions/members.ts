@@ -7,6 +7,7 @@ import {
   requireManagePermission,
 } from './helpers'
 import { getUserCampusIds } from '@/lib/utils/campus'
+import { isAdminOrOwner, isLeader } from '@/lib/permissions'
 
 /**
  * Check if a leader has access to a ministry based on campus
@@ -19,12 +20,12 @@ async function checkLeaderMinistryAccess(
   adminClient: ReturnType<typeof import('@/lib/supabase/server').createServiceRoleClient>
 ): Promise<string | null> {
   // Admin and owner can access all ministries
-  if (profileRole === 'admin' || profileRole === 'owner') {
+  if (isAdminOrOwner(profileRole)) {
     return null
   }
 
   // For leaders, check campus access
-  if (profileRole === 'leader') {
+  if (isLeader(profileRole)) {
     // Get the ministry's campus
     const { data: ministry } = await adminClient
       .from('ministries')

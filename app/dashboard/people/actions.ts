@@ -7,23 +7,12 @@ import {
   requireAdminPermission,
   requireManagePermission,
 } from '@/lib/utils/server-auth'
+import { ROLE_HIERARCHY, isLeaderOrAbove, type UserRole } from '@/lib/permissions'
+import { ASSIGNABLE_ROLES, type AssignableChurchRole } from '@/lib/types/entities'
 
-type Role = 'owner' | 'admin' | 'leader' | 'volunteer' | 'member'
-type AssignableRole = 'admin' | 'leader' | 'volunteer' | 'member'
-
-const roleHierarchy: Record<Role, number> = {
-  owner: 5,
-  admin: 4,
-  leader: 3,
-  volunteer: 2,
-  member: 1,
-}
-
-const assignableRoles: AssignableRole[] = ['admin', 'leader', 'volunteer', 'member']
-
-export async function updateMemberRole(memberId: string, newRole: AssignableRole) {
+export async function updateMemberRole(memberId: string, newRole: AssignableChurchRole) {
   // Validate that newRole is assignable (not owner)
-  if (!assignableRoles.includes(newRole)) {
+  if (!ASSIGNABLE_ROLES.includes(newRole)) {
     return { error: 'Invalid role. Owner role can only be transferred from Settings.' }
   }
 
@@ -62,8 +51,8 @@ export async function updateMemberRole(memberId: string, newRole: AssignableRole
     return { error: 'Owner role can only be transferred from Church Settings' }
   }
 
-  const currentUserRoleLevel = roleHierarchy[profile.role as Role]
-  const targetRoleLevel = roleHierarchy[targetProfile.role as Role]
+  const currentUserRoleLevel = ROLE_HIERARCHY[profile.role as UserRole]
+  const targetRoleLevel = ROLE_HIERARCHY[targetProfile.role as UserRole]
 
   // Check if current user has higher role than target
   if (currentUserRoleLevel <= targetRoleLevel) {
@@ -93,8 +82,7 @@ export async function updateMemberActive(memberId: string, active: boolean) {
   const { user, profile, adminClient } = auth
 
   // Only leaders or higher can change active status
-  const allowedRoles = ['owner', 'admin', 'leader']
-  if (!allowedRoles.includes(profile.role)) {
+  if (!isLeaderOrAbove(profile.role)) {
     return { error: 'Only leaders or higher can change member active status' }
   }
 
@@ -125,8 +113,8 @@ export async function updateMemberActive(memberId: string, active: boolean) {
   }
 
   // Check role hierarchy - can only modify users with lower role
-  const currentUserRoleLevel = roleHierarchy[profile.role as Role]
-  const targetRoleLevel = roleHierarchy[targetProfile.role as Role]
+  const currentUserRoleLevel = ROLE_HIERARCHY[profile.role as UserRole]
+  const targetRoleLevel = ROLE_HIERARCHY[targetProfile.role as UserRole]
   if (currentUserRoleLevel <= targetRoleLevel) {
     return { error: 'You can only change active status of members with lower access level' }
   }
@@ -163,8 +151,7 @@ export async function updateMemberDeparture(
   const { user, profile, adminClient } = auth
 
   // Only leaders or higher can update departure info
-  const allowedRoles = ['owner', 'admin', 'leader']
-  if (!allowedRoles.includes(profile.role)) {
+  if (!isLeaderOrAbove(profile.role)) {
     return { error: 'Only leaders or higher can update departure information' }
   }
 
@@ -195,8 +182,8 @@ export async function updateMemberDeparture(
   }
 
   // Check role hierarchy - can only modify users with lower role
-  const currentUserRoleLevel = roleHierarchy[profile.role as Role]
-  const targetRoleLevel = roleHierarchy[targetProfile.role as Role]
+  const currentUserRoleLevel = ROLE_HIERARCHY[profile.role as UserRole]
+  const targetRoleLevel = ROLE_HIERARCHY[targetProfile.role as UserRole]
   if (currentUserRoleLevel <= targetRoleLevel) {
     return { error: 'You can only modify departure info of members with lower access level' }
   }
@@ -238,8 +225,7 @@ export async function updateMemberBaptism(
   const { profile, adminClient } = auth
 
   // Only leaders or higher can update baptism info
-  const allowedRoles = ['owner', 'admin', 'leader']
-  if (!allowedRoles.includes(profile.role)) {
+  if (!isLeaderOrAbove(profile.role)) {
     return { error: 'Only leaders or higher can update baptism information' }
   }
 

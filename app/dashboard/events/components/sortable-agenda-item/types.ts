@@ -9,6 +9,7 @@ export const MINOR_KEYS = MUSICAL_KEYS.filter(k => k.endsWith('m'))
 export interface SortableAgendaItemProps {
   item: AgendaItem
   index: number
+  totalItems: number
   canManage: boolean
   formatDuration: (seconds: number) => string
   onEdit: (item: AgendaItem) => void
@@ -17,7 +18,11 @@ export interface SortableAgendaItemProps {
   onLeaderChange: (itemId: string, leaderId: string | null) => Promise<void>
   onDurationChange: (itemId: string, durationSeconds: number) => Promise<void>
   onDescriptionChange: (itemId: string, description: string | null) => Promise<void>
+  onArrangementChange: (itemId: string, arrangementId: string | null) => Promise<void>
   onSongPlaceholderClick: (item: AgendaItem) => void
+  onSongClick: (item: AgendaItem) => void
+  onMoveUp?: (itemId: string) => void
+  onMoveDown?: (itemId: string) => void
 }
 
 export interface PopoverState {

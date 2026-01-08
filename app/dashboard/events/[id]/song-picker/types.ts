@@ -4,6 +4,12 @@ export interface Tag {
   color: string
 }
 
+export interface Arrangement {
+  id: string
+  name: string
+  is_default: boolean
+}
+
 export interface Song {
   id: string
   title: string
@@ -11,6 +17,7 @@ export interface Song {
   default_key: string | null
   duration_seconds: number | null
   tags: Tag[]
+  arrangements?: Arrangement[]
 }
 
 export interface SongPickerProps {

@@ -16,6 +16,8 @@ export const TemplateAgendaSection = memo(function TemplateAgendaSection({
   onAddItem,
   onEditItem,
   onRemoveItem,
+  onMoveItemUp,
+  onMoveItemDown,
 }: TemplateAgendaSectionProps) {
   return (
     <div className="flex flex-col h-full">
@@ -66,13 +68,17 @@ export const TemplateAgendaSection = memo(function TemplateAgendaSection({
               strategy={verticalListSortingStrategy}
             >
               <div className="space-y-2">
-                {agendaItems.map((item) => (
+                {agendaItems.map((item, index) => (
                   <SortableTemplateAgendaItem
                     key={item.id}
                     item={item}
+                    index={index}
+                    totalItems={agendaItems.length}
                     canManage={canManage}
                     onEdit={onEditItem}
                     onRemove={onRemoveItem}
+                    onMoveUp={onMoveItemUp}
+                    onMoveDown={onMoveItemDown}
                   />
                 ))}
               </div>

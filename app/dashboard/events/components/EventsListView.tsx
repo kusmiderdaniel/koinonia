@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Calendar, Plus, Search } from 'lucide-react'
 import { EmptyState } from '@/components/EmptyState'
-import { MobileBackHeader } from '@/components/MobileBackHeader'
 import { useIsMobile } from '@/lib/hooks'
 import { EventCard } from './EventCard'
 import type { Event, EventDetail } from '../types'
@@ -21,6 +20,7 @@ interface EventsListViewProps {
   selectedEvent: EventDetail | null
   onSelectEvent: (event: Event) => void
   canManage?: boolean
+  timeFormat?: '12h' | '24h'
   onCreateEvent?: () => void
   onDuplicateEvent?: (event: Event) => void
   onEditEvent?: (event: Event) => void
@@ -38,6 +38,7 @@ export function EventsListView({
   selectedEvent,
   onSelectEvent,
   canManage,
+  timeFormat = '24h',
   onCreateEvent,
   onDuplicateEvent,
   onEditEvent,
@@ -105,6 +106,7 @@ export function EventsListView({
                   isSelected={selectedEvent?.id === event.id}
                   onClick={() => onSelectEvent(event)}
                   canManage={canManage}
+                  timeFormat={timeFormat}
                   onDuplicate={onDuplicateEvent}
                   onEdit={onEditEvent}
                   onDelete={onDeleteEvent}
@@ -128,6 +130,7 @@ export function EventsListView({
                   isSelected={selectedEvent?.id === event.id}
                   onClick={() => onSelectEvent(event)}
                   canManage={canManage}
+                  timeFormat={timeFormat}
                   onDuplicate={onDuplicateEvent}
                   onEdit={onEditEvent}
                   onDelete={onDeleteEvent}
@@ -166,13 +169,7 @@ export function EventsListViewWithDetail({
     if (listProps.selectedEvent) {
       return (
         <div className="h-full flex flex-col">
-          <MobileBackHeader
-            title={listProps.selectedEvent.title}
-            onBack={() => onClearSelection?.()}
-          />
-          <div className="flex-1 min-h-0">
-            {detailContent}
-          </div>
+          {detailContent}
         </div>
       )
     }

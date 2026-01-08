@@ -4,6 +4,7 @@ import { ReactNode, memo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Pencil, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useIsMobile } from '@/lib/hooks'
 
 interface DetailPanelHeaderProps {
   /** Main title text */
@@ -47,10 +48,12 @@ export const DetailPanelHeader = memo(function DetailPanelHeader({
   children,
   className,
 }: DetailPanelHeaderProps) {
+  const isMobile = useIsMobile()
+
   return (
-    <div className={cn('px-6 pt-2 pb-3 border-b', className)}>
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-3 flex-1 min-w-0">
+    <div className={cn(isMobile ? 'px-3 pt-2 pb-2' : 'px-6 pt-2 pb-3', 'border-b', className)}>
+      <div className={`flex items-start justify-between ${isMobile ? 'gap-2' : 'gap-4'}`}>
+        <div className={`flex items-center flex-1 min-w-0 ${isMobile ? 'gap-2' : 'gap-3'}`}>
           {colorIndicator && (
             <div
               className="w-3 h-3 rounded-full flex-shrink-0"
@@ -58,12 +61,12 @@ export const DetailPanelHeader = memo(function DetailPanelHeader({
             />
           )}
           <div className="flex-1 min-w-0">
-            <h2 className="text-xl font-bold truncate flex items-center gap-2 flex-wrap">
+            <h2 className={`font-bold truncate flex items-center gap-2 flex-wrap ${isMobile ? 'text-lg' : 'text-xl'}`}>
               {title}
               {badges}
             </h2>
             {subtitle && (
-              <div className="text-sm text-muted-foreground mt-1">
+              <div className={`text-muted-foreground mt-1 ${isMobile ? 'text-xs' : 'text-sm'}`}>
                 {subtitle}
               </div>
             )}
@@ -78,20 +81,20 @@ export const DetailPanelHeader = memo(function DetailPanelHeader({
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-full text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950"
+                    className={`rounded-full text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950 ${isMobile ? 'h-8 w-8' : ''}`}
                     onClick={onEdit}
                   >
-                    <Pencil className="w-4 h-4" />
+                    <Pencil className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
                   </Button>
                 )}
                 {onDelete && (
                   <Button
                     variant="outline"
                     size="icon"
-                    className="rounded-full text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                    className={`rounded-full text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 ${isMobile ? 'h-8 w-8' : ''}`}
                     onClick={onDelete}
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
                   </Button>
                 )}
               </>

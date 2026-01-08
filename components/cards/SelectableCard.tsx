@@ -29,16 +29,10 @@ export const SelectableCard = memo(
         type="button"
         className={cn(
           'w-full text-left p-3 rounded-lg transition-colors',
-          variant === 'bordered' && 'border',
+          variant === 'bordered' && 'border border-black dark:border-white',
           isSelected
-            ? cn(
-                'bg-gray-100 dark:bg-zinc-800',
-                variant === 'bordered' && 'border-brand'
-              )
-            : cn(
-                'hover:bg-gray-50 dark:hover:bg-zinc-800/50',
-                variant === 'bordered' && 'border-transparent'
-              ),
+            ? 'bg-gray-100 dark:bg-zinc-800'
+            : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50',
           className
         )}
         {...props}

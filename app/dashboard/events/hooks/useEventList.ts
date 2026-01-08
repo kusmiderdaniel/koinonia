@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { useDebouncedValue, queryKeys, useCacheInvalidation } from '@/lib/hooks'
+import { isLeaderOrAbove, isAdminOrOwner } from '@/lib/permissions'
 import { getEvents, getChurchMembers } from '../actions'
 import type { Event, Member } from '../types'
 
@@ -48,13 +49,38 @@ interface UseEventListReturn {
 
 export function useEventList(initialData?: EventsInitialData): UseEventListReturn {
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
   const { invalidateEvents, invalidateChurchMembers } = useCacheInvalidation()
+
+  // Initialize viewMode from URL param (survives page revalidation)
+  const initialViewMode = (): ViewMode => {
+    const viewParam = searchParams.get('view')
+    if (viewParam === 'list' || viewParam === 'calendar' || viewParam === 'matrix' || viewParam === 'templates') {
+      return viewParam
+    }
+    return 'list'
+  }
 
   // Local UI state
   const [searchQuery, setSearchQuery] = useState('')
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 300)
-  const [viewMode, setViewMode] = useState<ViewMode>('list')
+  const [viewMode, setViewModeState] = useState<ViewMode>(initialViewMode)
   const [error, setError] = useState<string | null>(null)
+
+  // setViewMode that also updates the URL to persist across revalidation
+  const setViewMode = useCallback((mode: ViewMode) => {
+    setViewModeState(mode)
+    // Update URL with new view mode (preserving other params)
+    const params = new URLSearchParams(searchParams.toString())
+    if (mode === 'list') {
+      params.delete('view') // 'list' is default, no need for param
+    } else {
+      params.set('view', mode)
+    }
+    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname
+    router.replace(newUrl, { scroll: false })
+  }, [pathname, router, searchParams])
 
   // React Query with initialData for instant render
   const eventsQuery = useQuery({
@@ -98,13 +124,17 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
   const churchMembers = membersQuery.data ?? []
   const isLoading = eventsQuery.isLoading || membersQuery.isLoading
 
-  // Handle view query param from URL
+  // Sync viewMode with URL param changes (e.g., browser back/forward)
   useEffect(() => {
     const viewParam = searchParams.get('view')
-    if (viewParam === 'list' || viewParam === 'calendar' || viewParam === 'matrix' || viewParam === 'templates') {
-      setViewMode(viewParam)
+    const targetMode: ViewMode = (viewParam === 'list' || viewParam === 'calendar' || viewParam === 'matrix' || viewParam === 'templates')
+      ? viewParam
+      : 'list'
+    // Only update if different to avoid unnecessary state updates
+    if (targetMode !== viewMode) {
+      setViewModeState(targetMode)
     }
-  }, [searchParams])
+  }, [searchParams, viewMode])
 
   // Sync query errors to local error state
   useEffect(() => {
@@ -116,18 +146,18 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
   // Permissions
   // canManage: Can create/edit/delete events (admin/owner only)
   const canManage = useMemo(
-    () => ['owner', 'admin'].includes(userRole),
+    () => isAdminOrOwner(userRole),
     [userRole]
   )
 
   // canManageContent: Can manage agenda, songs, positions (leader+)
   const canManageContent = useMemo(
-    () => ['owner', 'admin', 'leader'].includes(userRole),
+    () => isLeaderOrAbove(userRole),
     [userRole]
   )
 
   const canDelete = useMemo(
-    () => ['owner', 'admin'].includes(userRole),
+    () => isAdminOrOwner(userRole),
     [userRole]
   )
 

@@ -116,6 +116,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
     website: church.website,
     timezone: church.timezone,
     first_day_of_week: church.first_day_of_week,
+    time_format: church.time_format as '12h' | '24h',
     default_event_visibility: church.default_event_visibility,
     logo_url: church.logo_url,
   }

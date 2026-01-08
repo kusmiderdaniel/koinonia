@@ -10,10 +10,10 @@ export default function Page() {
           Church management made simple. Coordinate volunteers, manage events, and build community.
         </p>
         <div className="flex gap-4 justify-center">
-          <Button asChild size="lg">
+          <Button asChild size="lg" className="rounded-full !border !border-black dark:!border-white">
             <Link href="/auth/signin">Sign In</Link>
           </Button>
-          <Button asChild variant="outline" size="lg">
+          <Button asChild variant="outline" size="lg" className="rounded-full !bg-brand hover:!bg-brand/90 !text-white !border-brand">
             <Link href="/auth/signup">Get Started</Link>
           </Button>
         </div>

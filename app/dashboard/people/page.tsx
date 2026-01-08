@@ -5,9 +5,10 @@ import { UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { MembersTable } from './members-table'
-import { OfflineMemberDialog } from './offline-member-dialog'
+import { OfflineMemberDialog } from './OfflineMemberDialog'
 import { InvitePopover } from './invite-popover'
 import { getUserCampusIds } from '@/lib/utils/campus'
+import { isAdminOrOwner, isLeader } from '@/lib/permissions'
 import type { SavedView } from '@/types/saved-views'
 
 export default async function PeoplePage() {
@@ -36,13 +37,13 @@ export default async function PeoplePage() {
     redirect('/dashboard')
   }
 
-  const isAdmin = profile.role === 'admin' || profile.role === 'owner'
-  const isLeader = profile.role === 'leader'
-  const canViewPending = isAdmin || isLeader
+  const userIsAdmin = isAdminOrOwner(profile.role)
+  const userIsLeader = isLeader(profile.role)
+  const canViewPending = userIsAdmin || userIsLeader
 
   // For leaders, get their campus IDs for filtering
   let leaderCampusIds: string[] = []
-  if (isLeader) {
+  if (userIsLeader) {
     leaderCampusIds = await getUserCampusIds(profile.id, adminClient)
   }
 
@@ -64,9 +65,9 @@ export default async function PeoplePage() {
             .eq('status', 'pending')
 
           // Leaders only see pending registrations for their campus
-          if (isLeader && leaderCampusIds.length > 0) {
+          if (userIsLeader && leaderCampusIds.length > 0) {
             query = query.in('campus_id', leaderCampusIds)
-          } else if (isLeader) {
+          } else if (userIsLeader) {
             // Leader has no campus, so no pending registrations
             return { count: 0 }
           }
@@ -197,7 +198,7 @@ export default async function PeoplePage() {
   }) || []
 
   // For leaders, filter members to only show those who share a campus with them
-  const filteredMembers = isLeader && leaderCampusIds.length > 0
+  const filteredMembers = userIsLeader && leaderCampusIds.length > 0
     ? members.filter(member => {
         // If member has no campus, leaders can't see them
         if (member.campuses.length === 0) return false
@@ -211,12 +212,12 @@ export default async function PeoplePage() {
       <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
           <div>
-            <h1 className="text-2xl font-bold">{isLeader ? 'Campus Members' : 'Church Members'}</h1>
+            <h1 className="text-2xl font-bold">{userIsLeader ? 'Campus Members' : 'Church Members'}</h1>
             <p className="text-muted-foreground">
-              {isLeader ? 'Members in your campus.' : 'All members who have joined your church.'} {isAdmin && 'Click on a role to change it.'}
+              {userIsLeader ? 'Members in your campus.' : 'All members who have joined your church.'} {userIsAdmin && 'Click on a role to change it.'}
             </p>
           </div>
-          {(isAdmin || isLeader) && (
+          {(userIsAdmin || userIsLeader) && (
             <div className="flex items-center gap-2 flex-wrap">
               {pendingCount > 0 && (
                 <Button variant="outline" asChild className="!border !border-black dark:!border-white">
@@ -242,11 +243,11 @@ export default async function PeoplePage() {
               currentUserId={profile.id}
               currentUserRole={profile.role}
               savedViews={(savedViewsResult.data || []) as SavedView[]}
-              canManageViews={isAdmin || isLeader}
+              canManageViews={userIsAdmin || userIsLeader}
             />
           ) : (
             <p className="text-center text-muted-foreground py-8">
-              {isLeader ? 'No members in your campus yet.' : 'No members yet. Share your invite link to get started!'}
+              {userIsLeader ? 'No members in your campus yet.' : 'No members yet. Share your invite link to get started!'}
             </p>
           )}
         </div>

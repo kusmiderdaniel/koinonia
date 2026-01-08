@@ -1,5 +1,8 @@
 // Core entity types shared across the application
 
+// Import centralized role hierarchy from permissions
+import { ROLE_HIERARCHY, type UserRole } from '@/lib/permissions'
+
 /**
  * Base campus type with common fields
  * Extended by domain-specific types when needed
@@ -43,24 +46,17 @@ export interface RoleBrief {
 
 /**
  * Church member role hierarchy
+ * Alias for UserRole from permissions for backwards compatibility
  */
-export type ChurchRole = 'owner' | 'admin' | 'leader' | 'volunteer' | 'member'
+export type ChurchRole = UserRole
 
 /**
  * Roles that can be assigned from the People table (excludes owner)
  */
 export type AssignableChurchRole = 'admin' | 'leader' | 'volunteer' | 'member'
 
-/**
- * Role hierarchy for permission checks
- */
-export const ROLE_HIERARCHY: Record<ChurchRole, number> = {
-  owner: 5,
-  admin: 4,
-  leader: 3,
-  volunteer: 2,
-  member: 1,
-}
+// Re-export ROLE_HIERARCHY for backwards compatibility
+export { ROLE_HIERARCHY }
 
 /**
  * List of assignable roles
@@ -84,18 +80,4 @@ export const ROLE_COLORS: Record<ChurchRole, { bg: string; text: string; border:
 export function getRoleBadgeClasses(role: string): string {
   const colors = ROLE_COLORS[role as ChurchRole] || ROLE_COLORS.member
   return `inline-flex items-center ${colors.bg} ${colors.text} ${colors.border} border rounded-full px-2.5 py-1 text-xs font-medium`
-}
-
-/**
- * Check if a user role has higher or equal permissions than another
- */
-export function hasPermission(userRole: ChurchRole, requiredRole: ChurchRole): boolean {
-  return ROLE_HIERARCHY[userRole] >= ROLE_HIERARCHY[requiredRole]
-}
-
-/**
- * Check if a user can manage another user based on role hierarchy
- */
-export function canManageRole(managerRole: ChurchRole, targetRole: ChurchRole): boolean {
-  return ROLE_HIERARCHY[managerRole] > ROLE_HIERARCHY[targetRole]
 }

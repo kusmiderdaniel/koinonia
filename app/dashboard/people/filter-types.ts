@@ -37,7 +37,7 @@ export const PEOPLE_FILTER_FIELDS: FilterFieldDefinition[] = [
   { id: 'active', label: 'Active', type: 'boolean' },
   {
     id: 'sex',
-    label: 'Sex',
+    label: 'Gender',
     type: 'select',
     options: [
       { value: 'male', label: 'Male' },

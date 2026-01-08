@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Plus, Calendar, User, MoreHorizontal, Trash2, CheckSquare } from 'lucide-react'
+import { useIsMobile } from '@/lib/hooks'
 import { toast } from 'sonner'
 import { format, parseISO, isToday, isTomorrow, isPast } from 'date-fns'
 import { getTasksForEvent, getTask, updateTaskStatus, deleteTask } from '@/app/dashboard/tasks/actions'
@@ -42,6 +43,7 @@ export function EventTasksTab({
   weekStartsOn = 0,
   initialTasks,
 }: EventTasksTabProps) {
+  const isMobile = useIsMobile()
   const [tasks, setTasks] = useState<Task[]>(initialTasks || [])
   const [isLoading, setIsLoading] = useState(!initialTasks)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
@@ -151,29 +153,54 @@ export function EventTasksTab({
   return (
     <div className="flex flex-col h-full">
       {/* Fixed header */}
-      <div className="flex-shrink-0 flex items-center justify-between pl-6 pr-6 py-4 min-h-[72px]">
-        <div className="flex items-center gap-3">
-          <p className="text-sm text-muted-foreground">
-            {tasks.length} task{tasks.length !== 1 ? 's' : ''}
-          </p>
-        </div>
-        {canManage && (
-          <div className="flex gap-2 ml-auto">
-            <Button
-              variant="outline-pill"
-              size="sm"
-              className="!border !border-black dark:!border-white"
-              onClick={onAddTask}
-            >
-              <Plus className="w-4 h-4 mr-1" />
-              Add Task
-            </Button>
+      <div className={`flex-shrink-0 ${isMobile ? 'px-3 py-2' : 'pl-6 pr-6 py-4'}`}>
+        {isMobile ? (
+          <div className="space-y-1.5">
+            {canManage && (
+              <Button
+                variant="outline-pill"
+                size="sm"
+                className="!border !border-black dark:!border-white text-xs h-8"
+                onClick={onAddTask}
+              >
+                <Plus className="w-3.5 h-3.5 mr-1" />
+                Add Task
+              </Button>
+            )}
+            {tasks.length > 0 && (
+              <p className="text-xs text-muted-foreground">
+                {tasks.length} task{tasks.length !== 1 ? 's' : ''}
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center justify-between min-h-[40px]">
+            <div className="flex items-center gap-3">
+              {tasks.length > 0 && (
+                <p className="text-sm text-muted-foreground">
+                  {tasks.length} task{tasks.length !== 1 ? 's' : ''}
+                </p>
+              )}
+            </div>
+            {canManage && (
+              <div className="flex gap-2 ml-auto">
+                <Button
+                  variant="outline-pill"
+                  size="sm"
+                  className="!border !border-black dark:!border-white"
+                  onClick={onAddTask}
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add Task
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </div>
 
       {/* Scrollable content */}
-      <div className="flex-1 min-h-0 overflow-y-auto pl-6 pr-6 pb-6 scrollbar-minimal">
+      <div className={`flex-1 min-h-0 overflow-y-auto scrollbar-minimal ${isMobile ? 'px-3 pb-3' : 'pl-6 pr-6 pb-6'}`}>
         {tasks.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           <CheckSquare className="w-10 h-10 mx-auto mb-2 opacity-50" />
@@ -186,7 +213,7 @@ export function EventTasksTab({
           )}
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className={isMobile ? 'space-y-1.5' : 'space-y-2'}>
           {tasks.map((task) => {
             const dueDateInfo = formatDueDate(task.due_date)
             const isCompleted = task.status === 'completed'
@@ -194,7 +221,7 @@ export function EventTasksTab({
             return (
               <div
                 key={task.id}
-                className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                className={`flex items-center gap-2 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer ${isMobile ? 'p-2' : 'p-3 gap-3'}`}
                 onClick={() => handleTaskClick(task)}
               >
                 {/* Checkbox for completion */}
@@ -204,35 +231,35 @@ export function EventTasksTab({
                     onCheckedChange={(checked) => {
                       handleStatusChange(task.id, checked ? 'completed' : 'pending')
                     }}
-                    className="h-5 w-5"
+                    className={isMobile ? 'h-4 w-4' : 'h-5 w-5'}
                   />
                 </div>
 
                 {/* Task info */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={`font-medium text-sm truncate ${isCompleted ? 'line-through text-muted-foreground' : ''}`}>
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <span className={`font-medium truncate ${isMobile ? 'text-xs' : 'text-sm'} ${isCompleted ? 'line-through text-muted-foreground' : ''}`}>
                       {task.title}
                     </span>
                     <TaskPriorityBadge priority={task.priority} size="sm" />
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <div className={`flex items-center gap-2 text-muted-foreground ${isMobile ? 'text-[10px]' : 'text-xs gap-3'}`}>
                     {task.assignee && (
-                      <span className="flex items-center gap-1">
-                        <User className="h-3 w-3" />
+                      <span className="flex items-center gap-0.5">
+                        <User className={isMobile ? 'h-2.5 w-2.5' : 'h-3 w-3'} />
                         {task.assignee.first_name}
                       </span>
                     )}
                     {dueDateInfo && (
-                      <span className={`flex items-center gap-1 ${
+                      <span className={`flex items-center gap-0.5 ${
                         dueDateInfo.isOverdue ? 'text-red-600' :
                         dueDateInfo.isUrgent ? 'text-orange-600' : ''
                       }`}>
-                        <Calendar className="h-3 w-3" />
+                        <Calendar className={isMobile ? 'h-2.5 w-2.5' : 'h-3 w-3'} />
                         {dueDateInfo.label}
                       </span>
                     )}
-                    {task.ministry && (
+                    {task.ministry && !isMobile && (
                       <Badge
                         variant="outline"
                         className="text-xs rounded-full py-0"
@@ -274,8 +301,8 @@ export function EventTasksTab({
                   <div onClick={(e) => e.stopPropagation()}>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
-                          <MoreHorizontal className="h-4 w-4" />
+                        <Button variant="ghost" size="icon" className={isMobile ? 'h-6 w-6' : 'h-7 w-7'}>
+                          <MoreHorizontal className={isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">

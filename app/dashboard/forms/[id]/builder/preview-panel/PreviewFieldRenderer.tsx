@@ -21,6 +21,7 @@ import { Calendar } from '@/components/ui/calendar'
 import { CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
+import { useIsMobile } from '@/lib/hooks'
 import { getOptionColorClasses } from './types'
 import type { FieldRendererProps } from './types'
 
@@ -118,6 +119,8 @@ interface FieldWrapperProps {
 }
 
 function FieldWrapper({ field, children, error, fullWidth = false }: FieldWrapperProps) {
+  const isMobile = useIsMobile()
+
   return (
     <div key={field.id} className="space-y-2">
       <Label className="text-sm font-medium">
@@ -127,7 +130,7 @@ function FieldWrapper({ field, children, error, fullWidth = false }: FieldWrappe
       {field.description && (
         <p className="text-xs text-muted-foreground">{field.description}</p>
       )}
-      <div className={fullWidth ? '' : 'w-1/2'}>
+      <div className={fullWidth || isMobile ? '' : 'w-1/2'}>
         {children}
       </div>
       {error && (

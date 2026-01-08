@@ -5,7 +5,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { createClient } from '@/lib/supabase/client'
 import { InboxNavItem } from '@/components/InboxNavItem'
 import { usePrefetchRoutes, useSidebarCollapse } from '@/lib/hooks'
-import { hasPageAccess } from '@/lib/permissions'
+import { hasPageAccess, isMember } from '@/lib/permissions'
 import { ChurchLogo } from './ChurchLogo'
 import { NavItem } from './NavItem'
 import { CollapseToggle } from './CollapseToggle'
@@ -59,19 +59,21 @@ export function SidebarContent({
           {visibleNavItems.map((item, index) => {
             const isActive = pathname === item.href
 
-            // Insert Inbox after Home (index 0)
-            if (index === 0) {
+            // Insert Inbox after Home (index 0), but not for members
+            if (index === 0 && !isMember(user.role)) {
               return (
                 <div key={item.href}>
                   <NavItem
                     item={item}
                     isActive={isActive}
                     collapsed={collapsed}
+                    isMobile={isMobile}
                     onNavigate={handleNavClick}
                     onPrefetch={() => prefetchRoute(item.href)}
                   />
                   <InboxNavItem
                     collapsed={collapsed}
+                    isMobile={isMobile}
                     onNavigate={handleNavClick}
                     onPrefetch={() => prefetchRoute('/dashboard/inbox')}
                   />
@@ -85,6 +87,7 @@ export function SidebarContent({
                 item={item}
                 isActive={isActive}
                 collapsed={collapsed}
+                isMobile={isMobile}
                 onNavigate={handleNavClick}
                 onPrefetch={() => prefetchRoute(item.href)}
               />
@@ -102,6 +105,7 @@ export function SidebarContent({
                     item={item}
                     isActive={isActive}
                     collapsed={collapsed}
+                    isMobile={isMobile}
                     onNavigate={handleNavClick}
                     onPrefetch={() => prefetchRoute(item.href)}
                   />
@@ -116,6 +120,7 @@ export function SidebarContent({
         <UserDropdown
           user={user}
           collapsed={collapsed}
+          isMobile={isMobile}
           onNavigate={handleNavClick}
           onSignOut={handleSignOut}
         />

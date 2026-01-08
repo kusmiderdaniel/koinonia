@@ -178,7 +178,7 @@ export const MemberRow = memo(function MemberRow({
         </div>
       </TableCell>
 
-      {/* Sex */}
+      {/* Gender */}
       <TableCell className="text-muted-foreground capitalize">
         {member.sex || '—'}
       </TableCell>

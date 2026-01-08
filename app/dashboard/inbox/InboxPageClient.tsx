@@ -10,6 +10,7 @@ import { NotificationItem } from '@/components/NotificationItem'
 import { getNotifications, markAllAsRead, getUnreadCount, getActionableCount } from '@/app/dashboard/notifications/actions'
 import type { Notification } from '@/types/notifications'
 import { toast } from 'sonner'
+import { onNotificationRefresh } from '@/lib/events/notifications'
 
 interface InboxPageClientProps {
   initialNotifications: Notification[]
@@ -54,6 +55,11 @@ export function InboxPageClient({
     return () => clearInterval(interval)
   }, [refreshNotifications])
 
+  // Listen for notification refresh events (e.g., when invitation is responded to from home page)
+  useEffect(() => {
+    return onNotificationRefresh(refreshNotifications)
+  }, [refreshNotifications])
+
   const handleMarkAllAsRead = async () => {
     setIsMarkingAllRead(true)
     try {
@@ -94,14 +100,14 @@ export function InboxPageClient({
     <div className="flex h-[calc(100vh-3.5rem)] md:h-screen overflow-hidden">
       <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4 shrink-0">
-          <div className="flex items-center gap-3">
-            <Inbox className="h-7 w-7" />
-            <div>
-              <h1 className="text-2xl font-bold">Inbox</h1>
-              <p className="text-sm text-muted-foreground">
+        <div className="flex items-center justify-between mb-4 shrink-0 gap-2">
+          <div className="flex items-center gap-2 md:gap-3 min-w-0">
+            <Inbox className="h-6 w-6 md:h-7 md:w-7 flex-shrink-0" />
+            <div className="min-w-0">
+              <h1 className="text-xl md:text-2xl font-bold">Inbox</h1>
+              <p className="text-xs md:text-sm text-muted-foreground truncate">
                 {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}
-                {actionableCount > 0 && ` · ${actionableCount} pending response`}
+                {actionableCount > 0 && ` · ${actionableCount} pending`}
               </p>
             </div>
           </div>
@@ -111,32 +117,34 @@ export function InboxPageClient({
               size="sm"
               onClick={handleMarkAllAsRead}
               disabled={isMarkingAllRead}
-              className="gap-2 !rounded-full !border-black dark:!border-white"
+              className="gap-1.5 md:gap-2 !rounded-full !border-black dark:!border-white text-xs md:text-sm flex-shrink-0"
             >
               {isMarkingAllRead ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-3.5 w-3.5 md:h-4 md:w-4 animate-spin" />
               ) : (
-                <CheckCheck className="h-4 w-4" />
+                <CheckCheck className="h-3.5 w-3.5 md:h-4 md:w-4" />
               )}
-              Mark all read
+              <span className="hidden sm:inline">Mark all read</span>
+              <span className="sm:hidden">Read all</span>
             </Button>
           )}
         </div>
 
         {/* Content */}
         <div className="flex-1 min-h-0 overflow-auto">
-          <div className="border border-black dark:border-zinc-700 rounded-lg p-4 max-w-2xl">
+          <div className="md:border md:border-black md:dark:border-zinc-700 rounded-lg md:p-4 max-w-2xl">
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
               <TabsList className="mb-4 w-full border border-black dark:border-zinc-700">
-                <TabsTrigger value="all" className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-white">
+                <TabsTrigger value="all" className="flex-1 text-xs md:text-sm py-2 md:py-1.5 data-[state=active]:bg-brand data-[state=active]:text-white">
                   All
                 </TabsTrigger>
-                <TabsTrigger value="unread" className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-white">
+                <TabsTrigger value="unread" className="flex-1 text-xs md:text-sm py-2 md:py-1.5 data-[state=active]:bg-brand data-[state=active]:text-white">
                   Unread
                 </TabsTrigger>
-                <TabsTrigger value="actionable" className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-white">
-                  Needs Response
+                <TabsTrigger value="actionable" className="flex-1 text-xs md:text-sm py-2 md:py-1.5 data-[state=active]:bg-brand data-[state=active]:text-white">
+                  <span className="hidden sm:inline">Needs Response</span>
+                  <span className="sm:hidden">Pending</span>
                 </TabsTrigger>
               </TabsList>
 

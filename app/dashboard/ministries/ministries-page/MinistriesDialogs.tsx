@@ -6,7 +6,7 @@ import { RoleDialog } from '../components'
 import type { useMinistryDialogs } from '../hooks'
 
 const MinistryDialog = dynamic(
-  () => import('../ministry-dialog').then((mod) => ({ default: mod.MinistryDialog })),
+  () => import('../MinistryDialog').then((mod) => ({ default: mod.MinistryDialog })),
   { ssr: false }
 )
 

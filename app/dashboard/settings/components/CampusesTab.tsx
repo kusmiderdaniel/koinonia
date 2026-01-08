@@ -50,22 +50,22 @@ export const CampusesTab = memo(function CampusesTab({
 }: CampusesTabProps) {
   return (
     <>
-      <Card className="min-w-[28rem]">
-        <CardHeader>
-          <div className="flex items-center justify-between gap-6">
+      <Card className="w-full md:min-w-[28rem]">
+        <CardHeader className="p-4 md:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-6">
             <div>
-              <CardTitle>Campuses</CardTitle>
-              <CardDescription>
-                Manage your church&apos;s campus locations for multi-site operations
+              <CardTitle className="text-lg md:text-xl">Campuses</CardTitle>
+              <CardDescription className="text-sm">
+                Manage your church&apos;s campus locations
               </CardDescription>
             </div>
-            <Button onClick={() => campusManager.openCampusDialog()} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0">
+            <Button onClick={() => campusManager.openCampusDialog()} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               Add Campus
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 md:p-6 pt-0 md:pt-0">
           {campuses.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <Building2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
@@ -73,28 +73,26 @@ export const CampusesTab = memo(function CampusesTab({
               <p className="text-sm">Add your first campus to organize your church locations</p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1.5 md:space-y-2">
               {campuses.map((campus) => (
                 <div
                   key={campus.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                  className="flex items-center justify-between p-2 md:p-4 border rounded-lg hover:bg-muted/50 transition-colors gap-2"
                 >
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                     <div
-                      className="w-5 h-5 rounded-full mt-0.5 flex-shrink-0"
+                      className="w-4 h-4 md:w-5 md:h-5 rounded-full flex-shrink-0"
                       style={{ backgroundColor: campus.color }}
                     />
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{campus.name}</span>
-                      {campus.is_default && (
-                        <Badge variant="secondary" className="text-xs">
-                          <Star className="w-3 h-3 mr-1" />
-                          Default
-                        </Badge>
-                      )}
-                    </div>
+                    <span className="font-medium text-sm md:text-base truncate">{campus.name}</span>
+                    {campus.is_default && (
+                      <Badge variant="secondary" className="text-[10px] md:text-xs px-1.5 py-0 h-5">
+                        <Star className="w-2.5 h-2.5 md:w-3 md:h-3 mr-0.5 md:mr-1" />
+                        Default
+                      </Badge>
+                    )}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center shrink-0">
                     {!campus.is_default && (
                       <Button
                         variant="ghost"
@@ -102,7 +100,7 @@ export const CampusesTab = memo(function CampusesTab({
                         onClick={() =>
                           campusManager.handleSetDefault(campus.id, setCampuses, setError, setSuccess)
                         }
-                        className="text-xs"
+                        className="text-[10px] md:text-xs h-7 md:h-8 px-2 hidden sm:flex"
                       >
                         Set Default
                       </Button>
@@ -110,17 +108,19 @@ export const CampusesTab = memo(function CampusesTab({
                     <Button
                       variant="ghost"
                       size="icon"
+                      className="h-7 w-7 md:h-8 md:w-8"
                       onClick={() => campusManager.openCampusDialog(campus)}
                     >
-                      <Pencil className="w-4 h-4" />
+                      <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
+                      className="h-7 w-7 md:h-8 md:w-8"
                       onClick={() => campusManager.openDeleteCampusDialog(campus)}
                       disabled={campus.is_default || campuses.length <= 1}
                     >
-                      <Trash2 className="w-4 h-4 text-red-500" />
+                      <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-red-500" />
                     </Button>
                   </div>
                 </div>
@@ -135,7 +135,7 @@ export const CampusesTab = memo(function CampusesTab({
         open={campusManager.campusDialogOpen}
         onOpenChange={(open) => !open && campusManager.closeCampusDialog()}
       >
-        <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-lg overflow-hidden">
+        <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-[90vw] md:max-w-lg overflow-hidden">
           <AlertDialogHeader>
             <AlertDialogTitle>
               {campusManager.editingCampus ? 'Edit Campus' : 'Add Campus'}
@@ -219,7 +219,7 @@ export const CampusesTab = memo(function CampusesTab({
         open={campusManager.deleteCampusDialogOpen}
         onOpenChange={(open) => !open && campusManager.closeDeleteCampusDialog()}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-[90vw] md:max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Campus?</AlertDialogTitle>
             <AlertDialogDescription>

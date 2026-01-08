@@ -3,6 +3,7 @@ import {
   isAuthError,
   requireManagePermission,
   requireAdminPermission,
+  unwrapRelation,
 } from '@/lib/utils/server-auth'
 
 // Re-export schemas from centralized location
@@ -39,4 +40,4 @@ export function canUserSeeEvent(
 }
 
 // Re-export auth utilities for use in other action files
-export { getAuthenticatedUserWithProfile, isAuthError, requireManagePermission, requireAdminPermission }
+export { getAuthenticatedUserWithProfile, isAuthError, requireManagePermission, requireAdminPermission, unwrapRelation }

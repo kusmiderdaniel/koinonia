@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Copy, Pencil, Trash2 } from 'lucide-react'
 import { EventTypeBadge } from '@/components/EventTypeBadge'
 import { CampusBadges } from '@/components/CampusBadge'
+import { getTimeLocaleOptions } from '@/lib/utils/format'
 import type { Event } from '../types'
 
 interface EventCardProps {
@@ -12,6 +13,7 @@ interface EventCardProps {
   isSelected: boolean
   onClick: () => void
   canManage?: boolean
+  timeFormat?: '12h' | '24h'
   onDuplicate?: (event: Event) => void
   onEdit?: (event: Event) => void
   onDelete?: (event: Event) => void
@@ -22,6 +24,7 @@ export const EventCard = memo(function EventCard({
   isSelected,
   onClick,
   canManage,
+  timeFormat = '24h',
   onDuplicate,
   onEdit,
   onDelete,
@@ -34,7 +37,7 @@ export const EventCard = memo(function EventCard({
   })
   const timeStr = event.is_all_day
     ? 'All day'
-    : startDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+    : startDate.toLocaleTimeString('en-US', getTimeLocaleOptions(timeFormat))
 
   return (
     <div

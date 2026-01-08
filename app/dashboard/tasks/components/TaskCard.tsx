@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { MoreHorizontal, Trash2, Calendar, User } from 'lucide-react'
 import { TaskStatusBadge, TaskPriorityBadge } from './TaskBadges'
+import { useIsMobile } from '@/lib/hooks'
 import { format, parseISO, isToday, isTomorrow, isPast, isValid } from 'date-fns'
 import type { Task, TaskStatus, TaskPriority } from '../types'
 
@@ -53,28 +54,29 @@ export const TaskCard = memo(function TaskCard({
   onEdit,
   onDelete,
 }: TaskCardProps) {
+  const isMobile = useIsMobile()
   const isCompleted = task.status === 'completed'
   const dueDateInfo = formatDueDate(task.due_date)
 
   return (
     <div
-      className={`flex items-center gap-3 p-4 border-b cursor-pointer transition-colors hover:bg-muted/50 ${
-        isSelected ? 'bg-muted' : ''
-      }`}
+      className={`flex items-center border-b cursor-pointer transition-colors hover:bg-muted/50 ${
+        isMobile ? 'gap-2 p-2' : 'gap-3 p-4'
+      } ${isSelected ? 'bg-muted' : ''}`}
     >
       {/* Checkbox for completion */}
       <Checkbox
         checked={isCompleted}
         onCheckedChange={(checked) => onCompletionToggle(task.id, checked as boolean)}
         onClick={(e) => e.stopPropagation()}
-        className="h-5 w-5 shrink-0"
+        className={`shrink-0 ${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`}
       />
 
       {/* Task info */}
       <div className="flex-1 min-w-0" onClick={() => onTitleClick(task.id)}>
-        <div className="flex items-center gap-2 mb-1">
+        <div className={`flex items-center gap-1.5 ${isMobile ? 'mb-0.5' : 'mb-1'}`}>
           <span
-            className={`font-medium truncate ${
+            className={`font-medium truncate ${isMobile ? 'text-sm' : ''} ${
               isCompleted ? 'line-through text-muted-foreground' : ''
             }`}
           >
@@ -82,20 +84,20 @@ export const TaskCard = memo(function TaskCard({
           </span>
           <TaskPriorityBadge priority={task.priority} size="sm" />
         </div>
-        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+        <div className={`flex items-center text-muted-foreground ${isMobile ? 'gap-2 text-xs' : 'gap-3 text-sm'}`}>
           {task.assignee && (
-            <span className="flex items-center gap-1">
-              <User className="h-3 w-3" />
+            <span className="flex items-center gap-0.5">
+              <User className={isMobile ? 'h-2.5 w-2.5' : 'h-3 w-3'} />
               {task.assignee.first_name}
             </span>
           )}
           {dueDateInfo && (
-            <span className={`flex items-center gap-1 ${dueDateInfo.className}`}>
-              <Calendar className="h-3 w-3" />
+            <span className={`flex items-center gap-0.5 ${dueDateInfo.className}`}>
+              <Calendar className={isMobile ? 'h-2.5 w-2.5' : 'h-3 w-3'} />
               {dueDateInfo.label}
             </span>
           )}
-          {task.ministry && (
+          {task.ministry && !isMobile && (
             <Badge
               variant="outline"
               className="text-xs rounded-full"
@@ -114,7 +116,7 @@ export const TaskCard = memo(function TaskCard({
       <DropdownMenu>
         <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
           <button className="focus:outline-none shrink-0">
-            <TaskStatusBadge status={task.status} />
+            <TaskStatusBadge status={task.status} size={isMobile ? 'sm' : 'default'} />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="bg-white dark:bg-zinc-950">
@@ -136,8 +138,8 @@ export const TaskCard = memo(function TaskCard({
       {/* Actions */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-          <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
-            <MoreHorizontal className="h-4 w-4" />
+          <Button variant="ghost" size="icon" className={`shrink-0 ${isMobile ? 'h-6 w-6' : 'h-8 w-8'}`}>
+            <MoreHorizontal className={isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

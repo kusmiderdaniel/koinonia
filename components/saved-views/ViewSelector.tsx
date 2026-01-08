@@ -61,15 +61,7 @@ export function ViewSelector({
             ) : (
               <Bookmark className="h-4 w-4" />
             )}
-            {displayName ? (
-              <span className="inline-flex items-center gap-1">
-                <span className="bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded">
-                  {displayName}
-                </span>
-              </span>
-            ) : (
-              'Views'
-            )}
+            Views
           </Button>
         </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-64 bg-white dark:bg-zinc-950">

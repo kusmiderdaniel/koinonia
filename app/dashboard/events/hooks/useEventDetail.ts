@@ -11,6 +11,7 @@ import {
   updateAgendaItemDuration,
   updateAgendaItemDescription,
 } from '../actions'
+import { updateAgendaItemArrangement } from '../actions/agenda/songs'
 import type { EventDetail, AgendaItem, Position } from '../types'
 
 interface UseEventDetailReturn {
@@ -32,10 +33,13 @@ interface UseEventDetailReturn {
 
   // Agenda handlers
   handleDragEnd: (event: DragEndEvent) => Promise<void>
+  handleMoveAgendaItemUp: (itemId: string) => void
+  handleMoveAgendaItemDown: (itemId: string) => void
   handleAgendaItemKeyChange: (itemId: string, key: string | null) => Promise<{ error?: string }>
   handleAgendaItemLeaderChange: (itemId: string, leaderId: string | null) => Promise<{ error?: string }>
   handleAgendaItemDurationChange: (itemId: string, durationSeconds: number) => Promise<{ error?: string }>
   handleAgendaItemDescriptionChange: (itemId: string, description: string | null) => Promise<{ error?: string }>
+  handleAgendaItemArrangementChange: (itemId: string, arrangementId: string | null) => Promise<{ error?: string }>
 }
 
 export function useEventDetail(): UseEventDetailReturn {
@@ -111,6 +115,52 @@ export function useEventDetail(): UseEventDetailReturn {
     }
   }, [selectedEvent, sortedAgendaItems])
 
+  // Move agenda item up (swap with previous item)
+  const handleMoveAgendaItemUp = useCallback((itemId: string) => {
+    if (!selectedEvent) return
+    const index = sortedAgendaItems.findIndex((item) => item.id === itemId)
+    if (index <= 0) return // Can't move up if first item
+
+    const newOrder = arrayMove(sortedAgendaItems, index, index - 1)
+    const newIds = newOrder.map((item) => item.id)
+
+    // Optimistically update the UI
+    const reorderedItems = newOrder.map((item, idx) => ({
+      ...item,
+      sort_order: idx,
+    }))
+    setSelectedEvent({
+      ...selectedEvent,
+      event_agenda_items: reorderedItems,
+    })
+
+    // Save to server
+    reorderAgendaItems(selectedEvent.id, newIds)
+  }, [selectedEvent, sortedAgendaItems])
+
+  // Move agenda item down (swap with next item)
+  const handleMoveAgendaItemDown = useCallback((itemId: string) => {
+    if (!selectedEvent) return
+    const index = sortedAgendaItems.findIndex((item) => item.id === itemId)
+    if (index === -1 || index >= sortedAgendaItems.length - 1) return // Can't move down if last item
+
+    const newOrder = arrayMove(sortedAgendaItems, index, index + 1)
+    const newIds = newOrder.map((item) => item.id)
+
+    // Optimistically update the UI
+    const reorderedItems = newOrder.map((item, idx) => ({
+      ...item,
+      sort_order: idx,
+    }))
+    setSelectedEvent({
+      ...selectedEvent,
+      event_agenda_items: reorderedItems,
+    })
+
+    // Save to server
+    reorderAgendaItems(selectedEvent.id, newIds)
+  }, [selectedEvent, sortedAgendaItems])
+
   // Helper to update a single agenda item field optimistically
   const updateAgendaItemField = useCallback(<K extends keyof AgendaItem>(
     itemId: string,
@@ -172,6 +222,15 @@ export function useEventDetail(): UseEventDetailReturn {
     return result
   }, [selectedEvent, loadEventDetail, updateAgendaItemField])
 
+  const handleAgendaItemArrangementChange = useCallback(async (itemId: string, arrangementId: string | null) => {
+    // For arrangement changes, we need to reload to get the full arrangement data
+    const result = await updateAgendaItemArrangement(itemId, arrangementId)
+    if (!result.error && selectedEvent) {
+      await loadEventDetail(selectedEvent.id)
+    }
+    return result
+  }, [selectedEvent, loadEventDetail])
+
   return {
     // Data
     selectedEvent,
@@ -191,9 +250,12 @@ export function useEventDetail(): UseEventDetailReturn {
 
     // Agenda handlers
     handleDragEnd,
+    handleMoveAgendaItemUp,
+    handleMoveAgendaItemDown,
     handleAgendaItemKeyChange,
     handleAgendaItemLeaderChange,
     handleAgendaItemDurationChange,
     handleAgendaItemDescriptionChange,
+    handleAgendaItemArrangementChange,
   }
 }

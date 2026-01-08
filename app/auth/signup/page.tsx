@@ -45,15 +45,15 @@ function SignUpContent() {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="space-y-1">
+    <Card className="w-full max-w-md border-0 shadow-none sm:border sm:shadow-sm">
+      <CardHeader className="space-y-1 px-0 sm:px-6 sm:pt-6">
         <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
         <CardDescription>
           Enter your information to create your account
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 px-0 sm:px-6">
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
@@ -66,12 +66,13 @@ function SignUpContent() {
             </Alert>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First name</Label>
               <Input
                 id="firstName"
                 placeholder="John"
+                className="h-11"
                 {...register('firstName')}
                 disabled={isLoading}
               />
@@ -85,6 +86,7 @@ function SignUpContent() {
               <Input
                 id="lastName"
                 placeholder="Doe"
+                className="h-11"
                 {...register('lastName')}
                 disabled={isLoading}
               />
@@ -100,6 +102,7 @@ function SignUpContent() {
               id="email"
               type="email"
               placeholder="you@example.com"
+              className="h-11"
               {...register('email')}
               disabled={isLoading}
             />
@@ -114,7 +117,7 @@ function SignUpContent() {
               id="password"
               type="password"
               placeholder="••••••••"
-              className="focus:placeholder-transparent"
+              className="h-11 focus:placeholder-transparent"
               {...register('password')}
               disabled={isLoading}
             />
@@ -129,7 +132,7 @@ function SignUpContent() {
               id="confirmPassword"
               type="password"
               placeholder="••••••••"
-              className="focus:placeholder-transparent"
+              className="h-11 focus:placeholder-transparent"
               {...register('confirmPassword')}
               disabled={isLoading}
             />
@@ -139,8 +142,8 @@ function SignUpContent() {
           </div>
         </CardContent>
 
-        <CardFooter className="flex flex-col space-y-4 border-t-0 bg-transparent">
-          <Button type="submit" className="w-full !rounded-full !bg-brand hover:!bg-brand/90 text-white" disabled={isLoading}>
+        <CardFooter className="flex flex-col space-y-4 border-t-0 bg-transparent px-0 sm:px-6 pt-2">
+          <Button type="submit" className="w-full h-11 !rounded-full !bg-brand hover:!bg-brand/90 text-white" disabled={isLoading}>
             {isLoading ? 'Creating account...' : 'Create account'}
           </Button>
 
@@ -158,8 +161,8 @@ function SignUpContent() {
 
 export default function SignUpPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Suspense fallback={<Card className="w-full max-w-md"><CardContent className="p-6">Loading...</CardContent></Card>}>
+    <div className="flex min-h-[100dvh] items-center justify-center p-4 sm:p-6">
+      <Suspense fallback={<Card className="w-full max-w-md border-0 shadow-none sm:border sm:shadow-sm"><CardContent className="p-6">Loading...</CardContent></Card>}>
         <SignUpContent />
       </Suspense>
     </div>

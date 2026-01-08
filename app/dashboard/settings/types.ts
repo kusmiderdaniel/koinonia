@@ -22,6 +22,7 @@ export interface ChurchSettingsData {
   website: string | null
   timezone: string | null
   first_day_of_week: number | null
+  time_format: '12h' | '24h' | null
   default_event_visibility: string | null
   logo_url: string | null
 }
@@ -29,6 +30,7 @@ export interface ChurchSettingsData {
 export interface ChurchPreferences {
   timezone: string
   firstDayOfWeek: number
+  timeFormat: '12h' | '24h'
   defaultEventVisibility: 'members' | 'volunteers' | 'leaders'
 }
 

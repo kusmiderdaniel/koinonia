@@ -89,7 +89,7 @@ export function SongEditorContent({
       <div className="flex gap-2 pt-2">
         <Button
           variant="outline"
-          className="flex-1 rounded-full border-red-600 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
+          className="flex-1 rounded-full !border !border-red-600 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30"
           onClick={onRemove}
           disabled={isSaving || isRemoving}
         >
@@ -98,7 +98,7 @@ export function SongEditorContent({
         </Button>
         <Button
           variant="outline"
-          className="flex-1 rounded-full border-gray-900 dark:border-zinc-300"
+          className="flex-1 rounded-full !border !border-black dark:!border-white"
           onClick={onReplace}
           disabled={isSaving || isRemoving}
         >

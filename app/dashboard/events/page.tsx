@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { EventsPageClient } from './EventsPageClient'
 import { canUserSeeEvent } from './actions/helpers'
-import { hasPageAccess } from '@/lib/permissions'
+import { hasPageAccess, isVolunteer, isLeader } from '@/lib/permissions'
 import { getUserCampusIds } from '@/lib/utils/campus'
 import type { Event, Member } from './types'
 
@@ -49,7 +49,7 @@ export default async function EventsPage() {
       .order('start_time', { ascending: true }),
     adminClient
       .from('churches')
-      .select('first_day_of_week, timezone')
+      .select('first_day_of_week, timezone, time_format')
       .eq('id', profile.church_id)
       .single(),
     adminClient
@@ -77,9 +77,9 @@ export default async function EventsPage() {
   const ministries = ministriesResult.data || []
   const campuses = campusesResult.data || []
 
-  const isVolunteer = profile.role === 'volunteer'
-  const isLeader = profile.role === 'leader'
-  const needsCampusFilter = isVolunteer || isLeader
+  const userIsVolunteer = isVolunteer(profile.role)
+  const userIsLeader = isLeader(profile.role)
+  const needsCampusFilter = userIsVolunteer || userIsLeader
 
   // For volunteers and leaders, get their campus IDs for filtering
   let userCampusIds: string[] = []
@@ -148,6 +148,7 @@ export default async function EventsPage() {
         campuses: campuses as { id: string; name: string; color: string }[],
         role: profile.role,
         firstDayOfWeek: church?.first_day_of_week ?? 1,
+        timeFormat: (church?.time_format ?? '24h') as '12h' | '24h',
       }}
     />
   )

@@ -11,6 +11,7 @@ import {
 } from './helpers'
 import type { EventInput } from './helpers'
 import { getUserCampusIds } from '@/lib/utils/campus'
+import { isVolunteer, isLeader } from '@/lib/permissions'
 
 export async function getEvents(filters?: { status?: string; eventType?: string }) {
   const auth = await getAuthenticatedUserWithProfile()
@@ -18,9 +19,9 @@ export async function getEvents(filters?: { status?: string; eventType?: string 
 
   const { user, profile, adminClient } = auth
 
-  const isVolunteer = profile.role === 'volunteer'
-  const isLeader = profile.role === 'leader'
-  const needsCampusFilter = isVolunteer || isLeader
+  const userIsVolunteer = isVolunteer(profile.role)
+  const userIsLeader = isLeader(profile.role)
+  const needsCampusFilter = userIsVolunteer || userIsLeader
 
   // For volunteers and leaders, get their campus IDs for filtering
   let userCampusIds: string[] = []
@@ -139,7 +140,8 @@ export async function getEvent(eventId: string) {
         *,
         leader:profiles (id, first_name, last_name),
         ministry:ministries (id, name, color),
-        song:songs (id, title, artist, default_key, duration_seconds)
+        song:songs (id, title, artist, default_key, duration_seconds),
+        arrangement:song_arrangements (id, name, is_default)
       ),
       event_positions (
         *,
@@ -188,7 +190,7 @@ export async function getEvent(eventId: string) {
   }
 
   // For volunteers and leaders, check campus access
-  if (profile.role === 'volunteer' || profile.role === 'leader') {
+  if (isVolunteer(profile.role) || isLeader(profile.role)) {
     const eventCampusIds = campuses.map(c => c.id)
 
     // If event has campus restrictions, check if user is in one of them
@@ -390,7 +392,7 @@ export async function duplicateEvent(eventId: string) {
       location_id: original.location_id,
       event_type: original.event_type,
       visibility: original.visibility,
-      status: 'draft',
+      status: 'published',
       created_by: profile.id,
     })
     .select('id')

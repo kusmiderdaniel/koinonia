@@ -14,9 +14,16 @@ export {
   ASSIGNABLE_ROLES,
   ROLE_COLORS,
   getRoleBadgeClasses,
-  hasPermission,
-  canManageRole,
 } from './entities'
+
+// Re-export role permission functions from centralized permissions module
+export {
+  hasPermission,
+  canModifyRole,
+  isLeaderOrAbove,
+  isAdminOrOwner,
+  getRoleLevel,
+} from '@/lib/permissions'
 
 // Person types
 export {

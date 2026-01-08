@@ -15,7 +15,7 @@ export const MinistryCard = memo(function MinistryCard({ ministry, isSelected, o
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left p-3 rounded-lg transition-colors ${
+      className={`w-full text-left p-3 rounded-lg transition-colors border border-black dark:border-white ${
         isSelected
           ? 'bg-gray-100 dark:bg-zinc-800 font-medium'
           : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'

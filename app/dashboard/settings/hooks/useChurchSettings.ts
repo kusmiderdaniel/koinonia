@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { isLeaderOrAbove, isAdminOrOwner } from '@/lib/permissions'
 import { updateChurchSettings, regenerateJoinCode } from '../actions'
 import type { ChurchData, ChurchPreferences, ChurchSettingsData, Location, Member } from '../types'
 import type { Campus } from '../actions'
@@ -85,12 +86,14 @@ export function useChurchSettings(initialData?: SettingsInitialData): UseChurchS
     initialData ? {
       timezone: initialData.church.timezone || 'America/New_York',
       firstDayOfWeek: initialData.church.first_day_of_week ?? 1,
+      timeFormat: initialData.church.time_format || '24h',
       defaultEventVisibility:
         (initialData.church.default_event_visibility as 'members' | 'volunteers' | 'leaders') ||
         'members',
     } : {
       timezone: 'America/New_York',
       firstDayOfWeek: 1,
+      timeFormat: '24h',
       defaultEventVisibility: 'members',
     }
   )
@@ -159,14 +162,14 @@ export function useChurchSettings(initialData?: SettingsInitialData): UseChurchS
   }, [])
 
   const isAdmin = useMemo(
-    () => churchData?.role === 'admin' || churchData?.role === 'owner',
+    () => isAdminOrOwner(churchData?.role || ''),
     [churchData?.role]
   )
 
   const isOwner = useMemo(() => churchData?.role === 'owner', [churchData?.role])
 
   const canManageLocations = useMemo(
-    () => ['owner', 'admin', 'leader'].includes(churchData?.role || ''),
+    () => isLeaderOrAbove(churchData?.role || ''),
     [churchData?.role]
   )
 

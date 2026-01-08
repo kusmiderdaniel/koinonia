@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { isLeaderOrAbove } from '@/lib/permissions'
 import {
   songSchema,
   getAuthenticatedUserWithProfile,
@@ -74,7 +75,7 @@ export async function getSongs() {
       .filter(Boolean) || [],
   }))
 
-  const canManage = ['owner', 'admin', 'leader'].includes(profile.role)
+  const canManage = isLeaderOrAbove(profile.role)
 
   return { data: transformedSongs, canManage }
 }
@@ -85,7 +86,7 @@ export async function getSong(songId: string) {
 
   const { profile, adminClient } = auth
 
-  // Get song with tags and attachments
+  // Get song with tags, attachments, sections, and arrangements
   const { data: song, error } = await adminClient
     .from('songs')
     .select(`
@@ -108,6 +109,29 @@ export async function getSong(songId: string) {
         file_path,
         file_size,
         created_at
+      ),
+      song_sections (
+        id,
+        section_type,
+        section_number,
+        label,
+        lyrics,
+        sort_order,
+        created_at,
+        updated_at
+      ),
+      song_arrangements (
+        id,
+        name,
+        is_default,
+        created_by,
+        created_at,
+        updated_at,
+        song_arrangement_sections (
+          id,
+          section_id,
+          sort_order
+        )
       )
     `)
     .eq('id', songId)
@@ -123,15 +147,29 @@ export async function getSong(songId: string) {
     return { error: 'Song not found' }
   }
 
-  // Transform to flatten tags
+  // Transform to flatten tags and sort sections/arrangements
   const transformedSong = {
     ...song,
     tags: song.song_tag_assignments
       ?.map((sta: { tag: { id: string; name: string; color: string } | null }) => sta.tag)
       .filter(Boolean) || [],
+    song_sections: song.song_sections
+      ?.sort((a: { sort_order: number }, b: { sort_order: number }) => a.sort_order - b.sort_order) || [],
+    song_arrangements: song.song_arrangements
+      ?.sort((a: { is_default: boolean; name: string }, b: { is_default: boolean; name: string }) => {
+        // Master (is_default) first, then alphabetically
+        if (a.is_default && !b.is_default) return -1
+        if (!a.is_default && b.is_default) return 1
+        return a.name.localeCompare(b.name)
+      })
+      .map((arr: { song_arrangement_sections?: { sort_order: number }[] }) => ({
+        ...arr,
+        sections: arr.song_arrangement_sections
+          ?.sort((a: { sort_order: number }, b: { sort_order: number }) => a.sort_order - b.sort_order) || [],
+      })) || [],
   }
 
-  const canManage = ['owner', 'admin', 'leader'].includes(profile.role)
+  const canManage = isLeaderOrAbove(profile.role)
 
   return { data: transformedSong, canManage }
 }

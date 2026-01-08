@@ -4,21 +4,25 @@ import { memo } from 'react'
 import { Calendar } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import { EventTypeBadge } from '@/components/EventTypeBadge'
+import { getTimeFormatPattern } from '@/lib/utils/format'
 import type { EventForPicker } from './types'
 
 interface EventPickerItemProps {
   event: EventForPicker
   isSelected: boolean
   onSelect: (eventId: string) => void
+  timeFormat?: '12h' | '24h'
 }
 
 export const EventPickerItem = memo(function EventPickerItem({
   event,
   isSelected,
   onSelect,
+  timeFormat = '24h',
 }: EventPickerItemProps) {
   const formatEventDate = (startTime: string) => {
-    return format(parseISO(startTime), 'MMM d, yyyy · h:mm a')
+    const timePattern = getTimeFormatPattern(timeFormat)
+    return format(parseISO(startTime), `MMM d, yyyy · ${timePattern}`)
   }
 
   return (
@@ -36,9 +40,6 @@ export const EventPickerItem = memo(function EventPickerItem({
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-medium truncate">{event.title}</span>
             <EventTypeBadge type={event.event_type} />
-            {isSelected && (
-              <span className="text-xs text-brand">(Current)</span>
-            )}
           </div>
           <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
             <Calendar className="h-3 w-3" />

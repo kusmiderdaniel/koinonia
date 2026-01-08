@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
@@ -13,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ChevronLeft } from 'lucide-react'
+import { ArrowLeft, Loader2, MapPin, User } from 'lucide-react'
 import type { CampusInfo } from './types'
 
 interface CampusStepProps {
@@ -48,7 +47,7 @@ export function CampusStep({
   onSubmit,
 }: CampusStepProps) {
   return (
-    <CardContent className="space-y-6">
+    <div className="space-y-8">
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
@@ -57,8 +56,14 @@ export function CampusStep({
 
       {/* Campus Selection */}
       {campuses.length > 1 && (
-        <div className="space-y-3">
-          <Label>Select your campus</Label>
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 pb-2 border-b">
+            <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+              <MapPin className="w-4 h-4 text-green-600 dark:text-green-400" />
+            </div>
+            <h3 className="font-semibold">Select Your Campus</h3>
+          </div>
+
           <RadioGroup
             value={selectedCampusId || ''}
             onValueChange={onSelectedCampusIdChange}
@@ -67,24 +72,27 @@ export function CampusStep({
             {campuses.map((campus) => (
               <div
                 key={campus.id}
-                className="flex items-center space-x-3 rounded-lg border p-3 cursor-pointer hover:bg-muted/50 transition-colors"
+                className="flex items-center space-x-3 rounded-xl border-2 p-4 cursor-pointer hover:bg-muted/50 transition-colors data-[state=checked]:border-brand"
                 onClick={() => onSelectedCampusIdChange(campus.id)}
+                data-state={selectedCampusId === campus.id ? 'checked' : 'unchecked'}
               >
                 <RadioGroupItem value={campus.id} id={campus.id} />
                 <Label
                   htmlFor={campus.id}
-                  className="flex-1 cursor-pointer flex items-center gap-2"
+                  className="flex-1 cursor-pointer flex items-center gap-3"
                 >
                   <div
-                    className="w-3 h-3 rounded-full flex-shrink-0"
+                    className="w-4 h-4 rounded-full flex-shrink-0"
                     style={{ backgroundColor: campus.color }}
                   />
-                  <span className="font-medium">{campus.name}</span>
-                  {campus.is_default && (
-                    <span className="text-xs text-muted-foreground">
-                      (Main)
-                    </span>
-                  )}
+                  <div>
+                    <span className="font-medium">{campus.name}</span>
+                    {campus.is_default && (
+                      <span className="ml-2 text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                        Main Campus
+                      </span>
+                    )}
+                  </div>
                 </Label>
               </div>
             ))}
@@ -93,64 +101,87 @@ export function CampusStep({
       )}
 
       {/* Profile Information */}
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="phone">Phone Number</Label>
-          <Input
-            id="phone"
-            type="tel"
-            placeholder="(555) 123-4567"
-            value={phone}
-            onChange={(e) => onPhoneChange(e.target.value)}
-            disabled={isLoading}
-          />
+      <div className="space-y-5">
+        <div className="flex items-center gap-3 pb-2 border-b">
+          <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+            <User className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+          </div>
+          <h3 className="font-semibold">Your Information <span className="font-normal text-muted-foreground text-sm">(Optional)</span></h3>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="dateOfBirth">Date of Birth</Label>
-          <Input
-            id="dateOfBirth"
-            type="date"
-            value={dateOfBirth}
-            onChange={(e) => onDateOfBirthChange(e.target.value)}
-            disabled={isLoading}
-          />
-        </div>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone Number</Label>
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="(555) 123-4567"
+              className="h-11"
+              value={phone}
+              onChange={(e) => onPhoneChange(e.target.value)}
+              disabled={isLoading}
+            />
+          </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="sex">Sex</Label>
-          <Select value={sex} onValueChange={onSexChange}>
-            <SelectTrigger className="bg-white dark:bg-zinc-950">
-              <SelectValue placeholder="Select..." />
-            </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-zinc-950">
-              <SelectItem value="male">Male</SelectItem>
-              <SelectItem value="female">Female</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="dateOfBirth">Date of Birth</Label>
+              <Input
+                id="dateOfBirth"
+                type="date"
+                className="h-11"
+                value={dateOfBirth}
+                onChange={(e) => onDateOfBirthChange(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="sex">Gender</Label>
+              <Select value={sex} onValueChange={onSexChange}>
+                <SelectTrigger className="h-11 bg-white dark:bg-zinc-950">
+                  <SelectValue placeholder="Select..." />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-zinc-950">
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="flex gap-4 pt-4">
+      {/* Actions */}
+      <div className="flex flex-col sm:flex-row gap-4 pt-4">
         <Button
           type="button"
-          variant="outline-pill"
-          className="flex-1"
+          variant="outline"
+          size="lg"
+          className="sm:flex-1 h-14 text-base !rounded-full !border-2 !border-black dark:!border-white gap-2 order-2 sm:order-1"
           onClick={onBack}
           disabled={isLoading}
         >
-          <ChevronLeft className="mr-1 h-4 w-4" />
+          <ArrowLeft className="w-5 h-5" />
           Back
         </Button>
         <Button
           type="button"
-          className="flex-1 !rounded-full !bg-brand hover:!bg-brand/90 text-white"
+          size="lg"
+          className="sm:flex-1 h-14 text-base !rounded-full !bg-brand hover:!bg-brand/90 text-white order-1 sm:order-2"
           disabled={isLoading || (campuses.length > 1 && !selectedCampusId)}
           onClick={onSubmit}
         >
-          {isLoading ? 'Joining...' : 'Join Church'}
+          {isLoading ? (
+            <>
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+              Joining...
+            </>
+          ) : (
+            'Join Church'
+          )}
         </Button>
       </div>
-    </CardContent>
+    </div>
   )
 }

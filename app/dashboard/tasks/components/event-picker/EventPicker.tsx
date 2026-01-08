@@ -11,7 +11,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Search, X } from 'lucide-react'
-import { SmartVirtualizedList } from '@/components/VirtualizedList'
 import { DatePicker } from '@/components/ui/date-picker'
 import { useEventPickerState } from './useEventPickerState'
 import { EventTypeFilter, CampusFilter } from './EventPickerFilters'
@@ -24,6 +23,7 @@ export function EventPicker({
   currentEventId,
   onSelect,
   weekStartsOn = 0,
+  timeFormat,
 }: EventPickerProps) {
   const state = useEventPickerState({ open })
 
@@ -42,7 +42,7 @@ export function EventPicker({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950">
+      <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950 max-h-[85vh] overflow-y-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Link to Event</DialogTitle>
           <p className="text-sm text-muted-foreground">
@@ -64,6 +64,7 @@ export function EventPicker({
             value={state.search}
             onChange={(e) => state.setSearch(e.target.value)}
             className="pl-9"
+            autoFocus={false}
           />
         </div>
 
@@ -134,33 +135,31 @@ export function EventPicker({
           <p className="text-sm text-muted-foreground text-center py-4">
             Loading events...
           </p>
+        ) : state.filteredEvents.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-4">
+            {state.events.length === 0
+              ? 'No events found'
+              : 'No events match your filters'}
+          </p>
         ) : (
-          <SmartVirtualizedList
-            items={state.filteredEvents}
-            estimateSize={80}
-            className="max-h-[300px] -mx-4 px-4"
-            virtualizationThreshold={30}
-            emptyMessage={
-              <p className="text-sm text-muted-foreground text-center py-4">
-                {state.events.length === 0
-                  ? 'No events found'
-                  : 'No events match your filters'}
-              </p>
-            }
-            renderItem={(event) => (
-              <EventPickerItem
-                key={event.id}
-                event={event}
-                isSelected={event.id === currentEventId}
-                onSelect={handleSelect}
-              />
-            )}
-          />
+          <div className="overflow-y-auto overscroll-contain" style={{ maxHeight: '200px' }}>
+            <div className="space-y-2">
+              {state.filteredEvents.map((event) => (
+                <EventPickerItem
+                  key={event.id}
+                  event={event}
+                  isSelected={event.id === currentEventId}
+                  onSelect={handleSelect}
+                  timeFormat={timeFormat}
+                />
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Actions */}
         <div className="flex justify-end pt-2">
-          <Button variant="outline" onClick={() => handleOpenChange(false)}>
+          <Button variant="outline-pill" className="!border !border-black dark:!border-white" onClick={() => handleOpenChange(false)}>
             Cancel
           </Button>
         </div>

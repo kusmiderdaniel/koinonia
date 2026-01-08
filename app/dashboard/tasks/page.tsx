@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { TasksPageClient } from './TasksPageClient'
+import { hasPageAccess, isLeaderOrAbove } from '@/lib/permissions'
 import type { Task, TaskMinistry, TaskCampus } from './types'
 import type { SavedView } from '@/types/saved-views'
 
@@ -25,14 +26,20 @@ export default async function TasksPage() {
     redirect('/onboarding')
   }
 
-  // Fetch church settings for first day of week
+  // Check page access - members don't have access to tasks page
+  if (!hasPageAccess(profile.role, 'tasks')) {
+    redirect('/dashboard')
+  }
+
+  // Fetch church settings for first day of week and time format
   const { data: church } = await adminClient
     .from('churches')
-    .select('first_day_of_week')
+    .select('first_day_of_week, time_format')
     .eq('id', profile.church_id)
     .single()
 
   const firstDayOfWeek = (church?.first_day_of_week ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
+  const timeFormat = (church?.time_format ?? '24h') as '12h' | '24h'
 
   // Fetch tasks, ministries, campuses, members, events and saved views in parallel
   const [tasksResult, ministriesResult, campusesResult, membersResult, eventsResult, savedViewsResult] = await Promise.all([
@@ -105,7 +112,7 @@ export default async function TasksPage() {
       .order('name'),
   ])
 
-  const canManageViews = ['owner', 'admin', 'leader'].includes(profile.role)
+  const canManageViews = isLeaderOrAbove(profile.role)
 
   // Find default campus
   const campuses = (campusesResult.data || []) as TaskCampus[]
@@ -123,6 +130,7 @@ export default async function TasksPage() {
         currentUserId: profile.id,
         role: profile.role,
         firstDayOfWeek,
+        timeFormat,
         savedViews: (savedViewsResult.data || []) as SavedView[],
         canManageViews,
         defaultCampusId,

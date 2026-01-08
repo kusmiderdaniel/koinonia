@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { SongsPageClient } from './SongsPageClient'
-import { hasPageAccess } from '@/lib/permissions'
+import { hasPageAccess, isLeaderOrAbove } from '@/lib/permissions'
 import type { Song } from './types'
 
 export default async function SongsPage() {
@@ -59,7 +59,7 @@ export default async function SongsPage() {
       .filter(Boolean) || [],
   })) || []
 
-  const canManage = ['owner', 'admin', 'leader'].includes(profile.role)
+  const canManage = isLeaderOrAbove(profile.role)
 
   return (
     <SongsPageClient

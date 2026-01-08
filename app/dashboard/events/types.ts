@@ -34,6 +34,12 @@ export interface Position {
   event_assignments: Assignment[]
 }
 
+export interface ArrangementBrief {
+  id: string
+  name: string
+  is_default: boolean
+}
+
 export interface AgendaItem {
   id: string
   title: string
@@ -47,6 +53,8 @@ export interface AgendaItem {
   song_id: string | null
   song_key: string | null
   song: Song | null
+  arrangement_id: string | null
+  arrangement: ArrangementBrief | null
   is_song_placeholder: boolean
 }
 

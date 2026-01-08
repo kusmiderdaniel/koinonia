@@ -43,22 +43,22 @@ export const LocationsTab = memo(function LocationsTab({
 
   return (
     <>
-      <Card className="min-w-[28rem]">
-        <CardHeader>
-          <div className="flex items-center justify-between gap-6">
+      <Card className="w-full md:min-w-[28rem]">
+        <CardHeader className="p-4 md:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-6">
             <div>
-              <CardTitle>Locations</CardTitle>
-              <CardDescription>
-                Manage your church's venues and rooms for events
+              <CardTitle className="text-lg md:text-xl">Locations</CardTitle>
+              <CardDescription className="text-sm">
+                Manage your church's venues and rooms
               </CardDescription>
             </div>
-            <Button onClick={() => locationManager.openLocationDialog(undefined, defaultCampus?.id)} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0">
+            <Button onClick={() => locationManager.openLocationDialog(undefined, defaultCampus?.id)} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               Add Location
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 md:p-6 pt-0 md:pt-0">
           {locations.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <MapPin className="w-12 h-12 mx-auto mb-4 opacity-50" />
@@ -66,43 +66,42 @@ export const LocationsTab = memo(function LocationsTab({
               <p className="text-sm">Add your first location to use in events</p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1.5 md:space-y-2">
               {locations.map((location) => (
                 <div
                   key={location.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                  className="flex items-center justify-between p-2 md:p-4 border rounded-lg hover:bg-muted/50 transition-colors gap-2"
                 >
-                  <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 mt-0.5 text-muted-foreground" />
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{location.name}</span>
+                  <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+                    <MapPin className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-1 md:gap-2">
+                        <span className="font-medium text-sm md:text-base truncate">{location.name}</span>
                         {location.campus && (
                           <CampusBadge name={location.campus.name} color={location.campus.color} size="sm" />
                         )}
                       </div>
                       {location.address && (
-                        <div className="text-sm text-muted-foreground">{location.address}</div>
-                      )}
-                      {location.notes && (
-                        <div className="text-xs text-muted-foreground mt-1">{location.notes}</div>
+                        <div className="text-xs text-muted-foreground truncate hidden sm:block">{location.address}</div>
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center shrink-0">
                     <Button
                       variant="ghost"
                       size="icon"
+                      className="h-7 w-7 md:h-8 md:w-8"
                       onClick={() => locationManager.openLocationDialog(location)}
                     >
-                      <Pencil className="w-4 h-4" />
+                      <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
+                      className="h-7 w-7 md:h-8 md:w-8"
                       onClick={() => locationManager.openDeleteLocationDialog(location)}
                     >
-                      <Trash2 className="w-4 h-4 text-red-500" />
+                      <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-red-500" />
                     </Button>
                   </div>
                 </div>
@@ -117,7 +116,7 @@ export const LocationsTab = memo(function LocationsTab({
         open={locationManager.locationDialogOpen}
         onOpenChange={(open) => !open && locationManager.closeLocationDialog()}
       >
-        <AlertDialogContent className="bg-white dark:bg-zinc-950">
+        <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-[90vw] md:max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>
               {locationManager.editingLocation ? 'Edit Location' : 'Add Location'}
@@ -192,7 +191,7 @@ export const LocationsTab = memo(function LocationsTab({
         open={locationManager.deleteLocationDialogOpen}
         onOpenChange={(open) => !open && locationManager.closeDeleteLocationDialog()}
       >
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-[90vw] md:max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Location?</AlertDialogTitle>
             <AlertDialogDescription>

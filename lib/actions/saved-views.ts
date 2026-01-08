@@ -7,6 +7,7 @@ import {
   requireManagePermission,
   requireAdminPermission,
 } from '@/lib/utils/server-auth'
+import { isAdminOrOwner } from '@/lib/permissions'
 import type {
   SavedView,
   CreateSavedViewInput,
@@ -187,9 +188,8 @@ export async function deleteSavedView(viewId: string): Promise<SavedViewActionRe
 
   // Check permission: creator can delete, or admins
   const isCreator = existingView.created_by === profile.id
-  const isAdmin = ['owner', 'admin'].includes(profile.role)
 
-  if (!isCreator && !isAdmin) {
+  if (!isCreator && !isAdminOrOwner(profile.role)) {
     return { error: 'You can only delete views you created' }
   }
 

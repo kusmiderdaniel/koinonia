@@ -8,12 +8,14 @@ interface UsePreferencesManagerReturn {
   // State
   timezone: string
   firstDayOfWeek: number
+  timeFormat: '12h' | '24h'
   defaultEventVisibility: 'members' | 'volunteers' | 'leaders'
   isSavingPreferences: boolean
 
   // Actions
   setTimezone: (timezone: string) => void
   setFirstDayOfWeek: (day: number) => void
+  setTimeFormat: (format: '12h' | '24h') => void
   setDefaultEventVisibility: (visibility: 'members' | 'volunteers' | 'leaders') => void
   initializePreferences: (prefs: ChurchPreferences) => void
   handleSavePreferences: (
@@ -25,6 +27,7 @@ interface UsePreferencesManagerReturn {
 export function usePreferencesManager(): UsePreferencesManagerReturn {
   const [timezone, setTimezone] = useState('America/New_York')
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(1)
+  const [timeFormat, setTimeFormat] = useState<'12h' | '24h'>('24h')
   const [defaultEventVisibility, setDefaultEventVisibility] = useState<
     'members' | 'volunteers' | 'leaders'
   >('members')
@@ -33,6 +36,7 @@ export function usePreferencesManager(): UsePreferencesManagerReturn {
   const initializePreferences = useCallback((prefs: ChurchPreferences) => {
     setTimezone(prefs.timezone)
     setFirstDayOfWeek(prefs.firstDayOfWeek)
+    setTimeFormat(prefs.timeFormat)
     setDefaultEventVisibility(prefs.defaultEventVisibility)
   }, [])
 
@@ -48,6 +52,7 @@ export function usePreferencesManager(): UsePreferencesManagerReturn {
       const result = await updateChurchPreferences({
         timezone,
         firstDayOfWeek,
+        timeFormat,
         defaultEventVisibility,
       })
 
@@ -58,19 +63,21 @@ export function usePreferencesManager(): UsePreferencesManagerReturn {
       }
       setIsSavingPreferences(false)
     },
-    [timezone, firstDayOfWeek, defaultEventVisibility]
+    [timezone, firstDayOfWeek, timeFormat, defaultEventVisibility]
   )
 
   return {
     // State
     timezone,
     firstDayOfWeek,
+    timeFormat,
     defaultEventVisibility,
     isSavingPreferences,
 
     // Actions
     setTimezone,
     setFirstDayOfWeek,
+    setTimeFormat,
     setDefaultEventVisibility,
     initializePreferences,
     handleSavePreferences,

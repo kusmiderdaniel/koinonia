@@ -232,11 +232,13 @@ export type Database = {
           first_day_of_week: number
           id: string
           join_code: string
+          links_page_enabled: boolean
           logo_url: string | null
           name: string
           phone: string | null
           state: string | null
           subdomain: string
+          time_format: string
           timezone: string | null
           updated_at: string
           website: string | null
@@ -252,11 +254,13 @@ export type Database = {
           first_day_of_week?: number
           id?: string
           join_code: string
+          links_page_enabled?: boolean
           logo_url?: string | null
           name: string
           phone?: string | null
           state?: string | null
           subdomain: string
+          time_format?: string
           timezone?: string | null
           updated_at?: string
           website?: string | null
@@ -272,11 +276,13 @@ export type Database = {
           first_day_of_week?: number
           id?: string
           join_code?: string
+          links_page_enabled?: boolean
           logo_url?: string | null
           name?: string
           phone?: string | null
           state?: string | null
           subdomain?: string
+          time_format?: string
           timezone?: string | null
           updated_at?: string
           website?: string | null
@@ -286,6 +292,7 @@ export type Database = {
       }
       event_agenda_items: {
         Row: {
+          arrangement_id: string | null
           created_at: string | null
           description: string | null
           duration_seconds: number
@@ -301,6 +308,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          arrangement_id?: string | null
           created_at?: string | null
           description?: string | null
           duration_seconds?: number
@@ -316,6 +324,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          arrangement_id?: string | null
           created_at?: string | null
           description?: string | null
           duration_seconds?: number
@@ -331,6 +340,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "event_agenda_items_arrangement_id_fkey"
+            columns: ["arrangement_id"]
+            isOneToOne: false
+            referencedRelation: "song_arrangements"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "event_agenda_items_event_id_fkey"
             columns: ["event_id"]
@@ -1059,6 +1075,212 @@ export type Database = {
           },
         ]
       }
+      link_tree_clicks: {
+        Row: {
+          church_id: string
+          clicked_at: string | null
+          id: string
+          ip_address: unknown
+          link_id: string
+          referrer: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          church_id: string
+          clicked_at?: string | null
+          id?: string
+          ip_address?: unknown
+          link_id: string
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          church_id?: string
+          clicked_at?: string | null
+          id?: string
+          ip_address?: unknown
+          link_id?: string
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "link_tree_clicks_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "link_tree_clicks_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "link_tree_links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      link_tree_links: {
+        Row: {
+          card_color: string | null
+          card_size: string | null
+          church_id: string
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          end_date: string | null
+          hide_label: boolean | null
+          hover_effect: string | null
+          icon: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          label_bold: boolean | null
+          label_italic: boolean | null
+          label_underline: boolean | null
+          sort_order: number
+          start_date: string | null
+          text_color: string | null
+          title: string
+          updated_at: string | null
+          url: string
+          visibility: string
+        }
+        Insert: {
+          card_color?: string | null
+          card_size?: string | null
+          church_id: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          hide_label?: boolean | null
+          hover_effect?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          label_bold?: boolean | null
+          label_italic?: boolean | null
+          label_underline?: boolean | null
+          sort_order?: number
+          start_date?: string | null
+          text_color?: string | null
+          title: string
+          updated_at?: string | null
+          url: string
+          visibility?: string
+        }
+        Update: {
+          card_color?: string | null
+          card_size?: string | null
+          church_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          hide_label?: boolean | null
+          hover_effect?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          label_bold?: boolean | null
+          label_italic?: boolean | null
+          label_underline?: boolean | null
+          sort_order?: number
+          start_date?: string | null
+          text_color?: string | null
+          title?: string
+          updated_at?: string | null
+          url?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "link_tree_links_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "link_tree_links_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      link_tree_settings: {
+        Row: {
+          avatar_url: string | null
+          background_color: string | null
+          background_gradient_end: string | null
+          background_gradient_start: string | null
+          bio: string | null
+          card_border_radius: string | null
+          card_style: string | null
+          church_id: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          meta_description: string | null
+          meta_title: string | null
+          show_church_name: boolean | null
+          social_links: Json | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          background_color?: string | null
+          background_gradient_end?: string | null
+          background_gradient_start?: string | null
+          bio?: string | null
+          card_border_radius?: string | null
+          card_style?: string | null
+          church_id: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          meta_description?: string | null
+          meta_title?: string | null
+          show_church_name?: boolean | null
+          social_links?: Json | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          background_color?: string | null
+          background_gradient_end?: string | null
+          background_gradient_start?: string | null
+          bio?: string | null
+          card_border_radius?: string | null
+          card_style?: string | null
+          church_id?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          meta_description?: string | null
+          meta_title?: string | null
+          show_church_name?: boolean | null
+          social_links?: Json | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "link_tree_settings_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: true
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           address: string | null
@@ -1535,6 +1757,7 @@ export type Database = {
           id: string
           last_name: string
           member_type: string
+          notification_preferences: Json | null
           phone: string | null
           reason_for_departure: string | null
           receive_email_notifications: boolean | null
@@ -1562,6 +1785,7 @@ export type Database = {
           id: string
           last_name: string
           member_type?: string
+          notification_preferences?: Json | null
           phone?: string | null
           reason_for_departure?: string | null
           receive_email_notifications?: boolean | null
@@ -1589,6 +1813,7 @@ export type Database = {
           id?: string
           last_name?: string
           member_type?: string
+          notification_preferences?: Json | null
           phone?: string | null
           reason_for_departure?: string | null
           receive_email_notifications?: boolean | null
@@ -1669,6 +1894,93 @@ export type Database = {
           },
         ]
       }
+      song_arrangement_sections: {
+        Row: {
+          arrangement_id: string
+          created_at: string
+          id: string
+          section_id: string
+          sort_order: number
+        }
+        Insert: {
+          arrangement_id: string
+          created_at?: string
+          id?: string
+          section_id: string
+          sort_order?: number
+        }
+        Update: {
+          arrangement_id?: string
+          created_at?: string
+          id?: string
+          section_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_arrangement_sections_arrangement_id_fkey"
+            columns: ["arrangement_id"]
+            isOneToOne: false
+            referencedRelation: "song_arrangements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_arrangement_sections_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "song_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      song_arrangements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          duration_seconds: number | null
+          id: string
+          is_default: boolean | null
+          name: string
+          song_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          duration_seconds?: number | null
+          id?: string
+          is_default?: boolean | null
+          name: string
+          song_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          duration_seconds?: number | null
+          id?: string
+          is_default?: boolean | null
+          name?: string
+          song_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_arrangements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_arrangements_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       song_attachments: {
         Row: {
           created_at: string
@@ -1710,6 +2022,50 @@ export type Database = {
             columns: ["uploaded_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      song_sections: {
+        Row: {
+          created_at: string
+          id: string
+          label: string | null
+          lyrics: string
+          section_number: number | null
+          section_type: string
+          song_id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label?: string | null
+          lyrics: string
+          section_number?: number | null
+          section_type: string
+          song_id: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string | null
+          lyrics?: string
+          section_number?: number | null
+          section_type?: string
+          song_id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_sections_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
             referencedColumns: ["id"]
           },
         ]

@@ -46,6 +46,7 @@ export type LocationInput = z.infer<typeof locationSchema>
 export const churchPreferencesSchema = z.object({
   timezone: z.string().min(1, 'Timezone is required'),
   firstDayOfWeek: z.number().int().min(0).max(1),
+  timeFormat: z.enum(['12h', '24h']).default('24h'),
   defaultEventVisibility: z.enum(['members', 'volunteers', 'leaders']).default('members'),
 })
 

@@ -2,6 +2,10 @@ import { z } from 'zod'
 
 export const createChurchSchema = z.object({
   name: z.string().min(2, 'Church name must be at least 2 characters'),
+  subdomain: z.string()
+    .min(3, 'Subdomain must be at least 3 characters')
+    .max(30, 'Subdomain must be 30 characters or less')
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Subdomain can only contain lowercase letters, numbers, and hyphens (no leading/trailing hyphens)'),
   address: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),

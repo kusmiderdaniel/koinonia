@@ -33,6 +33,7 @@ export interface EventDetailPanelProps {
   canManage: boolean
   canManageContent: boolean
   canDelete: boolean
+  timeFormat?: '12h' | '24h'
   sensors: ReturnType<typeof useSensors>
   formatDuration: (seconds: number) => string
   onClose: () => void
@@ -47,7 +48,11 @@ export interface EventDetailPanelProps {
   onAgendaLeaderChange: (itemId: string, leaderId: string | null) => Promise<void>
   onAgendaDurationChange: (itemId: string, durationSeconds: number) => Promise<void>
   onAgendaDescriptionChange: (itemId: string, description: string | null) => Promise<void>
+  onAgendaArrangementChange: (itemId: string, arrangementId: string | null) => Promise<void>
   onSongPlaceholderClick: (item: AgendaItem) => void
+  onSongClick: (item: AgendaItem) => void
+  onMoveAgendaItemUp: (itemId: string) => void
+  onMoveAgendaItemDown: (itemId: string) => void
   onAddPosition: () => void
   onEditPosition: (position: Position) => void
   onDeletePosition: (position: Position) => void
@@ -80,7 +85,11 @@ export interface AgendaTabProps {
   onAgendaLeaderChange: (itemId: string, leaderId: string | null) => Promise<void>
   onAgendaDurationChange: (itemId: string, durationSeconds: number) => Promise<void>
   onAgendaDescriptionChange: (itemId: string, description: string | null) => Promise<void>
+  onAgendaArrangementChange: (itemId: string, arrangementId: string | null) => Promise<void>
   onSongPlaceholderClick: (item: AgendaItem) => void
+  onSongClick: (item: AgendaItem) => void
+  onMoveAgendaItemUp: (itemId: string) => void
+  onMoveAgendaItemDown: (itemId: string) => void
 }
 
 export interface PositionsTabProps {

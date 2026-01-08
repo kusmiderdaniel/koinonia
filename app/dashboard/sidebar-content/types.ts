@@ -6,6 +6,7 @@ import {
   Heart,
   Music,
   FileText,
+  Link2,
   Settings,
 } from 'lucide-react'
 import type { PageKey } from '@/lib/permissions'
@@ -41,6 +42,7 @@ export const navItems: NavItemData[] = [
   { href: '/dashboard/ministries', label: 'Ministries', icon: Heart, pageKey: 'ministries' },
   { href: '/dashboard/songs', label: 'Songs', icon: Music, pageKey: 'songs' },
   { href: '/dashboard/forms', label: 'Forms', icon: FileText, pageKey: 'forms' },
+  { href: '/dashboard/links', label: 'Links', icon: Link2, pageKey: 'links' },
 ]
 
 export const adminNavItems: NavItemData[] = [

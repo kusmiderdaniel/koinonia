@@ -1,10 +1,18 @@
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { getMyAssignments, getUpcomingEvents, getMyTasks } from './actions'
-import { MyAssignmentsWidget } from '@/components/dashboard/MyAssignmentsWidget'
-import { UpcomingEventsWidget } from '@/components/dashboard/UpcomingEventsWidget'
-import { UnavailabilityWidget } from '@/components/dashboard/UnavailabilityWidget'
-import { MyTasksWidget } from '@/components/dashboard/MyTasksWidget'
+import {
+  getMyAssignments,
+  getUpcomingEvents,
+  getUnavailabilityCount,
+  getCalendarEventsForMember,
+  getUpcomingBirthdays,
+} from './actions'
+import { DashboardClient } from '@/components/dashboard/DashboardClient'
+import { MemberDashboard } from '@/components/dashboard/MemberDashboard'
+import { createUrgentItems, createWeekItems } from '@/lib/utils/dashboard-helpers'
+import { canUserSeeLink, type LinkVisibility } from './links/types'
+import type { Task, TaskMinistry, TaskCampus } from './tasks/types'
+import type { UserRole } from '@/lib/permissions'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -26,17 +34,211 @@ export default async function DashboardPage() {
     redirect('/onboarding')
   }
 
-  // Fetch dashboard data
-  const [assignmentsResult, eventsResult, tasksResult, membersData, ministriesData, campusesData, allEventsData] = await Promise.all([
+  const firstDayOfWeek = (profile.church?.first_day_of_week ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
+  const timeFormat = (profile.church?.time_format ?? '24h') as '12h' | '24h'
+  const role = profile.role as UserRole
+
+  // Get current month/year for calendar
+  const now = new Date()
+  const currentMonth = now.getMonth()
+  const currentYear = now.getFullYear()
+
+  // Check if user is a member (calendar-only view)
+  const isMemberOnly = role === 'member'
+
+  // Check if user should see birthdays (leaders, admins, owners)
+  const showBirthdays = ['leader', 'admin', 'owner'].includes(role)
+
+  // For members: Fetch calendar events and optionally links
+  if (isMemberOnly) {
+    const calendarResult = await getCalendarEventsForMember(currentMonth, currentYear)
+
+    // Check if links page is enabled for this church
+    const linksPageEnabled = profile.church?.links_page_enabled ?? false
+    let linksData = null
+
+    if (linksPageEnabled) {
+      // Fetch link tree settings and links
+      const [settingsResult, linksResult] = await Promise.all([
+        adminClient
+          .from('link_tree_settings')
+          .select('*')
+          .eq('church_id', profile.church_id)
+          .single(),
+        adminClient
+          .from('link_tree_links')
+          .select('*')
+          .eq('church_id', profile.church_id)
+          .eq('is_active', true)
+          .order('sort_order', { ascending: true }),
+      ])
+
+      if (settingsResult.data && linksResult.data) {
+        // Filter links based on member visibility
+        const visibleLinks = linksResult.data.filter(link =>
+          canUserSeeLink('member', link.visibility as LinkVisibility)
+        )
+
+        linksData = {
+          settings: {
+            title: settingsResult.data.title,
+            bio: settingsResult.data.bio,
+            backgroundColor: settingsResult.data.background_color,
+            backgroundGradientStart: settingsResult.data.background_gradient_start,
+            backgroundGradientEnd: settingsResult.data.background_gradient_end,
+            cardStyle: settingsResult.data.card_style as 'filled' | 'outline' | 'shadow',
+            cardBorderRadius: settingsResult.data.card_border_radius,
+            avatarUrl: settingsResult.data.avatar_url,
+            showChurchName: settingsResult.data.show_church_name,
+            socialLinks: settingsResult.data.social_links as { platform: string; url: string }[] || [],
+          },
+          links: visibleLinks.map(link => ({
+            id: link.id,
+            title: link.title,
+            url: link.url,
+            description: link.description,
+            icon: link.icon,
+            imageUrl: link.image_url,
+            cardColor: link.card_color,
+            textColor: link.text_color,
+            cardSize: (link.card_size as 'small' | 'medium' | 'large') || 'medium',
+            hoverEffect: link.hover_effect as 'none' | 'scale' | 'glow' | 'lift',
+            hideLabel: link.hide_label ?? false,
+            labelBold: link.label_bold ?? false,
+            labelItalic: link.label_italic ?? false,
+            labelUnderline: link.label_underline ?? false,
+          })),
+          church: {
+            id: profile.church_id,
+            name: profile.church?.name || '',
+            logoUrl: profile.church?.logo_url || null,
+          },
+        }
+      }
+    }
+
+    return (
+      <MemberDashboard
+        firstName={profile.first_name}
+        initialEvents={calendarResult.data || []}
+        initialMonth={currentMonth}
+        initialYear={currentYear}
+        firstDayOfWeek={firstDayOfWeek}
+        timeFormat={timeFormat}
+        linksData={linksData}
+      />
+    )
+  }
+
+  // Check if links page is enabled for this church (for Quick Links widget)
+  const linksPageEnabled = profile.church?.links_page_enabled ?? false
+  let linksData = null
+
+  if (linksPageEnabled) {
+    // Fetch link tree settings and links
+    const [settingsResult, linksResult] = await Promise.all([
+      adminClient
+        .from('link_tree_settings')
+        .select('*')
+        .eq('church_id', profile.church_id)
+        .single(),
+      adminClient
+        .from('link_tree_links')
+        .select('*')
+        .eq('church_id', profile.church_id)
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true }),
+    ])
+
+    if (settingsResult.data && linksResult.data) {
+      // Filter links based on user's role visibility
+      const visibleLinks = linksResult.data.filter(link =>
+        canUserSeeLink(role, link.visibility as LinkVisibility)
+      )
+
+      linksData = {
+        settings: {
+          cardStyle: settingsResult.data.card_style as 'filled' | 'outline' | 'shadow',
+          cardBorderRadius: settingsResult.data.card_border_radius,
+          socialLinks: settingsResult.data.social_links as { platform: string; url: string }[] || [],
+        },
+        links: visibleLinks.map(link => ({
+          id: link.id,
+          title: link.title,
+          url: link.url,
+          description: link.description,
+          icon: link.icon,
+          imageUrl: link.image_url,
+          cardColor: link.card_color,
+          textColor: link.text_color,
+          cardSize: (link.card_size as 'small' | 'medium' | 'large') || 'medium',
+          hoverEffect: link.hover_effect as 'none' | 'scale' | 'glow' | 'lift',
+          hideLabel: link.hide_label ?? false,
+          labelBold: link.label_bold ?? false,
+          labelItalic: link.label_italic ?? false,
+          labelUnderline: link.label_underline ?? false,
+        })),
+        church: {
+          id: profile.church_id,
+          name: profile.church?.name || '',
+          logoUrl: profile.church?.logo_url || null,
+        },
+      }
+    }
+  }
+
+  // For volunteers and above: Fetch full dashboard data
+  const [
+    assignmentsResult,
+    eventsResult,
+    unavailabilityResult,
+    tasksResult,
+    ministriesResult,
+    campusesResult,
+    membersResult,
+    calendarResult,
+    birthdaysResult,
+  ] = await Promise.all([
     getMyAssignments(),
     getUpcomingEvents(),
-    getMyTasks(),
+    getUnavailabilityCount(),
+    // Full tasks for sheet
     adminClient
-      .from('profiles')
-      .select('id, first_name, last_name, email')
-      .eq('church_id', profile.church_id)
-      .eq('is_active', true)
-      .order('first_name'),
+      .from('tasks')
+      .select(`
+        *,
+        assignee:profiles!assigned_to (
+          id,
+          first_name,
+          last_name,
+          email
+        ),
+        event:events!event_id (
+          id,
+          title,
+          start_time,
+          end_time
+        ),
+        ministry:ministries!ministry_id (
+          id,
+          name,
+          color
+        ),
+        campus:campuses!campus_id (
+          id,
+          name,
+          color
+        ),
+        created_by_profile:profiles!created_by (
+          id,
+          first_name,
+          last_name
+        )
+      `)
+      .eq('assigned_to', profile.id)
+      .in('status', ['pending', 'in_progress'])
+      .order('due_date', { ascending: true, nullsFirst: false })
+      .limit(20),
     adminClient
       .from('ministries')
       .select('id, name, color, campus_id')
@@ -45,51 +247,78 @@ export default async function DashboardPage() {
       .order('name'),
     adminClient
       .from('campuses')
-      .select('id, name, color')
+      .select('id, name, color, is_default')
       .eq('church_id', profile.church_id)
+      .eq('is_active', true)
       .order('name'),
     adminClient
-      .from('events')
-      .select('id, title, start_time')
+      .from('profiles')
+      .select('id, first_name, last_name, email')
       .eq('church_id', profile.church_id)
-      .gte('start_time', new Date().toISOString())
-      .order('start_time')
-      .limit(50),
+      .eq('is_active', true)
+      .order('first_name'),
+    // Calendar events for all roles
+    getCalendarEventsForMember(currentMonth, currentYear),
+    // Birthdays for leaders+
+    showBirthdays ? getUpcomingBirthdays() : Promise.resolve({ data: [] }),
   ])
 
   const assignments = assignmentsResult.data || []
   const events = eventsResult.data || []
-  const tasks = tasksResult.data || []
-  const members = membersData.data || []
-  const ministries = ministriesData.data || []
-  const campuses = campusesData.data || []
-  const allEvents = allEventsData.data || []
+  const unavailabilityCount = unavailabilityResult.count
+  const tasks = (tasksResult.data || []) as Task[]
+  const ministries = (ministriesResult.data || []) as TaskMinistry[]
+  const campuses = (campusesResult.data || []) as TaskCampus[]
+  const members = membersResult.data || []
+  const calendarEvents = calendarResult.data || []
+  const birthdays = birthdaysResult.data || []
 
-  // Get first day of week preference
-  const firstDayOfWeek = (profile.church?.first_day_of_week ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
+  // Calculate stats for header
+  const pendingInvitations = assignments.filter(a => a.status === 'invited')
+  const openTasks = tasks.filter(t => t.status === 'pending' || t.status === 'in_progress')
+  const weekAssignments = assignments.filter(a => {
+    if (a.status !== 'accepted') return false
+    const eventDate = new Date(a.event.start_time)
+    const today = new Date()
+    const weekEnd = new Date()
+    weekEnd.setDate(weekEnd.getDate() + 7)
+    return eventDate >= today && eventDate <= weekEnd
+  })
+
+  // Create data for sections (convert full tasks to dashboard format)
+  const dashboardTasks = tasks.map(t => ({
+    id: t.id,
+    title: t.title,
+    status: t.status,
+    priority: t.priority,
+    due_date: t.due_date,
+    ministry: t.ministry ? { id: t.ministry.id, name: t.ministry.name, color: t.ministry.color } : null,
+    event: t.event ? { id: t.event.id, title: t.event.title } : null,
+  }))
+
+  const urgentItems = createUrgentItems(assignments, dashboardTasks, timeFormat)
+  const weekItems = createWeekItems(assignments, dashboardTasks, timeFormat)
 
   return (
-    <div className="p-4 md:p-6">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-xl md:text-2xl font-bold">Welcome back, {profile.first_name}!</h1>
-        <p className="text-muted-foreground text-sm md:text-base">Here's what's happening at {profile.church.name}</p>
-      </div>
-
-      {/* Widgets Grid */}
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-        <MyAssignmentsWidget assignments={assignments} />
-        <MyTasksWidget
-          tasks={tasks}
-          members={members}
-          ministries={ministries}
-          campuses={campuses}
-          events={allEvents}
-          weekStartsOn={firstDayOfWeek}
-        />
-        <UpcomingEventsWidget events={events} />
-        <UnavailabilityWidget />
-      </div>
-    </div>
+    <DashboardClient
+      role={role}
+      firstName={profile.first_name}
+      pendingCount={pendingInvitations.length}
+      tasksCount={openTasks.length}
+      weekCount={weekAssignments.length}
+      urgentItems={urgentItems}
+      weekItems={weekItems}
+      events={events}
+      unavailabilityCount={unavailabilityCount}
+      tasks={tasks}
+      ministries={ministries}
+      campuses={campuses}
+      members={members}
+      weekStartsOn={firstDayOfWeek}
+      timeFormat={timeFormat}
+      calendarEvents={calendarEvents}
+      birthdays={birthdays}
+      linksData={linksData}
+    />
   )
 }

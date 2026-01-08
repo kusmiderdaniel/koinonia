@@ -6,6 +6,7 @@ export interface EventDialogProps {
   onOpenChange: (open: boolean) => void
   event: Event | null
   onSuccess: () => void
+  timeFormat?: '12h' | '24h'
 }
 
 export interface InviteUsersPickerProps {
@@ -55,6 +56,9 @@ export interface EventFormFieldsProps {
   endTime: string
   onStartTimeChange: (value: string) => void
   setEndTime: (value: string) => void
+
+  // Time format preference
+  timeFormat?: '12h' | '24h'
 
   // Error
   error: string | null

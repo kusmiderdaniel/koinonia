@@ -30,15 +30,15 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
   setSuccess,
 }: TransferOwnershipTabProps) {
   return (
-    <Card className="min-w-[28rem] border-orange-200">
-      <CardHeader>
-        <CardTitle className="text-orange-700">Transfer Ownership</CardTitle>
-        <CardDescription>
+    <Card className="w-full md:min-w-[28rem] border-orange-200">
+      <CardHeader className="p-4 md:p-6">
+        <CardTitle className="text-orange-700 text-lg md:text-xl">Transfer Ownership</CardTitle>
+        <CardDescription className="text-sm">
           Transfer ownership of this church to an admin. This action cannot be undone. You will
           become an admin after transferring ownership.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="p-4 md:p-6 pt-0 md:pt-0 space-y-4">
         {ownershipTransfer.adminMembers.length === 0 ? (
           <Alert>
             <AlertDescription>
@@ -69,11 +69,11 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
                           : 'border-border hover:border-orange-300 hover:bg-muted/50'
                       }`}
                     >
-                      <div className="font-medium">
+                      <div className="font-medium text-sm md:text-base">
                         {member.first_name} {member.last_name}
                       </div>
                       {member.email && (
-                        <div className="text-sm text-muted-foreground">{member.email}</div>
+                        <div className="text-xs md:text-sm text-muted-foreground truncate">{member.email}</div>
                       )}
                     </button>
                   )
@@ -88,13 +88,13 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
               <AlertDialogTrigger asChild>
                 <Button
                   variant="outline"
-                  className="!rounded-full border-orange-500 text-orange-700 hover:bg-orange-50"
+                  className="!rounded-full border-orange-500 text-orange-700 hover:bg-orange-50 w-full sm:w-auto"
                   disabled={!ownershipTransfer.selectedNewOwner || ownershipTransfer.isTransferring}
                 >
                   Transfer Ownership
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent>
+              <AlertDialogContent className="max-w-[90vw] md:max-w-lg">
                 <AlertDialogHeader>
                   <AlertDialogTitle>Transfer Church Ownership?</AlertDialogTitle>
                   <AlertDialogDescription>

@@ -100,22 +100,22 @@ export function AgendaPresetsTab({
 
   return (
     <>
-      <Card className="min-w-[28rem]">
-        <CardHeader>
-          <div className="flex items-center justify-between gap-6">
+      <Card className="w-full md:min-w-[28rem]">
+        <CardHeader className="p-4 md:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-6">
             <div>
-              <CardTitle>Agenda Items</CardTitle>
-              <CardDescription>
-                Reusable agenda items for your events and templates
+              <CardTitle className="text-lg md:text-xl">Agenda Items</CardTitle>
+              <CardDescription className="text-sm">
+                Reusable agenda items for events
               </CardDescription>
             </div>
-            <Button onClick={handleAddPreset} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0">
+            <Button onClick={handleAddPreset} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
-              Add Agenda Item
+              Add Item
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 md:p-6 pt-0 md:pt-0">
           {presets.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <ListChecks className="w-12 h-12 mx-auto mb-4 opacity-50" />
@@ -123,49 +123,48 @@ export function AgendaPresetsTab({
               <p className="text-sm">Add your first agenda item to use in events</p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1.5 md:space-y-2">
               {presets.map((preset) => (
                 <div
                   key={preset.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                  className="flex items-center justify-between p-2 md:p-4 border rounded-lg hover:bg-muted/50 transition-colors gap-2"
                 >
-                  <div className="flex items-start gap-3">
-                    <ListChecks className="w-5 h-5 mt-0.5 text-muted-foreground" />
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{preset.title}</span>
-                        <span className="text-sm text-muted-foreground">
-                          ({formatDuration(preset.duration_seconds)})
+                  <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+                    <ListChecks className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-1 md:gap-2">
+                        <span className="font-medium text-sm md:text-base truncate">{preset.title}</span>
+                        <span className="text-[10px] md:text-sm text-muted-foreground">
+                          {formatDuration(preset.duration_seconds)}
                         </span>
                         {preset.ministry && (
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-0.5 hidden sm:flex">
                             <div
-                              className="w-3 h-3 rounded-full"
+                              className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-full"
                               style={{ backgroundColor: preset.ministry.color }}
                             />
-                            <span className="text-sm text-muted-foreground">{preset.ministry.name}</span>
+                            <span className="text-xs text-muted-foreground">{preset.ministry.name}</span>
                           </div>
                         )}
                       </div>
-                      {preset.description && (
-                        <div className="text-sm text-muted-foreground">{preset.description}</div>
-                      )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center shrink-0">
                     <Button
                       variant="ghost"
                       size="icon"
+                      className="h-7 w-7 md:h-8 md:w-8"
                       onClick={() => handleEditPreset(preset)}
                     >
-                      <Pencil className="w-4 h-4" />
+                      <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
+                      className="h-7 w-7 md:h-8 md:w-8"
                       onClick={() => handleDeleteClick(preset)}
                     >
-                      <Trash2 className="w-4 h-4 text-red-500" />
+                      <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-red-500" />
                     </Button>
                   </div>
                 </div>
@@ -186,7 +185,7 @@ export function AgendaPresetsTab({
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent className="bg-white dark:bg-zinc-950">
+        <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-[90vw] md:max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete agenda item?</AlertDialogTitle>
             <AlertDialogDescription>

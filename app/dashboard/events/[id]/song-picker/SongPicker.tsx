@@ -11,6 +11,7 @@ import {
 import { Music } from 'lucide-react'
 import { getSongsForAgenda, getSongTags, addSongToAgenda, createSongAndAddToAgenda, replaceSongPlaceholder } from '../../actions'
 import { SongList } from './SongList'
+import { ArrangementSelector } from './ArrangementSelector'
 import { SongDialog } from '@/app/dashboard/songs/song-dialog/SongDialog'
 import type { SongInput } from '@/app/dashboard/songs/song-dialog/types'
 import type { Song, Tag, SongPickerProps } from './types'
@@ -35,6 +36,9 @@ export function SongPicker({
   // Create new song mode
   const [isCreatingNew, setIsCreatingNew] = useState(false)
 
+  // Arrangement selection mode
+  const [selectedSongForArrangement, setSelectedSongForArrangement] = useState<Song | null>(null)
+
   useEffect(() => {
     if (open) {
       loadSongs()
@@ -42,6 +46,7 @@ export function SongPicker({
       setSearchQuery('')
       setFilterTagIds([])
       setIsCreatingNew(false)
+      setSelectedSongForArrangement(null)
       setError(null)
     }
   }, [open])
@@ -62,14 +67,13 @@ export function SongPicker({
     }
   }
 
-  const handleSelectSong = useCallback(async (song: Song) => {
+  const addSongWithArrangement = useCallback(async (songId: string, arrangementId: string | null) => {
     setIsAdding(true)
     setError(null)
 
-    // If replacing a placeholder, update the existing item instead of creating new
     const result = replaceAgendaItemId
-      ? await replaceSongPlaceholder(replaceAgendaItemId, song.id)
-      : await addSongToAgenda(eventId, song.id)
+      ? await replaceSongPlaceholder(replaceAgendaItemId, songId, arrangementId)
+      : await addSongToAgenda(eventId, songId, null, arrangementId)
 
     if (result.error) {
       setError(result.error)
@@ -80,6 +84,28 @@ export function SongPicker({
     setIsAdding(false)
     onSuccess()
   }, [replaceAgendaItemId, eventId, onSuccess])
+
+  const handleSelectSong = useCallback(async (song: Song) => {
+    // If song has multiple arrangements, show arrangement selector
+    if (song.arrangements && song.arrangements.length > 1) {
+      setSelectedSongForArrangement(song)
+      return
+    }
+
+    // If song has only one arrangement (master), use it
+    const arrangementId = song.arrangements?.[0]?.id || null
+
+    await addSongWithArrangement(song.id, arrangementId)
+  }, [addSongWithArrangement])
+
+  const handleSelectArrangement = useCallback(async (arrangementId: string | null) => {
+    if (!selectedSongForArrangement) return
+    await addSongWithArrangement(selectedSongForArrangement.id, arrangementId)
+  }, [selectedSongForArrangement, addSongWithArrangement])
+
+  const handleBackFromArrangement = useCallback(() => {
+    setSelectedSongForArrangement(null)
+  }, [])
 
   const handleStartCreateNew = () => {
     setIsCreatingNew(true)
@@ -128,19 +154,28 @@ export function SongPicker({
           </div>
         )}
 
-        <SongList
-          songs={songs}
-          allTags={allTags}
-          isLoading={isLoading}
-          isAdding={isAdding}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          filterTagIds={filterTagIds}
-          onFilterTagsChange={setFilterTagIds}
-          onSelectSong={handleSelectSong}
-          onCreateNew={handleStartCreateNew}
-          onClose={() => onOpenChange(false)}
-        />
+        {selectedSongForArrangement ? (
+          <ArrangementSelector
+            song={selectedSongForArrangement}
+            onSelectArrangement={handleSelectArrangement}
+            onBack={handleBackFromArrangement}
+            isAdding={isAdding}
+          />
+        ) : (
+          <SongList
+            songs={songs}
+            allTags={allTags}
+            isLoading={isLoading}
+            isAdding={isAdding}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            filterTagIds={filterTagIds}
+            onFilterTagsChange={setFilterTagIds}
+            onSelectSong={handleSelectSong}
+            onCreateNew={handleStartCreateNew}
+            onClose={() => onOpenChange(false)}
+          />
+        )}
       </DialogContent>
 
       {/* Song creation dialog - opens when creating new song */}
@@ -151,7 +186,7 @@ export function SongPicker({
             handleBackToList()
           }
         }}
-        onSuccess={() => {}}
+        onSuccess={() => setIsCreatingNew(false)}
         customAction={handleCreateAndAdd}
         title="Add New Song"
         submitText="Create & Add"

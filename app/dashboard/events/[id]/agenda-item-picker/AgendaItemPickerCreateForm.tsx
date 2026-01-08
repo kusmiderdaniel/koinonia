@@ -37,8 +37,8 @@ export function AgendaItemPickerCreateForm({
   onBack,
 }: AgendaItemPickerCreateFormProps) {
   return (
-    <div className="space-y-4 py-2">
-      <div className="space-y-2">
+    <div className="space-y-3">
+      <div className="space-y-1.5">
         <Label htmlFor="newTitle">Title *</Label>
         <Input
           id="newTitle"
@@ -49,7 +49,7 @@ export function AgendaItemPickerCreateForm({
         />
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label>Ministry *</Label>
         <Select value={formState.ministryId} onValueChange={onMinistryChange}>
           <SelectTrigger className="bg-white dark:bg-zinc-950 border border-input">
@@ -74,7 +74,7 @@ export function AgendaItemPickerCreateForm({
         </Select>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label>Duration (MM:SS) *</Label>
         <div className="flex items-center gap-1">
           <Input
@@ -97,14 +97,19 @@ export function AgendaItemPickerCreateForm({
         </div>
       </div>
 
-      <DialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-        <Button variant="outline-pill-muted" onClick={onBack} disabled={isAdding}>
+      <DialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-2">
+        <Button
+          variant="outline"
+          onClick={onBack}
+          disabled={isAdding}
+          className="rounded-full !border !border-black dark:!border-white"
+        >
           Back
         </Button>
         <Button
           onClick={onCreateAndAdd}
           disabled={isAdding || !formState.title.trim() || !formState.ministryId}
-          className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white !px-4 !py-2 disabled:!opacity-50"
+          className="rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground"
         >
           {isAdding ? 'Creating...' : 'Create & Add'}
         </Button>

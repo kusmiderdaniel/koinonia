@@ -45,6 +45,7 @@ export interface TemplateDetailPanelProps {
   template: Template
   canManage: boolean
   canDelete: boolean
+  timeFormat?: '12h' | '24h'
   onEdit: () => void
   onDelete: () => void
   onClose: () => void
@@ -56,6 +57,7 @@ export interface TemplateHeaderProps {
   canManage: boolean
   canDelete: boolean
   isDuplicating: boolean
+  timeFormat?: '12h' | '24h'
   onEdit: () => void
   onDelete: () => void
   onClose: () => void
@@ -71,6 +73,8 @@ export interface TemplateAgendaSectionProps {
   onAddItem: (isSongPlaceholder?: boolean) => void
   onEditItem: (item: AgendaItem) => void
   onRemoveItem: (itemId: string) => void
+  onMoveItemUp: (itemId: string) => void
+  onMoveItemDown: (itemId: string) => void
 }
 
 export interface TemplatePositionsSectionProps {

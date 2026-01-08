@@ -126,6 +126,16 @@ export function useEventHandlers({
     [eventDetail, eventList]
   )
 
+  const handleAgendaArrangementChange = useCallback(
+    async (itemId: string, arrangementId: string | null) => {
+      const result = await eventDetail.handleAgendaItemArrangementChange(itemId, arrangementId)
+      if (result.error) {
+        eventList.setError(result.error)
+      }
+    },
+    [eventDetail, eventList]
+  )
+
   // Position handlers
   const handlePositionDialogSuccess = useCallback(() => {
     dialogs.closePositionDialog()
@@ -260,6 +270,7 @@ export function useEventHandlers({
     handleAgendaLeaderChange,
     handleAgendaDurationChange,
     handleAgendaDescriptionChange,
+    handleAgendaArrangementChange,
 
     // Position handlers
     handlePositionDialogSuccess,

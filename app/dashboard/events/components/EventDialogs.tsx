@@ -5,20 +5,22 @@ import { ConfirmDialog } from '@/components/ConfirmDialog'
 import type { Event, EventDetail, AgendaItem, Position, Assignment } from '../types'
 
 // Dynamic imports for dialogs (only loaded when opened)
-const EventDialog = dynamic(() => import('../event-dialog').then(mod => ({ default: mod.EventDialog })), { ssr: false })
-const PositionDialog = dynamic(() => import('../[id]/position-dialog').then(mod => ({ default: mod.PositionDialog })), { ssr: false })
-const PositionPicker = dynamic(() => import('../[id]/position-picker').then(mod => ({ default: mod.PositionPicker })), { ssr: false })
-const VolunteerPicker = dynamic(() => import('../[id]/volunteer-picker').then(mod => ({ default: mod.VolunteerPicker })), { ssr: false })
+const EventDialog = dynamic(() => import('../dialogs').then(mod => ({ default: mod.EventDialog })), { ssr: false })
+const PositionDialog = dynamic(() => import('../[id]/PositionDialog').then(mod => ({ default: mod.PositionDialog })), { ssr: false })
+const PositionPicker = dynamic(() => import('../[id]/PositionPicker').then(mod => ({ default: mod.PositionPicker })), { ssr: false })
+const VolunteerPicker = dynamic(() => import('../[id]/VolunteerPicker').then(mod => ({ default: mod.VolunteerPicker })), { ssr: false })
 const AgendaItemDialog = dynamic(() => import('../[id]/agenda-item-dialog').then(mod => ({ default: mod.AgendaItemDialog })), { ssr: false })
 const AgendaItemPicker = dynamic(() => import('../[id]/agenda-item-picker').then(mod => ({ default: mod.AgendaItemPicker })), { ssr: false })
-const SongPicker = dynamic(() => import('../[id]/song-picker').then(mod => ({ default: mod.SongPicker })), { ssr: false })
+const SongPicker = dynamic(() => import('../[id]/SongPicker').then(mod => ({ default: mod.SongPicker })), { ssr: false })
 const TemplatePicker = dynamic(() => import('../templates/TemplatePicker').then(mod => ({ default: mod.TemplatePicker })), { ssr: false })
-const SendInvitationsDialog = dynamic(() => import('../[id]/send-invitations-dialog').then(mod => ({ default: mod.SendInvitationsDialog })), { ssr: false })
-const LeaderPicker = dynamic(() => import('../[id]/leader-picker').then(mod => ({ default: mod.LeaderPicker })), { ssr: false })
+const SendInvitationsDialog = dynamic(() => import('../[id]/SendInvitationsDialog').then(mod => ({ default: mod.SendInvitationsDialog })), { ssr: false })
+const LeaderPicker = dynamic(() => import('../[id]/LeaderPicker').then(mod => ({ default: mod.LeaderPicker })), { ssr: false })
 const SongEditor = dynamic(() => import('../[id]/song-editor').then(mod => ({ default: mod.SongEditor })), { ssr: false })
 
 interface EventDialogsProps {
   selectedEvent: EventDetail | null
+  // Time format preference
+  timeFormat?: '12h' | '24h'
   // Event dialog
   dialogOpen: boolean
   setDialogOpen: (open: boolean) => void
@@ -119,6 +121,7 @@ interface EventDialogsProps {
 
 export function EventDialogs({
   selectedEvent,
+  timeFormat = '24h',
   dialogOpen,
   setDialogOpen,
   editingEvent,
@@ -199,6 +202,7 @@ export function EventDialogs({
         onOpenChange={setDialogOpen}
         event={editingEvent}
         onSuccess={onDialogSuccess}
+        timeFormat={timeFormat}
       />
 
       {/* Delete Event Dialog */}

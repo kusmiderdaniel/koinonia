@@ -5,6 +5,7 @@ import {
   getAuthenticatedUserWithProfile,
   isAuthError,
   requireManagePermission,
+  verifyChurchOwnership,
 } from '@/lib/utils/server-auth'
 import { formConditionSchema, type FormConditionInput } from '@/lib/validations/forms'
 
@@ -15,15 +16,10 @@ export async function getFormConditions(formId: string) {
   const { profile, adminClient } = auth
 
   // Verify form belongs to church
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', formId)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', formId, profile.church_id, 'church_id', 'Form not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   const { data: conditions, error } = await adminClient
     .from('form_conditions')
@@ -55,15 +51,10 @@ export async function createFormCondition(formId: string, data: Omit<FormConditi
   if (permError) return { error: permError }
 
   // Verify form belongs to church
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', formId)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', formId, profile.church_id, 'church_id', 'Form not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   // Verify both fields belong to this form
   const { data: fields } = await adminClient
@@ -120,15 +111,10 @@ export async function updateFormCondition(conditionId: string, data: Partial<For
   }
 
   // Verify form belongs to church
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', condition.form_id)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Condition not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', condition.form_id, profile.church_id, 'church_id', 'Condition not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   const updateData: Record<string, unknown> = {}
   if (data.targetFieldId !== undefined) updateData.target_field_id = data.targetFieldId
@@ -173,15 +159,10 @@ export async function deleteFormCondition(conditionId: string) {
   }
 
   // Verify form belongs to church
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', condition.form_id)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Condition not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', condition.form_id, profile.church_id, 'church_id', 'Condition not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   const formId = condition.form_id
 
@@ -213,15 +194,10 @@ export async function bulkSaveFormConditions(
   if (permError) return { error: permError }
 
   // Verify form belongs to church
-  const { data: form } = await adminClient
-    .from('forms')
-    .select('church_id')
-    .eq('id', formId)
-    .single()
-
-  if (!form || form.church_id !== profile.church_id) {
-    return { error: 'Form not found' }
-  }
+  const { error: ownershipError } = await verifyChurchOwnership(
+    adminClient, 'forms', formId, profile.church_id, 'church_id', 'Form not found'
+  )
+  if (ownershipError) return { error: ownershipError }
 
   // Process conditions
   const toCreate: typeof conditions = []

@@ -40,6 +40,7 @@ export interface TemplateDialogProps {
   onOpenChange: (open: boolean) => void
   template: Template | null
   onSuccess: () => void
+  timeFormat?: '12h' | '24h'
 }
 
 export interface TemplateFormData {

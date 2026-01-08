@@ -3,8 +3,9 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/client'
+import { Building2, Users, Check, ArrowRight, LogOut } from 'lucide-react'
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -16,64 +17,136 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4 bg-muted/30">
-      <div className="absolute top-4 right-4">
-        <Button variant="outline-pill" size="sm" onClick={handleSignOut}>
-          Sign Out
+    <div className="min-h-[100dvh] bg-gradient-to-b from-brand/5 via-background to-background">
+      {/* Header */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground hover:text-foreground gap-2"
+          onClick={handleSignOut}
+        >
+          <LogOut className="w-4 h-4" />
+          <span className="hidden sm:inline">Sign Out</span>
         </Button>
       </div>
-      <div className="w-full max-w-4xl space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold">Welcome to Koinonia</h1>
-          <p className="text-muted-foreground">
-            Let's get you set up. Are you starting a new church or joining an existing one?
+
+      {/* Main Content */}
+      <div className="flex flex-col items-center justify-center min-h-[100dvh] px-4 py-16 sm:px-6">
+        <div className="w-full max-w-4xl space-y-10">
+          {/* Hero Section */}
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 mb-2">
+              <span className="text-3xl">⛪</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              Welcome to Koinonia
+            </h1>
+            <p className="text-muted-foreground text-lg max-w-md mx-auto">
+              Let&apos;s get you set up. Are you starting a new church or joining an existing one?
+            </p>
+          </div>
+
+          {/* Cards */}
+          <div className="grid sm:grid-cols-2 gap-6">
+            {/* Create Church Card */}
+            <Card className="group relative overflow-hidden border-2 hover:border-brand/50 transition-all duration-300 hover:shadow-lg hover:shadow-brand/5">
+              <CardContent className="p-6 sm:p-8">
+                <div className="space-y-6">
+                  {/* Icon */}
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-brand/10 text-brand group-hover:scale-110 transition-transform duration-300">
+                    <Building2 className="w-6 h-6" />
+                  </div>
+
+                  {/* Title & Description */}
+                  <div className="space-y-2">
+                    <h2 className="text-xl font-semibold">Create a New Church</h2>
+                    <p className="text-muted-foreground text-sm">
+                      Set up your church organization and invite others
+                    </p>
+                  </div>
+
+                  {/* Features */}
+                  <ul className="space-y-3">
+                    {[
+                      'Full administrative access',
+                      'Manage ministries and events',
+                      'Invite volunteers and leaders',
+                      'Get a unique join code for members',
+                    ].map((feature, i) => (
+                      <li key={i} className="flex items-start gap-3 text-sm">
+                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mt-0.5">
+                          <Check className="w-3 h-3 text-green-600 dark:text-green-400" />
+                        </div>
+                        <span className="text-muted-foreground">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Button */}
+                  <Button asChild className="w-full h-12 !rounded-full !bg-brand hover:!bg-brand/90 text-white group/btn" size="lg">
+                    <Link href="/onboarding/create-church" className="gap-2">
+                      Create Church
+                      <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Join Church Card */}
+            <Card className="group relative overflow-hidden border-2 hover:border-brand/50 transition-all duration-300 hover:shadow-lg hover:shadow-brand/5">
+              <CardContent className="p-6 sm:p-8">
+                <div className="space-y-6">
+                  {/* Icon */}
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300">
+                    <Users className="w-6 h-6" />
+                  </div>
+
+                  {/* Title & Description */}
+                  <div className="space-y-2">
+                    <h2 className="text-xl font-semibold">Join Existing Church</h2>
+                    <p className="text-muted-foreground text-sm">
+                      Connect with your church and start volunteering
+                    </p>
+                  </div>
+
+                  {/* Features */}
+                  <ul className="space-y-3">
+                    {[
+                      'Sign up for events and services',
+                      'Manage your availability',
+                      'Connect with your ministry teams',
+                      'Receive notifications and updates',
+                    ].map((feature, i) => (
+                      <li key={i} className="flex items-start gap-3 text-sm">
+                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mt-0.5">
+                          <Check className="w-3 h-3 text-green-600 dark:text-green-400" />
+                        </div>
+                        <span className="text-muted-foreground">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Button */}
+                  <Button asChild className="w-full h-12 !rounded-full !border-2 !border-black dark:!border-white bg-transparent hover:bg-muted text-foreground group/btn" variant="outline" size="lg">
+                    <Link href="/onboarding/join-church" className="gap-2">
+                      Join Church
+                      <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Footer text */}
+          <p className="text-center text-sm text-muted-foreground">
+            Need help? Contact us at{' '}
+            <a href="mailto:support@koinonia.app" className="text-brand hover:underline">
+              support@koinonia.app
+            </a>
           </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card className="relative overflow-hidden">
-            <CardHeader>
-              <CardTitle>Create a New Church</CardTitle>
-              <CardDescription>
-                Set up your church organization and become the administrator
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>✓ Full administrative access</li>
-                <li>✓ Manage ministries and events</li>
-                <li>✓ Invite volunteers and leaders</li>
-                <li>✓ Get a unique join code for members</li>
-              </ul>
-              <Button asChild className="w-full !rounded-full !bg-brand hover:!bg-brand/90 text-white" size="lg">
-                <Link href="/onboarding/create-church">
-                  Create Church
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="relative overflow-hidden">
-            <CardHeader>
-              <CardTitle>Join Existing Church</CardTitle>
-              <CardDescription>
-                Connect with your church and start volunteering
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>✓ Sign up for events and services</li>
-                <li>✓ Manage your availability</li>
-                <li>✓ Connect with your ministry teams</li>
-                <li>✓ Receive notifications and updates</li>
-              </ul>
-              <Button asChild className="w-full !rounded-full !bg-brand hover:!bg-brand/90 text-white" size="lg">
-                <Link href="/onboarding/join-church">
-                  Join Church
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

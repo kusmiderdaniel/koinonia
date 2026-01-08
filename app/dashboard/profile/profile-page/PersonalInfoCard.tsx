@@ -127,7 +127,7 @@ export function PersonalInfoCard({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="sex">Sex</Label>
+              <Label htmlFor="sex">Gender</Label>
               <Select
                 value={sex}
                 onValueChange={onSexChange}

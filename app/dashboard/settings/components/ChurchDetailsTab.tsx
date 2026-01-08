@@ -89,17 +89,17 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
   }
 
   return (
-    <Card className="min-w-[28rem]">
+    <Card className="w-full md:min-w-[28rem]">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <CardContent>
+        <CardContent className="p-3 md:p-6">
           <div className="space-y-4">
           {/* Logo Upload Section */}
           <div className="space-y-2">
             <Label>Church Logo</Label>
             <div className="border border-black dark:border-white rounded-lg p-3 space-y-3">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 md:gap-4">
                 {/* Logo Preview */}
-                <div className="relative w-20 h-20 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center bg-muted/30 overflow-hidden">
+                <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center bg-muted/30 overflow-hidden shrink-0">
                   {logoUrl ? (
                     <img
                       src={logoUrl}
@@ -107,7 +107,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
                       className="w-full h-full object-contain"
                     />
                   ) : (
-                    <Church className="w-8 h-8 text-muted-foreground/50" />
+                    <Church className="w-6 h-6 md:w-8 md:h-8 text-muted-foreground/50" />
                   )}
                 </div>
 
@@ -128,29 +128,29 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
                       size="sm"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isUploadingLogo || isRemovingLogo}
-                      className="!rounded-full !border-black dark:!border-white"
+                      className="!rounded-full !border-black dark:!border-white text-xs md:text-sm"
                     >
-                      <Upload className="w-4 h-4 mr-2" />
-                      {isUploadingLogo ? 'Uploading...' : 'Upload Logo'}
+                      <Upload className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
+                      {isUploadingLogo ? 'Uploading...' : 'Upload'}
                     </Button>
                     {logoUrl && (
                       <Button
                         type="button"
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
                         onClick={handleRemoveLogo}
                         disabled={isUploadingLogo || isRemovingLogo}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50 !rounded-full"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 !rounded-full !border-red-300 dark:!border-red-800 text-xs md:text-sm"
                       >
-                        <X className="w-4 h-4 mr-2" />
+                        <X className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
                         {isRemovingLogo ? 'Removing...' : 'Remove'}
                       </Button>
                     )}
                   </div>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Recommended: Square image, at least 200x200px. Max 5MB. Supported formats: JPEG, PNG, WebP, GIF.
+              <p className="text-[10px] md:text-xs text-muted-foreground">
+                Square image, 200x200px min. Max 5MB.
               </p>
             </div>
           </div>
@@ -163,7 +163,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
             {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="email">Church Email</Label>
               <Input
@@ -212,7 +212,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
             <div className="space-y-2">
               <Label htmlFor="country">Country</Label>
               <Input id="country" {...register('country')} disabled={isLoading || !isAdmin} />
@@ -223,7 +223,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
               <Input id="city" {...register('city')} disabled={isLoading || !isAdmin} />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 col-span-2 md:col-span-1">
               <Label htmlFor="zipCode">ZIP Code</Label>
               <Input id="zipCode" {...register('zipCode')} disabled={isLoading || !isAdmin} />
             </div>

@@ -198,7 +198,7 @@ export function SchedulingMatrix({
         {hasEvents && (
           <Button
             variant="outline"
-            className="rounded-full border-gray-900 dark:border-zinc-300 shrink-0"
+            className="rounded-full !border !border-black dark:!border-white shrink-0"
             onClick={() => setInvitationsDialogOpen(true)}
           >
             <Send className="w-4 h-4 mr-2" />
