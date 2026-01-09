@@ -205,17 +205,17 @@ I once was lost but now I'm found`}
           </div>
         ) : (
           // Desktop: Side-by-side layout
-          <div className="flex-1 min-h-0 grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {/* Input */}
-            <div className="flex flex-col min-h-0">
-              <div className="flex items-center justify-between mb-2">
-                <Label htmlFor="rawLyrics">Paste Lyrics</Label>
+            <div className="flex flex-col">
+              <div className="flex items-center justify-between mb-2 h-6">
+                <Label htmlFor="rawLyrics">Paste</Label>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   onClick={handleLoadExample}
-                  className="text-xs"
+                  className="text-xs h-6 px-2"
                 >
                   Load Example
                 </Button>
@@ -234,18 +234,18 @@ Was blind but now I see`}
                   setRawLyrics(e.target.value)
                   setError(null)
                 }}
-                className="flex-1 min-h-[300px] font-mono text-sm resize-none"
+                className="h-[350px] font-mono text-sm resize-none"
               />
             </div>
 
             {/* Preview */}
-            <div className="flex flex-col min-h-0">
-              <div className="flex items-center justify-between mb-2 h-8">
+            <div className="flex flex-col">
+              <div className="flex items-center justify-between mb-2 h-6">
                 <Label>
                   Preview ({parsedSections.length} section{parsedSections.length !== 1 ? 's' : ''})
                 </Label>
               </div>
-              <ScrollArea className="flex-1 min-h-[300px] border rounded-md p-3">
+              <ScrollArea className="h-[350px] border rounded-md p-3">
                 <PreviewContent />
               </ScrollArea>
             </div>
