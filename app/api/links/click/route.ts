@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
+import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
 
 export async function POST(request: Request) {
+  // Rate limit - relaxed for click tracking
+  const identifier = getClientIdentifier(request)
+  const rateLimit = await checkRateLimit(identifier, 'relaxed')
+  if (!rateLimit.success) {
+    return rateLimitedResponse(rateLimit)
+  }
+
   try {
     const body = await request.json()
     const { linkId, churchId } = body

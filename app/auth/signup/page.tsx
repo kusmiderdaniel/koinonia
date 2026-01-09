@@ -116,11 +116,14 @@ function SignUpContent() {
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder="••••••••••••"
               className="h-11 focus:placeholder-transparent"
               {...register('password')}
               disabled={isLoading}
             />
+            <p className="text-xs text-muted-foreground">
+              Min. 12 characters with uppercase, lowercase, number, and special character
+            </p>
             {errors.password && (
               <p className="text-sm text-red-500">{errors.password.message}</p>
             )}

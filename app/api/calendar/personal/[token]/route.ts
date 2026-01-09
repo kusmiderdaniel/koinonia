@@ -1,5 +1,6 @@
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import icalGenerator from 'ical-generator'
+import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
 
 interface EventData {
   id: string
@@ -41,6 +42,13 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ token: string }> }
 ) {
+  // Rate limit to prevent token brute-force attacks
+  const identifier = getClientIdentifier(request)
+  const rateLimit = await checkRateLimit(identifier, 'token')
+  if (!rateLimit.success) {
+    return rateLimitedResponse(rateLimit)
+  }
+
   const { token } = await params
 
   if (!token || token.length < 20) {

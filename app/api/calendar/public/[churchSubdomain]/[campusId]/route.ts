@@ -1,10 +1,18 @@
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import icalGenerator from 'ical-generator'
+import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ churchSubdomain: string; campusId: string }> }
 ) {
+  // Rate limit - relaxed for public calendar feeds
+  const identifier = getClientIdentifier(request)
+  const rateLimit = await checkRateLimit(identifier, 'relaxed')
+  if (!rateLimit.success) {
+    return rateLimitedResponse(rateLimit)
+  }
+
   try {
     const { churchSubdomain, campusId } = await params
 

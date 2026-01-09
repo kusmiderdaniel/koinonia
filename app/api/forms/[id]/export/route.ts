@@ -3,12 +3,20 @@ import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { isLeaderOrAbove } from '@/lib/permissions'
 import { verifyChurchOwnership } from '@/lib/utils/server-auth'
 import { format } from 'date-fns'
+import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
 
 interface RouteContext {
   params: Promise<{ id: string }>
 }
 
 export async function GET(request: Request, context: RouteContext) {
+  // Rate limit - standard for authenticated operations
+  const identifier = getClientIdentifier(request)
+  const rateLimit = await checkRateLimit(identifier, 'standard')
+  if (!rateLimit.success) {
+    return rateLimitedResponse(rateLimit)
+  }
+
   try {
     const { id: formId } = await context.params
 

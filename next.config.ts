@@ -5,6 +5,61 @@ const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
+// Content Security Policy
+// Note: 'unsafe-inline' for styles is required for Next.js and most UI libraries
+// In production, consider implementing nonce-based CSP for stricter security
+const ContentSecurityPolicy = `
+  default-src 'self';
+  script-src 'self' 'unsafe-eval' 'unsafe-inline';
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' blob: data: https://*.supabase.co http://127.0.0.1:54321;
+  font-src 'self' data:;
+  connect-src 'self' https://*.supabase.co wss://*.supabase.co http://127.0.0.1:54321 ws://127.0.0.1:54321;
+  frame-ancestors 'none';
+  form-action 'self';
+  base-uri 'self';
+  object-src 'none';
+`;
+
+// Security headers configuration
+const securityHeaders = [
+  // Prevent DNS prefetching to protect privacy
+  {
+    key: 'X-DNS-Prefetch-Control',
+    value: 'on',
+  },
+  // Enforce HTTPS (only effective when served over HTTPS)
+  {
+    key: 'Strict-Transport-Security',
+    value: 'max-age=63072000; includeSubDomains; preload',
+  },
+  // Prevent clickjacking attacks
+  {
+    key: 'X-Frame-Options',
+    value: 'DENY',
+  },
+  // Prevent MIME type sniffing
+  {
+    key: 'X-Content-Type-Options',
+    value: 'nosniff',
+  },
+  // Control referrer information
+  {
+    key: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin',
+  },
+  // Disable browser features we don't need
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+  },
+  // Content Security Policy
+  {
+    key: 'Content-Security-Policy',
+    value: ContentSecurityPolicy.replace(/\s{2,}/g, ' ').trim(),
+  },
+];
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -25,6 +80,16 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '5mb',
     },
+  },
+  // Apply security headers to all routes
+  async headers() {
+    return [
+      {
+        // Apply to all routes
+        source: '/:path*',
+        headers: securityHeaders,
+      },
+    ];
   },
 };
 

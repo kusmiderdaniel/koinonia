@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { notifyMinistryLeaderOfResponse } from '@/app/dashboard/events/actions/invitations'
+import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
 
 // Helper to create redirect URL
 function getRedirectUrl(request: Request, path: string) {
@@ -9,6 +10,13 @@ function getRedirectUrl(request: Request, path: string) {
 }
 
 export async function GET(request: Request) {
+  // Rate limit to prevent token brute-force attacks
+  const identifier = getClientIdentifier(request)
+  const rateLimit = await checkRateLimit(identifier, 'token')
+  if (!rateLimit.success) {
+    return rateLimitedResponse(rateLimit)
+  }
+
   console.log('[Invitation API] === REQUEST START ===')
   console.log('[Invitation API] URL:', request.url)
 

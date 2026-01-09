@@ -1,10 +1,18 @@
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ subdomain: string }> }
 ) {
+  // Rate limit to prevent subdomain enumeration
+  const identifier = getClientIdentifier(request)
+  const rateLimit = await checkRateLimit(identifier, 'standard')
+  if (!rateLimit.success) {
+    return rateLimitedResponse(rateLimit)
+  }
+
   const { subdomain } = await params
 
   const supabase = createServiceRoleClient()

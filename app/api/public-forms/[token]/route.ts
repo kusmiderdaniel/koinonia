@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
+import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
 
 interface RouteContext {
   params: Promise<{ token: string }>
@@ -8,6 +9,13 @@ interface RouteContext {
 
 // GET - Fetch form data for public access
 export async function GET(request: Request, context: RouteContext) {
+  // Rate limit - relaxed for read operations
+  const identifier = getClientIdentifier(request)
+  const rateLimit = await checkRateLimit(identifier, 'relaxed')
+  if (!rateLimit.success) {
+    return rateLimitedResponse(rateLimit)
+  }
+
   try {
     const { token } = await context.params
     const adminClient = createServiceRoleClient()
@@ -61,6 +69,13 @@ export async function GET(request: Request, context: RouteContext) {
 
 // POST - Submit form response
 export async function POST(request: Request, context: RouteContext) {
+  // Rate limit - strict for submissions to prevent spam
+  const identifier = getClientIdentifier(request)
+  const rateLimit = await checkRateLimit(identifier, 'strict')
+  if (!rateLimit.success) {
+    return rateLimitedResponse(rateLimit)
+  }
+
   try {
     const { token } = await context.params
     const body = await request.json()
