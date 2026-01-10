@@ -16,6 +16,7 @@ import {
   shouldNotify,
 } from '@/lib/notifications/preferences'
 import { formatTimeFromDate, type TimeFormat } from '@/lib/utils/format'
+import { sendPushToUser } from '@/lib/push/send'
 
 // Shared types for Supabase nested query results
 type MinistryData = { id: string; name: string; color: string }
@@ -97,6 +98,17 @@ async function sendInvitationEmails(
         churchName: church?.name || 'Your Church',
       }),
     }).catch((err) => console.error('[Email] Failed to send invitation email:', err))
+
+    // Send push notification
+    sendPushToUser(notification.recipient_id, {
+      title: "You've been invited to serve",
+      body: `${position.title} for ${event.title} on ${eventDate}`,
+      data: {
+        type: 'position_invitation',
+        event_id: event.id,
+        notification_id: notification.id,
+      },
+    }).catch((err) => console.error('[Push] Failed to send invitation push:', err))
   }
 }
 
@@ -806,6 +818,18 @@ export async function notifyMinistryLeaderOfResponse(
           viewEventUrl: `${siteUrl}/dashboard/events/${event.id}`,
         }),
       }).catch((err) => console.error('[Email] Failed to send notification email:', err))
+    }
+
+    // Check push notification preference
+    if (shouldNotify(prefs, preferenceKey, 'push')) {
+      sendPushToUser(recipient.id, {
+        title: `${responseEmoji} Invitation ${responseVerb}`,
+        body: `${responderName} has ${responseVerb} "${position.title}" for "${event.title}"`,
+        data: {
+          type: 'invitation_response',
+          event_id: event.id,
+        },
+      }).catch((err) => console.error('[Push] Failed to send response notification:', err))
     }
   }
 

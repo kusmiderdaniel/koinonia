@@ -33,6 +33,7 @@ export function parseNotificationPreferences(
     return {
       in_app: typeof channel.in_app === 'boolean' ? channel.in_app : defaultValue.in_app,
       email: typeof channel.email === 'boolean' ? channel.email : defaultValue.email,
+      push: typeof channel.push === 'boolean' ? channel.push : defaultValue.push,
     }
   }
 
@@ -49,6 +50,7 @@ export function parseNotificationPreferences(
     return {
       in_app: typeof channel.in_app === 'boolean' ? channel.in_app : defaultValue.in_app,
       email: typeof channel.email === 'boolean' ? channel.email : defaultValue.email,
+      push: typeof channel.push === 'boolean' ? channel.push : defaultValue.push,
       days_before:
         typeof channel.days_before === 'number' && channel.days_before > 0
           ? channel.days_before
@@ -65,6 +67,7 @@ export function parseNotificationPreferences(
     ? {
         in_app: typeof legacyMinistry.in_app === 'boolean' ? legacyMinistry.in_app : true,
         email: typeof legacyMinistry.email === 'boolean' ? legacyMinistry.email : true,
+        push: typeof legacyMinistry.push === 'boolean' ? legacyMinistry.push : true,
       }
     : DEFAULT_NOTIFICATION_PREFERENCES.ministry_invitation_accepted
 
@@ -72,6 +75,7 @@ export function parseNotificationPreferences(
     ? {
         in_app: typeof legacyMinistry.in_app === 'boolean' ? legacyMinistry.in_app : true,
         email: typeof legacyMinistry.email === 'boolean' ? legacyMinistry.email : true,
+        push: typeof legacyMinistry.push === 'boolean' ? legacyMinistry.push : true,
       }
     : DEFAULT_NOTIFICATION_PREFERENCES.ministry_invitation_declined
 
@@ -79,6 +83,7 @@ export function parseNotificationPreferences(
     ? {
         in_app: typeof legacyEvent.in_app === 'boolean' ? legacyEvent.in_app : true,
         email: typeof legacyEvent.email === 'boolean' ? legacyEvent.email : true,
+        push: typeof legacyEvent.push === 'boolean' ? legacyEvent.push : true,
       }
     : DEFAULT_NOTIFICATION_PREFERENCES.event_invitation_accepted
 
@@ -86,6 +91,7 @@ export function parseNotificationPreferences(
     ? {
         in_app: typeof legacyEvent.in_app === 'boolean' ? legacyEvent.in_app : true,
         email: typeof legacyEvent.email === 'boolean' ? legacyEvent.email : true,
+        push: typeof legacyEvent.push === 'boolean' ? legacyEvent.push : true,
       }
     : DEFAULT_NOTIFICATION_PREFERENCES.event_invitation_declined
 
@@ -122,13 +128,13 @@ export function parseNotificationPreferences(
  *
  * @param prefs - User's notification preferences
  * @param type - The notification preference key to check
- * @param channel - 'in_app' or 'email'
+ * @param channel - 'in_app', 'email', or 'push'
  * @returns boolean indicating if notification should be sent
  */
 export function shouldNotify(
   prefs: NotificationPreferences,
   type: NotificationPreferenceKey,
-  channel: 'in_app' | 'email'
+  channel: 'in_app' | 'email' | 'push'
 ): boolean {
   const preference = prefs[type]
   return preference ? preference[channel] : true // Default to true if not set

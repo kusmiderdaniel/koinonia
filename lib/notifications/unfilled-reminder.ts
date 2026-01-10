@@ -8,6 +8,7 @@ import {
   shouldNotify,
   shouldSendUnfilledReminder,
 } from '@/lib/notifications/preferences'
+import { sendPushToUser } from '@/lib/push/send'
 
 interface EventWithPositions {
   id: string
@@ -276,6 +277,18 @@ export async function sendUnfilledPositionReminders() {
         }).catch((err) => console.error('[Email] Failed to send unfilled reminder:', err))
 
         emailsSent++
+      }
+
+      // Check push notification preference
+      if (shouldNotify(prefs, 'unfilled_positions_reminder', 'push')) {
+        sendPushToUser(leader.id, {
+          title: 'Positions Need Attention',
+          body: `${positions.length} position${positions.length > 1 ? 's' : ''} need attention for "${event.title}"`,
+          data: {
+            type: 'unfilled_positions_reminder',
+            event_id: event.id,
+          },
+        }).catch((err) => console.error('[Push] Failed to send unfilled reminder:', err))
       }
     }
   }

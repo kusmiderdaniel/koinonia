@@ -6,6 +6,7 @@
 export type NotificationChannel = {
   in_app: boolean
   email: boolean
+  push: boolean
 }
 
 /**
@@ -49,10 +50,10 @@ export type ReminderDaysOption = (typeof REMINDER_DAYS_OPTIONS)[number]
  * Used when a user has no preferences set or for new users
  */
 export const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreferences = {
-  ministry_invitation_accepted: { in_app: true, email: true },
-  ministry_invitation_declined: { in_app: true, email: true },
-  event_invitation_accepted: { in_app: true, email: true },
-  event_invitation_declined: { in_app: true, email: true },
-  pending_member_registrations: { in_app: true, email: true },
-  unfilled_positions_reminder: { in_app: true, email: true, days_before: 3 },
+  ministry_invitation_accepted: { in_app: true, email: true, push: true },
+  ministry_invitation_declined: { in_app: true, email: true, push: true },
+  event_invitation_accepted: { in_app: true, email: true, push: true },
+  event_invitation_declined: { in_app: true, email: true, push: true },
+  pending_member_registrations: { in_app: true, email: true, push: true },
+  unfilled_positions_reminder: { in_app: true, email: true, push: true, days_before: 3 },
 }

@@ -23,6 +23,7 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: "Koinonia",
   description: "Church management and volunteer coordination platform",
+  manifest: "/manifest.json",
 };
 
 export const viewport = {

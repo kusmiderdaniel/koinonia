@@ -13,15 +13,16 @@ const withBundleAnalyzer = bundleAnalyzer({
 // In production, consider implementing nonce-based CSP for stricter security
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline';
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.gstatic.com;
   style-src 'self' 'unsafe-inline';
   img-src 'self' blob: data: https://*.supabase.co http://127.0.0.1:54321;
   font-src 'self' data:;
-  connect-src 'self' https://*.supabase.co wss://*.supabase.co http://127.0.0.1:54321 ws://127.0.0.1:54321;
+  connect-src 'self' https://*.supabase.co wss://*.supabase.co http://127.0.0.1:54321 ws://127.0.0.1:54321 https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://fcm.googleapis.com https://fcmregistrations.googleapis.com;
   frame-ancestors 'none';
   form-action 'self';
   base-uri 'self';
   object-src 'none';
+  worker-src 'self' blob:;
 `;
 
 // Security headers configuration

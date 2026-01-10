@@ -13,7 +13,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { FileText } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { FileText, Loader2 } from 'lucide-react'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { EmptyState } from '@/components/EmptyState'
 import { ListDetailLayout } from '@/components/layouts'
@@ -254,23 +255,24 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
             </div>
           </div>
           <div className="flex justify-end gap-3 pt-4 border-t mt-4">
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={() => setIsCreateDialogOpen(false)}
               disabled={isCreating}
-              className="px-4 py-2 rounded-full border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 disabled:opacity-50"
+              className="h-10 px-4 border-zinc-900 dark:border-zinc-100"
             >
               {t('createDialog.cancel')}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={handleCreateForm}
               disabled={isCreating || !newFormTitle.trim()}
-              className="px-4 py-2 rounded-full text-white disabled:opacity-50 hover:opacity-90"
-              style={{ backgroundColor: '#f49f1e' }}
+              className="h-10 px-4 !bg-brand hover:!bg-brand/90 !text-white"
             >
+              {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isCreating ? t('createDialog.creating') : t('createForm')}
-            </button>
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

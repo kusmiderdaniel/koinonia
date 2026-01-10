@@ -44,6 +44,12 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/invitation') &&
     !request.nextUrl.pathname.startsWith('/forms') &&
     !request.nextUrl.pathname.startsWith('/links') &&
+    !request.nextUrl.pathname.startsWith('/icons') &&
+    !request.nextUrl.pathname.endsWith('.json') &&
+    !request.nextUrl.pathname.endsWith('.js') &&
+    !request.nextUrl.pathname.endsWith('.png') &&
+    !request.nextUrl.pathname.endsWith('.ico') &&
+    !request.nextUrl.pathname.endsWith('.svg') &&
     request.nextUrl.pathname !== '/'
   ) {
     const url = request.nextUrl.clone()
@@ -61,6 +67,12 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith('/invitation') &&
     !request.nextUrl.pathname.startsWith('/forms') &&
     !request.nextUrl.pathname.startsWith('/links') &&
+    !request.nextUrl.pathname.startsWith('/icons') &&
+    !request.nextUrl.pathname.endsWith('.json') &&
+    !request.nextUrl.pathname.endsWith('.js') &&
+    !request.nextUrl.pathname.endsWith('.png') &&
+    !request.nextUrl.pathname.endsWith('.ico') &&
+    !request.nextUrl.pathname.endsWith('.svg') &&
     request.nextUrl.pathname !== '/'
   ) {
     // Check for approved profile (using user_id)

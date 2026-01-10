@@ -1837,6 +1837,60 @@ export type Database = {
           },
         ]
       }
+      push_tokens: {
+        Row: {
+          church_id: string
+          created_at: string | null
+          device_id: string
+          device_name: string | null
+          id: string
+          last_used_at: string | null
+          platform: string | null
+          profile_id: string
+          token: string
+          updated_at: string | null
+        }
+        Insert: {
+          church_id: string
+          created_at?: string | null
+          device_id: string
+          device_name?: string | null
+          id?: string
+          last_used_at?: string | null
+          platform?: string | null
+          profile_id: string
+          token: string
+          updated_at?: string | null
+        }
+        Update: {
+          church_id?: string
+          created_at?: string | null
+          device_id?: string
+          device_name?: string | null
+          id?: string
+          last_used_at?: string | null
+          platform?: string | null
+          profile_id?: string
+          token?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_tokens_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "push_tokens_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       saved_views: {
         Row: {
           church_id: string

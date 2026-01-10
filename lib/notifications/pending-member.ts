@@ -5,6 +5,7 @@ import {
   parseNotificationPreferences,
   shouldNotify,
 } from '@/lib/notifications/preferences'
+import { sendPushToUser } from '@/lib/push/send'
 
 interface PendingMemberInfo {
   firstName: string
@@ -80,6 +81,17 @@ export async function notifyLeadersOfPendingMember(
           reviewUrl,
         }),
       }).catch((err) => console.error('[Email] Failed to send pending member email:', err))
+    }
+
+    // Check push notification preference
+    if (shouldNotify(prefs, 'pending_member_registrations', 'push')) {
+      sendPushToUser(leader.id, {
+        title: 'New Member Request',
+        body: `${memberFullName} has requested to join ${church.name}`,
+        data: {
+          type: 'pending_member',
+        },
+      }).catch((err) => console.error('[Push] Failed to send pending member push:', err))
     }
   }
 }
