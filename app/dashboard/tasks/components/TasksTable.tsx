@@ -65,7 +65,7 @@ export const TasksTable = memo(function TasksTable({
     return (
       <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
         <div className="text-muted-foreground mb-4">{t('noTasksFound')}</div>
-        <Button onClick={onCreateTask} variant="outline">
+        <Button onClick={onCreateTask} variant="outline" className="!border !border-black dark:!border-white rounded-full">
           <Plus className="h-4 w-4 mr-2" />
           {t('createFirstTask')}
         </Button>

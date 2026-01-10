@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { ChevronRight, ArrowLeft } from 'lucide-react'
 import { LoadingState } from '@/components/LoadingState'
@@ -30,6 +29,7 @@ export function ProfilePageClient() {
   const isMobile = useIsMobile()
   const showNotificationSettings = isLeaderOrAbove(state.userRole)
   const [mobileSelectedTab, setMobileSelectedTab] = useState<TabKey | null>(null)
+  const [activeTab, setActiveTab] = useState<TabKey>('personal')
 
   const tabItems: TabItem[] = [
     { key: 'personal', labelKey: 'tabs.personal', descriptionKey: 'tabDescriptions.personal', show: true },
@@ -207,44 +207,34 @@ export function ProfilePageClient() {
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 flex flex-col">
-          <Tabs defaultValue="personal" className="h-full flex flex-row gap-6">
-            {/* Tab navigation - vertical sidebar */}
-            <div className="shrink-0 w-56">
-              <TabsList className="flex flex-col w-full h-auto gap-1 p-1 border border-black dark:border-zinc-700 rounded-lg bg-muted/50">
-                <TabsTrigger
-                  value="personal"
-                  className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
+        <div className="flex-1 min-h-0 flex flex-row gap-6">
+          {/* Tab navigation - vertical sidebar */}
+          <div className="shrink-0 w-64">
+            <div className="flex flex-col w-full gap-1 p-1 border border-black dark:border-zinc-700 rounded-lg bg-muted/50">
+              {visibleTabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`w-full text-left py-2.5 px-3 rounded-md transition-colors ${
+                    activeTab === tab.key
+                      ? 'bg-brand text-brand-foreground'
+                      : 'hover:bg-muted'
+                  }`}
                 >
-                  {t('tabs.personal')}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="password"
-                  className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
-                >
-                  {t('tabs.password')}
-                </TabsTrigger>
-                {showNotificationSettings && (
-                  <TabsTrigger
-                    value="notifications"
-                    className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
-                  >
-                    {t('tabs.notifications')}
-                  </TabsTrigger>
-                )}
-                <TabsTrigger
-                  value="language"
-                  className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
-                >
-                  {t('tabs.language')}
-                </TabsTrigger>
-              </TabsList>
+                  <div className="font-medium text-sm">{t(tab.labelKey)}</div>
+                  <div className={`text-xs ${activeTab === tab.key ? 'opacity-80' : 'text-muted-foreground'}`}>
+                    {t(tab.descriptionKey)}
+                  </div>
+                </button>
+              ))}
             </div>
+          </div>
 
-            {/* Tab content */}
-            <div className="flex-1 min-w-0 min-h-0 overflow-auto">
-              <div className="border border-black dark:border-zinc-700 rounded-lg p-4 w-fit">
-                <TabsContent value="personal" className="mt-0 h-full">
+          {/* Tab content */}
+          <div className="flex-1 min-w-0 overflow-auto">
+            <div className="border border-black dark:border-zinc-700 rounded-lg p-4">
+              {activeTab === 'personal' && (
+                <>
                   {state.error && (
                     <Alert variant="destructive" className="mb-4">
                       <AlertDescription>{state.error}</AlertDescription>
@@ -266,61 +256,61 @@ export function ProfilePageClient() {
                     onDateOfBirthChange={state.handleDateOfBirthChange}
                     onSexChange={state.handleSexChange}
                   />
-                </TabsContent>
+                </>
+              )}
 
-                <TabsContent value="password" className="mt-0 h-full">
-                  <PasswordChangeCard
-                    showPasswordForm={state.showPasswordForm}
-                    currentPassword={state.currentPassword}
-                    newPassword={state.newPassword}
-                    confirmPassword={state.confirmPassword}
-                    showCurrentPassword={state.showCurrentPassword}
-                    showNewPassword={state.showNewPassword}
-                    isChangingPassword={state.isChangingPassword}
-                    passwordError={state.passwordError}
-                    passwordSuccess={state.passwordSuccess}
-                    onShowPasswordFormChange={state.setShowPasswordForm}
-                    onCurrentPasswordChange={state.setCurrentPassword}
-                    onNewPasswordChange={state.setNewPassword}
-                    onConfirmPasswordChange={state.setConfirmPassword}
-                    onShowCurrentPasswordToggle={() =>
-                      state.setShowCurrentPassword(!state.showCurrentPassword)
-                    }
-                    onShowNewPasswordToggle={() =>
-                      state.setShowNewPassword(!state.showNewPassword)
-                    }
-                    onSubmit={state.handlePasswordChange}
-                    onCancel={state.handleCancelPasswordChange}
+              {activeTab === 'password' && (
+                <PasswordChangeCard
+                  showPasswordForm={state.showPasswordForm}
+                  currentPassword={state.currentPassword}
+                  newPassword={state.newPassword}
+                  confirmPassword={state.confirmPassword}
+                  showCurrentPassword={state.showCurrentPassword}
+                  showNewPassword={state.showNewPassword}
+                  isChangingPassword={state.isChangingPassword}
+                  passwordError={state.passwordError}
+                  passwordSuccess={state.passwordSuccess}
+                  onShowPasswordFormChange={state.setShowPasswordForm}
+                  onCurrentPasswordChange={state.setCurrentPassword}
+                  onNewPasswordChange={state.setNewPassword}
+                  onConfirmPasswordChange={state.setConfirmPassword}
+                  onShowCurrentPasswordToggle={() =>
+                    state.setShowCurrentPassword(!state.showCurrentPassword)
+                  }
+                  onShowNewPasswordToggle={() =>
+                    state.setShowNewPassword(!state.showNewPassword)
+                  }
+                  onSubmit={state.handlePasswordChange}
+                  onCancel={state.handleCancelPasswordChange}
+                />
+              )}
+
+              {activeTab === 'notifications' && showNotificationSettings && (
+                <>
+                  {state.notificationSuccess && (
+                    <Alert className="mb-4 border-green-500 text-green-700">
+                      <AlertDescription>{state.notificationSuccess}</AlertDescription>
+                    </Alert>
+                  )}
+                  {state.notificationError && (
+                    <Alert variant="destructive" className="mb-4">
+                      <AlertDescription>{state.notificationError}</AlertDescription>
+                    </Alert>
+                  )}
+                  <NotificationSettingsCard
+                    preferences={state.notificationPreferences}
+                    isLoading={state.isUpdatingNotifications}
+                    onPreferencesChange={state.handleNotificationPreferencesChange}
+                    onSave={state.handleSaveNotificationPreferences}
                   />
-                </TabsContent>
+                </>
+              )}
 
-                {showNotificationSettings && (
-                  <TabsContent value="notifications" className="mt-0 h-full">
-                    {state.notificationSuccess && (
-                      <Alert className="mb-4 border-green-500 text-green-700">
-                        <AlertDescription>{state.notificationSuccess}</AlertDescription>
-                      </Alert>
-                    )}
-                    {state.notificationError && (
-                      <Alert variant="destructive" className="mb-4">
-                        <AlertDescription>{state.notificationError}</AlertDescription>
-                      </Alert>
-                    )}
-                    <NotificationSettingsCard
-                      preferences={state.notificationPreferences}
-                      isLoading={state.isUpdatingNotifications}
-                      onPreferencesChange={state.handleNotificationPreferencesChange}
-                      onSave={state.handleSaveNotificationPreferences}
-                    />
-                  </TabsContent>
-                )}
-
-                <TabsContent value="language" className="mt-0 h-full">
-                  <LanguageSettingsCard currentLanguage={state.language} />
-                </TabsContent>
-              </div>
+              {activeTab === 'language' && (
+                <LanguageSettingsCard currentLanguage={state.language} />
+              )}
             </div>
-          </Tabs>
+          </div>
         </div>
       </div>
     </div>

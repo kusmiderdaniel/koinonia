@@ -136,7 +136,7 @@ function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
   return (
     <div className={`flex flex-col items-center justify-center px-4 text-center ${isMobile ? 'py-8' : 'py-16'}`}>
       <div className={`text-muted-foreground ${isMobile ? 'text-sm mb-3' : 'mb-4'}`}>{t('noTasksFound')}</div>
-      <Button onClick={onCreateTask} variant="outline" size={isMobile ? 'sm' : 'default'}>
+      <Button onClick={onCreateTask} variant="outline" size={isMobile ? 'sm' : 'default'} className="!border !border-black dark:!border-white rounded-full">
         <Plus className={isMobile ? 'h-3.5 w-3.5 mr-1' : 'h-4 w-4 mr-2'} />
         {t('createFirstTask')}
       </Button>
