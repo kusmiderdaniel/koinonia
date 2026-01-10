@@ -227,7 +227,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
 
   return (
     <div className="flex h-[calc(100vh-3.5rem)] md:h-screen overflow-hidden">
-      <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
+      <div className="flex-1 flex flex-col p-4 md:p-6 overflow-auto lg:overflow-hidden">
         <EventsHeader
         viewMode={viewMode}
         onViewModeChange={eventList.setViewMode}

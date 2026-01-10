@@ -21,6 +21,11 @@ export const queryKeys = {
   ministry: (id: string) => ['ministries', id] as const,
   ministryMembers: (ministryId: string) => ['ministries', ministryId, 'members'] as const,
 
+  // Matrix (scheduling matrix filters)
+  matrixMinistries: ['matrix-ministries'] as const,
+  matrixCampuses: ['matrix-campuses'] as const,
+  matrixData: ['matrix-data'] as const,
+
   // Members
   churchMembers: ['churchMembers'] as const,
 
@@ -195,13 +200,25 @@ export function useCacheInvalidation() {
     invalidateSong: (songId: string) =>
       queryClient.invalidateQueries({ queryKey: queryKeys.song(songId) }),
 
-    // Invalidate all ministries
-    invalidateMinistries: () =>
-      queryClient.invalidateQueries({ queryKey: queryKeys.ministries }),
+    // Invalidate all ministries (including matrix filter)
+    invalidateMinistries: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.ministries })
+      queryClient.invalidateQueries({ queryKey: queryKeys.matrixMinistries })
+    },
 
     // Invalidate specific ministry
     invalidateMinistry: (ministryId: string) =>
       queryClient.invalidateQueries({ queryKey: queryKeys.ministry(ministryId) }),
+
+    // Invalidate matrix-specific queries
+    invalidateMatrixMinistries: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.matrixMinistries }),
+
+    invalidateMatrixCampuses: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.matrixCampuses }),
+
+    invalidateMatrixData: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.matrixData }),
 
     // Invalidate church members
     invalidateChurchMembers: () =>

@@ -26,8 +26,8 @@ export function SelectedDayPanel({
   const locale = useLocale()
 
   return (
-    <Card className="h-full">
-      <CardContent className="p-4 h-full flex flex-col">
+    <Card className="lg:h-full">
+      <CardContent className="p-4 lg:h-full flex flex-col">
         {selectedDate ? (
           <>
             <h3 className="font-semibold mb-4">

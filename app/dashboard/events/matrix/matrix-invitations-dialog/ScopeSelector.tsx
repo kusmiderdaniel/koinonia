@@ -14,9 +14,11 @@ export function ScopeSelector({
   scope,
   onScopeChange,
   pendingCounts,
+  selectedDates,
   selectedEventIds,
   selectedMinistryIds,
   selectedPositionIds,
+  onToggleDate,
   onToggleEvent,
   onToggleMinistry,
   onTogglePosition,
@@ -39,13 +41,13 @@ export function ScopeSelector({
         </Label>
       </div>
 
-      {/* By Event/Date */}
-      {pendingCounts.byEvent.length > 1 && (
+      {/* By Date */}
+      {pendingCounts.byDate.length > 0 && (
         <div className="border rounded-lg overflow-hidden">
           <div className="flex items-center space-x-2 p-3 hover:bg-gray-50 dark:hover:bg-zinc-900">
-            <RadioGroupItem value="events" id="scope-events" />
+            <RadioGroupItem value="dates" id="scope-dates" />
             <Label
-              htmlFor="scope-events"
+              htmlFor="scope-dates"
               className="flex-1 cursor-pointer font-medium flex items-center gap-2"
             >
               <Calendar className="w-4 h-4" />
@@ -53,29 +55,31 @@ export function ScopeSelector({
             </Label>
           </div>
 
-          {scope === 'events' && (
+          {scope === 'dates' && (
             <ScrollArea className="max-h-40 px-3 pb-3">
               <div className="space-y-2">
-                {pendingCounts.byEvent.map(({ event, count }) => (
+                {pendingCounts.byDate.map(({ date, eventIds, count }) => (
                   <div
-                    key={event.id}
+                    key={date}
                     className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800"
                   >
                     <Checkbox
-                      id={`event-${event.id}`}
-                      checked={selectedEventIds.includes(event.id)}
-                      onCheckedChange={() => onToggleEvent(event.id)}
+                      id={`date-${date}`}
+                      checked={selectedDates.includes(date)}
+                      onCheckedChange={() => onToggleDate(date)}
                     />
                     <Label
-                      htmlFor={`event-${event.id}`}
+                      htmlFor={`date-${date}`}
                       className="flex-1 cursor-pointer text-sm"
                     >
                       <span className="font-medium">
-                        {format(new Date(event.start_time), 'MMM d')}
+                        {format(new Date(date), 'EEEE, MMM d')}
                       </span>
-                      <span className="text-muted-foreground ml-2">
-                        {event.title}
-                      </span>
+                      {eventIds.length > 1 && (
+                        <span className="text-muted-foreground ml-2">
+                          ({eventIds.length} {t('events')})
+                        </span>
+                      )}
                     </Label>
                     <Badge variant="secondary">{count}</Badge>
                   </div>

@@ -72,9 +72,11 @@ export function MatrixInvitationsDialog({
               scope={state.scope}
               onScopeChange={state.setScope}
               pendingCounts={state.pendingCounts}
+              selectedDates={state.selectedDates}
               selectedEventIds={state.selectedEventIds}
               selectedMinistryIds={state.selectedMinistryIds}
               selectedPositionIds={state.selectedPositionIds}
+              onToggleDate={state.toggleDate}
               onToggleEvent={state.toggleEvent}
               onToggleMinistry={state.toggleMinistry}
               onTogglePosition={state.togglePosition}

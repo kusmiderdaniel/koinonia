@@ -243,6 +243,10 @@ export function EventDialogs({
             open={positionPickerOpen}
             onOpenChange={setPositionPickerOpen}
             eventId={selectedEvent.id}
+            existingPositions={selectedEvent.event_positions?.map((p) => ({
+              ministry_id: p.ministry?.id || '',
+              role_id: p.role?.id || null,
+            })) || []}
             onSuccess={onPositionPickerSuccess}
           />
 

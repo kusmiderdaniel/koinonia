@@ -342,7 +342,7 @@ export async function getMatrixPendingInvitationCounts(eventIds: string[]) {
   const { adminClient } = auth
 
   if (!eventIds.length) {
-    return { data: { total: 0, byEvent: [], byMinistry: [], byPosition: [] } }
+    return { data: { total: 0, byDate: [], byEvent: [], byMinistry: [], byPosition: [] } }
   }
 
   // Get all assignments without invitations for these events
@@ -378,6 +378,7 @@ export async function getMatrixPendingInvitationCounts(eventIds: string[]) {
   }
   type MatrixAssignment = { id: string; position: MatrixPositionData }
 
+  const dateCountsMap = new Map<string, { date: string; eventIds: string[]; count: number }>()
   const eventCountsMap = new Map<string, { event: MatrixEventData; count: number }>()
   const ministryCountsMap = new Map<string, { ministry: MinistryData; count: number }>()
   const positionCountsMap = new Map<string, { position: { id: string; title: string; eventId: string; ministry: MinistryData | null }; count: number }>()
@@ -387,6 +388,18 @@ export async function getMatrixPendingInvitationCounts(eventIds: string[]) {
     const ministry = unwrapRelation(position.ministry)
     const event = unwrapRelation(position.event)
     if (!event) continue
+
+    // Date count (group by calendar date)
+    const dateKey = event.start_time.split('T')[0] // YYYY-MM-DD format
+    const existingDate = dateCountsMap.get(dateKey)
+    if (existingDate) {
+      existingDate.count++
+      if (!existingDate.eventIds.includes(event.id)) {
+        existingDate.eventIds.push(event.id)
+      }
+    } else {
+      dateCountsMap.set(dateKey, { date: dateKey, eventIds: [event.id], count: 1 })
+    }
 
     // Event count
     const existingEvent = eventCountsMap.get(event.id)
@@ -421,6 +434,9 @@ export async function getMatrixPendingInvitationCounts(eventIds: string[]) {
   return {
     data: {
       total: assignments?.length || 0,
+      byDate: Array.from(dateCountsMap.values()).sort(
+        (a, b) => a.date.localeCompare(b.date)
+      ),
       byEvent: Array.from(eventCountsMap.values()).sort(
         (a, b) => new Date(a.event.start_time).getTime() - new Date(b.event.start_time).getTime()
       ),
@@ -430,11 +446,12 @@ export async function getMatrixPendingInvitationCounts(eventIds: string[]) {
   }
 }
 
-export type BulkInvitationScope = 'all' | 'events' | 'ministries' | 'positions'
+export type BulkInvitationScope = 'all' | 'dates' | 'events' | 'ministries' | 'positions'
 
 export interface SendBulkInvitationsOptions {
   eventIds: string[]
   scope: BulkInvitationScope
+  selectedDates?: string[]
   selectedEventIds?: string[]
   selectedMinistryIds?: string[]
   selectedPositionIds?: string[]
@@ -484,25 +501,44 @@ export async function sendBulkInvitations(options: SendBulkInvitationsOptions) {
     .is('status', null)
     .in('position.event.id', options.eventIds)
 
-  if (options.scope === 'events' && options.selectedEventIds?.length) {
+  if (options.scope === 'dates' && options.selectedDates?.length) {
+    // For dates scope, we need to filter by events that match the selected dates
+    // This will be handled after fetching by filtering the results
+  } else if (options.scope === 'events' && options.selectedEventIds?.length) {
     query = query.in('position.event.id', options.selectedEventIds)
   } else if (options.scope === 'ministries' && options.selectedMinistryIds?.length) {
     query = query.in('position.ministry_id', options.selectedMinistryIds)
   } else if (options.scope === 'positions' && options.selectedPositionIds?.length) {
     query = query.in('position_id', options.selectedPositionIds)
-  } else if (options.scope !== 'all') {
+  } else if (options.scope !== 'all' && options.scope !== 'dates') {
     return { error: 'Invalid scope or missing parameters' }
   }
 
-  const { data: assignments, error: fetchError } = await query
+  const { data: rawAssignments, error: fetchError } = await query
 
   if (fetchError) {
     console.error('Error fetching assignments:', fetchError)
     return { error: 'Failed to fetch assignments' }
   }
 
-  if (!assignments || assignments.length === 0) {
+  if (!rawAssignments || rawAssignments.length === 0) {
     return { error: 'No pending assignments found to invite' }
+  }
+
+  // Filter by date if scope is 'dates'
+  let assignments = rawAssignments
+  if (options.scope === 'dates' && options.selectedDates?.length) {
+    assignments = rawAssignments.filter((a) => {
+      const position = a.position as unknown as { event: { start_time: string } | { start_time: string }[] }
+      const event = Array.isArray(position.event) ? position.event[0] : position.event
+      if (!event) return false
+      const eventDate = event.start_time.split('T')[0]
+      return options.selectedDates!.includes(eventDate)
+    })
+
+    if (assignments.length === 0) {
+      return { error: 'No pending assignments found for selected dates' }
+    }
   }
 
   // Extract assignment IDs

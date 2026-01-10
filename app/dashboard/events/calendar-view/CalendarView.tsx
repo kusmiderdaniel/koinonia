@@ -38,7 +38,7 @@ export const CalendarView = memo(function CalendarView({
   const dayLabelKeys = firstDayOfWeek === 0 ? DAYS_SUNDAY_START_KEYS : DAYS_MONDAY_START_KEYS
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 h-full">
+    <div className="flex flex-col lg:flex-row gap-6 lg:h-full overflow-auto lg:overflow-visible">
       {/* Calendar or Event Details */}
       <div className="flex-1 min-w-0">
         {leftPanelContent ? (

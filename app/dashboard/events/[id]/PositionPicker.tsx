@@ -32,10 +32,16 @@ interface SelectedRole {
   roleName: string
 }
 
+interface ExistingPosition {
+  ministry_id: string
+  role_id: string | null
+}
+
 interface PositionPickerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   eventId: string
+  existingPositions?: ExistingPosition[]
   onSuccess: () => void
 }
 
@@ -43,6 +49,7 @@ export function PositionPicker({
   open,
   onOpenChange,
   eventId,
+  existingPositions = [],
   onSuccess,
 }: PositionPickerProps) {
   const t = useTranslations('events.positionPicker')
@@ -115,6 +122,12 @@ export function PositionPicker({
     )
   }
 
+  const isRoleAlreadyAdded = (ministryId: string, roleId: string) => {
+    return existingPositions.some(
+      (p) => p.ministry_id === ministryId && p.role_id === roleId
+    )
+  }
+
   const handleAdd = async () => {
     if (selectedRoles.length === 0) return
 
@@ -135,6 +148,17 @@ export function PositionPicker({
 
   const totalRoles = ministries.reduce(
     (sum, m) => sum + (m.ministry_roles?.length || 0),
+    0
+  )
+
+  // Count available roles (excluding already added ones)
+  const availableRolesCount = ministries.reduce(
+    (sum, m) => {
+      const available = m.ministry_roles?.filter(
+        (role) => !isRoleAlreadyAdded(m.id, role.id)
+      ).length || 0
+      return sum + available
+    },
     0
   )
 
@@ -166,12 +190,26 @@ export function PositionPicker({
           <div className="py-8 text-center text-muted-foreground">
             {t('noRoles')}
           </div>
+        ) : availableRolesCount === 0 ? (
+          <div className="py-8 text-center text-muted-foreground">
+            {t('allRolesAdded')}
+          </div>
         ) : (
           <div className="border rounded-lg overflow-hidden">
             <div className="h-[350px] overflow-y-auto p-4">
               <div className="space-y-6">
               {ministries.map((ministry) => {
                 if (!ministry.ministry_roles || ministry.ministry_roles.length === 0) {
+                  return null
+                }
+
+                // Filter out roles that are already added to the event
+                const availableRoles = ministry.ministry_roles.filter(
+                  (role) => !isRoleAlreadyAdded(ministry.id, role.id)
+                )
+
+                // Skip ministry if all roles are already added
+                if (availableRoles.length === 0) {
                   return null
                 }
 
@@ -197,12 +235,12 @@ export function PositionPicker({
                         {ministry.name}
                       </h3>
                       <span className="text-xs text-muted-foreground ml-1">
-                        ({ministry.ministry_roles.length})
+                        ({availableRoles.length})
                       </span>
                     </button>
                     {isExpanded && (
                     <div className="space-y-2 pl-6">
-                      {ministry.ministry_roles.map((role) => (
+                      {availableRoles.map((role) => (
                         <label
                           key={role.id}
                           className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors"

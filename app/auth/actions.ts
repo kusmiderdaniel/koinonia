@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { signInSchema, signUpSchema, resetPasswordSchema } from '@/lib/validations/auth'
 import type { SignInInput, SignUpInput, ResetPasswordInput } from '@/lib/validations/auth'
 
@@ -123,4 +124,31 @@ export async function updatePassword(password: string) {
   }
 
   return { success: true, messageKey: 'passwordUpdated' }
+}
+
+export async function signInWithGoogle() {
+  const supabase = await createClient()
+  const headersList = await headers()
+  const origin = headersList.get('origin') || process.env.NEXT_PUBLIC_SITE_URL
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${origin}/auth/callback`,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
+      },
+    },
+  })
+
+  if (error) {
+    return { error: 'googleSignInFailed' }
+  }
+
+  if (data.url) {
+    redirect(data.url)
+  }
+
+  return { error: 'googleSignInFailed' }
 }

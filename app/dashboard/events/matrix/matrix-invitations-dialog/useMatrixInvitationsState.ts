@@ -22,6 +22,7 @@ export function useMatrixInvitationsState({
   const [pendingCounts, setPendingCounts] = useState<PendingCounts | null>(null)
   const [isLoadingCounts, setIsLoadingCounts] = useState(false)
   const [scope, setScope] = useState<BulkInvitationScope>('all')
+  const [selectedDates, setSelectedDates] = useState<string[]>([])
   const [selectedEventIds, setSelectedEventIds] = useState<string[]>([])
   const [selectedMinistryIds, setSelectedMinistryIds] = useState<string[]>([])
   const [selectedPositionIds, setSelectedPositionIds] = useState<string[]>([])
@@ -32,6 +33,7 @@ export function useMatrixInvitationsState({
     if (open && eventIds.length > 0) {
       setIsLoadingCounts(true)
       setScope('all')
+      setSelectedDates([])
       setSelectedEventIds([])
       setSelectedMinistryIds([])
       setSelectedPositionIds([])
@@ -52,6 +54,7 @@ export function useMatrixInvitationsState({
       const options = {
         eventIds,
         scope,
+        selectedDates: scope === 'dates' ? selectedDates : undefined,
         selectedEventIds: scope === 'events' ? selectedEventIds : undefined,
         selectedMinistryIds: scope === 'ministries' ? selectedMinistryIds : undefined,
         selectedPositionIds: scope === 'positions' ? selectedPositionIds : undefined,
@@ -71,7 +74,15 @@ export function useMatrixInvitationsState({
     } finally {
       setIsSending(false)
     }
-  }, [eventIds, scope, selectedEventIds, selectedMinistryIds, selectedPositionIds, onSuccess, onOpenChange])
+  }, [eventIds, scope, selectedDates, selectedEventIds, selectedMinistryIds, selectedPositionIds, onSuccess, onOpenChange])
+
+  const toggleDate = useCallback((date: string) => {
+    setSelectedDates((prev) =>
+      prev.includes(date)
+        ? prev.filter((d) => d !== date)
+        : [...prev, date]
+    )
+  }, [])
 
   const toggleEvent = useCallback((eventId: string) => {
     setSelectedEventIds((prev) =>
@@ -102,6 +113,10 @@ export function useMatrixInvitationsState({
 
     if (scope === 'all') {
       return pendingCounts.total
+    } else if (scope === 'dates' && selectedDates.length > 0) {
+      return pendingCounts.byDate
+        .filter((d) => selectedDates.includes(d.date))
+        .reduce((sum, d) => sum + d.count, 0)
     } else if (scope === 'events' && selectedEventIds.length > 0) {
       return pendingCounts.byEvent
         .filter((e) => selectedEventIds.includes(e.event.id))
@@ -116,24 +131,26 @@ export function useMatrixInvitationsState({
         .reduce((sum, p) => sum + p.count, 0)
     }
     return 0
-  }, [pendingCounts, scope, selectedEventIds, selectedMinistryIds, selectedPositionIds])
+  }, [pendingCounts, scope, selectedDates, selectedEventIds, selectedMinistryIds, selectedPositionIds])
 
   const canSend = useCallback(() => {
     if (!pendingCounts || pendingCounts.total === 0) return false
 
     if (scope === 'all') return true
+    if (scope === 'dates') return selectedDates.length > 0
     if (scope === 'events') return selectedEventIds.length > 0
     if (scope === 'ministries') return selectedMinistryIds.length > 0
     if (scope === 'positions') return selectedPositionIds.length > 0
 
     return false
-  }, [pendingCounts, scope, selectedEventIds, selectedMinistryIds, selectedPositionIds])
+  }, [pendingCounts, scope, selectedDates, selectedEventIds, selectedMinistryIds, selectedPositionIds])
 
   return {
     // State
     pendingCounts,
     isLoadingCounts,
     scope,
+    selectedDates,
     selectedEventIds,
     selectedMinistryIds,
     selectedPositionIds,
@@ -146,6 +163,7 @@ export function useMatrixInvitationsState({
     // Actions
     setScope,
     handleSend,
+    toggleDate,
     toggleEvent,
     toggleMinistry,
     togglePosition,

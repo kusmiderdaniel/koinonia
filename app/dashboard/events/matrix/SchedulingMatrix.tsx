@@ -10,6 +10,7 @@ import { MatrixGrid, type AgendaCellClickData } from './MatrixGrid'
 import { MatrixLegend } from './MatrixLegend'
 import { MatrixInvitationsDialog } from './matrix-invitations-dialog'
 import { getMatrixData, getMatrixMinistries, getMatrixCampuses } from '../actions/matrix-queries'
+import { queryKeys } from '@/lib/hooks/queries'
 import type { MatrixFilters as MatrixFiltersType, MatrixData, MatrixMinistry, MatrixCampus } from './types'
 
 interface SongEditorData {
@@ -54,21 +55,23 @@ export function SchedulingMatrix({
 
   // Fetch ministries and campuses for filter dropdowns
   const { data: ministries = [] } = useQuery<MatrixMinistry[]>({
-    queryKey: ['matrix-ministries'],
+    queryKey: queryKeys.matrixMinistries,
     queryFn: async () => {
       const result = await getMatrixMinistries()
       return result.data || []
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 30 * 1000, // 30 seconds
+    refetchOnMount: 'always',
   })
 
   const { data: campuses = [] } = useQuery<MatrixCampus[]>({
-    queryKey: ['matrix-campuses'],
+    queryKey: queryKeys.matrixCampuses,
     queryFn: async () => {
       const result = await getMatrixCampuses()
       return result.data || []
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 30 * 1000, // 30 seconds
+    refetchOnMount: 'always',
   })
 
   // Fetch matrix data - show next 20 events
