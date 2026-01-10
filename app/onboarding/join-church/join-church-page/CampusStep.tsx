@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { DatePicker } from '@/components/ui/date-picker'
 import { ArrowLeft, Loader2, MapPin, User } from 'lucide-react'
 import type { CampusInfo } from './types'
 
@@ -28,6 +29,7 @@ interface CampusStepProps {
   onDateOfBirthChange: (value: string) => void
   sex: 'male' | 'female' | '' | undefined
   onSexChange: (value: 'male' | 'female') => void
+  weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6
   onBack: () => void
   onSubmit: () => void
 }
@@ -44,6 +46,7 @@ export function CampusStep({
   onDateOfBirthChange,
   sex,
   onSexChange,
+  weekStartsOn,
   onBack,
   onSubmit,
 }: CampusStepProps) {
@@ -137,13 +140,14 @@ export function CampusStep({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="dateOfBirth">{t('profileInfo.dateOfBirth')}</Label>
-              <Input
+              <DatePicker
                 id="dateOfBirth"
-                type="date"
-                className="h-11"
                 value={dateOfBirth}
-                onChange={(e) => onDateOfBirthChange(e.target.value)}
+                onChange={onDateOfBirthChange}
+                placeholder={t('profileInfo.dateOfBirthPlaceholder')}
                 disabled={isLoading}
+                weekStartsOn={weekStartsOn}
+                className="h-11"
               />
             </div>
 
@@ -153,7 +157,7 @@ export function CampusStep({
                 <SelectTrigger className="h-11 bg-white dark:bg-zinc-950">
                   <SelectValue placeholder={t('profileInfo.genderPlaceholder')} />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-zinc-950">
+                <SelectContent className="bg-white dark:bg-zinc-950" style={{ borderColor: '#18181b', borderWidth: '1px' }}>
                   <SelectItem value="male">{t('profileInfo.male')}</SelectItem>
                   <SelectItem value="female">{t('profileInfo.female')}</SelectItem>
                 </SelectContent>

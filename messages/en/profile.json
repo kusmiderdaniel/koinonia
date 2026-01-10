@@ -6,13 +6,15 @@
     "personal": "Personal Information",
     "password": "Password",
     "notifications": "Notification Settings",
-    "language": "Language"
+    "language": "Language",
+    "account": "Account"
   },
   "tabDescriptions": {
     "personal": "Name, email, phone, and more",
     "password": "Change your password",
     "notifications": "Manage notification preferences",
-    "language": "Choose your preferred language"
+    "language": "Choose your preferred language",
+    "account": "Leave church or delete account"
   },
   "personalInfo": {
     "title": "Personal Information",
@@ -30,7 +32,8 @@
     "male": "Male",
     "female": "Female",
     "saving": "Saving...",
-    "saveChanges": "Save Changes"
+    "saveChanges": "Save Changes",
+    "savedSuccess": "Profile updated successfully!"
   },
   "password": {
     "title": "Password",
@@ -42,7 +45,9 @@
     "changing": "Changing...",
     "updateButton": "Update Password",
     "cancel": "Cancel",
-    "success": "Password changed successfully"
+    "success": "Password changed successfully!",
+    "passwordsDoNotMatch": "New passwords do not match",
+    "passwordTooShort": "New password must be at least 6 characters"
   },
   "notifications": {
     "title": "Notification Settings",
@@ -73,12 +78,53 @@
       "beforeEvent": "before event"
     },
     "saving": "Saving...",
-    "saveSettings": "Save Settings"
+    "saveSettings": "Save Settings",
+    "savedSuccess": "Notification settings saved!"
   },
   "language": {
     "title": "Language",
     "label": "Display Language",
     "description": "Choose your preferred language for the interface",
     "updated": "Language preference updated"
+  },
+  "account": {
+    "title": "Account Settings",
+    "description": "Manage your church membership and account",
+    "confirmationText": "I understand",
+    "confirmationMismatch": "Please type the confirmation text exactly",
+    "cancel": "Cancel",
+    "leave": {
+      "title": "Leave Church",
+      "description": "Step away from {churchName} while keeping your profile for future reference",
+      "button": "Leave Church",
+      "dialog": {
+        "title": "Leave Church?",
+        "description": "You are about to leave <bold>{churchName}</bold>. Your profile will be marked as inactive, but your data will be kept for the church's records. You can request to rejoin later.",
+        "reasonLabel": "Reason for leaving (optional)",
+        "reasonPlaceholder": "Please share why you're leaving...",
+        "reasonHint": "This helps the church understand and improve",
+        "confirmationLabel": "Confirmation",
+        "confirmationHint": "Type \"{text}\" to confirm",
+        "processing": "Processing...",
+        "confirm": "Leave Church"
+      }
+    },
+    "delete": {
+      "title": "Delete Account",
+      "description": "Permanently delete your login access. Your profile data will be kept for church records.",
+      "button": "Delete Account",
+      "dialog": {
+        "title": "Delete Your Account?",
+        "description": "This will permanently delete your login access. You will no longer be able to sign in. Your profile information will be kept in the church's records.",
+        "warning": "This action cannot be undone. You will be logged out immediately.",
+        "reasonLabel": "Reason for leaving (optional)",
+        "reasonPlaceholder": "Please share why you're deleting your account...",
+        "reasonHint": "This helps the church understand and improve",
+        "confirmationLabel": "Confirmation",
+        "confirmationHint": "Type \"{text}\" to confirm",
+        "processing": "Deleting...",
+        "confirm": "Delete Account"
+      }
+    }
   }
 }

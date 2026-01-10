@@ -4,6 +4,10 @@ import { useState, useCallback, useMemo } from 'react'
 import { transferOwnership } from '../actions'
 import type { Member, ChurchData } from '../types'
 
+export interface OwnershipTransferTranslations {
+  transferredSuccess: string
+}
+
 interface UseOwnershipTransferReturn {
   // State
   selectedNewOwner: string
@@ -24,7 +28,7 @@ interface UseOwnershipTransferReturn {
   ) => Promise<void>
 }
 
-export function useOwnershipTransfer(members: Member[]): UseOwnershipTransferReturn {
+export function useOwnershipTransfer(members: Member[], translations: OwnershipTransferTranslations): UseOwnershipTransferReturn {
   const [selectedNewOwner, setSelectedNewOwner] = useState<string>('')
   const [isTransferring, setIsTransferring] = useState(false)
   const [transferDialogOpen, setTransferDialogOpen] = useState(false)
@@ -53,7 +57,7 @@ export function useOwnershipTransfer(members: Member[]): UseOwnershipTransferRet
         if (result.error) {
           setError(result.error)
         } else {
-          setSuccess('Ownership transferred successfully! You are now an admin.')
+          setSuccess(translations.transferredSuccess)
           setChurchData((prev) => (prev ? { ...prev, role: 'admin' } : null))
           setSelectedNewOwner('')
         }
@@ -64,7 +68,7 @@ export function useOwnershipTransfer(members: Member[]): UseOwnershipTransferRet
         setTransferDialogOpen(false)
       }
     },
-    [selectedNewOwner]
+    [selectedNewOwner, translations.transferredSuccess]
   )
 
   return {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -8,6 +8,11 @@ import { isLeaderOrAbove, isAdminOrOwner } from '@/lib/permissions'
 import { updateChurchSettings, regenerateJoinCode } from '../actions'
 import type { ChurchData, ChurchPreferences, ChurchSettingsData, Location, Member } from '../types'
 import type { Campus } from '../actions'
+
+export interface ChurchSettingsTranslations {
+  savedSuccess: string
+  regeneratedSuccess: string
+}
 
 const churchSettingsSchema = z.object({
   name: z.string().min(2, 'Church name must be at least 2 characters'),
@@ -65,7 +70,7 @@ interface UseChurchSettingsReturn {
   setCampuses: (campuses: Campus[]) => void
 }
 
-export function useChurchSettings(initialData?: SettingsInitialData): UseChurchSettingsReturn {
+export function useChurchSettings(initialData: SettingsInitialData | undefined, translations: ChurchSettingsTranslations): UseChurchSettingsReturn {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -123,7 +128,7 @@ export function useChurchSettings(initialData?: SettingsInitialData): UseChurchS
         if (result?.error) {
           setError(result.error)
         } else {
-          setSuccess('Church settings updated successfully!')
+          setSuccess(translations.savedSuccess)
         }
       } catch (err) {
         setError('An unexpected error occurred')
@@ -131,7 +136,7 @@ export function useChurchSettings(initialData?: SettingsInitialData): UseChurchS
         setIsLoading(false)
       }
     },
-    []
+    [translations.savedSuccess]
   )
 
   const copyJoinCode = useCallback(async () => {
@@ -151,7 +156,7 @@ export function useChurchSettings(initialData?: SettingsInitialData): UseChurchS
         setError(result.error)
       } else if (result.success && result.joinCode) {
         setChurchData((prev) => prev ? { ...prev, join_code: result.joinCode! } : null)
-        setSuccess('Join code regenerated successfully!')
+        setSuccess(translations.regeneratedSuccess)
         setTimeout(() => setSuccess(null), 3000)
       }
     } catch (err) {
@@ -159,7 +164,7 @@ export function useChurchSettings(initialData?: SettingsInitialData): UseChurchS
     } finally {
       setIsRegeneratingCode(false)
     }
-  }, [])
+  }, [translations.regeneratedSuccess])
 
   const isAdmin = useMemo(
     () => isAdminOrOwner(churchData?.role || ''),

@@ -4,6 +4,12 @@ import { useState, useCallback } from 'react'
 import { createLocation, updateLocation, deleteLocation, getLocations } from '../actions'
 import type { Location } from '../types'
 
+export interface LocationManagerTranslations {
+  createdSuccess: string
+  updatedSuccess: string
+  deletedSuccess: string
+}
+
 interface UseLocationManagerReturn {
   // Dialog state
   locationDialogOpen: boolean
@@ -39,7 +45,7 @@ interface UseLocationManagerReturn {
   ) => Promise<void>
 }
 
-export function useLocationManager(): UseLocationManagerReturn {
+export function useLocationManager(translations: LocationManagerTranslations): UseLocationManagerReturn {
   const [locationDialogOpen, setLocationDialogOpen] = useState(false)
   const [editingLocation, setEditingLocation] = useState<Location | null>(null)
   const [locationName, setLocationName] = useState('')
@@ -116,11 +122,11 @@ export function useLocationManager(): UseLocationManagerReturn {
           setLocations(locationsResult.data)
         }
         setLocationDialogOpen(false)
-        setSuccess(editingLocation ? 'Location updated!' : 'Location created!')
+        setSuccess(editingLocation ? translations.updatedSuccess : translations.createdSuccess)
       }
       setIsSavingLocation(false)
     },
-    [editingLocation, locationName, locationAddress, locationNotes, locationCampusId]
+    [editingLocation, locationName, locationAddress, locationNotes, locationCampusId, translations.createdSuccess, translations.updatedSuccess]
   )
 
   const handleDeleteLocation = useCallback(
@@ -139,12 +145,12 @@ export function useLocationManager(): UseLocationManagerReturn {
         setError(result.error)
       } else {
         setLocations(locations.filter((l) => l.id !== locationToDelete.id))
-        setSuccess('Location deleted!')
+        setSuccess(translations.deletedSuccess)
       }
       setDeleteLocationDialogOpen(false)
       setLocationToDelete(null)
     },
-    [locationToDelete]
+    [locationToDelete, translations.deletedSuccess]
   )
 
   return {

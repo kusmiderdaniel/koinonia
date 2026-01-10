@@ -12,9 +12,10 @@ import { PersonalInfoCard } from './PersonalInfoCard'
 import { PasswordChangeCard } from './PasswordChangeCard'
 import { NotificationSettingsCard } from './NotificationSettingsCard'
 import { LanguageSettingsCard } from './LanguageSettingsCard'
+import { AccountSettingsCard } from './AccountSettingsCard'
 import { isLeaderOrAbove } from '@/lib/permissions'
 
-type TabKey = 'personal' | 'password' | 'notifications' | 'language'
+type TabKey = 'personal' | 'password' | 'notifications' | 'language' | 'account'
 
 interface TabItem {
   key: TabKey
@@ -25,7 +26,13 @@ interface TabItem {
 
 export function ProfilePageClient() {
   const t = useTranslations('profile')
-  const state = useProfilePageState()
+  const state = useProfilePageState({
+    profileSavedSuccess: t('personalInfo.savedSuccess'),
+    passwordSuccess: t('password.success'),
+    passwordsDoNotMatch: t('password.passwordsDoNotMatch'),
+    passwordTooShort: t('password.passwordTooShort'),
+    notificationsSavedSuccess: t('notifications.savedSuccess'),
+  })
   const isMobile = useIsMobile()
   const showNotificationSettings = isLeaderOrAbove(state.userRole)
   const [mobileSelectedTab, setMobileSelectedTab] = useState<TabKey | null>(null)
@@ -36,6 +43,7 @@ export function ProfilePageClient() {
     { key: 'password', labelKey: 'tabs.password', descriptionKey: 'tabDescriptions.password', show: true },
     { key: 'notifications', labelKey: 'tabs.notifications', descriptionKey: 'tabDescriptions.notifications', show: showNotificationSettings },
     { key: 'language', labelKey: 'tabs.language', descriptionKey: 'tabDescriptions.language', show: true },
+    { key: 'account', labelKey: 'tabs.account', descriptionKey: 'tabDescriptions.account', show: true },
   ]
 
   const visibleTabs = tabItems.filter(t => t.show)
@@ -126,6 +134,8 @@ export function ProfilePageClient() {
         ) : null
       case 'language':
         return <LanguageSettingsCard currentLanguage={state.language} />
+      case 'account':
+        return <AccountSettingsCard churchName={state.churchName} />
       default:
         return null
     }
@@ -308,6 +318,10 @@ export function ProfilePageClient() {
 
               {activeTab === 'language' && (
                 <LanguageSettingsCard currentLanguage={state.language} />
+              )}
+
+              {activeTab === 'account' && (
+                <AccountSettingsCard churchName={state.churchName} />
               )}
             </div>
           </div>

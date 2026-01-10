@@ -4,6 +4,13 @@ import { useState, useCallback } from 'react'
 import { createCampus, updateCampus, deleteCampus, getCampuses, setDefaultCampus } from '../actions'
 import type { Campus } from '../actions'
 
+export interface CampusManagerTranslations {
+  createdSuccess: string
+  updatedSuccess: string
+  deletedSuccess: string
+  defaultUpdatedSuccess: string
+}
+
 interface UseCampusManagerReturn {
   // Dialog state
   campusDialogOpen: boolean
@@ -57,7 +64,7 @@ interface UseCampusManagerReturn {
 
 const DEFAULT_COLOR = '#3B82F6'
 
-export function useCampusManager(): UseCampusManagerReturn {
+export function useCampusManager(translations: CampusManagerTranslations): UseCampusManagerReturn {
   const [campusDialogOpen, setCampusDialogOpen] = useState(false)
   const [editingCampus, setEditingCampus] = useState<Campus | null>(null)
   const [campusName, setCampusName] = useState('')
@@ -159,12 +166,12 @@ export function useCampusManager(): UseCampusManagerReturn {
           setCampuses(campusesResult.data)
         }
         setCampusDialogOpen(false)
-        setSuccess(editingCampus ? 'Campus updated!' : 'Campus created!')
+        setSuccess(editingCampus ? translations.updatedSuccess : translations.createdSuccess)
         closeCampusDialog()
       }
       setIsSavingCampus(false)
     },
-    [editingCampus, campusName, campusDescription, campusAddress, campusCity, campusState, campusZipCode, campusCountry, campusColor, campusIsDefault, closeCampusDialog]
+    [editingCampus, campusName, campusDescription, campusAddress, campusCity, campusState, campusZipCode, campusCountry, campusColor, campusIsDefault, closeCampusDialog, translations.createdSuccess, translations.updatedSuccess]
   )
 
   const handleDeleteCampus = useCallback(
@@ -183,12 +190,12 @@ export function useCampusManager(): UseCampusManagerReturn {
         setError(result.error)
       } else {
         setCampuses(campuses.filter((c) => c.id !== campusToDelete.id))
-        setSuccess('Campus deleted!')
+        setSuccess(translations.deletedSuccess)
       }
       setDeleteCampusDialogOpen(false)
       setCampusToDelete(null)
     },
-    [campusToDelete]
+    [campusToDelete, translations.deletedSuccess]
   )
 
   const handleSetDefault = useCallback(
@@ -209,10 +216,10 @@ export function useCampusManager(): UseCampusManagerReturn {
         if (campusesResult.data) {
           setCampuses(campusesResult.data)
         }
-        setSuccess('Default campus updated!')
+        setSuccess(translations.defaultUpdatedSuccess)
       }
     },
-    []
+    [translations.defaultUpdatedSuccess]
   )
 
   return {

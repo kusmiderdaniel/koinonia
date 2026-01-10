@@ -316,7 +316,7 @@ export async function joinChurch(data: JoinChurchInput & {
     return { error: 'Church not found. Please check the join code and try again.' }
   }
 
-  // Check if user already has a profile (might be joining a different church or re-joining)
+  // Check if user already has an active profile linked to their account
   const { data: existingProfile } = await adminClient
     .from('profiles')
     .select('id, church_id')
@@ -329,6 +329,62 @@ export async function joinChurch(data: JoinChurchInput & {
       return { success: true }
     }
     return { error: 'You are already a member of another church.' }
+  }
+
+  // Check if user has an inactive profile in this church (they left and are returning)
+  // Match by email since user_id was set to null when they left
+  const { data: inactiveProfile } = await adminClient
+    .from('profiles')
+    .select('id, campus_id')
+    .eq('church_id', church.id)
+    .eq('email', user.email!)
+    .eq('active', false)
+    .is('user_id', null)
+    .single()
+
+  if (inactiveProfile) {
+    // Reactivate the returning member's profile
+    const campusId = data.campusId || inactiveProfile.campus_id
+
+    const { error: reactivateError } = await adminClient
+      .from('profiles')
+      .update({
+        user_id: user.id,
+        active: true,
+        member_type: 'authenticated',
+        date_of_departure: null,
+        reason_for_departure: null,
+        phone: data.phone || null,
+        date_of_birth: data.dateOfBirth || null,
+        sex: data.sex || null,
+        campus_id: campusId,
+      })
+      .eq('id', inactiveProfile.id)
+
+    if (reactivateError) {
+      console.error('Profile reactivation error:', reactivateError)
+      return { error: 'Failed to reactivate your membership. Please try again.' }
+    }
+
+    // Update campus assignment if changed
+    if (campusId && campusId !== inactiveProfile.campus_id) {
+      await adminClient
+        .from('profile_campuses')
+        .upsert({
+          profile_id: inactiveProfile.id,
+          campus_id: campusId,
+          is_primary: true,
+        }, { onConflict: 'profile_id,campus_id' })
+    }
+
+    // Clean up any old pending registrations
+    await adminClient
+      .from('pending_registrations')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('church_id', church.id)
+
+    return { success: true }
   }
 
   // Check if user already has a pending registration for this church
@@ -346,6 +402,12 @@ export async function joinChurch(data: JoinChurchInput & {
     if (existingPending.status === 'rejected') {
       return { error: 'Your previous registration was rejected. Please contact the church administrator.' }
     }
+    // Status is 'approved' - this shouldn't happen normally but clean it up
+    // Delete the old record so a new one can be created
+    await adminClient
+      .from('pending_registrations')
+      .delete()
+      .eq('id', existingPending.id)
   }
 
   // If no campus specified, get the default campus
@@ -410,10 +472,10 @@ export async function getCampusesByJoinCode(joinCode: string) {
   // Use service role client to look up church by join code
   const adminClient = createServiceRoleClient()
 
-  // Find church by join_code
+  // Find church by join_code (including first_day_of_week for date picker)
   const { data: church, error: churchError } = await adminClient
     .from('churches')
-    .select('id, name')
+    .select('id, name, first_day_of_week')
     .eq('join_code', joinCode.toUpperCase())
     .single()
 
@@ -436,7 +498,11 @@ export async function getCampusesByJoinCode(joinCode: string) {
   }
 
   return {
-    church: { id: church.id, name: church.name },
+    church: {
+      id: church.id,
+      name: church.name,
+      firstDayOfWeek: (church.first_day_of_week ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6,
+    },
     campuses: campuses || [],
   }
 }

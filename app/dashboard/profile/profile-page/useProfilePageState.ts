@@ -9,7 +9,15 @@ import {
 } from '@/types/notification-preferences'
 import { type Locale } from '@/lib/i18n/config'
 
-export function useProfilePageState() {
+export interface ProfilePageTranslations {
+  profileSavedSuccess: string
+  passwordSuccess: string
+  passwordsDoNotMatch: string
+  passwordTooShort: string
+  notificationsSavedSuccess: string
+}
+
+export function useProfilePageState(translations: ProfilePageTranslations) {
   // Profile state
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -21,6 +29,7 @@ export function useProfilePageState() {
   const [firstDayOfWeek, setFirstDayOfWeek] = useState<0 | 1 | 2 | 3 | 4 | 5 | 6>(0)
   const [userRole, setUserRole] = useState<string>('')
   const [language, setLanguage] = useState<Locale | null>(null)
+  const [churchName, setChurchName] = useState<string>('')
 
   // Notification preferences state
   const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>(
@@ -68,6 +77,9 @@ export function useProfilePageState() {
         if (result.data.language) {
           setLanguage(result.data.language as Locale)
         }
+        if (result.churchName) {
+          setChurchName(result.churchName)
+        }
         reset({
           firstName: result.data.first_name,
           lastName: result.data.last_name,
@@ -96,7 +108,7 @@ export function useProfilePageState() {
         if (result?.error) {
           setError(result.error)
         } else {
-          setSuccess('Profile updated successfully!')
+          setSuccess(translations.profileSavedSuccess)
         }
       } catch {
         setError('An unexpected error occurred')
@@ -104,7 +116,7 @@ export function useProfilePageState() {
         setIsLoading(false)
       }
     },
-    [dateOfBirth, sex]
+    [dateOfBirth, sex, translations.profileSavedSuccess]
   )
 
   const handlePasswordChange = useCallback(
@@ -114,12 +126,12 @@ export function useProfilePageState() {
       setPasswordSuccess(null)
 
       if (newPassword !== confirmPassword) {
-        setPasswordError('New passwords do not match')
+        setPasswordError(translations.passwordsDoNotMatch)
         return
       }
 
       if (newPassword.length < 6) {
-        setPasswordError('New password must be at least 6 characters')
+        setPasswordError(translations.passwordTooShort)
         return
       }
 
@@ -130,7 +142,7 @@ export function useProfilePageState() {
         if (result.error) {
           setPasswordError(result.error)
         } else {
-          setPasswordSuccess('Password changed successfully!')
+          setPasswordSuccess(translations.passwordSuccess)
           setCurrentPassword('')
           setNewPassword('')
           setConfirmPassword('')
@@ -142,7 +154,7 @@ export function useProfilePageState() {
         setIsChangingPassword(false)
       }
     },
-    [currentPassword, newPassword, confirmPassword]
+    [currentPassword, newPassword, confirmPassword, translations.passwordsDoNotMatch, translations.passwordTooShort, translations.passwordSuccess]
   )
 
   const handleCancelPasswordChange = useCallback(() => {
@@ -186,7 +198,7 @@ export function useProfilePageState() {
       if (result.error) {
         setNotificationError(result.error)
       } else {
-        setNotificationSuccess('Notification settings saved!')
+        setNotificationSuccess(translations.notificationsSavedSuccess)
         // Clear success message after 3 seconds
         setTimeout(() => setNotificationSuccess(null), 3000)
       }
@@ -195,7 +207,7 @@ export function useProfilePageState() {
     } finally {
       setIsUpdatingNotifications(false)
     }
-  }, [notificationPreferences])
+  }, [notificationPreferences, translations.notificationsSavedSuccess])
 
   return {
     // Form
@@ -213,6 +225,7 @@ export function useProfilePageState() {
     firstDayOfWeek,
     userRole,
     language,
+    churchName,
 
     // Profile handlers
     handleDateOfBirthChange,

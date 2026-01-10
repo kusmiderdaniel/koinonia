@@ -86,6 +86,7 @@
         "phone": "Numer telefonu",
         "phonePlaceholder": "+48 123 456 789",
         "dateOfBirth": "Data urodzenia",
+        "dateOfBirthPlaceholder": "Wybierz datę",
         "gender": "Płeć",
         "genderPlaceholder": "Wybierz...",
         "male": "Mężczyzna",

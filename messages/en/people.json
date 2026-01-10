@@ -147,7 +147,7 @@
   "rejectDialog": {
     "title": "Reject Registration",
     "description": "Are you sure you want to reject {name}'s registration?",
-    "reason": "Reason (optional)",
+    "reasonLabel": "Reason (optional)",
     "reasonPlaceholder": "Provide a reason for rejection...",
     "confirmButton": "Reject Registration"
   },

@@ -67,11 +67,27 @@ interface TabItem {
 export function SettingsPageClient({ initialData, defaultTab = 'details' }: SettingsPageClientProps) {
   const t = useTranslations('settings')
   const isMobile = useIsMobile()
-  const settings = useChurchSettings(initialData)
-  const locationManager = useLocationManager()
-  const campusManager = useCampusManager()
-  const preferencesManager = usePreferencesManager()
-  const ownershipTransfer = useOwnershipTransfer(settings.members)
+  const settings = useChurchSettings(initialData, {
+    savedSuccess: t('details.savedSuccess'),
+    regeneratedSuccess: t('invite.regeneratedSuccess'),
+  })
+  const locationManager = useLocationManager({
+    createdSuccess: t('locations.createdSuccess'),
+    updatedSuccess: t('locations.updatedSuccess'),
+    deletedSuccess: t('locations.deletedSuccess'),
+  })
+  const campusManager = useCampusManager({
+    createdSuccess: t('campuses.createdSuccess'),
+    updatedSuccess: t('campuses.updatedSuccess'),
+    deletedSuccess: t('campuses.deletedSuccess'),
+    defaultUpdatedSuccess: t('campuses.defaultUpdatedSuccess'),
+  })
+  const preferencesManager = usePreferencesManager({
+    savedSuccess: t('preferences.savedSuccess'),
+  })
+  const ownershipTransfer = useOwnershipTransfer(settings.members, {
+    transferredSuccess: t('transfer.transferredSuccess'),
+  })
   const [presets, setPresets] = useState<Preset[]>(initialData.presets)
   const presetsMinistries = initialData.ministries
   const [logoUrl, setLogoUrl] = useState<string | null>(initialData.church.logo_url)

@@ -101,11 +101,10 @@ export function RegistrationsTable({
               <div className="flex items-center justify-end gap-2">
                 {isAdmin && offlineMembers.length > 0 && (
                   <Button
-                    variant="outline"
                     size="sm"
                     onClick={() => onLink(registration)}
                     disabled={actionLoading === registration.id}
-                    className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                    className="!bg-blue-600 hover:!bg-blue-700 !text-white"
                   >
                     <Link2 className="h-4 w-4 mr-1" />
                     {t('pending.link')}

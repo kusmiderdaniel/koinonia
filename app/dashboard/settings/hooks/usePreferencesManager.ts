@@ -4,6 +4,10 @@ import { useState, useCallback } from 'react'
 import { updateChurchPreferences } from '../actions'
 import type { ChurchPreferences } from '../types'
 
+export interface PreferencesManagerTranslations {
+  savedSuccess: string
+}
+
 interface UsePreferencesManagerReturn {
   // State
   timezone: string
@@ -24,7 +28,7 @@ interface UsePreferencesManagerReturn {
   ) => Promise<void>
 }
 
-export function usePreferencesManager(): UsePreferencesManagerReturn {
+export function usePreferencesManager(translations: PreferencesManagerTranslations): UsePreferencesManagerReturn {
   const [timezone, setTimezone] = useState('America/New_York')
   const [firstDayOfWeek, setFirstDayOfWeek] = useState(1)
   const [timeFormat, setTimeFormat] = useState<'12h' | '24h'>('24h')
@@ -59,11 +63,11 @@ export function usePreferencesManager(): UsePreferencesManagerReturn {
       if (result.error) {
         setError(result.error)
       } else {
-        setSuccess('Church preferences updated!')
+        setSuccess(translations.savedSuccess)
       }
       setIsSavingPreferences(false)
     },
-    [timezone, firstDayOfWeek, timeFormat, defaultEventVisibility]
+    [timezone, firstDayOfWeek, timeFormat, defaultEventVisibility, translations.savedSuccess]
   )
 
   return {

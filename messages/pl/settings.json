@@ -36,6 +36,7 @@
       "uploadSuccess": "Logo zostało przesłane",
       "removeSuccess": "Logo zostało usunięte"
     },
+    "savedSuccess": "Ustawienia kościoła zostały zaktualizowane!",
     "name": "Nazwa kościoła *",
     "email": "E-mail kościoła",
     "emailPlaceholder": "info@twojkosciol.pl",
@@ -61,6 +62,7 @@
     "regenerate": "Wygeneruj nowy",
     "regenerating": "Generowanie...",
     "shareHint": "Udostępnij ten kod nowym członkom, aby połączyć ich z kościołem.",
+    "regeneratedSuccess": "Kod dołączenia został wygenerowany!",
     "regenerateDialog": {
       "title": "Wygenerować nowy kod?",
       "description": "Spowoduje to utworzenie nowego kodu i unieważnienie obecnego. Osoby ze starym kodem nie będą mogły dołączyć.",
@@ -73,6 +75,9 @@
     "title": "Lokalizacje",
     "description": "Zarządzaj miejscami i salami kościoła",
     "addLocation": "Dodaj lokalizację",
+    "createdSuccess": "Lokalizacja została utworzona!",
+    "updatedSuccess": "Lokalizacja została zaktualizowana!",
+    "deletedSuccess": "Lokalizacja została usunięta!",
     "empty": {
       "title": "Brak lokalizacji",
       "description": "Dodaj pierwszą lokalizację do wykorzystania w wydarzeniach"
@@ -109,6 +114,10 @@
     "addCampus": "Dodaj kampus",
     "default": "Domyślny",
     "setDefault": "Ustaw jako domyślny",
+    "createdSuccess": "Kampus został utworzony!",
+    "updatedSuccess": "Kampus został zaktualizowany!",
+    "deletedSuccess": "Kampus został usunięty!",
+    "defaultUpdatedSuccess": "Domyślny kampus został zmieniony!",
     "empty": {
       "title": "Brak kampusów",
       "description": "Dodaj pierwszy kampus, aby uporządkować lokalizacje kościoła"
@@ -208,7 +217,8 @@
       "hint": "Nowe wydarzenia będą domyślnie miały ten poziom widoczności"
     },
     "saving": "Zapisywanie...",
-    "savePreferences": "Zapisz preferencje"
+    "savePreferences": "Zapisz preferencje",
+    "savedSuccess": "Preferencje kościoła zostały zaktualizowane!"
   },
 
   "transfer": {
@@ -218,6 +228,7 @@
     "selectNewOwner": "Wybierz nowego właściciela",
     "selectHint": "Tylko administratorzy mogą zostać nowym właścicielem. Kliknij, aby wybrać.",
     "transferButton": "Przekaż własność",
+    "transferredSuccess": "Własność została przekazana! Jesteś teraz administratorem.",
     "dialog": {
       "title": "Przekazać własność kościoła?",
       "description": "Zamierzasz przekazać własność użytkownikowi <strong>{name}</strong>. Tej operacji nie można cofnąć. Staniesz się administratorem i stracisz uprawnienia właściciela.",

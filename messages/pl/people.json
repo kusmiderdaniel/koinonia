@@ -147,7 +147,7 @@
   "rejectDialog": {
     "title": "Odrzuć rejestrację",
     "description": "Czy na pewno chcesz odrzucić rejestrację {name}?",
-    "reason": "Powód (opcjonalnie)",
+    "reasonLabel": "Powód (opcjonalnie)",
     "reasonPlaceholder": "Podaj powód odrzucenia...",
     "confirmButton": "Odrzuć rejestrację"
   },

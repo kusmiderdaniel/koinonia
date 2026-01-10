@@ -276,12 +276,19 @@ export async function linkRegistrationToProfile(registrationId: string, profileI
   }
 
   // Update the profile to link it to the user
+  // Overwrite with registration data and clear departure fields (user is rejoining)
   const { error: linkError } = await adminClient
     .from('profiles')
     .update({
       user_id: registration.user_id,
       member_type: 'authenticated',
       email: registration.email,
+      phone: registration.phone || targetProfile.phone || null,
+      date_of_birth: registration.date_of_birth || targetProfile.date_of_birth || null,
+      sex: registration.sex || targetProfile.sex || null,
+      active: true,
+      date_of_departure: null,
+      reason_for_departure: null,
     })
     .eq('id', profileId)
 

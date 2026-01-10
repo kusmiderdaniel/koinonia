@@ -76,6 +76,7 @@ export function JoinChurchPageClient() {
                   onDateOfBirthChange={state.setDateOfBirth}
                   sex={state.sex}
                   onSexChange={state.setSex}
+                  weekStartsOn={state.churchInfo?.firstDayOfWeek ?? 0}
                   onBack={state.handleBack}
                   onSubmit={state.onSubmitCampus}
                 />

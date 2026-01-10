@@ -86,6 +86,7 @@
         "phone": "Phone Number",
         "phonePlaceholder": "(555) 123-4567",
         "dateOfBirth": "Date of Birth",
+        "dateOfBirthPlaceholder": "Select date",
         "gender": "Gender",
         "genderPlaceholder": "Select...",
         "male": "Male",

@@ -6,13 +6,15 @@
     "personal": "Dane osobowe",
     "password": "Hasło",
     "notifications": "Ustawienia powiadomień",
-    "language": "Język"
+    "language": "Język",
+    "account": "Konto"
   },
   "tabDescriptions": {
     "personal": "Imię, e-mail, telefon i więcej",
     "password": "Zmień swoje hasło",
     "notifications": "Zarządzaj preferencjami powiadomień",
-    "language": "Wybierz preferowany język"
+    "language": "Wybierz preferowany język",
+    "account": "Opuść kościół lub usuń konto"
   },
   "personalInfo": {
     "title": "Dane osobowe",
@@ -30,7 +32,8 @@
     "male": "Mężczyzna",
     "female": "Kobieta",
     "saving": "Zapisywanie...",
-    "saveChanges": "Zapisz zmiany"
+    "saveChanges": "Zapisz zmiany",
+    "savedSuccess": "Profil został zaktualizowany!"
   },
   "password": {
     "title": "Hasło",
@@ -42,7 +45,9 @@
     "changing": "Zmienianie...",
     "updateButton": "Zaktualizuj hasło",
     "cancel": "Anuluj",
-    "success": "Hasło zostało zmienione"
+    "success": "Hasło zostało zmienione!",
+    "passwordsDoNotMatch": "Nowe hasła nie są zgodne",
+    "passwordTooShort": "Nowe hasło musi mieć co najmniej 6 znaków"
   },
   "notifications": {
     "title": "Ustawienia powiadomień",
@@ -73,12 +78,53 @@
       "beforeEvent": "przed wydarzeniem"
     },
     "saving": "Zapisywanie...",
-    "saveSettings": "Zapisz ustawienia"
+    "saveSettings": "Zapisz ustawienia",
+    "savedSuccess": "Ustawienia powiadomień zostały zapisane!"
   },
   "language": {
     "title": "Język",
     "label": "Język interfejsu",
     "description": "Wybierz preferowany język interfejsu",
     "updated": "Preferencja językowa została zaktualizowana"
+  },
+  "account": {
+    "title": "Ustawienia konta",
+    "description": "Zarządzaj członkostwem w kościele i kontem",
+    "confirmationText": "Rozumiem",
+    "confirmationMismatch": "Proszę wpisać dokładnie tekst potwierdzenia",
+    "cancel": "Anuluj",
+    "leave": {
+      "title": "Opuść kościół",
+      "description": "Odejdź z {churchName} zachowując swój profil do przyszłego odniesienia",
+      "button": "Opuść kościół",
+      "dialog": {
+        "title": "Opuścić kościół?",
+        "description": "Zamierzasz opuścić <bold>{churchName}</bold>. Twój profil zostanie oznaczony jako nieaktywny, ale twoje dane zostaną zachowane w archiwum kościoła. Możesz później poprosić o ponowne dołączenie.",
+        "reasonLabel": "Powód odejścia (opcjonalnie)",
+        "reasonPlaceholder": "Podziel się, dlaczego odchodzisz...",
+        "reasonHint": "To pomoże kościołowi zrozumieć i się doskonalić",
+        "confirmationLabel": "Potwierdzenie",
+        "confirmationHint": "Wpisz \"{text}\" aby potwierdzić",
+        "processing": "Przetwarzanie...",
+        "confirm": "Opuść kościół"
+      }
+    },
+    "delete": {
+      "title": "Usuń konto",
+      "description": "Trwale usuń dostęp do logowania. Dane twojego profilu zostaną zachowane w archiwum kościoła.",
+      "button": "Usuń konto",
+      "dialog": {
+        "title": "Usunąć twoje konto?",
+        "description": "To trwale usunie twój dostęp do logowania. Nie będziesz mógł się już zalogować. Informacje o twoim profilu zostaną zachowane w archiwum kościoła.",
+        "warning": "Tej akcji nie można cofnąć. Zostaniesz natychmiast wylogowany.",
+        "reasonLabel": "Powód odejścia (opcjonalnie)",
+        "reasonPlaceholder": "Podziel się, dlaczego usuwasz swoje konto...",
+        "reasonHint": "To pomoże kościołowi zrozumieć i się doskonalić",
+        "confirmationLabel": "Potwierdzenie",
+        "confirmationHint": "Wpisz \"{text}\" aby potwierdzić",
+        "processing": "Usuwanie...",
+        "confirm": "Usuń konto"
+      }
+    }
   }
 }
