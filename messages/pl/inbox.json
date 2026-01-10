@@ -32,5 +32,57 @@
   "toast": {
     "markedAllRead": "Wszystkie powiadomienia oznaczono jako przeczytane",
     "markAllReadError": "Nie udało się oznaczyć wszystkich jako przeczytane"
+  },
+
+  "notification": {
+    "types": {
+      "position_invitation": {
+        "title": "Zaproszenie do służby",
+        "message": "Zostałeś przydzielony do \"{position}\" na wydarzeniu \"{event}\""
+      },
+      "invitation_response": {
+        "accepted": {
+          "title": "Zaproszenie zaakceptowane",
+          "message": "{responder} zaakceptował(a) zaproszenie do służby jako \"{position}\" na wydarzeniu \"{event}\""
+        },
+        "declined": {
+          "title": "Zaproszenie odrzucone",
+          "message": "{responder} odrzucił(a) zaproszenie do służby jako \"{position}\" na wydarzeniu \"{event}\""
+        }
+      },
+      "assignment_reminder": {
+        "title": "Przypomnienie",
+        "message": "Masz nadchodzące przydzielenie"
+      },
+      "event_update": {
+        "title": "Wydarzenie zaktualizowane",
+        "message": "Wydarzenie, do którego jesteś przypisany, zostało zaktualizowane"
+      },
+      "general": {
+        "title": "Powiadomienie",
+        "message": ""
+      }
+    },
+    "status": {
+      "accepted": "Zaakceptowane",
+      "declined": "Odrzucone",
+      "expired": "Wygasłe"
+    },
+    "actions": {
+      "accept": "Akceptuj",
+      "decline": "Odrzuć",
+      "cancel": "Anuluj",
+      "acceptInstead": "Zaakceptuj zamiast",
+      "declineInstead": "Odrzuć zamiast",
+      "markAsRead": "Oznacz jako przeczytane"
+    },
+    "labels": {
+      "position": "Stanowisko:"
+    },
+    "toast": {
+      "accepted": "Zaproszenie zaakceptowane!",
+      "declined": "Zaproszenie odrzucone",
+      "error": "Coś poszło nie tak"
+    }
   }
 }

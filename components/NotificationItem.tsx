@@ -2,13 +2,15 @@
 
 import { useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Check, X, Calendar, Clock, Loader2, Eye } from 'lucide-react'
-import type { Notification } from '@/types/notifications'
+import type { Notification, NotificationType } from '@/types/notifications'
 import { respondToInvitation } from '@/app/dashboard/events/actions/invitations'
 import { markAsRead } from '@/app/dashboard/notifications/actions'
 import { toast } from 'sonner'
 import { dispatchNotificationRefresh } from '@/lib/events/notifications'
+import { enUS, pl } from 'date-fns/locale'
 
 interface NotificationItemProps {
   notification: Notification
@@ -17,8 +19,59 @@ interface NotificationItemProps {
 }
 
 export function NotificationItem({ notification, onActionComplete, onNavigateToEvent }: NotificationItemProps) {
+  const t = useTranslations('inbox.notification')
+  const locale = useLocale()
+  const dateLocale = locale === 'pl' ? pl : enUS
   const [isLoading, setIsLoading] = useState<'accept' | 'decline' | 'read' | null>(null)
   const [isChangingResponse, setIsChangingResponse] = useState(false)
+
+  // Get translated title and message based on notification type
+  const getTranslatedTitle = () => {
+    // For invitation_response, detect accepted/declined from stored title and translate
+    if (notification.type === 'invitation_response') {
+      const storedTitle = notification.title.toLowerCase()
+      const isAccepted = storedTitle.includes('accepted')
+      const responseType = isAccepted ? 'accepted' : 'declined'
+      // Get emoji from original title (first character if it's an emoji)
+      const emoji = notification.title.match(/^[\u{1F300}-\u{1F9FF}]|^[✅❌]/u)?.[0] || ''
+      const translatedTitle = t(`types.invitation_response.${responseType}.title`)
+      return emoji ? `${emoji} ${translatedTitle}` : translatedTitle
+    }
+    const typeKey = notification.type as NotificationType
+    try {
+      return t(`types.${typeKey}.title`)
+    } catch {
+      return notification.title
+    }
+  }
+
+  const getTranslatedMessage = () => {
+    // For invitation_response, extract responder name and translate
+    if (notification.type === 'invitation_response') {
+      const storedTitle = notification.title.toLowerCase()
+      const isAccepted = storedTitle.includes('accepted')
+      const responseType = isAccepted ? 'accepted' : 'declined'
+      // Extract responder name from stored message (format: "Name has accepted/declined...")
+      const responderMatch = notification.message?.match(/^(.+?) has (accepted|declined)/i)
+      const responder = responderMatch?.[1] || ''
+      const position = notification.assignment?.position?.title || ''
+      const event = notification.event?.title || ''
+      try {
+        return t(`types.invitation_response.${responseType}.message`, { responder, position, event })
+      } catch {
+        return notification.message
+      }
+    }
+    const typeKey = notification.type as NotificationType
+    const position = notification.assignment?.position?.title || ''
+    const event = notification.event?.title || ''
+    try {
+      const template = t(`types.${typeKey}.message`, { position, event })
+      return template || notification.message
+    } catch {
+      return notification.message
+    }
+  }
 
   const isActionable =
     notification.type === 'position_invitation' &&
@@ -49,14 +102,14 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success(response === 'accepted' ? 'Invitation accepted!' : 'Invitation declined')
+        toast.success(response === 'accepted' ? t('toast.accepted') : t('toast.declined'))
         setIsChangingResponse(false)
         // Dispatch event to update notification counts immediately
         dispatchNotificationRefresh()
         onActionComplete?.()
       }
     } catch (error) {
-      toast.error('Something went wrong')
+      toast.error(t('toast.error'))
     } finally {
       setIsLoading(null)
     }
@@ -76,7 +129,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
         onActionComplete?.()
       }
     } catch (error) {
-      toast.error('Something went wrong')
+      toast.error(t('toast.error'))
     } finally {
       setIsLoading(null)
     }
@@ -105,7 +158,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
       return (
         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
           <Clock className="w-3 h-3 mr-1" />
-          Expired
+          {t('status.expired')}
         </span>
       )
     }
@@ -117,7 +170,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
           className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-600 text-white hover:bg-green-700 transition-colors cursor-pointer"
         >
           <Check className="w-3 h-3 mr-1" />
-          Accepted
+          {t('status.accepted')}
         </button>
       )
     }
@@ -129,7 +182,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
           className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer"
         >
           <X className="w-3 h-3 mr-1" />
-          Declined
+          {t('status.declined')}
         </button>
       )
     }
@@ -166,11 +219,11 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
               <p className={`text-sm md:text-base ${notification.is_read ? 'font-normal' : 'font-semibold'}`}>
-                {notification.title}
+                {getTranslatedTitle()}
               </p>
-              {notification.message && (
+              {getTranslatedMessage() && (
                 <p className="text-xs md:text-sm text-muted-foreground mt-0.5 line-clamp-2">
-                  {notification.message}
+                  {getTranslatedMessage()}
                 </p>
               )}
             </div>
@@ -184,7 +237,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
               <span className="truncate">{notification.event.title}</span>
               <span className="hidden md:inline">•</span>
               <span className="w-full md:w-auto">
-                {new Date(notification.event.start_time).toLocaleDateString('en-US', {
+                {new Date(notification.event.start_time).toLocaleDateString(locale === 'pl' ? 'pl-PL' : 'en-US', {
                   weekday: 'short',
                   month: 'short',
                   day: 'numeric',
@@ -198,7 +251,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
           {/* Position info */}
           {notification.assignment?.position && (
             <div className="mt-1 text-xs text-muted-foreground">
-              <span className="font-medium">Position:</span> {notification.assignment.position.title}
+              <span className="font-medium">{t('labels.position')}</span> {notification.assignment.position.title}
               {notification.assignment.position.ministry?.name && (
                 <span> • {notification.assignment.position.ministry.name}</span>
               )}
@@ -208,7 +261,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
           {/* Timestamp and actions */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-3">
             <span className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
+              {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: dateLocale })}
             </span>
 
             {/* Initial response buttons */}
@@ -226,7 +279,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
                   ) : (
                     <>
                       <X className="w-4 h-4 md:w-3 md:h-3 mr-1.5 md:mr-1" />
-                      Decline
+                      {t('actions.decline')}
                     </>
                   )}
                 </Button>
@@ -242,7 +295,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
                   ) : (
                     <>
                       <Check className="w-4 h-4 md:w-3 md:h-3 mr-1.5 md:mr-1" />
-                      Accept
+                      {t('actions.accept')}
                     </>
                   )}
                 </Button>
@@ -259,7 +312,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
                   onClick={handleCancelChange}
                   disabled={isLoading !== null}
                 >
-                  Cancel
+                  {t('actions.cancel')}
                 </Button>
                 {notification.action_taken === 'accepted' ? (
                   <Button
@@ -274,8 +327,8 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
                     ) : (
                       <>
                         <X className="w-4 h-4 md:w-3 md:h-3 mr-1.5 md:mr-1" />
-                        <span className="hidden sm:inline">Decline Instead</span>
-                        <span className="sm:hidden">Decline</span>
+                        <span className="hidden sm:inline">{t('actions.declineInstead')}</span>
+                        <span className="sm:hidden">{t('actions.decline')}</span>
                       </>
                     )}
                   </Button>
@@ -292,8 +345,8 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
                     ) : (
                       <>
                         <Check className="w-4 h-4 md:w-3 md:h-3 mr-1.5 md:mr-1" />
-                        <span className="hidden sm:inline">Accept Instead</span>
-                        <span className="sm:hidden">Accept</span>
+                        <span className="hidden sm:inline">{t('actions.acceptInstead')}</span>
+                        <span className="sm:hidden">{t('actions.accept')}</span>
                       </>
                     )}
                   </Button>
@@ -315,7 +368,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
                 ) : (
                   <>
                     <Eye className="w-4 h-4 md:w-3 md:h-3 mr-1.5 md:mr-1" />
-                    Mark as read
+                    {t('actions.markAsRead')}
                   </>
                 )}
               </Button>

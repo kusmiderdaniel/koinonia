@@ -2,7 +2,7 @@
 
 export type AssignmentStatus = 'invited' | 'accepted' | 'declined' | 'expired' | null
 
-export type NotificationType = 'position_invitation' | 'assignment_reminder' | 'event_update' | 'general'
+export type NotificationType = 'position_invitation' | 'invitation_response' | 'assignment_reminder' | 'event_update' | 'general'
 
 export type NotificationAction = 'accepted' | 'declined' | 'expired'
 

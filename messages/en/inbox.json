@@ -32,5 +32,57 @@
   "toast": {
     "markedAllRead": "All notifications marked as read",
     "markAllReadError": "Failed to mark all as read"
+  },
+
+  "notification": {
+    "types": {
+      "position_invitation": {
+        "title": "You've been invited to serve",
+        "message": "You've been assigned to \"{position}\" for \"{event}\""
+      },
+      "invitation_response": {
+        "accepted": {
+          "title": "Invitation accepted",
+          "message": "{responder} has accepted the invitation to serve as \"{position}\" for \"{event}\""
+        },
+        "declined": {
+          "title": "Invitation declined",
+          "message": "{responder} has declined the invitation to serve as \"{position}\" for \"{event}\""
+        }
+      },
+      "assignment_reminder": {
+        "title": "Reminder",
+        "message": "You have an upcoming assignment"
+      },
+      "event_update": {
+        "title": "Event Updated",
+        "message": "An event you're assigned to has been updated"
+      },
+      "general": {
+        "title": "Notification",
+        "message": ""
+      }
+    },
+    "status": {
+      "accepted": "Accepted",
+      "declined": "Declined",
+      "expired": "Expired"
+    },
+    "actions": {
+      "accept": "Accept",
+      "decline": "Decline",
+      "cancel": "Cancel",
+      "acceptInstead": "Accept Instead",
+      "declineInstead": "Decline Instead",
+      "markAsRead": "Mark as read"
+    },
+    "labels": {
+      "position": "Position:"
+    },
+    "toast": {
+      "accepted": "Invitation accepted!",
+      "declined": "Invitation declined",
+      "error": "Something went wrong"
+    }
   }
 }
