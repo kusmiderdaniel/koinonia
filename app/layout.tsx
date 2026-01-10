@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Geist, Inter } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { NavigationProgress } from "@/components/NavigationProgress";
 import { Toaster } from "sonner";
@@ -29,21 +31,24 @@ export const viewport = {
   maximumScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en" className={inter.variable}>
-      <body
-        className={`${geistSans.variable} antialiased`}
-      >
-        <Suspense fallback={null}>
-          <NavigationProgress />
-        </Suspense>
-        <QueryProvider>{children}</QueryProvider>
-        <Toaster position="top-right" richColors />
+    <html lang={locale} className={inter.variable}>
+      <body className={`${geistSans.variable} antialiased`}>
+        <NextIntlClientProvider messages={messages}>
+          <Suspense fallback={null}>
+            <NavigationProgress />
+          </Suspense>
+          <QueryProvider>{children}</QueryProvider>
+          <Toaster position="top-right" richColors />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

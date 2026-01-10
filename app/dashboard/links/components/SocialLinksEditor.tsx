@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   DndContext,
   closestCenter,
@@ -148,6 +149,7 @@ export const SocialLinksEditor = memo(function SocialLinksEditor({
   links,
   onChange,
 }: SocialLinksEditorProps) {
+  const t = useTranslations('links')
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -210,7 +212,7 @@ export const SocialLinksEditor = memo(function SocialLinksEditor({
         className="!border !border-black dark:!border-white text-xs h-8"
       >
         <Plus className="h-3 w-3 mr-1" />
-        Add Social Link
+        {t('settings.socialLinks.addButton')}
       </Button>
     </div>
   )

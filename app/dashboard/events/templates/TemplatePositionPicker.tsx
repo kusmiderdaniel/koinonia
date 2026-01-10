@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -53,6 +54,9 @@ export function TemplatePositionPicker({
   existingPositions,
   onSuccess,
 }: TemplatePositionPickerProps) {
+  const t = useTranslations('events.templatePositionPicker')
+  const tCommon = useTranslations('common')
+  const tTemplates = useTranslations('events.templatesTab')
   const [ministries, setMinistries] = useState<Ministry[]>([])
   const [selectedPositions, setSelectedPositions] = useState<SelectedPosition[]>([])
   const [expandedMinistries, setExpandedMinistries] = useState<Set<string>>(new Set())
@@ -149,9 +153,9 @@ export function TemplatePositionPicker({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950">
         <DialogHeader>
-          <DialogTitle>Add Positions</DialogTitle>
+          <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>
-            Select roles to add as volunteer positions for this template.
+            {t('description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -163,21 +167,21 @@ export function TemplatePositionPicker({
 
         {isLoading ? (
           <div className="py-8 text-center text-muted-foreground">
-            Loading ministries...
+            {t('loading')}
           </div>
         ) : ministriesWithRoles.length === 0 ? (
           <div className="text-center py-8">
             <Users className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
             <p className="text-sm text-muted-foreground">
-              No ministries with roles found.
+              {t('noMinistriesFound')}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Create ministry roles first in the Ministries section.
+              {t('createRolesHint')}
             </p>
           </div>
         ) : totalRoles === 0 ? (
           <div className="py-8 text-center text-muted-foreground">
-            No roles defined in any ministry. Add roles to ministries first.
+            {t('noRolesDefined')}
           </div>
         ) : (
           <div className="border rounded-lg overflow-hidden">
@@ -240,7 +244,7 @@ export function TemplatePositionPicker({
                           </span>
                           {alreadyAdded && (
                             <span className="text-xs text-muted-foreground ml-auto">
-                              (already added)
+                              {tTemplates('alreadyAdded')}
                             </span>
                           )}
                         </label>
@@ -261,7 +265,7 @@ export function TemplatePositionPicker({
             onClick={() => onOpenChange(false)}
             disabled={isAdding}
           >
-            Cancel
+            {tCommon('buttons.cancel')}
           </Button>
           <Button
             onClick={handleSubmit}
@@ -269,10 +273,12 @@ export function TemplatePositionPicker({
             className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white !px-4 !py-2 disabled:!opacity-50"
           >
             {isAdding
-              ? 'Adding...'
+              ? t('adding')
               : selectedPositions.length === 0
-              ? 'Select roles'
-              : `Add ${selectedPositions.length} position${selectedPositions.length > 1 ? 's' : ''}`}
+              ? t('selectRoles')
+              : selectedPositions.length === 1
+              ? t('addCount', { count: 1 })
+              : t('addCountPlural', { count: selectedPositions.length })}
           </Button>
         </DialogFooter>
       </DialogContent>

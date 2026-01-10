@@ -1,0 +1,54 @@
+{
+  "title": "Moja niedostępność",
+  "descriptionDesktop": "Kliknij datę, aby oznaczyć ją jako niedostępną. Kliknij drugą datę, aby wybrać zakres.",
+  "descriptionMobile": "Dotknij daty, aby oznaczyć niedostępność",
+
+  "loading": "Ładowanie dostępności...",
+
+  "empty": {
+    "title": "Nie oznaczono jeszcze dat niedostępności",
+    "description": "Kliknij kalendarz, aby rozpocząć."
+  },
+
+  "tabs": {
+    "upcoming": "Nadchodzące",
+    "past": "Minione"
+  },
+
+  "noUpcoming": "Brak nadchodzącej niedostępności",
+  "noPast": "Brak minionej niedostępności",
+
+  "calendar": {
+    "selected": "Wybrano:",
+    "clickForRange": "Kliknij inną datę dla zakresu, lub",
+    "tapForRange": "Dotknij innej daty dla zakresu, lub",
+    "addSingleDay": "Dodaj pojedynczy dzień"
+  },
+
+  "addDialog": {
+    "title": "Dodaj niedostępność",
+    "markingAs": "Oznaczanie jako niedostępne",
+    "reasonLabel": "Powód (opcjonalnie)",
+    "reasonPlaceholder": "np. Urlop, Wydarzenie rodzinne...",
+    "cancel": "Anuluj",
+    "saving": "Zapisywanie...",
+    "add": "Dodaj"
+  },
+
+  "editDialog": {
+    "title": "Edytuj niedostępność",
+    "startDate": "Data rozpoczęcia",
+    "endDate": "Data zakończenia",
+    "selectDate": "Wybierz datę",
+    "reasonLabel": "Powód (opcjonalnie)",
+    "reasonPlaceholder": "np. Urlop, Wydarzenie rodzinne...",
+    "delete": "Usuń",
+    "cancel": "Anuluj",
+    "saving": "Zapisywanie...",
+    "saveChanges": "Zapisz zmiany"
+  },
+
+  "errors": {
+    "endDateBeforeStart": "Data zakończenia musi być w dniu lub po dacie rozpoczęcia"
+  }
+}

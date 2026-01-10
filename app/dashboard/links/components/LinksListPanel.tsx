@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   DndContext,
   closestCenter,
@@ -32,6 +33,7 @@ interface LinksListPanelProps {
 }
 
 export function LinksListPanel({ links, setLinks, analytics }: LinksListPanelProps) {
+  const t = useTranslations('links')
   const isMobile = useIsMobile()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingLink, setEditingLink] = useState<LinkTreeLinkRow | null>(null)
@@ -66,7 +68,7 @@ export function LinksListPanel({ links, setLinks, analytics }: LinksListPanelPro
       if (result.error) {
         // Revert on error
         setLinks(links)
-        toast.error('Failed to reorder links')
+        toast.error(t('toast.reorderFailed'))
       }
     }
   }
@@ -87,7 +89,7 @@ export function LinksListPanel({ links, setLinks, analytics }: LinksListPanelPro
       toast.error(result.error)
     } else {
       setLinks(links.filter(l => l.id !== id))
-      toast.success('Link deleted')
+      toast.success(t('toast.linkDeleted'))
     }
   }
 
@@ -122,7 +124,7 @@ export function LinksListPanel({ links, setLinks, analytics }: LinksListPanelPro
     const result = await reorderLinks(newLinks.map(l => l.id))
     if (result.error) {
       setLinks(links) // Revert on error
-      toast.error('Failed to reorder links')
+      toast.error(t('toast.reorderFailed'))
     }
   }
 
@@ -137,7 +139,7 @@ export function LinksListPanel({ links, setLinks, analytics }: LinksListPanelPro
     const result = await reorderLinks(newLinks.map(l => l.id))
     if (result.error) {
       setLinks(links) // Revert on error
-      toast.error('Failed to reorder links')
+      toast.error(t('toast.reorderFailed'))
     }
   }
 
@@ -145,14 +147,14 @@ export function LinksListPanel({ links, setLinks, analytics }: LinksListPanelPro
     <div className="space-y-4 h-full">
       {/* Add Link Button */}
       <div className="flex justify-between items-center">
-        <h3 className="font-semibold">Links</h3>
+        <h3 className="font-semibold">{t('linksList.title')}</h3>
         <Button
           onClick={handleAddLink}
           size="sm"
           className="!bg-brand hover:!bg-brand/90 !text-brand-foreground"
         >
           <Plus className="h-4 w-4 mr-1" />
-          Add Link
+          {t('linksList.addLink')}
         </Button>
       </div>
 
@@ -162,9 +164,9 @@ export function LinksListPanel({ links, setLinks, analytics }: LinksListPanelPro
           <div className="rounded-full bg-muted p-4 mb-4">
             <Link2 className="h-8 w-8 text-muted-foreground" />
           </div>
-          <h3 className="font-medium mb-1">No links yet</h3>
+          <h3 className="font-medium mb-1">{t('linksList.empty.title')}</h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Add your first link to get started
+            {t('linksList.empty.description')}
           </p>
           <Button
             onClick={handleAddLink}
@@ -172,7 +174,7 @@ export function LinksListPanel({ links, setLinks, analytics }: LinksListPanelPro
             className="!border !border-black dark:!border-white"
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add Link
+            {t('linksList.addLink')}
           </Button>
         </div>
       ) : isMobile ? (

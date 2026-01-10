@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { signIn } from '../actions'
@@ -13,6 +14,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
 export default function SignInPage() {
+  const t = useTranslations('auth.signin')
+  const tErrors = useTranslations('auth.errors')
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -31,10 +34,11 @@ export default function SignInPage() {
     try {
       const result = await signIn(data)
       if (result?.error) {
-        setError(result.error)
+        // Error is now a translation key
+        setError(tErrors(result.error))
       }
-    } catch (err) {
-      setError('An unexpected error occurred')
+    } catch {
+      setError(tErrors('generic'))
     } finally {
       setIsLoading(false)
     }
@@ -44,9 +48,9 @@ export default function SignInPage() {
     <div className="flex min-h-[100dvh] items-center justify-center p-4 sm:p-6">
       <Card className="w-full max-w-md border-0 shadow-none sm:border sm:shadow-sm">
         <CardHeader className="space-y-1 px-0 sm:px-6 sm:pt-6">
-          <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
           <CardDescription>
-            Enter your email and password to sign in to your account
+            {t('description')}
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -58,11 +62,11 @@ export default function SignInPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t('emailPlaceholder')}
                 className="h-11"
                 {...register('email')}
                 disabled={isLoading}
@@ -73,7 +77,7 @@ export default function SignInPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -89,20 +93,20 @@ export default function SignInPage() {
                 href="/auth/reset-password"
                 className="text-sm text-brand hover:underline inline-block"
               >
-                Forgot password?
+                {t('forgotPassword')}
               </Link>
             </div>
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-4 border-t-0 bg-transparent px-0 sm:px-6 pt-2">
             <Button type="submit" className="w-full h-11 !rounded-full !bg-brand hover:!bg-brand/90 text-white" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? t('submitting') : t('submitButton')}
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              Don&apos;t have an account?{' '}
+              {t('noAccount')}{' '}
               <Link href="/auth/signup" className="text-brand font-semibold hover:underline">
-                Sign up
+                {t('signupLink')}
               </Link>
             </p>
           </CardFooter>

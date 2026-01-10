@@ -1,0 +1,36 @@
+{
+  "title": "Skrzynka odbiorcza",
+  "unreadCount": "{count} nieprzeczytanych",
+  "allCaughtUp": "Wszystko przeczytane",
+  "pendingCount": "{count} oczekujących",
+
+  "markAllRead": "Oznacz wszystkie jako przeczytane",
+  "markAllReadShort": "Przeczytaj wszystkie",
+
+  "tabs": {
+    "all": "Wszystkie",
+    "unread": "Nieprzeczytane",
+    "actionable": "Wymagają odpowiedzi",
+    "actionableShort": "Oczekujące"
+  },
+
+  "empty": {
+    "all": {
+      "title": "Brak powiadomień",
+      "description": "Otrzymasz powiadomienia o zaproszeniach na wydarzenia, przydzielonych zadaniach i nie tylko."
+    },
+    "unread": {
+      "title": "Wszystko przeczytane!",
+      "description": "Przeczytałeś wszystkie powiadomienia."
+    },
+    "actionable": {
+      "title": "Brak oczekujących zaproszeń",
+      "description": "Odpowiedziałeś na wszystkie zaproszenia."
+    }
+  },
+
+  "toast": {
+    "markedAllRead": "Wszystkie powiadomienia oznaczono jako przeczytane",
+    "markAllReadError": "Nie udało się oznaczyć wszystkich jako przeczytane"
+  }
+}

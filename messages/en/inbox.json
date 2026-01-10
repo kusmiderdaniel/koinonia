@@ -1,0 +1,36 @@
+{
+  "title": "Inbox",
+  "unreadCount": "{count} unread",
+  "allCaughtUp": "All caught up",
+  "pendingCount": "{count} pending",
+
+  "markAllRead": "Mark all read",
+  "markAllReadShort": "Read all",
+
+  "tabs": {
+    "all": "All",
+    "unread": "Unread",
+    "actionable": "Needs Response",
+    "actionableShort": "Pending"
+  },
+
+  "empty": {
+    "all": {
+      "title": "No notifications yet",
+      "description": "You'll receive notifications for event invitations, task assignments, and more."
+    },
+    "unread": {
+      "title": "All caught up!",
+      "description": "You've read all your notifications."
+    },
+    "actionable": {
+      "title": "No pending invitations",
+      "description": "You've responded to all invitations."
+    }
+  },
+
+  "toast": {
+    "markedAllRead": "All notifications marked as read",
+    "markAllReadError": "Failed to mark all as read"
+  }
+}

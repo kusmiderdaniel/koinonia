@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { useTranslations } from 'next-intl'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { RoleDialog } from '../components'
 import type { useMinistryDialogs } from '../hooks'
@@ -27,6 +28,8 @@ export function MinistriesDialogs({
   onDeleteRole,
   onRemoveMember,
 }: MinistriesDialogsProps) {
+  const t = useTranslations('ministries')
+
   return (
     <>
       {/* Ministry Dialog */}
@@ -41,15 +44,9 @@ export function MinistriesDialogs({
       <ConfirmDialog
         open={dialogs.deleteDialogOpen}
         onOpenChange={(open) => !open && dialogs.closeDeleteDialog()}
-        title="Delete Ministry?"
-        description={
-          <>
-            Are you sure you want to delete{' '}
-            <strong>{dialogs.deletingMinistry?.name}</strong>? This action cannot
-            be undone.
-          </>
-        }
-        confirmLabel="Delete"
+        title={t('dialog.deleteTitle')}
+        description={t('dialog.deleteConfirmation', { name: dialogs.deletingMinistry?.name ?? '' })}
+        confirmLabel={t('actions.delete')}
         destructive
         isLoading={dialogs.isDeleting}
         onConfirm={onDelete}
@@ -73,15 +70,9 @@ export function MinistriesDialogs({
       <ConfirmDialog
         open={dialogs.deleteRoleDialogOpen}
         onOpenChange={(open) => !open && dialogs.closeDeleteRoleDialog()}
-        title="Delete Role?"
-        description={
-          <>
-            Are you sure you want to delete{' '}
-            <strong>{dialogs.deletingRole?.name}</strong>? Members with this role
-            will have their role unassigned.
-          </>
-        }
-        confirmLabel="Delete"
+        title={t('dialog.deleteRoleTitle')}
+        description={t('dialog.deleteRoleConfirmation', { name: dialogs.deletingRole?.name ?? '' })}
+        confirmLabel={t('actions.delete')}
         destructive
         isLoading={dialogs.isDeletingRole}
         onConfirm={onDeleteRole}
@@ -91,18 +82,11 @@ export function MinistriesDialogs({
       <ConfirmDialog
         open={dialogs.removeMemberDialogOpen}
         onOpenChange={(open) => !open && dialogs.closeRemoveMemberDialog()}
-        title="Remove Member?"
-        description={
-          <>
-            Are you sure you want to remove{' '}
-            <strong>
-              {dialogs.removingMember?.profile.first_name}{' '}
-              {dialogs.removingMember?.profile.last_name}
-            </strong>{' '}
-            from this ministry?
-          </>
-        }
-        confirmLabel="Remove"
+        title={t('dialog.removeMemberTitle')}
+        description={t('dialog.removeMemberConfirmation', {
+          name: `${dialogs.removingMember?.profile.first_name ?? ''} ${dialogs.removingMember?.profile.last_name ?? ''}`.trim()
+        })}
+        confirmLabel={t('actions.remove')}
         destructive
         isLoading={dialogs.isRemovingMember}
         onConfirm={onRemoveMember}

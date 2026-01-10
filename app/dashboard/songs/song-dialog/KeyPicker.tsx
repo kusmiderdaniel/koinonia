@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Popover,
@@ -22,6 +23,8 @@ export function KeyPicker({
   onOpenChange,
   onSelect,
 }: KeyPickerProps) {
+  const t = useTranslations('songs.keyPicker')
+
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
@@ -29,7 +32,7 @@ export function KeyPicker({
           variant="outline"
           className="w-full justify-between !border !border-black dark:!border-zinc-700"
         >
-          {value || <span className="text-muted-foreground">Select key</span>}
+          {value || <span className="text-muted-foreground">{t('selectKey')}</span>}
           <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -38,7 +41,7 @@ export function KeyPicker({
         align="start"
       >
         <div className="text-xs font-semibold text-muted-foreground px-1 py-1">
-          Major
+          {t('major')}
         </div>
         <div className="grid grid-cols-6 gap-1 mb-2">
           {MAJOR_KEYS.map((k) => (
@@ -57,7 +60,7 @@ export function KeyPicker({
           ))}
         </div>
         <div className="text-xs font-semibold text-muted-foreground px-1 py-1 border-t pt-2">
-          Minor
+          {t('minor')}
         </div>
         <div className="grid grid-cols-6 gap-1">
           {MINOR_KEYS.map((k) => (

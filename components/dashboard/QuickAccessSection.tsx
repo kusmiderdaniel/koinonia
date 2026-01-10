@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Calendar as CalendarIcon, CalendarOff, ChevronRight, Plus, Pencil, Trash2 } from 'lucide-react'
@@ -29,6 +30,7 @@ const isUpcoming = (endDate: string): boolean => {
 
 export function QuickAccessSection({ events, unavailabilityCount = 0, weekStartsOn = 1, timeFormat = '24h' }: QuickAccessSectionProps) {
   const router = useRouter()
+  const t = useTranslations('dashboard')
 
   // Dialog state
   const [addDialogOpen, setAddDialogOpen] = useState(false)
@@ -90,14 +92,14 @@ export function QuickAccessSection({ events, unavailabilityCount = 0, weekStarts
     const result = await deleteUnavailability(id)
 
     if (result.success) {
-      toast.success('Unavailability deleted')
+      toast.success(t('quickAccess.unavailabilityDeleted'))
       loadUnavailability()
       router.refresh()
     } else {
-      toast.error('Failed to delete')
+      toast.error(t('quickAccess.failedToDelete'))
     }
     setIsDeleting(false)
-  }, [loadUnavailability, router])
+  }, [loadUnavailability, router, t])
 
   const handleDialogSuccess = useCallback(() => {
     loadUnavailability()
@@ -105,7 +107,7 @@ export function QuickAccessSection({ events, unavailabilityCount = 0, weekStarts
 
   return (
     <section className="mb-6">
-      <h2 className="text-base md:text-lg font-semibold mb-3">Quick Access</h2>
+      <h2 className="text-base md:text-lg font-semibold mb-3">{t('quickAccess.title')}</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Upcoming Events Card */}
@@ -117,14 +119,14 @@ export function QuickAccessSection({ events, unavailabilityCount = 0, weekStarts
             <CardTitle className="text-sm font-medium flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-                Upcoming Events
+                {t('quickAccess.upcomingEvents')}
               </span>
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0 p-4">
             {events.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No upcoming events</p>
+              <p className="text-sm text-muted-foreground">{t('quickAccess.noUpcomingEvents')}</p>
             ) : (
               <div className="space-y-2">
                 {events.slice(0, 3).map((event) => (
@@ -142,7 +144,7 @@ export function QuickAccessSection({ events, unavailabilityCount = 0, weekStarts
                 ))}
                 {events.length > 3 && (
                   <p className="text-xs text-muted-foreground mt-2">
-                    +{events.length - 3} more events
+                    {t('quickAccess.moreEvents', { count: events.length - 3 })}
                   </p>
                 )}
               </div>
@@ -159,16 +161,16 @@ export function QuickAccessSection({ events, unavailabilityCount = 0, weekStarts
             <CardTitle className="text-sm font-medium flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <CalendarOff className="h-4 w-4 text-muted-foreground" />
-                My Unavailability
+                {t('quickAccess.myUnavailability')}
               </span>
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0 p-4">
             {isLoadingList ? (
-              <p className="text-sm text-muted-foreground">Loading...</p>
+              <p className="text-sm text-muted-foreground">{t('quickAccess.loading')}</p>
             ) : upcomingItems.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No upcoming unavailable dates</p>
+              <p className="text-sm text-muted-foreground">{t('quickAccess.noUpcomingUnavailable')}</p>
             ) : (
               <div className="space-y-1.5">
                 {upcomingItems.slice(0, 3).map((item) => (
@@ -208,7 +210,7 @@ export function QuickAccessSection({ events, unavailabilityCount = 0, weekStarts
                 ))}
                 {upcomingItems.length > 3 && (
                   <p className="text-xs text-muted-foreground mt-1 text-center">
-                    +{upcomingItems.length - 3} more
+                    {t('quickAccess.more', { count: upcomingItems.length - 3 })}
                   </p>
                 )}
               </div>
@@ -219,7 +221,7 @@ export function QuickAccessSection({ events, unavailabilityCount = 0, weekStarts
               onClick={handleOpenAddDialog}
             >
               <Plus className="h-3.5 w-3.5" />
-              Add Unavailability
+              {t('quickAccess.addUnavailability')}
             </Button>
           </CardContent>
         </Card>

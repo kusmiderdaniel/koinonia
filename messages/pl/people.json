@@ -1,0 +1,162 @@
+{
+  "title": "Członkowie kościoła",
+  "titleLeader": "Członkowie lokalizacji",
+  "subtitle": "Wszyscy członkowie, którzy dołączyli do kościoła.",
+  "subtitleLeader": "Członkowie w Twojej lokalizacji.",
+  "subtitleClickRole": "Kliknij na rolę, aby ją zmienić.",
+  "members": "Członkowie",
+  "addMember": "Dodaj członka",
+  "inviteMember": "Zaproś członka",
+  "noMembers": "Brak członków. Udostępnij link zaproszenia, aby rozpocząć!",
+  "noMembersLeader": "Brak członków w Twojej lokalizacji.",
+  "search": "Szukaj członków...",
+  "pendingBadge": "Oczekujące",
+  "showingMembers": "Pokazuje {filtered} z {total} {total, plural, =1 {członka} few {członków} other {członków}}",
+  "you": "(ty)",
+  "offline": "Offline",
+  "noEmail": "Brak emaila",
+  "fields": {
+    "firstName": "Imię",
+    "lastName": "Nazwisko",
+    "email": "E-mail",
+    "phone": "Telefon",
+    "role": "Rola",
+    "status": "Status",
+    "dateOfBirth": "Data urodzenia",
+    "sex": "Płeć",
+    "baptism": "Chrzest",
+    "baptismDate": "Data chrztu",
+    "skills": "Umiejętności",
+    "bio": "O mnie",
+    "emergencyContactName": "Kontakt awaryjny - imię i nazwisko",
+    "emergencyContactPhone": "Kontakt awaryjny - telefon"
+  },
+  "roles": {
+    "owner": "Właściciel",
+    "admin": "Administrator",
+    "leader": "Lider",
+    "volunteer": "Wolontariusz"
+  },
+  "sex": {
+    "male": "Mężczyzna",
+    "female": "Kobieta",
+    "other": "Inne"
+  },
+  "status": {
+    "active": "Aktywny",
+    "inactive": "Nieaktywny"
+  },
+  "tableHeader": {
+    "active": "Aktywny",
+    "name": "Imię i nazwisko",
+    "email": "Email",
+    "emailTooltip": "Nie można zmienić",
+    "role": "Rola",
+    "campus": "Lokalizacja",
+    "ministryRoles": "Role w służbach",
+    "gender": "Płeć",
+    "genderTooltip": "Można zmienić w ustawieniach profilu użytkownika",
+    "dateOfBirth": "Data urodzenia",
+    "dateOfBirthTooltip": "Można zmienić w ustawieniach profilu użytkownika",
+    "age": "Wiek",
+    "baptized": "Ochrzczony",
+    "baptismDate": "Data chrztu",
+    "departureDate": "Data odejścia",
+    "departureReason": "Powód odejścia",
+    "joined": "Dołączył"
+  },
+  "table": {
+    "showing": "Wyświetlanie {count} z {total} {total, plural, =1 {członka} few {członków} other {członków}}",
+    "noResults": "Brak członków pasujących do wyszukiwania",
+    "selectAll": "Zaznacz wszystkich",
+    "selected": "{count} zaznaczonych",
+    "updating": "Aktualizowanie...",
+    "reasonForDeparture": "Powód odejścia",
+    "enterReason": "Wpisz powód odejścia..."
+  },
+  "card": {
+    "gender": "Płeć",
+    "age": "Wiek",
+    "dob": "Data ur.",
+    "joined": "Dołączył",
+    "campus": "Lokalizacja",
+    "baptized": "Ochrzczony",
+    "yes": "Tak",
+    "no": "Nie",
+    "date": "Data",
+    "departure": "Odejście",
+    "reason": "Powód"
+  },
+  "invite": {
+    "button": "Zaproś członków",
+    "title": "Kod dołączenia do kościoła",
+    "description": "Udostępnij ten kod nowym członkom, aby dołączyli do kościoła."
+  },
+  "offlineMember": {
+    "button": "Dodaj członka offline",
+    "title": "Dodaj członka offline",
+    "description": "Dodaj członka kościoła, który nie ma konta (np. dzieci). Można później połączyć z kontem, jeśli się zarejestruje.",
+    "firstNameRequired": "Imię *",
+    "firstNamePlaceholder": "Jan",
+    "lastNameRequired": "Nazwisko *",
+    "lastNamePlaceholder": "Kowalski",
+    "emailOptional": "Email (opcjonalnie)",
+    "emailPlaceholder": "jan@przyklad.pl",
+    "phoneOptional": "Telefon (opcjonalnie)",
+    "phonePlaceholder": "+48 123 456 789",
+    "dateOfBirth": "Data urodzenia",
+    "selectDate": "Wybierz datę",
+    "gender": "Płeć",
+    "selectPlaceholder": "Wybierz...",
+    "successMessage": "{name} został dodany",
+    "errorRequired": "Imię i nazwisko są wymagane"
+  },
+  "views": {
+    "title": "Widoki",
+    "create": "Utwórz widok",
+    "delete": "Usuń widok",
+    "deleteTitle": "Usuń widok",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć widok \"{name}\"? Ta akcja jest nieodwracalna."
+  },
+  "dialog": {
+    "editTitle": "Edytuj członka",
+    "deleteTitle": "Usuń członka",
+    "deleteConfirmation": "Czy na pewno chcesz usunąć \"{name}\" z kościoła? Ta akcja jest nieodwracalna."
+  },
+  "actions": {
+    "cancel": "Anuluj",
+    "save": "Zapisz",
+    "saving": "Zapisywanie...",
+    "delete": "Usuń"
+  },
+  "pending": {
+    "title": "Oczekujące rejestracje",
+    "subtitle": "Przeglądaj i zatwierdzaj nowe rejestracje członków",
+    "noRegistrations": "Brak oczekujących rejestracji",
+    "noRegistrationsDescription": "Nowe rejestracje pojawią się tutaj do zatwierdzenia",
+    "name": "Imię i nazwisko",
+    "email": "Email",
+    "campus": "Lokalizacja",
+    "campusNotSpecified": "Nie określono",
+    "registered": "Zarejestrowano",
+    "actionsColumn": "Akcje",
+    "link": "Połącz",
+    "reject": "Odrzuć",
+    "approve": "Zatwierdź"
+  },
+  "rejectDialog": {
+    "title": "Odrzuć rejestrację",
+    "description": "Czy na pewno chcesz odrzucić rejestrację {name}?",
+    "reason": "Powód (opcjonalnie)",
+    "reasonPlaceholder": "Podaj powód odrzucenia...",
+    "confirmButton": "Odrzuć rejestrację"
+  },
+  "linkDialog": {
+    "title": "Połącz z istniejącym członkiem",
+    "description": "Połącz konto {name} z istniejącym rekordem członka offline.",
+    "searchPlaceholder": "Szukaj członków...",
+    "noMatch": "Brak członków pasujących do wyszukiwania",
+    "noOfflineMembers": "Brak dostępnych członków offline",
+    "confirmButton": "Połącz konto"
+  }
+}

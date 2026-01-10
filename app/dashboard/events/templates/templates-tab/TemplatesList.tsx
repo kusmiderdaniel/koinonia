@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Plus, Search, FileText, Copy, Pencil, Trash2 } from 'lucide-react'
@@ -41,6 +42,8 @@ export function TemplatesList({
   onDuplicateTemplate,
   onDeleteTemplate,
 }: TemplatesListProps) {
+  const t = useTranslations('events.templatesTab')
+
   return (
     <div
       className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card ${
@@ -52,7 +55,7 @@ export function TemplatesList({
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search templates..."
+            placeholder={t('searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9"
@@ -64,7 +67,7 @@ export function TemplatesList({
             size="icon"
             className="flex-shrink-0 rounded-full !border !border-black dark:!border-white"
             onClick={onCreateTemplate}
-            title="Create template"
+            title={t('createTemplate')}
           >
             <Plus className="w-4 h-4" />
           </Button>
@@ -75,15 +78,15 @@ export function TemplatesList({
       <div className="flex-1 overflow-y-auto p-2 space-y-2">
         {isLoading ? (
           <p className="text-sm text-muted-foreground text-center py-4">
-            Loading templates...
+            {t('loading')}
           </p>
         ) : filteredTemplates.length === 0 ? (
           <div className="text-center py-8">
             <FileText className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
             <p className="text-sm text-muted-foreground">
               {templates.length === 0
-                ? 'No templates yet'
-                : 'No templates found'}
+                ? t('noTemplates')
+                : t('noTemplatesFound')}
             </p>
             {templates.length === 0 && canManage && (
               <Button
@@ -93,7 +96,7 @@ export function TemplatesList({
                 onClick={onCreateTemplate}
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Create your first template
+                {t('createFirst')}
               </Button>
             )}
           </div>
@@ -129,8 +132,8 @@ export function TemplatesList({
                     {formatDurationMinutes(template.default_duration_minutes)}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {template.agendaItemCount} items • {template.positionCount}{' '}
-                    positions
+                    {template.agendaItemCount} {t('items')} • {template.positionCount}{' '}
+                    {t('positions')}
                   </p>
                 </button>
                 {canManage && (
@@ -143,7 +146,7 @@ export function TemplatesList({
                         e.stopPropagation()
                         onDuplicateTemplate(template)
                       }}
-                      title="Duplicate"
+                      title={t('duplicateTitle')}
                     >
                       <Copy className="w-3.5 h-3.5" />
                     </Button>
@@ -155,7 +158,7 @@ export function TemplatesList({
                         e.stopPropagation()
                         onEditTemplate(template)
                       }}
-                      title="Edit"
+                      title={t('editTitle')}
                     >
                       <Pencil className="w-3.5 h-3.5" />
                     </Button>
@@ -167,7 +170,7 @@ export function TemplatesList({
                         e.stopPropagation()
                         onDeleteTemplate(template)
                       }}
-                      title="Delete"
+                      title={t('deleteTitle')}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </Button>

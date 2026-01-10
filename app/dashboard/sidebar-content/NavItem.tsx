@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import {
   Tooltip,
@@ -26,6 +27,9 @@ export function NavItem({
   onNavigate,
   onPrefetch,
 }: NavItemProps) {
+  const t = useTranslations('dashboard.navigation')
+  const label = t(item.labelKey)
+
   const linkContent = (
     <ProgressLink
       href={item.href}
@@ -42,7 +46,7 @@ export function NavItem({
       <div className="w-12 flex items-center justify-center flex-shrink-0">
         <item.icon className={isMobile ? 'w-6 h-6' : 'w-5 h-5'} />
       </div>
-      {!collapsed && <span className={cn('pr-3', isMobile && 'text-base')}>{item.label}</span>}
+      {!collapsed && <span className={cn('pr-3', isMobile && 'text-base')}>{label}</span>}
     </ProgressLink>
   )
 
@@ -50,7 +54,7 @@ export function NavItem({
     return (
       <Tooltip>
         <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
-        <TooltipContent side="right">{item.label}</TooltipContent>
+        <TooltipContent side="right">{label}</TooltipContent>
       </Tooltip>
     )
   }

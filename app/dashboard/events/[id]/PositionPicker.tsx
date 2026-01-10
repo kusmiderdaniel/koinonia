@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -44,6 +45,8 @@ export function PositionPicker({
   eventId,
   onSuccess,
 }: PositionPickerProps) {
+  const t = useTranslations('events.positionPicker')
+  const tCommon = useTranslations('common.buttons')
   const [ministries, setMinistries] = useState<Ministry[]>([])
   const [selectedRoles, setSelectedRoles] = useState<SelectedRole[]>([])
   const [expandedMinistries, setExpandedMinistries] = useState<Set<string>>(new Set())
@@ -139,9 +142,9 @@ export function PositionPicker({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-white dark:bg-zinc-950 max-w-lg">
         <DialogHeader>
-          <DialogTitle>Add Positions</DialogTitle>
+          <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>
-            Select roles to add as volunteer positions for this event.
+            {t('description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -153,15 +156,15 @@ export function PositionPicker({
 
         {isLoading ? (
           <div className="py-8 text-center text-muted-foreground">
-            Loading ministries...
+            {t('loading')}
           </div>
         ) : ministries.length === 0 ? (
           <div className="py-8 text-center text-muted-foreground">
-            No ministries with roles found. Create ministries and roles first.
+            {t('noMinistries')}
           </div>
         ) : totalRoles === 0 ? (
           <div className="py-8 text-center text-muted-foreground">
-            No roles defined in any ministry. Add roles to ministries first.
+            {t('noRoles')}
           </div>
         ) : (
           <div className="border rounded-lg overflow-hidden">
@@ -228,7 +231,7 @@ export function PositionPicker({
             disabled={isAdding}
             className="!border !border-black dark:!border-white"
           >
-            Cancel
+            {tCommon('cancel')}
           </Button>
           <Button
             onClick={handleAdd}
@@ -237,10 +240,12 @@ export function PositionPicker({
             className="!border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
           >
             {isAdding
-              ? 'Adding...'
+              ? t('adding')
               : selectedRoles.length === 0
-              ? 'Select roles'
-              : `Add ${selectedRoles.length} position${selectedRoles.length > 1 ? 's' : ''}`}
+              ? t('selectRoles')
+              : selectedRoles.length === 1
+              ? t('addCount', { count: selectedRoles.length })
+              : t('addCountPlural', { count: selectedRoles.length })}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,6 +1,7 @@
 'use client'
 
 import { memo, useRef, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -40,6 +41,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
   onLogoChange,
   onSubmit,
 }: ChurchDetailsTabProps) {
+  const t = useTranslations('settings.details')
   const {
     register,
     handleSubmit,
@@ -64,7 +66,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
       toast.error(result.error)
     } else if (result.data) {
       onLogoChange(result.data.logoUrl)
-      toast.success('Logo uploaded successfully')
+      toast.success(t('logo.uploadSuccess'))
     }
 
     setIsUploadingLogo(false)
@@ -82,7 +84,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
       toast.error(result.error)
     } else {
       onLogoChange(null)
-      toast.success('Logo removed')
+      toast.success(t('logo.removeSuccess'))
     }
 
     setIsRemovingLogo(false)
@@ -95,7 +97,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
           <div className="space-y-4">
           {/* Logo Upload Section */}
           <div className="space-y-2">
-            <Label>Church Logo</Label>
+            <Label>{t('logo.label')}</Label>
             <div className="border border-black dark:border-white rounded-lg p-3 space-y-3">
               <div className="flex items-center gap-3 md:gap-4">
                 {/* Logo Preview */}
@@ -131,7 +133,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
                       className="!rounded-full !border-black dark:!border-white text-xs md:text-sm"
                     >
                       <Upload className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
-                      {isUploadingLogo ? 'Uploading...' : 'Upload'}
+                      {isUploadingLogo ? t('logo.uploading') : t('logo.upload')}
                     </Button>
                     {logoUrl && (
                       <Button
@@ -143,14 +145,14 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
                         className="text-red-600 hover:text-red-700 hover:bg-red-50 !rounded-full !border-red-300 dark:!border-red-800 text-xs md:text-sm"
                       >
                         <X className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
-                        {isRemovingLogo ? 'Removing...' : 'Remove'}
+                        {isRemovingLogo ? t('logo.removing') : t('logo.remove')}
                       </Button>
                     )}
                   </div>
                 )}
               </div>
               <p className="text-[10px] md:text-xs text-muted-foreground">
-                Square image, 200x200px min. Max 5MB.
+                {t('logo.hint')}
               </p>
             </div>
           </div>
@@ -158,18 +160,18 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
           <Separator />
 
           <div className="space-y-2">
-            <Label htmlFor="name">Church Name *</Label>
+            <Label htmlFor="name">{t('name')}</Label>
             <Input id="name" {...register('name')} disabled={isLoading || !isAdmin} />
             {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Church Email</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="info@yourchurch.org"
+                placeholder={t('emailPlaceholder')}
                 {...register('email')}
                 disabled={isLoading || !isAdmin}
               />
@@ -177,11 +179,11 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone">{t('phone')}</Label>
               <Input
                 id="phone"
                 type="tel"
-                placeholder="(555) 123-4567"
+                placeholder={t('phonePlaceholder')}
                 {...register('phone')}
                 disabled={isLoading || !isAdmin}
               />
@@ -189,11 +191,11 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="website">Website</Label>
+            <Label htmlFor="website">{t('website')}</Label>
             <Input
               id="website"
               type="url"
-              placeholder="https://yourchurch.org"
+              placeholder={t('websitePlaceholder')}
               {...register('website')}
               disabled={isLoading || !isAdmin}
             />
@@ -203,10 +205,10 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
           <Separator />
 
           <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address">{t('address')}</Label>
             <Input
               id="address"
-              placeholder="123 Main Street"
+              placeholder={t('addressPlaceholder')}
               {...register('address')}
               disabled={isLoading || !isAdmin}
             />
@@ -214,17 +216,17 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
             <div className="space-y-2">
-              <Label htmlFor="country">Country</Label>
+              <Label htmlFor="country">{t('country')}</Label>
               <Input id="country" {...register('country')} disabled={isLoading || !isAdmin} />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="city">City</Label>
+              <Label htmlFor="city">{t('city')}</Label>
               <Input id="city" {...register('city')} disabled={isLoading || !isAdmin} />
             </div>
 
             <div className="space-y-2 col-span-2 md:col-span-1">
-              <Label htmlFor="zipCode">ZIP Code</Label>
+              <Label htmlFor="zipCode">{t('zipCode')}</Label>
               <Input id="zipCode" {...register('zipCode')} disabled={isLoading || !isAdmin} />
             </div>
           </div>
@@ -232,7 +234,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
           {isAdmin && (
             <div className="flex justify-end pt-2">
               <Button type="submit" disabled={isLoading} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white">
-                {isLoading ? 'Saving...' : 'Save Changes'}
+                {isLoading ? t('saving') : t('saveChanges')}
               </Button>
             </div>
           )}

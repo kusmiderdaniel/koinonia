@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { CalendarOff } from 'lucide-react'
 import { useAvailabilityData, useCalendarSelection, useAvailabilityDialogs } from './hooks'
 import { CalendarSection, UnavailabilityList, AddDialog, EditDialog } from './components'
@@ -8,6 +9,7 @@ import { toDateString } from './types'
 import type { Unavailability } from './types'
 
 export function AvailabilityPageClient() {
+  const t = useTranslations('availability')
   const data = useAvailabilityData()
   const calendar = useCalendarSelection()
   const dialogs = useAvailabilityDialogs()
@@ -59,7 +61,7 @@ export function AvailabilityPageClient() {
     if (!dialogs.editingId || !dialogs.editStartDate || !dialogs.editEndDate) return
 
     if (dialogs.editEndDate < dialogs.editStartDate) {
-      data.setError('End date must be on or after start date')
+      data.setError(t('errors.endDateBeforeStart'))
       return
     }
 
@@ -118,10 +120,10 @@ export function AvailabilityPageClient() {
       <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4 mb-4 shrink-0">
           <div>
-            <h1 className="text-xl md:text-2xl font-bold">My Unavailability</h1>
+            <h1 className="text-xl md:text-2xl font-bold">{t('title')}</h1>
             <p className="text-sm text-muted-foreground">
-              <span className="hidden sm:inline">Click on a date to mark it as unavailable. Click a second date to select a range.</span>
-              <span className="sm:hidden">Tap dates to mark unavailable</span>
+              <span className="hidden sm:inline">{t('descriptionDesktop')}</span>
+              <span className="sm:hidden">{t('descriptionMobile')}</span>
             </p>
           </div>
         </div>

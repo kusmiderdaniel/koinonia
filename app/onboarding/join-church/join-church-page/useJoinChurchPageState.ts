@@ -62,7 +62,7 @@ export function useJoinChurchPageState() {
           }
         }
       } catch {
-        setError('An unexpected error occurred')
+        setError('generic')
         setIsLoading(false)
       }
     },
@@ -76,9 +76,10 @@ export function useJoinChurchPageState() {
     try {
       const result = await getCampusesByJoinCode(joinCodeValue)
       if (result?.error) {
+        // Return error key for translation
         setError(
           result.error === 'Church not found'
-            ? 'Church not found. Please check the join code and try again.'
+            ? 'churchNotFound'
             : result.error
         )
         setIsLoading(false)
@@ -104,7 +105,7 @@ export function useJoinChurchPageState() {
         setStep('campus')
       }
     } catch {
-      setError('An unexpected error occurred')
+      setError('generic')
     } finally {
       setIsLoading(false)
     }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -84,6 +85,7 @@ function BirthdayCard({ birthday }: { birthday: Birthday }) {
 }
 
 export function BirthdaysSection({ birthdays }: BirthdaysSectionProps) {
+  const t = useTranslations('dashboard')
   const [expanded, setExpanded] = useState(false)
 
   if (birthdays.length === 0) {
@@ -106,7 +108,7 @@ export function BirthdaysSection({ birthdays }: BirthdaysSectionProps) {
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Cake className="h-5 w-5" />
-            <span>Upcoming Birthdays</span>
+            <span>{t('birthdays.title')}</span>
             <Badge variant="secondary" className="ml-1">
               {upcomingCount}
             </Badge>
@@ -128,12 +130,12 @@ export function BirthdaysSection({ birthdays }: BirthdaysSectionProps) {
             {expanded ? (
               <>
                 <ChevronUp className="h-4 w-4 mr-1" />
-                Show less
+                {t('birthdays.showLess')}
               </>
             ) : (
               <>
                 <ChevronDown className="h-4 w-4 mr-1" />
-                Show {birthdays.length - INITIAL_DISPLAY_COUNT} more
+                {t('birthdays.showMore', { count: birthdays.length - INITIAL_DISPLAY_COUNT })}
               </>
             )}
           </Button>

@@ -1,6 +1,7 @@
 'use client'
 
 import { memo, Fragment } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Table,
   TableBody,
@@ -58,13 +59,15 @@ export const TasksTable = memo(function TasksTable({
   onCreateTask,
   weekStartsOn,
 }: TasksTableProps) {
+  const t = useTranslations('tasks')
+
   if (tasks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div className="text-muted-foreground mb-4">No tasks found</div>
+        <div className="text-muted-foreground mb-4">{t('noTasksFound')}</div>
         <Button onClick={onCreateTask} variant="outline">
           <Plus className="h-4 w-4 mr-2" />
-          Create your first task
+          {t('createFirstTask')}
         </Button>
       </div>
     )
@@ -75,13 +78,13 @@ export const TasksTable = memo(function TasksTable({
       <TableHeader>
         <TableRow>
           <TableHead className="w-[40px]"></TableHead>
-          <TableHead className="min-w-[200px]">Title</TableHead>
-          <TableHead className="w-[120px]">Status</TableHead>
-          <TableHead className="w-[100px]">Priority</TableHead>
-          <TableHead className="w-[150px]">Assignee</TableHead>
-          <TableHead className="w-[130px]">Ministry</TableHead>
-          <TableHead className="w-[130px]">Campus</TableHead>
-          <TableHead className="w-[120px]">Due Date</TableHead>
+          <TableHead className="min-w-[200px]">{t('columns.title')}</TableHead>
+          <TableHead className="w-[120px]">{t('columns.status')}</TableHead>
+          <TableHead className="w-[100px]">{t('columns.priority')}</TableHead>
+          <TableHead className="w-[150px]">{t('columns.assignee')}</TableHead>
+          <TableHead className="w-[130px]">{t('columns.ministry')}</TableHead>
+          <TableHead className="w-[130px]">{t('columns.campus')}</TableHead>
+          <TableHead className="w-[120px]">{t('columns.dueDate')}</TableHead>
           <TableHead className="w-[50px]"></TableHead>
         </TableRow>
       </TableHeader>
@@ -102,7 +105,7 @@ export const TasksTable = memo(function TasksTable({
                     )}
                     <span>{group.label}</span>
                     <span className="text-muted-foreground font-normal text-sm">
-                      ({group.tasks.length} task{group.tasks.length !== 1 ? 's' : ''})
+                      ({t('taskCount', { count: group.tasks.length })})
                     </span>
                   </div>
                 </TableCell>

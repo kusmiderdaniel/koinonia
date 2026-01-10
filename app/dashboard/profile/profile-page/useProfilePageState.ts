@@ -7,6 +7,7 @@ import {
   type NotificationPreferences,
   DEFAULT_NOTIFICATION_PREFERENCES,
 } from '@/types/notification-preferences'
+import { type Locale } from '@/lib/i18n/config'
 
 export function useProfilePageState() {
   // Profile state
@@ -19,6 +20,7 @@ export function useProfilePageState() {
   const [dateOfBirth, setDateOfBirth] = useState<string>('')
   const [firstDayOfWeek, setFirstDayOfWeek] = useState<0 | 1 | 2 | 3 | 4 | 5 | 6>(0)
   const [userRole, setUserRole] = useState<string>('')
+  const [language, setLanguage] = useState<Locale | null>(null)
 
   // Notification preferences state
   const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>(
@@ -62,6 +64,9 @@ export function useProfilePageState() {
         }
         if (result.data.notification_preferences) {
           setNotificationPreferences(result.data.notification_preferences)
+        }
+        if (result.data.language) {
+          setLanguage(result.data.language as Locale)
         }
         reset({
           firstName: result.data.first_name,
@@ -207,6 +212,7 @@ export function useProfilePageState() {
     dateOfBirth,
     firstDayOfWeek,
     userRole,
+    language,
 
     // Profile handlers
     handleDateOfBirthChange,

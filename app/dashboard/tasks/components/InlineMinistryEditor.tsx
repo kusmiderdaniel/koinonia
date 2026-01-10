@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { InlineEntityEditor } from '@/components/editors'
 import type { TaskMinistry } from '../types'
 
@@ -18,13 +19,15 @@ export function InlineMinistryEditor({
   onUpdate,
   disabled = false,
 }: InlineMinistryEditorProps) {
+  const t = useTranslations('tasks')
+
   return (
     <InlineEntityEditor
       value={ministryId}
       entity={ministry}
       options={ministries}
       onUpdate={onUpdate}
-      emptyLabel="No ministry"
+      emptyLabel={t('inlineEditor.noMinistry')}
       disabled={disabled}
     />
   )

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations, useLocale } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
@@ -21,13 +22,16 @@ export function SelectedDayPanel({
   timeFormat = '24h',
   onEventSelect,
 }: SelectedDayPanelProps) {
+  const t = useTranslations('events')
+  const locale = useLocale()
+
   return (
     <Card className="h-full">
       <CardContent className="p-4 h-full flex flex-col">
         {selectedDate ? (
           <>
             <h3 className="font-semibold mb-4">
-              {selectedDate.toLocaleDateString('en-US', {
+              {selectedDate.toLocaleDateString(locale, {
                 weekday: 'long',
                 month: 'long',
                 day: 'numeric',
@@ -36,7 +40,7 @@ export function SelectedDayPanel({
             {events.length === 0 ? (
               <div className="flex-1 flex items-center justify-center">
                 <p className="text-sm text-muted-foreground">
-                  No events on this day
+                  {t('calendar.noEventsOnDay')}
                 </p>
               </div>
             ) : (
@@ -74,7 +78,7 @@ export function SelectedDayPanel({
                           {event.totalPositions > 0 && (
                             <p className="text-xs text-muted-foreground mt-1">
                               {event.filledPositions}/{event.totalPositions}{' '}
-                              volunteers
+                              {t('volunteers')}
                             </p>
                           )}
                         </div>
@@ -96,7 +100,7 @@ export function SelectedDayPanel({
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <p className="text-sm text-muted-foreground">
-              Select a day to see its events
+              {t('calendar.noEventsSelected')}
             </p>
           </div>
         )}

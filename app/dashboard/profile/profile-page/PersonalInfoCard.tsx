@@ -1,6 +1,7 @@
 'use client'
 
 import { UseFormReturn } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -44,6 +45,7 @@ export function PersonalInfoCard({
   onDateOfBirthChange,
   onSexChange,
 }: PersonalInfoCardProps) {
+  const t = useTranslations('profile.personalInfo')
   const {
     register,
     handleSubmit,
@@ -53,13 +55,13 @@ export function PersonalInfoCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Personal Information</CardTitle>
-        <CardDescription>Update your name and contact details</CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('email')}</Label>
             <Input
               id="email"
               type="email"
@@ -68,13 +70,13 @@ export function PersonalInfoCard({
               className="bg-muted"
             />
             <p className="text-xs text-muted-foreground">
-              Email cannot be changed
+              {t('emailHint')}
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name *</Label>
+              <Label htmlFor="firstName">{t('firstName')}</Label>
               <Input
                 id="firstName"
                 {...register('firstName')}
@@ -88,7 +90,7 @@ export function PersonalInfoCard({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name *</Label>
+              <Label htmlFor="lastName">{t('lastName')}</Label>
               <Input
                 id="lastName"
                 {...register('lastName')}
@@ -103,11 +105,11 @@ export function PersonalInfoCard({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone">{t('phone')}</Label>
             <Input
               id="phone"
               type="tel"
-              placeholder="(555) 123-4567"
+              placeholder={t('phonePlaceholder')}
               {...register('phone')}
               disabled={isLoading}
             />
@@ -115,19 +117,19 @@ export function PersonalInfoCard({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="dateOfBirth">Date of Birth</Label>
+              <Label htmlFor="dateOfBirth">{t('dateOfBirth')}</Label>
               <DatePicker
                 id="dateOfBirth"
                 value={dateOfBirth}
                 onChange={onDateOfBirthChange}
-                placeholder="Select date"
+                placeholder={t('dateOfBirthPlaceholder')}
                 disabled={isLoading}
                 weekStartsOn={firstDayOfWeek}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="sex">Gender</Label>
+              <Label htmlFor="sex">{t('sex')}</Label>
               <Select
                 value={sex}
                 onValueChange={onSexChange}
@@ -137,7 +139,7 @@ export function PersonalInfoCard({
                   id="sex"
                   className="w-full bg-white dark:bg-zinc-950 border border-input"
                 >
-                  <SelectValue placeholder="Select..." />
+                  <SelectValue placeholder={t('sexPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent
                   side="bottom"
@@ -147,13 +149,13 @@ export function PersonalInfoCard({
                     value="male"
                     className="cursor-pointer [&>span.absolute]:hidden hover:!bg-gray-50 dark:hover:!bg-zinc-800/50 data-[state=checked]:!bg-gray-100 dark:data-[state=checked]:!bg-zinc-800 data-[state=checked]:font-medium"
                   >
-                    Male
+                    {t('male')}
                   </SelectItem>
                   <SelectItem
                     value="female"
                     className="cursor-pointer [&>span.absolute]:hidden hover:!bg-gray-50 dark:hover:!bg-zinc-800/50 data-[state=checked]:!bg-gray-100 dark:data-[state=checked]:!bg-zinc-800 data-[state=checked]:font-medium"
                   >
-                    Female
+                    {t('female')}
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -166,7 +168,7 @@ export function PersonalInfoCard({
               disabled={isLoading}
               className="!bg-brand hover:!bg-brand/90 !text-brand-foreground"
             >
-              {isLoading ? 'Saving...' : 'Save Changes'}
+              {isLoading ? t('saving') : t('saveChanges')}
             </Button>
           </div>
         </CardContent>

@@ -1,0 +1,176 @@
+{
+  "title": "Pieśni",
+  "subtitle": "Zarządzaj biblioteką pieśni",
+  "newSong": "Nowa pieśń",
+  "selectSong": "Wybierz pieśń",
+  "selectSongDescription": "Wybierz pieśń z listy, aby zobaczyć szczegóły",
+  "songDetails": "Szczegóły pieśni",
+
+  "search": {
+    "placeholder": "Szukaj pieśni...",
+    "noSongsYet": "Brak pieśni",
+    "noSongsYetDescription": "Dodaj pierwszą pieśń, aby rozpocząć",
+    "noSongsFound": "Nie znaleziono pieśni",
+    "noSongsFoundDescription": "Spróbuj innego wyszukiwania lub filtra",
+    "clear": "Wyczyść"
+  },
+
+  "detail": {
+    "tabs": {
+      "details": "Szczegóły",
+      "lyrics": "Tekst",
+      "arrangements": "Aranżacje"
+    },
+    "defaultKey": "Domyślna tonacja",
+    "duration": "Czas trwania",
+    "tags": "Tagi",
+    "noTags": "Brak tagów",
+    "attachments": "Załączniki",
+    "uploading": "Przesyłanie...",
+    "uploadPdf": "Prześlij PDF",
+    "noAttachments": "Brak załączników"
+  },
+
+  "dialog": {
+    "addTitle": "Dodaj pieśń",
+    "editTitle": "Edytuj pieśń",
+    "titleLabel": "Tytuł *",
+    "titlePlaceholder": "Tytuł pieśni",
+    "artistLabel": "Wykonawca",
+    "defaultKeyLabel": "Domyślna tonacja",
+    "durationLabel": "Czas trwania",
+    "tagsLabel": "Tagi",
+    "saving": "Zapisywanie...",
+    "saveChanges": "Zapisz zmiany",
+    "addSong": "Dodaj pieśń"
+  },
+
+  "deleteDialog": {
+    "title": "Usunąć pieśń?",
+    "description": "Czy na pewno chcesz usunąć {title}? Spowoduje to również usunięcie wszystkich załączników. Tej operacji nie można cofnąć.",
+    "confirm": "Usuń"
+  },
+
+  "lyrics": {
+    "view": "Widok:",
+    "allSections": "Wszystkie sekcje",
+    "import": "Importuj",
+    "add": "Dodaj",
+    "noLyricsYet": "Brak tekstu",
+    "noLyricsYetManage": "Dodaj sekcje pieśni, aby przechowywać tekst",
+    "noLyricsYetView": "Do tej pieśni nie dodano jeszcze tekstu",
+    "importLyrics": "Importuj tekst",
+    "addSection": "Dodaj sekcję"
+  },
+
+  "sectionDialog": {
+    "addTitle": "Dodaj sekcję",
+    "editTitle": "Edytuj sekcję",
+    "typeLabel": "Typ",
+    "numberLabel": "Numer",
+    "customLabel": "Własna etykieta",
+    "optional": "(opcjonalnie)",
+    "customLabelPlaceholder": "np. \"{type} 1\" lub własna nazwa",
+    "lyricsLabel": "Tekst",
+    "lyricsPlaceholder": "Wprowadź tekst tej sekcji...",
+    "lyricsRequired": "Tekst jest wymagany",
+    "saving": "Zapisywanie...",
+    "adding": "Dodawanie...",
+    "save": "Zapisz",
+    "addButton": "Dodaj"
+  },
+
+  "importDialog": {
+    "title": "Importuj tekst",
+    "description": "Wklej sformatowany tekst z nagłówkami sekcji. Obsługiwane formaty: [Verse 1] lub CHORUS:",
+    "pasteLyrics": "Wklej tekst",
+    "preview": "Podgląd",
+    "previewCount": "Podgląd ({count, plural, one {# sekcja} few {# sekcje} other {# sekcji}})",
+    "loadExample": "Załaduj przykład",
+    "pasteToPreview": "Wklej tekst, aby zobaczyć podgląd",
+    "noSectionsFound": "Nie znaleziono sekcji. Dodaj nagłówki sekcji jak [Verse 1] lub CHORUS:",
+    "importing": "Importowanie...",
+    "importButton": "Importuj {count, plural, one {# sekcję} few {# sekcje} other {# sekcji}}",
+    "paste": "Wklej"
+  },
+
+  "arrangements": {
+    "title": "Aranżacje",
+    "new": "Nowa",
+    "newArrangement": "Nowa aranżacja",
+    "noArrangementsYet": "Brak aranżacji. Utwórz jedną, aby zdefiniować kolejność sekcji.",
+    "default": "Domyślna",
+    "deleteTitle": "Usuń aranżację",
+    "deleteDescription": "Czy na pewno chcesz usunąć \"{name}\"? Tej operacji nie można cofnąć."
+  },
+
+  "arrangementDialog": {
+    "addTitle": "Nowa aranżacja",
+    "editTitle": "Edytuj aranżację",
+    "nameLabel": "Nazwa",
+    "namePlaceholder": "np. Krótka wersja, Nabożeństwo niedzielne",
+    "durationLabel": "Czas trwania",
+    "durationHint": "(opcjonalnie - zastępuje domyślny czas pieśni)",
+    "sectionsLabel": "Sekcje",
+    "sectionsHint": "(kliknij, aby dodać)",
+    "noSectionsAvailable": "Brak dostępnych sekcji. Najpierw dodaj sekcje do pieśni.",
+    "orderLabel": "Kolejność aranżacji",
+    "orderHint": "(przeciągnij, aby zmienić kolejność)",
+    "emptyOrder": "Kliknij sekcje powyżej, aby zbudować aranżację",
+    "nameRequired": "Nazwa aranżacji jest wymagana",
+    "sectionsRequired": "Dodaj co najmniej jedną sekcję do aranżacji",
+    "saving": "Zapisywanie...",
+    "creating": "Tworzenie...",
+    "save": "Zapisz",
+    "create": "Utwórz"
+  },
+
+  "deleteSectionDialog": {
+    "title": "Usuń sekcję",
+    "description": "Czy na pewno chcesz usunąć \"{label}\"? Spowoduje to również usunięcie jej ze wszystkich aranżacji."
+  },
+
+  "tagPicker": {
+    "placeholder": "Wybierz tagi...",
+    "tagNamePlaceholder": "Nazwa tagu",
+    "creating": "Tworzenie...",
+    "create": "Utwórz",
+    "createNewTag": "Utwórz nowy tag"
+  },
+
+  "artistPicker": {
+    "placeholder": "Wybierz lub dodaj wykonawcę...",
+    "searchPlaceholder": "Szukaj lub dodaj nowego wykonawcę...",
+    "noArtistsFound": "Nie znaleziono wykonawców",
+    "noArtistsYet": "Brak wykonawców",
+    "addArtist": "Dodaj \"{artist}\""
+  },
+
+  "keyPicker": {
+    "selectKey": "Wybierz tonację",
+    "setKey": "Ustaw tonację",
+    "key": "Tonacja",
+    "noKey": "Brak tonacji",
+    "major": "Durowe",
+    "minor": "Molowe"
+  },
+
+  "sectionTypes": {
+    "VERSE": "Zwrotka",
+    "CHORUS": "Refren",
+    "PRE_CHORUS": "Pre-refren",
+    "BRIDGE": "Bridge",
+    "TAG": "Tag",
+    "INTRO": "Intro",
+    "OUTRO": "Outro",
+    "INTERLUDE": "Interludium",
+    "ENDING": "Zakończenie"
+  },
+
+  "actions": {
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "save": "Zapisz",
+    "edit": "Edytuj"
+  }
+}

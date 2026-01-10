@@ -1,6 +1,7 @@
 'use client'
 
 import { format } from 'date-fns'
+import { useTranslations } from 'next-intl'
 import { Clock } from 'lucide-react'
 import { MatrixCell } from './MatrixCell'
 import { AvailabilitySection } from './AvailabilitySection'
@@ -36,6 +37,7 @@ export function MatrixGrid({
   onPositionCellClick,
   onEventClick,
 }: MatrixGridProps) {
+  const t = useTranslations('events.matrix')
   const { events, rows, unavailabilityByEvent, multiAssignmentsByEvent } = data
 
   return (
@@ -47,12 +49,12 @@ export function MatrixGrid({
           <div className="flex-shrink-0 w-48 border-r bg-white dark:bg-zinc-950 sticky left-0 z-[5]">
             {/* Header */}
             <div className="h-16 border-b flex items-center px-3 bg-white dark:bg-zinc-950">
-              <span className="text-sm font-medium text-muted-foreground">Agenda</span>
+              <span className="text-sm font-medium text-muted-foreground">{t('agenda')}</span>
             </div>
 
             {/* Row labels */}
             {rows.map((row) => (
-              <RowLabel key={row.key} row={row} />
+              <RowLabel key={row.key} row={row} availabilityLabel={t('availability')} />
             ))}
 
             {/* Availability header spacer */}
@@ -79,7 +81,7 @@ export function MatrixGrid({
 }
 
 // Row label in the sidebar
-function RowLabel({ row }: { row: MatrixRow }) {
+function RowLabel({ row, availabilityLabel }: { row: MatrixRow; availabilityLabel: string }) {
   if (row.type === 'agenda-header') {
     return (
       <div className="h-8 flex items-center px-3 bg-white dark:bg-zinc-950 border-b">
@@ -125,7 +127,7 @@ function RowLabel({ row }: { row: MatrixRow }) {
       <div className="h-8 flex items-center px-3 bg-white dark:bg-zinc-950 border-b">
         <Clock className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-          Availability
+          {availabilityLabel}
         </span>
       </div>
     )

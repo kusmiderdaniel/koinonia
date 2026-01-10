@@ -1,0 +1,208 @@
+{
+  "title": "Linki",
+  "description": "Utwórz publiczną stronę z linkami dla swojego kościoła",
+
+  "status": {
+    "enabled": "Włączone",
+    "disabled": "Wyłączone"
+  },
+
+  "tabs": {
+    "links": "Linki",
+    "settings": "Ustawienia",
+    "analytics": "Analityka"
+  },
+
+  "linksList": {
+    "title": "Linki",
+    "addLink": "Dodaj link",
+    "empty": {
+      "title": "Brak linków",
+      "description": "Dodaj swój pierwszy link, aby rozpocząć"
+    }
+  },
+
+  "linkDialog": {
+    "addTitle": "Dodaj link",
+    "editTitle": "Edytuj link",
+    "titleLabel": "Tytuł *",
+    "titlePlaceholder": "Tytuł linku",
+    "urlLabel": "URL *",
+    "urlPlaceholder": "https://example.com",
+    "descriptionLabel": "Opis (opcjonalnie)",
+    "descriptionPlaceholder": "Krótki opis",
+    "visibilityLabel": "Kto może zobaczyć ten link?",
+    "cancel": "Anuluj",
+    "saving": "Zapisywanie...",
+    "saveChanges": "Zapisz zmiany",
+    "addButton": "Dodaj link"
+  },
+
+  "settings": {
+    "title": "Ustawienia",
+    "saving": "Zapisywanie...",
+    "saved": "Zapisano",
+
+    "basicInfo": {
+      "title": "Podstawowe informacje",
+      "pageTitle": "Tytuł strony",
+      "pageTitlePlaceholder": "Nazwa kościoła lub własny tytuł",
+      "bio": "Bio / Opis",
+      "bioPlaceholder": "Krótki opis dla strony z linkami",
+      "showChurchName": "Pokaż nazwę kościoła"
+    },
+
+    "background": {
+      "title": "Tło",
+      "useGradient": "Użyj gradientu",
+      "start": "Początek",
+      "end": "Koniec",
+      "color": "Kolor"
+    },
+
+    "cardStyle": {
+      "title": "Styl karty",
+      "style": "Styl",
+      "cornerRadius": "Zaokrąglenie rogów",
+      "styles": {
+        "filled": "Wypełniony",
+        "outline": "Obrys",
+        "shadow": "Cień"
+      },
+      "radii": {
+        "square": "Kwadratowe",
+        "small": "Małe",
+        "medium": "Średnie",
+        "large": "Duże",
+        "pill": "Zaokrąglone"
+      }
+    },
+
+    "socialLinks": {
+      "title": "Linki społecznościowe",
+      "addButton": "Dodaj link społecznościowy"
+    },
+
+    "pageStatus": {
+      "title": "Status",
+      "enabled": "Strona linków włączona",
+      "disabledDescription": "Gdy wyłączone, odwiedzający zobaczą błąd 404"
+    }
+  },
+
+  "analytics": {
+    "empty": {
+      "title": "Brak danych analitycznych",
+      "description": "Dane o kliknięciach pojawią się tutaj, gdy ludzie zaczną klikać Twoje linki"
+    },
+    "stats": {
+      "totalClicks": "Wszystkie kliknięcia",
+      "today": "Dzisiaj",
+      "thisWeek": "Ten tydzień",
+      "thisMonth": "Ten miesiąc",
+      "week": "Tydzień",
+      "month": "Miesiąc"
+    },
+    "clicksByLink": "Kliknięcia według linku",
+    "clicksOverTime": "Kliknięcia w czasie",
+    "noLinkData": "Brak danych o linkach",
+    "table": {
+      "link": "Link",
+      "total": "Razem"
+    }
+  },
+
+  "preview": {
+    "label": "Podgląd",
+    "noActiveLinks": "Brak aktywnych linków",
+    "poweredBy": "Obsługiwane przez Koinonia"
+  },
+
+  "linkItem": {
+    "edit": "Edytuj",
+    "hideLink": "Ukryj link",
+    "showLink": "Pokaż link",
+
+    "label": {
+      "button": "Etykieta",
+      "tooltip": "Opcje etykiety",
+      "hideLabel": "Ukryj etykietę",
+      "bold": "Pogrubienie",
+      "italic": "Kursywa",
+      "underline": "Podkreślenie"
+    },
+
+    "icon": {
+      "button": "Ikona",
+      "tooltip": "Wybierz ikonę",
+      "label": "Ikona",
+      "remove": "Usuń"
+    },
+
+    "image": {
+      "button": "Obraz",
+      "tooltip": "Dodaj miniaturę",
+      "label": "Miniatura",
+      "alt": "Miniatura linku",
+      "remove": "Usuń obraz",
+      "uploading": "Przesyłanie...",
+      "clickToUpload": "Kliknij, aby przesłać",
+      "hint": "PNG, JPG, WebP (maks. 5MB)"
+    },
+
+    "color": {
+      "button": "Kolor",
+      "tooltip": "Kolor karty"
+    },
+
+    "size": {
+      "button": "Rozmiar",
+      "tooltip": "Rozmiar karty",
+      "label": "Rozmiar karty"
+    },
+
+    "hover": {
+      "button": "Najazd",
+      "tooltip": "Efekt najazdu",
+      "label": "Efekt najazdu"
+    }
+  },
+
+  "visibility": {
+    "public": { "label": "Publiczny", "description": "Każdy może zobaczyć ten link" },
+    "member": { "label": "Członkowie", "description": "Zalogowani członkowie kościoła" },
+    "volunteer": { "label": "Wolontariusze", "description": "Wolontariusze i wyżej" },
+    "leader": { "label": "Liderzy", "description": "Liderzy i wyżej" },
+    "admin": { "label": "Administratorzy", "description": "Tylko administratorzy i właściciele" }
+  },
+
+  "cardSize": {
+    "small": { "label": "Mały", "description": "Kompaktowa karta" },
+    "medium": { "label": "Średni", "description": "Standardowa karta" },
+    "large": { "label": "Duży", "description": "Wyróżniona karta" }
+  },
+
+  "hoverEffect": {
+    "none": "Brak",
+    "scale": "Skalowanie",
+    "glow": "Poświata",
+    "lift": "Uniesienie"
+  },
+
+  "toast": {
+    "pageEnabled": "Strona linków włączona",
+    "pageDisabled": "Strona linków wyłączona",
+    "reorderFailed": "Nie udało się zmienić kolejności linków",
+    "linkDeleted": "Link usunięty",
+    "linkUpdated": "Link zaktualizowany",
+    "linkCreated": "Link utworzony",
+    "saveFailed": "Nie udało się zapisać linku",
+    "settingsSaveFailed": "Nie udało się zapisać ustawień"
+  },
+
+  "validation": {
+    "titleRequired": "Tytuł jest wymagany",
+    "urlRequired": "URL jest wymagany",
+    "invalidUrl": "Wprowadź prawidłowy URL"
+  }
+}

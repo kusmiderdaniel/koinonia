@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { format } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -20,6 +21,8 @@ export function ScopeSelector({
   onToggleMinistry,
   onTogglePosition,
 }: ScopeSelectorProps) {
+  const t = useTranslations('events.invitationsDialog')
+
   return (
     <RadioGroup
       value={scope}
@@ -29,7 +32,7 @@ export function ScopeSelector({
       <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-900">
         <RadioGroupItem value="all" id="scope-all" />
         <Label htmlFor="scope-all" className="flex-1 cursor-pointer">
-          <span className="font-medium">All pending</span>
+          <span className="font-medium">{t('allPending')}</span>
           <span className="text-sm text-muted-foreground ml-2">
             ({pendingCounts.total})
           </span>
@@ -46,7 +49,7 @@ export function ScopeSelector({
               className="flex-1 cursor-pointer font-medium flex items-center gap-2"
             >
               <Calendar className="w-4 h-4" />
-              By date
+              {t('byDate')}
             </Label>
           </div>
 
@@ -93,7 +96,7 @@ export function ScopeSelector({
               className="flex-1 cursor-pointer font-medium flex items-center gap-2"
             >
               <Users2 className="w-4 h-4" />
-              By ministry
+              {t('byMinistry')}
             </Label>
           </div>
 
@@ -139,7 +142,7 @@ export function ScopeSelector({
               className="flex-1 cursor-pointer font-medium flex items-center gap-2"
             >
               <Briefcase className="w-4 h-4" />
-              By role
+              {t('byRole')}
             </Label>
           </div>
 

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -37,6 +38,8 @@ export function ImageUploadPopover({
   onRemoveImage,
   showTooltip = false,
 }: ImageUploadPopoverProps) {
+  const t = useTranslations('links')
+
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     onImageUpload(e, () => onOpenChange(false))
   }
@@ -56,7 +59,7 @@ export function ImageUploadPopover({
         )}
       >
         <ImageIcon className="h-4 w-4" />
-        <span className="text-xs">Image</span>
+        <span className="text-xs">{t('linkItem.image.button')}</span>
       </Button>
     </PopoverTrigger>
   )
@@ -66,7 +69,7 @@ export function ImageUploadPopover({
       {showTooltip ? (
         <Tooltip>
           <TooltipTrigger asChild>{trigger}</TooltipTrigger>
-          <TooltipContent>Add thumbnail</TooltipContent>
+          <TooltipContent>{t('linkItem.image.tooltip')}</TooltipContent>
         </Tooltip>
       ) : (
         trigger
@@ -76,14 +79,14 @@ export function ImageUploadPopover({
         align="start"
       >
         <div className="space-y-3">
-          <Label className="text-sm font-medium">Thumbnail Image</Label>
+          <Label className="text-sm font-medium">{t('linkItem.image.label')}</Label>
 
           {imageUrl ? (
             <div className="space-y-2">
               <div className="relative aspect-video rounded-md overflow-hidden border">
                 <img
                   src={imageUrl}
-                  alt="Link thumbnail"
+                  alt={t('linkItem.image.alt')}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -94,7 +97,7 @@ export function ImageUploadPopover({
                 className="w-full"
               >
                 <X className="h-4 w-4 mr-1" />
-                Remove Image
+                {t('linkItem.image.remove')}
               </Button>
             </div>
           ) : (
@@ -108,10 +111,10 @@ export function ImageUploadPopover({
               >
                 <Upload className="h-6 w-6 text-muted-foreground mb-2" />
                 <span className="text-sm text-muted-foreground">
-                  {isUploading ? 'Uploading...' : 'Click to upload'}
+                  {isUploading ? t('linkItem.image.uploading') : t('linkItem.image.clickToUpload')}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  PNG, JPG, WebP (max 5MB)
+                  {t('linkItem.image.hint')}
                 </span>
               </Label>
               <Input

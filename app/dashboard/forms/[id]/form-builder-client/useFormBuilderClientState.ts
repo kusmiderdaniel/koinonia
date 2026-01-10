@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { useFormBuilder } from '../../hooks/useFormBuilder'
 import { updateForm, publishForm, unpublishForm, closeForm } from '../../actions'
@@ -11,7 +12,9 @@ import type { FormBuilderClientProps } from './types'
 export function useFormBuilderClientState({ initialData }: FormBuilderClientProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const initialTab = searchParams.get('tab') === 'responses' ? 'responses' : 'build'
+  const t = useTranslations('forms')
+  const tabParam = searchParams.get('tab')
+  const initialTab = tabParam === 'responses' ? 'responses' : tabParam === 'settings' ? 'settings' : 'build'
 
   // Local UI state
   const [activeTab, setActiveTab] = useState(initialTab)
@@ -43,13 +46,13 @@ export function useFormBuilderClientState({ initialData }: FormBuilderClientProp
       initialData.fields.map((f) => ({
         ...f,
         isNew: false,
-      })) as BuilderField[]
+      })) as unknown as BuilderField[]
     )
     setConditions(
       initialData.conditions.map((c) => ({
         ...c,
         isNew: false,
-      })) as BuilderCondition[]
+      })) as unknown as BuilderCondition[]
     )
     setWeekStartsOn(initialData.firstDayOfWeek)
   }, [initialData, setForm, setFields, setConditions, setWeekStartsOn])
@@ -60,14 +63,16 @@ export function useFormBuilderClientState({ initialData }: FormBuilderClientProp
     setIsSaving(true)
 
     try {
-      // Save form title/description if changed
+      // Save form title/description/access_type if changed
       if (
         form.title !== initialData.form.title ||
-        form.description !== initialData.form.description
+        form.description !== initialData.form.description ||
+        form.access_type !== initialData.form.access_type
       ) {
         const formResult = await updateForm(form.id, {
           title: form.title,
           description: form.description,
+          accessType: form.access_type,
         })
         if (formResult.error) {
           toast.error(formResult.error)
@@ -115,15 +120,15 @@ export function useFormBuilderClientState({ initialData }: FormBuilderClientProp
         return
       }
 
-      toast.success('Form saved')
+      toast.success(t('toast.saved'))
       setIsDirty(false)
       router.refresh()
     } catch {
-      toast.error('Failed to save form')
+      toast.error(t('toast.saveFailed'))
     } finally {
       setIsSaving(false)
     }
-  }, [form, fields, conditions, initialData, setIsSaving, setIsDirty, router])
+  }, [form, fields, conditions, initialData, setIsSaving, setIsDirty, router, t])
 
   const handlePublish = useCallback(async () => {
     if (!form) return
@@ -138,9 +143,9 @@ export function useFormBuilderClientState({ initialData }: FormBuilderClientProp
       return
     }
 
-    toast.success('Form published')
+    toast.success(t('toast.published'))
     router.refresh()
-  }, [form, isDirty, handleSave, router])
+  }, [form, isDirty, handleSave, router, t])
 
   const handleUnpublish = useCallback(async () => {
     if (!form) return
@@ -151,9 +156,9 @@ export function useFormBuilderClientState({ initialData }: FormBuilderClientProp
       return
     }
 
-    toast.success('Form unpublished')
+    toast.success(t('toast.unpublished'))
     router.refresh()
-  }, [form, router])
+  }, [form, router, t])
 
   const handleClose = useCallback(async () => {
     if (!form) return
@@ -164,9 +169,9 @@ export function useFormBuilderClientState({ initialData }: FormBuilderClientProp
       return
     }
 
-    toast.success('Form closed')
+    toast.success(t('toast.closed'))
     router.refresh()
-  }, [form, router])
+  }, [form, router, t])
 
   const handleTitleSave = useCallback(() => {
     if (editTitle.trim()) {
@@ -189,12 +194,12 @@ export function useFormBuilderClientState({ initialData }: FormBuilderClientProp
     setCopiedLink(true)
 
     if (form.status !== 'published') {
-      toast.success('Link copied! Note: Form must be published for link to work.')
+      toast.success(t('toast.linkCopiedNote'))
     } else {
-      toast.success('Link copied to clipboard')
+      toast.success(t('toast.linkCopied'))
     }
     setTimeout(() => setCopiedLink(false), 2000)
-  }, [form])
+  }, [form, t])
 
   const currentForm = form || initialData.form
 

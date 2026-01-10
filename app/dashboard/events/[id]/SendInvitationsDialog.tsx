@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -53,6 +54,8 @@ export function SendInvitationsDialog({
   eventId,
   onSuccess,
 }: SendInvitationsDialogProps) {
+  const t = useTranslations('events.invitationsDialog')
+  const tCommon = useTranslations('common')
   const [pendingCounts, setPendingCounts] = useState<PendingCounts | null>(null)
   const [isLoadingCounts, setIsLoadingCounts] = useState(false)
   const [scope, setScope] = useState<InvitationScope>('all')
@@ -93,12 +96,12 @@ export function SendInvitationsDialog({
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success(`${result.data?.invitedCount} invitation(s) sent!`)
+        toast.success(t('invitationsSent', { count: result.data?.invitedCount || 0 }))
         onSuccess()
         onOpenChange(false)
       }
     } catch (error) {
-      toast.error('Failed to send invitations')
+      toast.error(t('sendFailed'))
     } finally {
       setIsSending(false)
     }
@@ -148,11 +151,10 @@ export function SendInvitationsDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Send className="w-5 h-5" />
-            Send Invitations
+            {t('title')}
           </DialogTitle>
           <DialogDescription>
-            Send invitations to volunteers assigned to positions. They will receive a
-            notification and can accept or decline.
+            {t('descriptionSingle')}
           </DialogDescription>
         </DialogHeader>
 
@@ -163,9 +165,9 @@ export function SendInvitationsDialog({
         ) : pendingCounts?.total === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <Users className="w-10 h-10 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">No pending assignments to invite</p>
+            <p className="text-sm">{t('noPending')}</p>
             <p className="text-xs mt-1">
-              All assigned volunteers have already been invited
+              {t('allInvited')}
             </p>
           </div>
         ) : (
@@ -173,8 +175,7 @@ export function SendInvitationsDialog({
             {/* Summary */}
             <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
               <p className="text-sm text-blue-700 dark:text-blue-300">
-                <strong>{pendingCounts?.total}</strong> volunteer
-                {pendingCounts?.total !== 1 ? 's' : ''} assigned but not yet invited
+                {t('summaryVolunteers', { count: pendingCounts?.total || 0 })}
               </p>
             </div>
 
@@ -184,7 +185,7 @@ export function SendInvitationsDialog({
               <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-900">
                 <RadioGroupItem value="all" id="scope-all" />
                 <Label htmlFor="scope-all" className="flex-1 cursor-pointer">
-                  <span className="font-medium">All pending</span>
+                  <span className="font-medium">{t('allPending')}</span>
                   <span className="text-sm text-muted-foreground ml-2">
                     ({pendingCounts?.total})
                   </span>
@@ -197,7 +198,7 @@ export function SendInvitationsDialog({
                   <div className="flex items-center space-x-2 p-3 hover:bg-gray-50 dark:hover:bg-zinc-900">
                     <RadioGroupItem value="ministry" id="scope-ministry" />
                     <Label htmlFor="scope-ministry" className="flex-1 cursor-pointer font-medium">
-                      By ministry
+                      {t('byMinistry')}
                     </Label>
                   </div>
 
@@ -235,7 +236,7 @@ export function SendInvitationsDialog({
                   <div className="flex items-center space-x-2 p-3 hover:bg-gray-50 dark:hover:bg-zinc-900">
                     <RadioGroupItem value="positions" id="scope-positions" />
                     <Label htmlFor="scope-positions" className="flex-1 cursor-pointer font-medium">
-                      By position
+                      {t('byPosition')}
                     </Label>
                   </div>
 
@@ -278,7 +279,7 @@ export function SendInvitationsDialog({
             onClick={() => onOpenChange(false)}
             disabled={isSending}
           >
-            Cancel
+            {tCommon('buttons.cancel')}
           </Button>
           <Button
             variant="outline-pill"
@@ -289,12 +290,12 @@ export function SendInvitationsDialog({
             {isSending ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Sending...
+                {t('sending')}
               </>
             ) : (
               <>
                 <Send className="w-4 h-4 mr-2" />
-                Send {inviteCount > 0 ? `(${inviteCount})` : ''}
+                {t('send')} {inviteCount > 0 ? `(${inviteCount})` : ''}
               </>
             )}
           </Button>

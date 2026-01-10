@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -31,10 +32,18 @@ interface WeekTimelineSectionProps {
 
 export function WeekTimelineSection({ items, defaultExpanded = true, onTaskClick }: WeekTimelineSectionProps) {
   const router = useRouter()
+  const t = useTranslations('dashboard')
   const [isExpanded, setIsExpanded] = useState(defaultExpanded)
 
+  // Helper function to get day label with translations
+  const getDayLabelTranslated = (date: Date): string => {
+    if (isToday(date)) return t('yourWeek.today')
+    if (isTomorrow(date)) return t('yourWeek.tomorrow')
+    return format(date, 'EEEE, MMM d')
+  }
+
   // Group items by day
-  const dayGroups = groupItemsByDay(items)
+  const dayGroups = groupItemsByDay(items, getDayLabelTranslated)
 
   const handleNavigate = (item: WeekItem) => {
     if (item.type === 'assignment') {
@@ -55,14 +64,14 @@ export function WeekTimelineSection({ items, defaultExpanded = true, onTaskClick
       <section className="p-4 border border-border rounded-lg bg-card h-full">
         <h2 className="text-base md:text-lg font-semibold mb-3 flex items-center gap-2">
           <Calendar className="h-5 w-5 text-muted-foreground" />
-          Your Week
+          {t('yourWeek.title')}
         </h2>
         <Card className="bg-muted/30 border border-border">
           <CardContent className="py-6 text-center">
             <Calendar className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-            <p className="text-muted-foreground font-medium">Nothing scheduled</p>
+            <p className="text-muted-foreground font-medium">{t('yourWeek.nothingScheduled')}</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Your upcoming assignments and tasks will appear here.
+              {t('yourWeek.emptyDescription')}
             </p>
           </CardContent>
         </Card>
@@ -78,7 +87,7 @@ export function WeekTimelineSection({ items, defaultExpanded = true, onTaskClick
       >
         <h2 className="text-base md:text-lg font-semibold flex items-center gap-2">
           <Calendar className="h-5 w-5 text-muted-foreground" />
-          Your Week
+          {t('yourWeek.title')}
           <Badge variant="secondary" className="px-1.5 py-0 h-5 text-xs">
             {items.length}
           </Badge>
@@ -150,10 +159,10 @@ export function WeekTimelineSection({ items, defaultExpanded = true, onTaskClick
           <Card className="border border-border">
             <CardContent className="p-3">
               <p className="text-sm text-muted-foreground">
-                {items.length} items this week
+                {t('yourWeek.itemsThisWeek', { count: items.length })}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Tap to expand
+                {t('yourWeek.tapToExpand')}
               </p>
             </CardContent>
           </Card>
@@ -163,7 +172,7 @@ export function WeekTimelineSection({ items, defaultExpanded = true, onTaskClick
   )
 }
 
-function groupItemsByDay(items: WeekItem[]): DayGroup[] {
+function groupItemsByDay(items: WeekItem[], getLabelFn: (date: Date) => string): DayGroup[] {
   const groups: Map<string, DayGroup> = new Map()
 
   items.forEach((item) => {
@@ -172,7 +181,7 @@ function groupItemsByDay(items: WeekItem[]): DayGroup[] {
 
     if (!groups.has(key)) {
       groups.set(key, {
-        label: getDayLabel(dayStart),
+        label: getLabelFn(dayStart),
         date: dayStart,
         items: [],
       })
@@ -188,12 +197,6 @@ function groupItemsByDay(items: WeekItem[]): DayGroup[] {
       ...group,
       items: group.items.sort((a, b) => a.date.getTime() - b.date.getTime()),
     }))
-}
-
-function getDayLabel(date: Date): string {
-  if (isToday(date)) return 'Today'
-  if (isTomorrow(date)) return 'Tomorrow'
-  return format(date, 'EEEE, MMM d')
 }
 
 // Convert hex color to low saturation background

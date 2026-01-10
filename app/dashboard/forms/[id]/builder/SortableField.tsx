@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Button } from '@/components/ui/button'
@@ -43,17 +44,6 @@ const FIELD_ICONS: Record<FieldType, LucideIcon> = {
   checkbox: Square,
 }
 
-const FIELD_LABELS: Record<FieldType, string> = {
-  text: 'Short Text',
-  textarea: 'Long Text',
-  number: 'Number',
-  email: 'Email',
-  date: 'Date',
-  single_select: 'Dropdown',
-  multi_select: 'Checkboxes',
-  checkbox: 'Yes/No',
-}
-
 export const SortableField = memo(function SortableField({
   field,
   isSelected,
@@ -61,6 +51,7 @@ export const SortableField = memo(function SortableField({
   index = 0,
   totalFields = 0,
 }: SortableFieldProps) {
+  const t = useTranslations('forms')
   const { fields, deleteField, duplicateField, reorderFields } = useFormBuilder()
   const isMobile = useIsMobile()
   const {
@@ -77,7 +68,7 @@ export const SortableField = memo(function SortableField({
     transition,
   }
 
-  const Icon = FIELD_ICONS[field.type] || Type
+  const Icon = FIELD_ICONS[field.type as FieldType] || Type
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -184,7 +175,7 @@ export const SortableField = memo(function SortableField({
       <div className={isMobile ? 'pl-7 pr-6' : 'pl-6 pr-8'}>
         <div className="flex items-center gap-1.5">
           <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
-          <span className="text-sm font-medium">{field.label || FIELD_LABELS[field.type]}</span>
+          <span className="text-sm font-medium">{field.label || t(`fieldTypes.${field.type}`)}</span>
           {field.required && (
             <span className="text-brand font-bold">*</span>
           )}
@@ -199,39 +190,39 @@ export const SortableField = memo(function SortableField({
         <div className="mt-2">
           {field.type === 'text' && (
             <div className="h-9 rounded-md border bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
-              {field.placeholder || 'Short answer text'}
+              {field.placeholder || t('fieldPlaceholders.text')}
             </div>
           )}
           {field.type === 'textarea' && (
             <div className="h-20 rounded-md border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
-              {field.placeholder || 'Long answer text'}
+              {field.placeholder || t('fieldPlaceholders.textarea')}
             </div>
           )}
           {field.type === 'number' && (
             <div className="h-9 rounded-md border bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
-              {field.placeholder || '0'}
+              {field.placeholder || t('fieldPlaceholders.number')}
             </div>
           )}
           {field.type === 'email' && (
             <div className="h-9 rounded-md border bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
-              {field.placeholder || 'email@example.com'}
+              {field.placeholder || t('fieldPlaceholders.email')}
             </div>
           )}
           {field.type === 'date' && (
             <div className="h-9 rounded-md border bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
               <Calendar className="h-4 w-4 mr-2" />
-              Pick a date
+              {t('fieldPlaceholders.date')}
             </div>
           )}
           {field.type === 'single_select' && (
             <div className="h-9 rounded-md border bg-muted/50 px-3 flex items-center justify-between text-sm text-muted-foreground">
-              <span>Select an option</span>
+              <span>{t('fieldPlaceholders.single_select')}</span>
               <ChevronDown className="h-4 w-4" />
             </div>
           )}
           {field.type === 'multi_select' && field.options && (
             <div className="space-y-2">
-              {field.options.slice(0, 3).map((opt) => (
+              {field.options.slice(0, 3).map((opt: { value: string; label: string }) => (
                 <div key={opt.value} className="flex items-center gap-2 text-sm">
                   <div className="h-4 w-4 rounded border bg-muted/50" />
                   <span>{opt.label}</span>
@@ -239,7 +230,7 @@ export const SortableField = memo(function SortableField({
               ))}
               {field.options.length > 3 && (
                 <p className="text-xs text-muted-foreground">
-                  +{field.options.length - 3} more options
+                  {t('fieldEditor.moreOptions', { count: field.options.length - 3 })}
                 </p>
               )}
             </div>
@@ -247,7 +238,7 @@ export const SortableField = memo(function SortableField({
           {field.type === 'checkbox' && (
             <div className="flex items-center gap-2 text-sm">
               <div className="h-5 w-5 rounded border bg-muted/50" />
-              <span className="text-muted-foreground">Yes</span>
+              <span className="text-muted-foreground">{t('fieldPlaceholders.checkbox')}</span>
             </div>
           )}
         </div>

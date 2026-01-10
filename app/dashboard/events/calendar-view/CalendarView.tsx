@@ -1,13 +1,14 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useCalendarState } from './useCalendarState'
 import { DayCell } from './DayCell'
 import { SelectedDayPanel } from './SelectedDayPanel'
-import { MONTHS, DAYS_SUNDAY_START, DAYS_MONDAY_START } from './types'
+import { MONTH_KEYS, DAYS_SUNDAY_START_KEYS, DAYS_MONDAY_START_KEYS } from './types'
 import type { CalendarViewProps } from './types'
 
 export const CalendarView = memo(function CalendarView({
@@ -17,6 +18,7 @@ export const CalendarView = memo(function CalendarView({
   onEventSelect,
   leftPanelContent,
 }: CalendarViewProps) {
+  const t = useTranslations('events.calendar')
   const {
     currentYear,
     currentMonth,
@@ -32,8 +34,8 @@ export const CalendarView = memo(function CalendarView({
     handleDateClick,
   } = useCalendarState(events, firstDayOfWeek)
 
-  // Choose day labels based on first day of week setting
-  const dayLabels = firstDayOfWeek === 0 ? DAYS_SUNDAY_START : DAYS_MONDAY_START
+  // Choose day label keys based on first day of week setting
+  const dayLabelKeys = firstDayOfWeek === 0 ? DAYS_SUNDAY_START_KEYS : DAYS_MONDAY_START_KEYS
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 h-full">
@@ -47,7 +49,7 @@ export const CalendarView = memo(function CalendarView({
               {/* Header */}
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold">
-                  {MONTHS[currentMonth]} {currentYear}
+                  {t(`months.${MONTH_KEYS[currentMonth]}`)} {currentYear}
                 </h2>
                 <div className="flex items-center gap-2">
                   <Button
@@ -56,7 +58,7 @@ export const CalendarView = memo(function CalendarView({
                     className="rounded-full"
                     onClick={goToToday}
                   >
-                    Today
+                    {t('today')}
                   </Button>
                   <Button
                     variant="outline"
@@ -79,12 +81,12 @@ export const CalendarView = memo(function CalendarView({
 
               {/* Day headers */}
               <div className="grid grid-cols-7 mb-2">
-                {dayLabels.map((day) => (
+                {dayLabelKeys.map((dayKey) => (
                   <div
-                    key={day}
+                    key={dayKey}
                     className="text-center text-sm font-medium text-muted-foreground py-2"
                   >
-                    {day}
+                    {t(`daysShort.${dayKey}`)}
                   </div>
                 ))}
               </div>

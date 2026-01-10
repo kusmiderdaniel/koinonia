@@ -5,6 +5,39 @@ import { redirect } from 'next/navigation'
 import { signInSchema, signUpSchema, resetPasswordSchema } from '@/lib/validations/auth'
 import type { SignInInput, SignUpInput, ResetPasswordInput } from '@/lib/validations/auth'
 
+/**
+ * Map Supabase error messages to translation keys
+ */
+function mapAuthError(errorMessage: string): string {
+  const errorMap: Record<string, string> = {
+    'Invalid login credentials': 'invalidCredentials',
+    'User already registered': 'userAlreadyRegistered',
+    'Email not confirmed': 'emailNotConfirmed',
+    'Password should be at least 6 characters': 'weakPassword',
+    'User not found': 'accountNotFound',
+  }
+
+  // Check for exact match first
+  if (errorMap[errorMessage]) {
+    return errorMap[errorMessage]
+  }
+
+  // Check for partial matches
+  const lowerMessage = errorMessage.toLowerCase()
+  if (lowerMessage.includes('already registered') || lowerMessage.includes('already exists')) {
+    return 'userAlreadyRegistered'
+  }
+  if (lowerMessage.includes('invalid') && (lowerMessage.includes('credentials') || lowerMessage.includes('password'))) {
+    return 'invalidCredentials'
+  }
+  if (lowerMessage.includes('weak') || lowerMessage.includes('password')) {
+    return 'weakPassword'
+  }
+
+  // Return generic error for unknown messages
+  return 'generic'
+}
+
 export async function signIn(data: SignInInput) {
   const supabase = await createClient()
 
@@ -17,7 +50,7 @@ export async function signIn(data: SignInInput) {
   })
 
   if (error) {
-    return { error: error.message }
+    return { error: mapAuthError(error.message) }
   }
 
   redirect('/dashboard')
@@ -42,13 +75,13 @@ export async function signUp(data: SignUpInput) {
   })
 
   if (error) {
-    return { error: error.message }
+    return { error: mapAuthError(error.message) }
   }
 
-  // Return success with message about email confirmation
+  // Return success with message key for translation
   return {
     success: true,
-    message: 'Check your email to confirm your account before signing in.'
+    messageKey: 'accountCreated'
   }
 }
 
@@ -69,12 +102,12 @@ export async function resetPassword(data: ResetPasswordInput) {
   })
 
   if (error) {
-    return { error: error.message }
+    return { error: mapAuthError(error.message) }
   }
 
   return {
     success: true,
-    message: 'Check your email for the password reset link.'
+    messageKey: 'passwordResetSent'
   }
 }
 
@@ -86,8 +119,8 @@ export async function updatePassword(password: string) {
   })
 
   if (error) {
-    return { error: error.message }
+    return { error: mapAuthError(error.message) }
   }
 
-  return { success: true, message: 'Password updated successfully!' }
+  return { success: true, messageKey: 'passwordUpdated' }
 }

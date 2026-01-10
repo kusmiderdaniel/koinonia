@@ -29,22 +29,22 @@ export interface SidebarContentProps {
 
 export interface NavItemData {
   href: string
-  label: string
+  labelKey: string
   icon: LucideIcon
   pageKey: PageKey
 }
 
 export const navItems: NavItemData[] = [
-  { href: '/dashboard', label: 'Home', icon: Home, pageKey: 'dashboard' },
-  { href: '/dashboard/events', label: 'Events', icon: Calendar, pageKey: 'events' },
-  { href: '/dashboard/tasks', label: 'Tasks', icon: CheckSquare, pageKey: 'tasks' },
-  { href: '/dashboard/people', label: 'People', icon: Users, pageKey: 'people' },
-  { href: '/dashboard/ministries', label: 'Ministries', icon: Heart, pageKey: 'ministries' },
-  { href: '/dashboard/songs', label: 'Songs', icon: Music, pageKey: 'songs' },
-  { href: '/dashboard/forms', label: 'Forms', icon: FileText, pageKey: 'forms' },
-  { href: '/dashboard/links', label: 'Links', icon: Link2, pageKey: 'links' },
+  { href: '/dashboard', labelKey: 'home', icon: Home, pageKey: 'dashboard' },
+  { href: '/dashboard/events', labelKey: 'events', icon: Calendar, pageKey: 'events' },
+  { href: '/dashboard/tasks', labelKey: 'tasks', icon: CheckSquare, pageKey: 'tasks' },
+  { href: '/dashboard/people', labelKey: 'people', icon: Users, pageKey: 'people' },
+  { href: '/dashboard/ministries', labelKey: 'ministries', icon: Heart, pageKey: 'ministries' },
+  { href: '/dashboard/songs', labelKey: 'songs', icon: Music, pageKey: 'songs' },
+  { href: '/dashboard/forms', labelKey: 'forms', icon: FileText, pageKey: 'forms' },
+  { href: '/dashboard/links', labelKey: 'links', icon: Link2, pageKey: 'links' },
 ]
 
 export const adminNavItems: NavItemData[] = [
-  { href: '/dashboard/settings', label: 'Settings', icon: Settings, pageKey: 'settings' },
+  { href: '/dashboard/settings', labelKey: 'settings', icon: Settings, pageKey: 'settings' },
 ]

@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Checkbox } from '@/components/ui/checkbox'
 import { TableCell, TableRow } from '@/components/ui/table'
 import {
@@ -56,6 +57,7 @@ export const TaskRow = memo(function TaskRow({
   onDelete,
   weekStartsOn,
 }: TaskRowProps) {
+  const t = useTranslations('tasks')
   const isCompleted = task.status === 'completed'
 
   return (
@@ -149,14 +151,14 @@ export const TaskRow = memo(function TaskRow({
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => onEdit(task)}>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit
+              {t('actions.edit')}
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => onDelete(task)}
               className="text-red-600"
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Delete
+              {t('actions.delete')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

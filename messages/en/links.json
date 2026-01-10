@@ -1,0 +1,208 @@
+{
+  "title": "Links",
+  "description": "Create a public page with links for your church",
+
+  "status": {
+    "enabled": "Enabled",
+    "disabled": "Disabled"
+  },
+
+  "tabs": {
+    "links": "Links",
+    "settings": "Settings",
+    "analytics": "Analytics"
+  },
+
+  "linksList": {
+    "title": "Links",
+    "addLink": "Add Link",
+    "empty": {
+      "title": "No links yet",
+      "description": "Add your first link to get started"
+    }
+  },
+
+  "linkDialog": {
+    "addTitle": "Add Link",
+    "editTitle": "Edit Link",
+    "titleLabel": "Title *",
+    "titlePlaceholder": "Link title",
+    "urlLabel": "URL *",
+    "urlPlaceholder": "https://example.com",
+    "descriptionLabel": "Description (optional)",
+    "descriptionPlaceholder": "Brief description",
+    "visibilityLabel": "Who can see this link?",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "addButton": "Add Link"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "saving": "Saving...",
+    "saved": "Saved",
+
+    "basicInfo": {
+      "title": "Basic Info",
+      "pageTitle": "Page Title",
+      "pageTitlePlaceholder": "Your church name or custom title",
+      "bio": "Bio / Description",
+      "bioPlaceholder": "A short description for your link page",
+      "showChurchName": "Show Church Name"
+    },
+
+    "background": {
+      "title": "Background",
+      "useGradient": "Use Gradient",
+      "start": "Start",
+      "end": "End",
+      "color": "Color"
+    },
+
+    "cardStyle": {
+      "title": "Card Style",
+      "style": "Style",
+      "cornerRadius": "Corner Radius",
+      "styles": {
+        "filled": "Filled",
+        "outline": "Outline",
+        "shadow": "Shadow"
+      },
+      "radii": {
+        "square": "Square",
+        "small": "Small",
+        "medium": "Medium",
+        "large": "Large",
+        "pill": "Pill"
+      }
+    },
+
+    "socialLinks": {
+      "title": "Social Links",
+      "addButton": "Add Social Link"
+    },
+
+    "pageStatus": {
+      "title": "Status",
+      "enabled": "Links Page Enabled",
+      "disabledDescription": "When disabled, visitors see a 404"
+    }
+  },
+
+  "analytics": {
+    "empty": {
+      "title": "No analytics data yet",
+      "description": "Click data will appear here once people start clicking your links"
+    },
+    "stats": {
+      "totalClicks": "Total Clicks",
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "week": "Week",
+      "month": "Month"
+    },
+    "clicksByLink": "Clicks by Link",
+    "clicksOverTime": "Clicks Over Time",
+    "noLinkData": "No link data available",
+    "table": {
+      "link": "Link",
+      "total": "Total"
+    }
+  },
+
+  "preview": {
+    "label": "Preview",
+    "noActiveLinks": "No active links",
+    "poweredBy": "Powered by Koinonia"
+  },
+
+  "linkItem": {
+    "edit": "Edit",
+    "hideLink": "Hide link",
+    "showLink": "Show link",
+
+    "label": {
+      "button": "Label",
+      "tooltip": "Label options",
+      "hideLabel": "Hide label",
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline"
+    },
+
+    "icon": {
+      "button": "Icon",
+      "tooltip": "Choose icon",
+      "label": "Icon",
+      "remove": "Remove"
+    },
+
+    "image": {
+      "button": "Image",
+      "tooltip": "Add thumbnail",
+      "label": "Thumbnail Image",
+      "alt": "Link thumbnail",
+      "remove": "Remove Image",
+      "uploading": "Uploading...",
+      "clickToUpload": "Click to upload",
+      "hint": "PNG, JPG, WebP (max 5MB)"
+    },
+
+    "color": {
+      "button": "Color",
+      "tooltip": "Card color"
+    },
+
+    "size": {
+      "button": "Size",
+      "tooltip": "Card size",
+      "label": "Card Size"
+    },
+
+    "hover": {
+      "button": "Hover",
+      "tooltip": "Hover effect",
+      "label": "Hover Effect"
+    }
+  },
+
+  "visibility": {
+    "public": { "label": "Public", "description": "Anyone can see this link" },
+    "member": { "label": "Members", "description": "Logged-in church members" },
+    "volunteer": { "label": "Volunteers", "description": "Volunteers and above" },
+    "leader": { "label": "Leaders", "description": "Leaders and above" },
+    "admin": { "label": "Admins", "description": "Admins and owners only" }
+  },
+
+  "cardSize": {
+    "small": { "label": "Small", "description": "Compact card" },
+    "medium": { "label": "Medium", "description": "Standard card" },
+    "large": { "label": "Large", "description": "Featured card" }
+  },
+
+  "hoverEffect": {
+    "none": "None",
+    "scale": "Scale",
+    "glow": "Glow",
+    "lift": "Lift"
+  },
+
+  "toast": {
+    "pageEnabled": "Links page enabled",
+    "pageDisabled": "Links page disabled",
+    "reorderFailed": "Failed to reorder links",
+    "linkDeleted": "Link deleted",
+    "linkUpdated": "Link updated",
+    "linkCreated": "Link created",
+    "saveFailed": "Failed to save link",
+    "settingsSaveFailed": "Failed to save settings"
+  },
+
+  "validation": {
+    "titleRequired": "Title is required",
+    "urlRequired": "URL is required",
+    "invalidUrl": "Please enter a valid URL"
+  }
+}

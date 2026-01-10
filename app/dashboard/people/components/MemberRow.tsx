@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Checkbox } from '@/components/ui/checkbox'
 import { TableCell, TableRow } from '@/components/ui/table'
 import {
@@ -63,6 +64,7 @@ export const MemberRow = memo(function MemberRow({
   onDepartureChange,
   onBaptismChange,
 }: MemberRowProps) {
+  const t = useTranslations('people')
   const [departurePopoverOpen, setDeparturePopoverOpen] = useState(false)
 
   return (
@@ -82,11 +84,11 @@ export const MemberRow = memo(function MemberRow({
         <div className="flex items-center gap-2">
           <span>{member.first_name} {member.last_name}</span>
           {member.id === currentUserId && (
-            <span className="text-xs text-muted-foreground">(you)</span>
+            <span className="text-xs text-muted-foreground">{t('you')}</span>
           )}
           {member.member_type === 'offline' && (
             <span className="inline-flex items-center bg-amber-50 text-amber-700 border-amber-200 border rounded-full px-2 py-0.5 text-xs font-medium">
-              Offline
+              {t('offline')}
             </span>
           )}
         </div>
@@ -104,7 +106,7 @@ export const MemberRow = memo(function MemberRow({
                 <span
                   className={`cursor-pointer hover:opacity-80 transition-opacity ${getRoleBadgeClasses(member.role)} ${isUpdatingRole ? 'opacity-50' : ''}`}
                 >
-                  {isUpdatingRole ? 'Updating...' : member.role}
+                  {isUpdatingRole ? t('table.updating') : member.role}
                 </span>
               </button>
             </DropdownMenuTrigger>
@@ -237,10 +239,10 @@ export const MemberRow = memo(function MemberRow({
             </PopoverTrigger>
             <PopoverContent className="w-80 bg-white dark:bg-zinc-950 border shadow-lg">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Reason for Departure</label>
+                <label className="text-sm font-medium">{t('table.reasonForDeparture')}</label>
                 <Textarea
                   defaultValue={member.reason_for_departure || ''}
-                  placeholder="Enter reason for departure..."
+                  placeholder={t('table.enterReason')}
                   className="min-h-[80px]"
                   id={`reason-${member.id}`}
                 />
@@ -251,7 +253,7 @@ export const MemberRow = memo(function MemberRow({
                     className="!border !border-black dark:!border-white"
                     onClick={() => setDeparturePopoverOpen(false)}
                   >
-                    Cancel
+                    {t('actions.cancel')}
                   </Button>
                   <Button
                     size="sm"
@@ -262,7 +264,7 @@ export const MemberRow = memo(function MemberRow({
                       setDeparturePopoverOpen(false)
                     }}
                   >
-                    {isUpdatingDeparture ? 'Saving...' : 'Save'}
+                    {isUpdatingDeparture ? t('actions.saving') : t('actions.save')}
                   </Button>
                 </div>
               </div>

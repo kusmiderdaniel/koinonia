@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Loader2, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -38,6 +39,7 @@ export function SchedulingMatrix({
   onOpenLeaderPicker,
   onOpenSongEditor,
 }: SchedulingMatrixProps) {
+  const t = useTranslations('events.matrix')
   const queryClient = useQueryClient()
 
   // Filter state
@@ -172,7 +174,7 @@ export function SchedulingMatrix({
   if (error) {
     return (
       <div className="flex items-center justify-center h-96">
-        <p className="text-muted-foreground">Failed to load scheduling matrix</p>
+        <p className="text-muted-foreground">{t('loadError')}</p>
       </div>
     )
   }
@@ -202,7 +204,7 @@ export function SchedulingMatrix({
             onClick={() => setInvitationsDialogOpen(true)}
           >
             <Send className="w-4 h-4 mr-2" />
-            Send Invitations
+            {t('sendInvitations')}
           </Button>
         )}
       </div>
@@ -221,9 +223,9 @@ export function SchedulingMatrix({
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <p className="text-muted-foreground mb-2">No upcoming events found</p>
+              <p className="text-muted-foreground mb-2">{t('noEvents')}</p>
               <p className="text-sm text-muted-foreground">
-                Try adjusting your filters or create new events
+                {t('noEventsHint')}
               </p>
             </div>
           </div>

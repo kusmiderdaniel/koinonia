@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Dialog,
   DialogContent,
@@ -15,11 +16,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { toast } from 'sonner'
 import { createLink, updateLink } from '../actions'
-import {
-  VISIBILITY_LABELS,
-  type LinkTreeLinkRow,
-  type LinkVisibility,
-} from '../types'
+import type { LinkTreeLinkRow, LinkVisibility } from '../types'
 
 interface LinkDialogProps {
   open: boolean
@@ -28,7 +25,10 @@ interface LinkDialogProps {
   onSave: (link?: LinkTreeLinkRow) => void
 }
 
+const VISIBILITY_OPTIONS: LinkVisibility[] = ['public', 'member', 'volunteer', 'leader', 'admin']
+
 export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps) {
+  const t = useTranslations('links')
   const [isSaving, setIsSaving] = useState(false)
 
   // Form state
@@ -54,11 +54,11 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
 
   const handleSave = async () => {
     if (!title.trim()) {
-      toast.error('Title is required')
+      toast.error(t('validation.titleRequired'))
       return
     }
     if (!url.trim()) {
-      toast.error('URL is required')
+      toast.error(t('validation.urlRequired'))
       return
     }
 
@@ -66,7 +66,7 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
     try {
       new URL(url)
     } catch {
-      toast.error('Please enter a valid URL')
+      toast.error(t('validation.invalidUrl'))
       return
     }
 
@@ -89,11 +89,11 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success(link ? 'Link updated' : 'Link created')
+        toast.success(link ? t('toast.linkUpdated') : t('toast.linkCreated'))
         onSave(result.link as LinkTreeLinkRow)
       }
     } catch (error) {
-      toast.error('Failed to save link')
+      toast.error(t('toast.saveFailed'))
     } finally {
       setIsSaving(false)
     }
@@ -103,61 +103,59 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{link ? 'Edit Link' : 'Add Link'}</DialogTitle>
+          <DialogTitle>{link ? t('linkDialog.editTitle') : t('linkDialog.addTitle')}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           {/* Title */}
           <div className="space-y-2">
-            <Label htmlFor="link-title">Title *</Label>
+            <Label htmlFor="link-title">{t('linkDialog.titleLabel')}</Label>
             <Input
               id="link-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Link title"
+              placeholder={t('linkDialog.titlePlaceholder')}
             />
           </div>
 
           {/* URL */}
           <div className="space-y-2">
-            <Label htmlFor="link-url">URL *</Label>
+            <Label htmlFor="link-url">{t('linkDialog.urlLabel')}</Label>
             <Input
               id="link-url"
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://example.com"
+              placeholder={t('linkDialog.urlPlaceholder')}
             />
           </div>
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="link-description">Description (optional)</Label>
+            <Label htmlFor="link-description">{t('linkDialog.descriptionLabel')}</Label>
             <Textarea
               id="link-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Brief description"
+              placeholder={t('linkDialog.descriptionPlaceholder')}
               rows={2}
             />
           </div>
 
           {/* Visibility */}
           <div className="space-y-2">
-            <Label>Who can see this link?</Label>
+            <Label>{t('linkDialog.visibilityLabel')}</Label>
             <Select value={visibility} onValueChange={(v) => setVisibility(v as LinkVisibility)}>
               <SelectTrigger className="!border !border-black dark:!border-zinc-700">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="border border-black dark:border-zinc-700">
-                {(Object.entries(VISIBILITY_LABELS) as [LinkVisibility, { label: string; description: string }][]).map(
-                  ([value, { label, description }]) => (
-                    <SelectItem key={value} value={value}>
-                      <span className="font-medium">{label}</span>
-                      <span className="text-muted-foreground ml-2 text-sm">- {description}</span>
-                    </SelectItem>
-                  )
-                )}
+                {VISIBILITY_OPTIONS.map((value) => (
+                  <SelectItem key={value} value={value}>
+                    <span className="font-medium">{t(`visibility.${value}.label`)}</span>
+                    <span className="text-muted-foreground ml-2 text-sm">- {t(`visibility.${value}.description`)}</span>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -170,14 +168,14 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
             disabled={isSaving}
             className="!border !border-black dark:!border-white"
           >
-            Cancel
+            {t('linkDialog.cancel')}
           </Button>
           <Button
             onClick={handleSave}
             disabled={isSaving}
             className="!bg-brand hover:!bg-brand/90 !text-brand-foreground"
           >
-            {isSaving ? 'Saving...' : link ? 'Save Changes' : 'Add Link'}
+            {isSaving ? t('linkDialog.saving') : link ? t('linkDialog.saveChanges') : t('linkDialog.addButton')}
           </Button>
         </DialogFooter>
       </DialogContent>

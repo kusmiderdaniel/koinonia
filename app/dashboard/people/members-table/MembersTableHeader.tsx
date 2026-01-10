@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import {
   TableHead,
   TableHeader,
@@ -29,29 +30,31 @@ function HeaderWithTooltip({ label, tooltip }: { label: string; tooltip: string 
 }
 
 export function MembersTableHeader() {
+  const t = useTranslations('people')
+
   return (
     <TableHeader>
       <TableRow>
-        <TableHead className="w-[60px]">Active</TableHead>
-        <TableHead>Name</TableHead>
+        <TableHead className="w-[60px]">{t('tableHeader.active')}</TableHead>
+        <TableHead>{t('tableHeader.name')}</TableHead>
         <TableHead>
-          <HeaderWithTooltip label="Email" tooltip="Cannot be changed" />
+          <HeaderWithTooltip label={t('tableHeader.email')} tooltip={t('tableHeader.emailTooltip')} />
         </TableHead>
-        <TableHead>Role</TableHead>
-        <TableHead>Campus</TableHead>
-        <TableHead>Ministry Roles</TableHead>
+        <TableHead>{t('tableHeader.role')}</TableHead>
+        <TableHead>{t('tableHeader.campus')}</TableHead>
+        <TableHead>{t('tableHeader.ministryRoles')}</TableHead>
         <TableHead>
-          <HeaderWithTooltip label="Gender" tooltip="Can be changed in user's profile settings" />
+          <HeaderWithTooltip label={t('tableHeader.gender')} tooltip={t('tableHeader.genderTooltip')} />
         </TableHead>
         <TableHead>
-          <HeaderWithTooltip label="Date of Birth" tooltip="Can be changed in user's profile settings" />
+          <HeaderWithTooltip label={t('tableHeader.dateOfBirth')} tooltip={t('tableHeader.dateOfBirthTooltip')} />
         </TableHead>
-        <TableHead>Age</TableHead>
-        <TableHead className="w-[70px]">Baptized</TableHead>
-        <TableHead>Baptism Date</TableHead>
-        <TableHead>Departure Date</TableHead>
-        <TableHead>Departure Reason</TableHead>
-        <TableHead>Joined</TableHead>
+        <TableHead>{t('tableHeader.age')}</TableHead>
+        <TableHead className="w-[70px]">{t('tableHeader.baptized')}</TableHead>
+        <TableHead>{t('tableHeader.baptismDate')}</TableHead>
+        <TableHead>{t('tableHeader.departureDate')}</TableHead>
+        <TableHead>{t('tableHeader.departureReason')}</TableHead>
+        <TableHead>{t('tableHeader.joined')}</TableHead>
       </TableRow>
     </TableHeader>
   )

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
@@ -43,6 +44,7 @@ export function EventTasksTab({
   weekStartsOn = 0,
   initialTasks,
 }: EventTasksTabProps) {
+  const t = useTranslations('events.tasks')
   const isMobile = useIsMobile()
   const [tasks, setTasks] = useState<Task[]>(initialTasks || [])
   const [isLoading, setIsLoading] = useState(!initialTasks)
@@ -72,12 +74,12 @@ export function EventTasksTab({
     if (result.error) {
       toast.error(result.error)
     } else {
-      setTasks(prev => prev.map(t =>
-        t.id === taskId ? { ...t, status: newStatus } : t
+      setTasks(prev => prev.map(task =>
+        task.id === taskId ? { ...task, status: newStatus } : task
       ))
-      toast.success(newStatus === 'completed' ? 'Task completed!' : 'Status updated')
+      toast.success(newStatus === 'completed' ? t('taskCompleted') : t('statusUpdated'))
     }
-  }, [])
+  }, [t])
 
   const handleDeleteClick = useCallback((task: Task) => {
     setTaskToDelete(task)
@@ -116,13 +118,13 @@ export function EventTasksTab({
     if (result.error) {
       toast.error(result.error)
     } else {
-      setTasks(prev => prev.filter(t => t.id !== taskToDelete.id))
-      toast.success('Task deleted')
+      setTasks(prev => prev.filter(task => task.id !== taskToDelete.id))
+      toast.success(t('deleted'))
     }
 
     setDeleteConfirmOpen(false)
     setTaskToDelete(null)
-  }, [taskToDelete])
+  }, [taskToDelete, t])
 
   // Format due date with relative labels
   const formatDueDate = (dueDate: string | null) => {
@@ -131,10 +133,10 @@ export function EventTasksTab({
     const date = parseISO(dueDate)
 
     if (isToday(date)) {
-      return { label: 'Today', isOverdue: false, isUrgent: true }
+      return { label: t('today'), isOverdue: false, isUrgent: true }
     }
     if (isTomorrow(date)) {
-      return { label: 'Tomorrow', isOverdue: false, isUrgent: true }
+      return { label: t('tomorrow'), isOverdue: false, isUrgent: true }
     }
     if (isPast(date)) {
       return { label: format(date, 'MMM d'), isOverdue: true, isUrgent: false }
@@ -145,7 +147,7 @@ export function EventTasksTab({
   if (isLoading) {
     return (
       <div className="text-center py-8 text-muted-foreground">
-        <p className="text-sm">Loading tasks...</p>
+        <p className="text-sm">{t('loading')}</p>
       </div>
     )
   }
@@ -164,12 +166,12 @@ export function EventTasksTab({
                 onClick={onAddTask}
               >
                 <Plus className="w-3.5 h-3.5 mr-1" />
-                Add Task
+                {t('addTask')}
               </Button>
             )}
             {tasks.length > 0 && (
               <p className="text-xs text-muted-foreground">
-                {tasks.length} task{tasks.length !== 1 ? 's' : ''}
+                {t('taskCount', { count: tasks.length })}
               </p>
             )}
           </div>
@@ -178,7 +180,7 @@ export function EventTasksTab({
             <div className="flex items-center gap-3">
               {tasks.length > 0 && (
                 <p className="text-sm text-muted-foreground">
-                  {tasks.length} task{tasks.length !== 1 ? 's' : ''}
+                  {t('taskCount', { count: tasks.length })}
                 </p>
               )}
             </div>
@@ -191,7 +193,7 @@ export function EventTasksTab({
                   onClick={onAddTask}
                 >
                   <Plus className="w-4 h-4 mr-1" />
-                  Add Task
+                  {t('addTask')}
                 </Button>
               </div>
             )}
@@ -204,11 +206,11 @@ export function EventTasksTab({
         {tasks.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           <CheckSquare className="w-10 h-10 mx-auto mb-2 opacity-50" />
-          <p className="text-sm">No tasks linked to this event</p>
+          <p className="text-sm">{t('noTasks')}</p>
           {canManage && (
             <Button variant="outline" size="sm" className="mt-4 !rounded-full !border-black dark:!border-white" onClick={onAddTask}>
               <Plus className="w-4 h-4 mr-1" />
-              Add a task
+              {t('addATask')}
             </Button>
           )}
         </div>
@@ -311,7 +313,7 @@ export function EventTasksTab({
                           className="text-red-600 cursor-pointer"
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
+                          {t('deleteTask')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -327,9 +329,9 @@ export function EventTasksTab({
       <ConfirmDialog
         open={deleteConfirmOpen}
         onOpenChange={setDeleteConfirmOpen}
-        title="Delete Task"
-        description={`Are you sure you want to delete "${taskToDelete?.title}"? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={t('deleteTask')}
+        description={t('deleteConfirmation', { name: taskToDelete?.title ?? '' })}
+        confirmLabel={t('deleteTask')}
         destructive
         onConfirm={handleDeleteConfirm}
         isLoading={isDeleting}

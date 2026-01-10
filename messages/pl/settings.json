@@ -1,0 +1,229 @@
+{
+  "title": "Ustawienia kościoła",
+  "subtitle": "Zarządzaj szczegółami i preferencjami kościoła",
+  "subtitleDesktop": "Zarządzaj szczegółami kościoła i zapraszaj nowych członków",
+  "adminOnlyMobile": "Tylko administratorzy mogą modyfikować ustawienia.",
+  "adminOnly": "Tylko administratorzy kościoła mogą modyfikować ustawienia. Skontaktuj się z administratorem w celu zmian.",
+
+  "tabs": {
+    "details": "Szczegóły",
+    "invite": "Zaproś członków",
+    "locations": "Lokalizacje",
+    "campuses": "Kampusy",
+    "presets": "Elementy agendy",
+    "preferences": "Preferencje",
+    "transfer": "Przekaż własność"
+  },
+
+  "tabDescriptions": {
+    "details": "Nazwa, logo, dane kontaktowe",
+    "invite": "Udostępnij kod dołączenia nowym członkom",
+    "locations": "Zarządzaj lokalizacjami kościoła",
+    "campuses": "Zarządzaj kampusami kościoła",
+    "presets": "Domyślne szablony elementów agendy",
+    "preferences": "Ustawienia aplikacji i domyślne",
+    "transfer": "Przekaż kościół innemu administratorowi"
+  },
+
+  "details": {
+    "logo": {
+      "label": "Logo kościoła",
+      "upload": "Prześlij",
+      "uploading": "Przesyłanie...",
+      "remove": "Usuń",
+      "removing": "Usuwanie...",
+      "hint": "Kwadratowy obraz, min. 200x200px. Maks. 5MB.",
+      "uploadSuccess": "Logo zostało przesłane",
+      "removeSuccess": "Logo zostało usunięte"
+    },
+    "name": "Nazwa kościoła *",
+    "email": "E-mail kościoła",
+    "emailPlaceholder": "info@twojkosciol.pl",
+    "phone": "Telefon",
+    "phonePlaceholder": "+48 123 456 789",
+    "website": "Strona internetowa",
+    "websitePlaceholder": "https://twojkosciol.pl",
+    "address": "Adres",
+    "addressPlaceholder": "ul. Główna 123",
+    "country": "Kraj",
+    "city": "Miasto",
+    "zipCode": "Kod pocztowy",
+    "saving": "Zapisywanie...",
+    "saveChanges": "Zapisz zmiany"
+  },
+
+  "invite": {
+    "title": "Zaproś członków",
+    "description": "Udostępnij kod dołączenia, aby zaprosić osoby do kościoła",
+    "joinCodeLabel": "Kod dołączenia do kościoła",
+    "copy": "Kopiuj",
+    "copied": "Skopiowano!",
+    "regenerate": "Wygeneruj nowy",
+    "regenerating": "Generowanie...",
+    "shareHint": "Udostępnij ten kod nowym członkom, aby połączyć ich z kościołem.",
+    "regenerateDialog": {
+      "title": "Wygenerować nowy kod?",
+      "description": "Spowoduje to utworzenie nowego kodu i unieważnienie obecnego. Osoby ze starym kodem nie będą mogły dołączyć.",
+      "cancel": "Anuluj",
+      "confirm": "Wygeneruj nowy"
+    }
+  },
+
+  "locations": {
+    "title": "Lokalizacje",
+    "description": "Zarządzaj miejscami i salami kościoła",
+    "addLocation": "Dodaj lokalizację",
+    "empty": {
+      "title": "Brak lokalizacji",
+      "description": "Dodaj pierwszą lokalizację do wykorzystania w wydarzeniach"
+    },
+    "dialog": {
+      "addTitle": "Dodaj lokalizację",
+      "editTitle": "Edytuj lokalizację",
+      "addDescription": "Dodaj nową lokalizację dla wydarzeń.",
+      "editDescription": "Zaktualizuj szczegóły lokalizacji.",
+      "nameLabel": "Nazwa lokalizacji *",
+      "namePlaceholder": "np. Sala główna",
+      "addressLabel": "Adres",
+      "addressPlaceholder": "np. ul. Kościelna 123",
+      "notesLabel": "Notatki",
+      "notesPlaceholder": "np. Wejście od strony parkingu",
+      "campusLabel": "Kampus",
+      "campusPlaceholder": "Wszystkie kampusy",
+      "cancel": "Anuluj",
+      "saving": "Zapisywanie...",
+      "saveChanges": "Zapisz zmiany",
+      "addButton": "Dodaj lokalizację"
+    },
+    "deleteDialog": {
+      "title": "Usunąć lokalizację?",
+      "description": "Czy na pewno chcesz usunąć \"{name}\"? Tej operacji nie można cofnąć.",
+      "cancel": "Anuluj",
+      "confirm": "Usuń"
+    }
+  },
+
+  "campuses": {
+    "title": "Kampusy",
+    "description": "Zarządzaj kampusami kościoła",
+    "addCampus": "Dodaj kampus",
+    "default": "Domyślny",
+    "setDefault": "Ustaw jako domyślny",
+    "empty": {
+      "title": "Brak kampusów",
+      "description": "Dodaj pierwszy kampus, aby uporządkować lokalizacje kościoła"
+    },
+    "dialog": {
+      "addTitle": "Dodaj kampus",
+      "editTitle": "Edytuj kampus",
+      "addDescription": "Dodaj nowy kampus dla kościoła.",
+      "editDescription": "Zaktualizuj szczegóły kampusu.",
+      "nameLabel": "Nazwa kampusu *",
+      "namePlaceholder": "np. Kampus główny",
+      "colorLabel": "Kolor kampusu",
+      "isDefaultLabel": "Ustaw jako domyślny kampus",
+      "isDefaultHint": "Nowi członkowie będą domyślnie przypisywani do tego kampusu",
+      "cancel": "Anuluj",
+      "saving": "Zapisywanie...",
+      "saveChanges": "Zapisz zmiany",
+      "addButton": "Dodaj kampus"
+    },
+    "deleteDialog": {
+      "title": "Usunąć kampus?",
+      "description": "Czy na pewno chcesz usunąć \"{name}\"? Członkowie i wydarzenia przypisane do tego kampusu będą wymagały ponownego przypisania. Tej operacji nie można cofnąć.",
+      "cancel": "Anuluj",
+      "confirm": "Usuń"
+    }
+  },
+
+  "presets": {
+    "title": "Elementy agendy",
+    "description": "Wielokrotnego użytku elementy agendy dla wydarzeń",
+    "addItem": "Dodaj element",
+    "empty": {
+      "title": "Brak elementów agendy",
+      "description": "Dodaj pierwszy element agendy do wykorzystania w wydarzeniach"
+    },
+    "dialog": {
+      "addTitle": "Dodaj element agendy",
+      "editTitle": "Edytuj element agendy",
+      "addDescription": "Utwórz wielokrotnego użytku element agendy dla wydarzeń i szablonów.",
+      "editDescription": "Zaktualizuj szczegóły elementu agendy. Zmiany nie wpłyną na elementy już dodane do wydarzeń.",
+      "titleLabel": "Tytuł *",
+      "titlePlaceholder": "np. Powitanie i ogłoszenia",
+      "durationLabel": "Czas trwania (MM:SS) *",
+      "durationError": "Czas trwania musi być większy niż 0",
+      "ministryLabel": "Służba",
+      "ministryPlaceholder": "Wybierz służbę...",
+      "noMinistry": "Bez przypisanej służby",
+      "descriptionLabel": "Opis",
+      "descriptionPlaceholder": "Opcjonalne notatki lub szczegóły...",
+      "cancel": "Anuluj",
+      "saving": "Zapisywanie...",
+      "saveChanges": "Zapisz zmiany",
+      "createButton": "Utwórz element agendy",
+      "createdSuccess": "Element agendy został utworzony",
+      "updatedSuccess": "Element agendy został zaktualizowany"
+    },
+    "deleteDialog": {
+      "title": "Usunąć element agendy?",
+      "description": "Spowoduje to usunięcie \"{title}\" z biblioteki elementów agendy. Elementy już dodane do wydarzeń lub szablonów nie zostaną zmienione.",
+      "cancel": "Anuluj",
+      "confirm": "Usuń",
+      "deleting": "Usuwanie...",
+      "deletedSuccess": "Element agendy został usunięty"
+    }
+  },
+
+  "preferences": {
+    "title": "Preferencje kościoła",
+    "description": "Skonfiguruj ustawienia regionalne dla kościoła",
+    "timezone": {
+      "label": "Strefa czasowa",
+      "placeholder": "Wybierz strefę czasową",
+      "hint": "Ta strefa czasowa będzie używana do wyświetlania czasów wydarzeń"
+    },
+    "firstDayOfWeek": {
+      "label": "Pierwszy dzień tygodnia",
+      "placeholder": "Wybierz pierwszy dzień",
+      "monday": "Poniedziałek",
+      "sunday": "Niedziela",
+      "hint": "Wybierz, od którego dnia zaczyna się tydzień w kalendarzu"
+    },
+    "timeFormat": {
+      "label": "Format czasu",
+      "placeholder": "Wybierz format czasu",
+      "24h": "24-godzinny (14:30)",
+      "12h": "12-godzinny (2:30 PM)",
+      "hint": "Wybierz sposób wyświetlania czasu w aplikacji"
+    },
+    "eventVisibility": {
+      "label": "Domyślna widoczność wydarzeń",
+      "members": "Wszyscy członkowie",
+      "membersDescription": "Widoczne dla wszystkich członków kościoła",
+      "volunteers": "Wolontariusze+",
+      "volunteersDescription": "Widoczne dla wolontariuszy i wyżej",
+      "leaders": "Liderzy+",
+      "leadersDescription": "Widoczne tylko dla liderów i administratorów",
+      "hint": "Nowe wydarzenia będą domyślnie miały ten poziom widoczności"
+    },
+    "saving": "Zapisywanie...",
+    "savePreferences": "Zapisz preferencje"
+  },
+
+  "transfer": {
+    "title": "Przekaż własność",
+    "description": "Przekaż własność kościoła administratorowi. Tej operacji nie można cofnąć. Po przekazaniu staniesz się administratorem.",
+    "noAdmins": "Brak dostępnych administratorów do przekazania własności. Najpierw awansuj członka na administratora na stronie Osoby.",
+    "selectNewOwner": "Wybierz nowego właściciela",
+    "selectHint": "Tylko administratorzy mogą zostać nowym właścicielem. Kliknij, aby wybrać.",
+    "transferButton": "Przekaż własność",
+    "dialog": {
+      "title": "Przekazać własność kościoła?",
+      "description": "Zamierzasz przekazać własność użytkownikowi <strong>{name}</strong>. Tej operacji nie można cofnąć. Staniesz się administratorem i stracisz uprawnienia właściciela.",
+      "cancel": "Anuluj",
+      "confirm": "Tak, przekaż własność",
+      "transferring": "Przekazywanie..."
+    }
+  }
+}

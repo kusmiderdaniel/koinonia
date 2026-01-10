@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { EntityPicker } from '@/components/pickers'
 import type { Person } from '../types'
 
@@ -19,6 +20,8 @@ export const MemberPicker = memo(function MemberPicker({
   currentAssigneeId,
   onSelect,
 }: MemberPickerProps) {
+  const t = useTranslations('tasks')
+
   return (
     <EntityPicker
       open={open}
@@ -26,21 +29,21 @@ export const MemberPicker = memo(function MemberPicker({
       items={members}
       selectedId={currentAssigneeId}
       onSelect={onSelect}
-      title="Assign Member"
-      description="Select a church member to assign to this task"
-      searchPlaceholder="Search by name..."
+      title={t('memberPicker.title')}
+      description={t('memberPicker.description')}
+      searchPlaceholder={t('memberPicker.searchPlaceholder')}
       getSearchableText={(member) => `${member.first_name} ${member.last_name}`}
       allowClear={!!currentAssigneeId}
-      clearLabel="Unassign task"
-      emptyMessage="No members found"
-      noResultsMessage="No members found matching your search"
+      clearLabel={t('memberPicker.unassign')}
+      emptyMessage={t('memberPicker.noMembersFound')}
+      noResultsMessage={t('memberPicker.noMembersMatch')}
       renderItem={(member, isSelected) => (
         <>
           <span className="font-medium">
             {member.first_name} {member.last_name}
           </span>
           {isSelected && (
-            <span className="ml-2 text-xs text-brand">(Currently assigned)</span>
+            <span className="ml-2 text-xs text-brand">{t('memberPicker.currentlyAssigned')}</span>
           )}
         </>
       )}

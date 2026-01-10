@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -74,6 +75,7 @@ export function TaskDialogFormFields({
   setShowMemberPicker,
   setShowEventPicker,
 }: TaskDialogFormFieldsProps) {
+  const t = useTranslations('tasks')
   const selectedMember = formState.assignedTo
     ? members.find((m) => m.id === formState.assignedTo)
     : null
@@ -85,12 +87,12 @@ export function TaskDialogFormFields({
     <div className="grid gap-4 py-4">
       {/* Title */}
       <div className="grid gap-2">
-        <Label htmlFor="title">Title *</Label>
+        <Label htmlFor="title">{t('dialog.titleLabel')}</Label>
         <Input
           id="title"
           value={formState.title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter task title"
+          placeholder={t('dialog.titlePlaceholder')}
           autoFocus
         />
       </div>
@@ -98,7 +100,7 @@ export function TaskDialogFormFields({
       {/* Status (only show when editing) */}
       {isEditing && (
         <div className="grid gap-2">
-          <Label>Status</Label>
+          <Label>{t('dialog.statusLabel')}</Label>
           <Select
             value={formState.status}
             onValueChange={(v) => setStatus(v as TaskStatus)}
@@ -111,16 +113,16 @@ export function TaskDialogFormFields({
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-zinc-950 border border-input">
               <SelectItem value="pending" className={SELECT_ITEM_CLASS}>
-                Pending
+                {t('status.pending')}
               </SelectItem>
               <SelectItem value="in_progress" className={SELECT_ITEM_CLASS}>
-                In Progress
+                {t('status.in_progress')}
               </SelectItem>
               <SelectItem value="completed" className={SELECT_ITEM_CLASS}>
-                Completed
+                {t('status.completed')}
               </SelectItem>
               <SelectItem value="cancelled" className={SELECT_ITEM_CLASS}>
-                Cancelled
+                {t('status.cancelled')}
               </SelectItem>
             </SelectContent>
           </Select>
@@ -130,7 +132,7 @@ export function TaskDialogFormFields({
       {/* Row 1: Campus & Ministry */}
       <div className="grid grid-cols-2 gap-4">
         <div className="grid gap-2">
-          <Label>Campus</Label>
+          <Label>{t('dialog.campusLabel')}</Label>
           <Select
             value={formState.campusId || '_none'}
             onValueChange={(v) => setCampusId(v === '_none' ? '' : v)}
@@ -139,11 +141,11 @@ export function TaskDialogFormFields({
               centered
               className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
             >
-              <SelectValue placeholder="None" />
+              <SelectValue placeholder={t('dialog.none')} />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-zinc-950 border border-input">
               <SelectItem value="_none" className={SELECT_ITEM_CLASS}>
-                None
+                {t('dialog.none')}
               </SelectItem>
               {campuses.map((campus) => (
                 <SelectItem
@@ -166,7 +168,7 @@ export function TaskDialogFormFields({
           </Select>
         </div>
         <div className="grid gap-2">
-          <Label>Ministry</Label>
+          <Label>{t('dialog.ministryLabel')}</Label>
           <Select
             value={formState.ministryId || '_none'}
             onValueChange={(v) => setMinistryId(v === '_none' ? '' : v)}
@@ -175,11 +177,11 @@ export function TaskDialogFormFields({
               centered
               className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
             >
-              <SelectValue placeholder="None" />
+              <SelectValue placeholder={t('dialog.none')} />
             </SelectTrigger>
             <SelectContent className="bg-white dark:bg-zinc-950 border border-input">
               <SelectItem value="_none" className={SELECT_ITEM_CLASS}>
-                None
+                {t('dialog.none')}
               </SelectItem>
               {filteredMinistries.map((ministry) => (
                 <SelectItem
@@ -204,16 +206,16 @@ export function TaskDialogFormFields({
       {/* Row 2: Due Date & Assignment */}
       <div className="grid grid-cols-2 gap-4">
         <div className="grid gap-2">
-          <Label>Due Date</Label>
+          <Label>{t('dialog.dueDateLabel')}</Label>
           <DatePicker
             value={formState.dueDate}
             onChange={setDueDate}
-            placeholder="Pick a date"
+            placeholder={t('dates.pickDate')}
             weekStartsOn={weekStartsOn}
           />
         </div>
         <div className="grid gap-2">
-          <Label>Assign To</Label>
+          <Label>{t('dialog.assignToLabel')}</Label>
           <Button
             type="button"
             variant="outline"
@@ -224,7 +226,7 @@ export function TaskDialogFormFields({
             {selectedMember ? (
               `${selectedMember.first_name} ${selectedMember.last_name}`
             ) : (
-              <span className="text-muted-foreground">Select a person</span>
+              <span className="text-muted-foreground">{t('dialog.selectPerson')}</span>
             )}
           </Button>
           <MemberPicker
@@ -240,7 +242,7 @@ export function TaskDialogFormFields({
       {/* Row 3: Link to Event & Priority */}
       <div className="grid grid-cols-2 gap-4">
         <div className="grid gap-2">
-          <Label>Link to Event</Label>
+          <Label>{t('dialog.linkToEventLabel')}</Label>
           <Button
             type="button"
             variant="outline"
@@ -251,7 +253,7 @@ export function TaskDialogFormFields({
             {selectedEvent ? (
               <span className="truncate">{selectedEvent.title}</span>
             ) : (
-              <span className="text-muted-foreground">None</span>
+              <span className="text-muted-foreground">{t('dialog.none')}</span>
             )}
           </Button>
           <EventPicker
@@ -264,7 +266,7 @@ export function TaskDialogFormFields({
           />
         </div>
         <div className="grid gap-2">
-          <Label>Priority</Label>
+          <Label>{t('dialog.priorityLabel')}</Label>
           <Select
             value={formState.priority}
             onValueChange={(v) => setPriority(v as TaskPriority)}
@@ -279,25 +281,25 @@ export function TaskDialogFormFields({
               <SelectItem value="low" className={SELECT_ITEM_CLASS}>
                 <span className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-gray-400" />
-                  Low
+                  {t('priority.low')}
                 </span>
               </SelectItem>
               <SelectItem value="medium" className={SELECT_ITEM_CLASS}>
                 <span className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-blue-400" />
-                  Medium
+                  {t('priority.medium')}
                 </span>
               </SelectItem>
               <SelectItem value="high" className={SELECT_ITEM_CLASS}>
                 <span className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-orange-400" />
-                  High
+                  {t('priority.high')}
                 </span>
               </SelectItem>
               <SelectItem value="urgent" className={SELECT_ITEM_CLASS}>
                 <span className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-red-400" />
-                  Urgent
+                  {t('priority.urgent')}
                 </span>
               </SelectItem>
             </SelectContent>
@@ -307,12 +309,12 @@ export function TaskDialogFormFields({
 
       {/* Description */}
       <div className="grid gap-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">{t('dialog.descriptionLabel')}</Label>
         <Textarea
           id="description"
           value={formState.description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Add more details about the task..."
+          placeholder={t('dialog.descriptionPlaceholder')}
           rows={3}
         />
       </div>

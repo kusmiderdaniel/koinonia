@@ -1,0 +1,99 @@
+{
+  "signOut": "Sign Out",
+  "needHelp": "Need help? Contact us at",
+  "errors": {
+    "churchNotFound": "Church not found. Please check the join code and try again.",
+    "generic": "An unexpected error occurred"
+  },
+  "main": {
+    "title": "Welcome to Koinonia",
+    "description": "Let's get you set up. Are you starting a new church or joining an existing one?",
+    "createChurch": {
+      "title": "Create a New Church",
+      "description": "Set up your church organization and invite others",
+      "feature1": "Full administrative access",
+      "feature2": "Manage ministries and events",
+      "feature3": "Invite volunteers and leaders",
+      "feature4": "Get a unique join code for members",
+      "button": "Create Church"
+    },
+    "joinChurch": {
+      "title": "Join Existing Church",
+      "description": "Connect with your church and start volunteering",
+      "feature1": "Sign up for events and services",
+      "feature2": "Manage your availability",
+      "feature3": "Connect with your ministry teams",
+      "feature4": "Receive notifications and updates",
+      "button": "Join Church"
+    }
+  },
+  "createChurch": {
+    "title": "Create Your Church",
+    "description": "Set up your church organization and start inviting your team",
+    "basicInfo": {
+      "title": "Basic Information",
+      "churchName": "Church Name",
+      "churchNamePlaceholder": "First Baptist Church",
+      "churchUrl": "Your Church URL",
+      "churchUrlPlaceholder": "your-church",
+      "subdomainAvailable": "This subdomain is available!",
+      "subdomainUnavailable": "This subdomain is not available"
+    },
+    "contact": {
+      "title": "Contact Information",
+      "email": "Church Email",
+      "emailPlaceholder": "info@yourchurch.org",
+      "phone": "Church Phone",
+      "phonePlaceholder": "(555) 123-4567"
+    },
+    "location": {
+      "title": "Location",
+      "optional": "(Optional)",
+      "address": "Address",
+      "addressPlaceholder": "123 Main Street",
+      "city": "City",
+      "cityPlaceholder": "New York",
+      "zipCode": "ZIP Code",
+      "zipCodePlaceholder": "10001",
+      "country": "Country"
+    },
+    "back": "Back",
+    "submit": "Create Church",
+    "submitting": "Creating...",
+    "error": "An unexpected error occurred"
+  },
+  "joinChurch": {
+    "codeStep": {
+      "title": "Join Your Church",
+      "description": "Enter the 6-character join code from your church admin",
+      "sectionTitle": "Enter Join Code",
+      "placeholder": "ABC123",
+      "hint": "Ask your church admin for the 6-character code",
+      "back": "Back",
+      "continue": "Continue",
+      "validating": "Validating..."
+    },
+    "campusStep": {
+      "title": "Join {churchName}",
+      "description": "Complete your profile to join the church",
+      "selectCampus": {
+        "title": "Select Your Campus",
+        "mainCampus": "Main Campus"
+      },
+      "profileInfo": {
+        "title": "Your Information",
+        "optional": "(Optional)",
+        "phone": "Phone Number",
+        "phonePlaceholder": "(555) 123-4567",
+        "dateOfBirth": "Date of Birth",
+        "gender": "Gender",
+        "genderPlaceholder": "Select...",
+        "male": "Male",
+        "female": "Female"
+      },
+      "back": "Back",
+      "submit": "Join Church",
+      "submitting": "Joining..."
+    }
+  }
+}

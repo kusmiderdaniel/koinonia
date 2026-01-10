@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -11,27 +12,30 @@ import { useProfilePageState } from './useProfilePageState'
 import { PersonalInfoCard } from './PersonalInfoCard'
 import { PasswordChangeCard } from './PasswordChangeCard'
 import { NotificationSettingsCard } from './NotificationSettingsCard'
+import { LanguageSettingsCard } from './LanguageSettingsCard'
 import { isLeaderOrAbove } from '@/lib/permissions'
 
-type TabKey = 'personal' | 'password' | 'notifications'
+type TabKey = 'personal' | 'password' | 'notifications' | 'language'
 
 interface TabItem {
   key: TabKey
-  label: string
-  description: string
+  labelKey: string
+  descriptionKey: string
   show: boolean
 }
 
 export function ProfilePageClient() {
+  const t = useTranslations('profile')
   const state = useProfilePageState()
   const isMobile = useIsMobile()
   const showNotificationSettings = isLeaderOrAbove(state.userRole)
   const [mobileSelectedTab, setMobileSelectedTab] = useState<TabKey | null>(null)
 
   const tabItems: TabItem[] = [
-    { key: 'personal', label: 'Personal Information', description: 'Name, email, phone, and more', show: true },
-    { key: 'password', label: 'Password', description: 'Change your password', show: true },
-    { key: 'notifications', label: 'Notification Settings', description: 'Manage notification preferences', show: showNotificationSettings },
+    { key: 'personal', labelKey: 'tabs.personal', descriptionKey: 'tabDescriptions.personal', show: true },
+    { key: 'password', labelKey: 'tabs.password', descriptionKey: 'tabDescriptions.password', show: true },
+    { key: 'notifications', labelKey: 'tabs.notifications', descriptionKey: 'tabDescriptions.notifications', show: showNotificationSettings },
+    { key: 'language', labelKey: 'tabs.language', descriptionKey: 'tabDescriptions.language', show: true },
   ]
 
   const visibleTabs = tabItems.filter(t => t.show)
@@ -40,7 +44,7 @@ export function ProfilePageClient() {
   if (state.isLoadingData) {
     return (
       <div className="flex h-[calc(100vh-3.5rem)] md:h-screen items-center justify-center">
-        <LoadingState message="Loading profile..." />
+        <LoadingState message={t('loading')} />
       </div>
     )
   }
@@ -120,6 +124,8 @@ export function ProfilePageClient() {
             />
           </>
         ) : null
+      case 'language':
+        return <LanguageSettingsCard currentLanguage={state.language} />
       default:
         return null
     }
@@ -143,15 +149,15 @@ export function ProfilePageClient() {
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <div>
-                  <h1 className="text-lg font-bold">{selectedTabItem?.label}</h1>
-                  <p className="text-xs text-muted-foreground">{selectedTabItem?.description}</p>
+                  <h1 className="text-lg font-bold">{selectedTabItem ? t(selectedTabItem.labelKey) : ''}</h1>
+                  <p className="text-xs text-muted-foreground">{selectedTabItem ? t(selectedTabItem.descriptionKey) : ''}</p>
                 </div>
               </div>
             ) : (
               <div>
-                <h1 className="text-xl font-bold">Your Profile</h1>
+                <h1 className="text-xl font-bold">{t('title')}</h1>
                 <p className="text-sm text-muted-foreground">
-                  Manage your account settings
+                  {t('subtitle')}
                 </p>
               </div>
             )}
@@ -174,8 +180,8 @@ export function ProfilePageClient() {
                     className="w-full flex items-center justify-between p-4 border border-black dark:border-zinc-700 rounded-lg bg-card hover:bg-muted/50 transition-colors text-left"
                   >
                     <div>
-                      <div className="font-medium">{tab.label}</div>
-                      <div className="text-sm text-muted-foreground">{tab.description}</div>
+                      <div className="font-medium">{t(tab.labelKey)}</div>
+                      <div className="text-sm text-muted-foreground">{t(tab.descriptionKey)}</div>
                     </div>
                     <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
                   </button>
@@ -194,9 +200,9 @@ export function ProfilePageClient() {
       <div className="flex-1 flex flex-col p-6 overflow-hidden">
         <div className="flex items-center justify-between gap-4 mb-4 shrink-0">
           <div>
-            <h1 className="text-2xl font-bold">Your Profile</h1>
+            <h1 className="text-2xl font-bold">{t('title')}</h1>
             <p className="text-muted-foreground">
-              Manage your account settings
+              {t('subtitle')}
             </p>
           </div>
         </div>
@@ -210,22 +216,28 @@ export function ProfilePageClient() {
                   value="personal"
                   className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
                 >
-                  Personal Information
+                  {t('tabs.personal')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="password"
                   className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
                 >
-                  Password
+                  {t('tabs.password')}
                 </TabsTrigger>
                 {showNotificationSettings && (
                   <TabsTrigger
                     value="notifications"
                     className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
                   >
-                    Notification Settings
+                    {t('tabs.notifications')}
                   </TabsTrigger>
                 )}
+                <TabsTrigger
+                  value="language"
+                  className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
+                >
+                  {t('tabs.language')}
+                </TabsTrigger>
               </TabsList>
             </div>
 
@@ -302,6 +314,10 @@ export function ProfilePageClient() {
                     />
                   </TabsContent>
                 )}
+
+                <TabsContent value="language" className="mt-0 h-full">
+                  <LanguageSettingsCard currentLanguage={state.language} />
+                </TabsContent>
               </div>
             </div>
           </Tabs>

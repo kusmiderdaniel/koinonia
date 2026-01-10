@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { useDebouncedValue } from '@/lib/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -45,6 +46,8 @@ export function LocationPicker({
   onSelect,
   filterByCampusIds = [],
 }: LocationPickerProps) {
+  const t = useTranslations('events.location')
+  const tActions = useTranslations('events.actions')
   const [locations, setLocations] = useState<Location[]>([])
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebouncedValue(search, 300)
@@ -139,11 +142,11 @@ export function LocationPicker({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>{showNewForm ? 'New Location' : 'Choose Location'}</DialogTitle>
+          <DialogTitle>{showNewForm ? t('newLocation') : t('chooseLocation')}</DialogTitle>
           <DialogDescription>
             {showNewForm
-              ? 'Create a new location for this event and to use it in the future.'
-              : 'Select a location for this event or create a new one'}
+              ? t('createDescription')
+              : t('selectDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -156,31 +159,31 @@ export function LocationPicker({
         {showNewForm ? (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="newLocationName">Location Name *</Label>
+              <Label htmlFor="newLocationName">{t('nameRequired')}</Label>
               <Input
                 id="newLocationName"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                placeholder="e.g., Main Sanctuary"
+                placeholder={t('namePlaceholder')}
                 autoFocus
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="newLocationAddress">Address</Label>
+              <Label htmlFor="newLocationAddress">{t('addressLabel')}</Label>
               <Input
                 id="newLocationAddress"
                 value={newAddress}
                 onChange={(e) => setNewAddress(e.target.value)}
-                placeholder="e.g., 123 Church Street"
+                placeholder={t('addressPlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="newLocationNotes">Notes</Label>
+              <Label htmlFor="newLocationNotes">{t('notesLabel')}</Label>
               <Input
                 id="newLocationNotes"
                 value={newNotes}
                 onChange={(e) => setNewNotes(e.target.value)}
-                placeholder="e.g., Enter through side door"
+                placeholder={t('notesPlaceholder')}
               />
             </div>
             <DialogFooter className="flex justify-end gap-3 pt-4 !bg-transparent !border-0 !mx-0 !mb-0 !p-0">
@@ -196,7 +199,7 @@ export function LocationPicker({
                 }}
                 disabled={isCreating}
               >
-                Back
+                {tActions('back')}
               </Button>
               <Button
                 type="button"
@@ -205,7 +208,7 @@ export function LocationPicker({
                 disabled={isCreating || !newName.trim()}
                 className="!border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
               >
-                {isCreating ? 'Creating...' : 'Create & Select'}
+                {isCreating ? t('creating') : t('createAndSelect')}
               </Button>
             </DialogFooter>
           </div>
@@ -215,7 +218,7 @@ export function LocationPicker({
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Search locations..."
+                placeholder={t('searchPlaceholder')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9"
@@ -226,15 +229,15 @@ export function LocationPicker({
             <div className="max-h-[300px] overflow-y-auto -mx-4 px-4">
               {isLoading ? (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  Loading locations...
+                  {t('loading')}
                 </p>
               ) : filteredLocations.length === 0 ? (
                 <div className="text-center py-6">
                   <MapPin className="w-10 h-10 mx-auto mb-2 opacity-50" />
                   <p className="text-sm text-muted-foreground">
                     {locations.length === 0
-                      ? 'No locations yet'
-                      : 'No locations found'}
+                      ? t('noLocations')
+                      : t('noLocationsFound')}
                   </p>
                 </div>
               ) : (
@@ -287,7 +290,7 @@ export function LocationPicker({
                 onClick={() => setShowNewForm(true)}
               >
                 <Plus className="w-4 h-4 mr-2" />
-                New Location
+                {t('newLocation')}
               </Button>
               <div className="flex gap-2">
                 {selectedLocation && (
@@ -298,7 +301,7 @@ export function LocationPicker({
                     className="rounded-full"
                     onClick={handleClearSelection}
                   >
-                    Clear
+                    {tActions('clear')}
                   </Button>
                 )}
                 <Button
@@ -308,7 +311,7 @@ export function LocationPicker({
                   className="rounded-full"
                   onClick={() => onOpenChange(false)}
                 >
-                  Close
+                  {tActions('close')}
                 </Button>
               </div>
             </div>

@@ -1,0 +1,36 @@
+{
+  "title": "Integracja kalendarza",
+  "description": "Subskrybuj kalendarze kościoła w Kalendarzu Google, Kalendarzu Apple lub innej aplikacji kalendarzowej",
+  "loading": "Ładowanie ustawień kalendarza...",
+
+  "personal": {
+    "title": "Mój kalendarz",
+    "description": "Wydarzenia, do których masz przypisania (zaproszone lub zaakceptowane) oraz prywatne wydarzenia, na które jesteś zaproszony. Twoja rola w każdym wydarzeniu jest pokazana w opisie.",
+    "copyUrl": "Kopiuj link",
+    "addToCalendar": "Dodaj do kalendarza",
+    "regenerateLink": "Wygeneruj nowy link",
+    "privateWarning": "Zachowaj ten link jako prywatny. Każdy, kto ma ten link, może zobaczyć Twoje przypisane wydarzenia."
+  },
+
+  "regenerate": {
+    "title": "Wygenerować nowy link kalendarza?",
+    "description": "Spowoduje to unieważnienie bieżącego linku subskrypcji kalendarza. Aplikacje kalendarza używające starego linku przestaną otrzymywać aktualizacje. Będziesz musiał ponownie subskrybować za pomocą nowego linku.",
+    "cancel": "Anuluj",
+    "confirm": "Wygeneruj nowy"
+  },
+
+  "public": {
+    "title": "Publiczne kalendarze kampusów",
+    "description": "Subskrybuj, aby zobaczyć wszystkie publiczne wydarzenia dla kampusu. Każdy może subskrybować te kalendarze.",
+    "copy": "Kopiuj",
+    "add": "Dodaj"
+  },
+
+  "help": {
+    "title": "Jak to działa",
+    "subscription": "Kalendarze subskrypcyjne automatycznie synchronizują się z aplikacją kalendarza. Gdy wydarzenia są dodawane lub aktualizowane w Koinonii, pojawią się w Twoim kalendarzu w ciągu 24 godzin.",
+    "google": "Kalendarz Google: Kliknij \"Dodaj do kalendarza\" lub przejdź do Ustawienia → Dodaj kalendarz → Z adresu URL i wklej link.",
+    "apple": "Kalendarz Apple: Kliknij \"Dodaj do kalendarza\" lub przejdź do Plik → Nowa subskrypcja kalendarza i wklej link.",
+    "note": "Uwaga: Te kalendarze są tylko do odczytu. Zmiany wprowadzone w aplikacji kalendarza nie będą synchronizowane z powrotem do Koinonii."
+  }
+}

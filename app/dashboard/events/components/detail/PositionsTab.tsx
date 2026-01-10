@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -29,6 +30,7 @@ const StatusBadge = memo(function StatusBadge({
   badgeClass: string
   isMobile?: boolean
 }) {
+  const t = useTranslations('events.invitationStatus')
   const iconClass = isMobile ? 'w-2.5 h-2.5' : 'w-3 h-3 mr-1'
   const badgeSizeClass = isMobile ? 'text-[10px] px-1.5 py-0' : 'text-xs'
 
@@ -37,28 +39,28 @@ const StatusBadge = memo(function StatusBadge({
       return (
         <Badge variant="outline" className={`${badgeSizeClass} ${badgeClass}`}>
           <Check className={iconClass} />
-          {!isMobile && 'Accepted'}
+          {!isMobile && t('accepted')}
         </Badge>
       )
     case 'declined':
       return (
         <Badge variant="outline" className={`${badgeSizeClass} ${badgeClass}`}>
           <XCircle className={iconClass} />
-          {!isMobile && 'Declined'}
+          {!isMobile && t('declined')}
         </Badge>
       )
     case 'invited':
       return (
         <Badge variant="outline" className={`${badgeSizeClass} ${badgeClass}`}>
           <Send className={iconClass} />
-          {!isMobile && 'Invited'}
+          {!isMobile && t('invited')}
         </Badge>
       )
     case 'expired':
       return (
         <Badge variant="outline" className={`${badgeSizeClass} ${badgeClass}`}>
           <ClockIcon className={iconClass} />
-          {!isMobile && 'Expired'}
+          {!isMobile && t('expired')}
         </Badge>
       )
     default:
@@ -78,6 +80,7 @@ export const PositionsTab = memo(function PositionsTab({
   onUnassign,
   onSendInvitations,
 }: PositionsTabProps) {
+  const t = useTranslations('events.positions')
   const isMobile = useIsMobile()
 
   return (
@@ -94,7 +97,7 @@ export const PositionsTab = memo(function PositionsTab({
                 onClick={onSendInvitations}
               >
                 <Send className={isMobile ? 'w-3.5 h-3.5 mr-1' : 'w-4 h-4 mr-1'} />
-                {isMobile ? `Send (${pendingInvitationsCount})` : `Send Invitations (${pendingInvitationsCount})`}
+                {isMobile ? `${t('sendShort')} (${pendingInvitationsCount})` : `${t('sendInvitations')} (${pendingInvitationsCount})`}
               </Button>
             )}
             <Button
@@ -104,7 +107,7 @@ export const PositionsTab = memo(function PositionsTab({
               onClick={onAddPosition}
             >
               <Plus className={isMobile ? 'w-3.5 h-3.5 mr-1' : 'w-4 h-4 mr-1'} />
-              {isMobile ? 'Add' : 'Add Position'}
+              {isMobile ? t('addShort') : t('add')}
             </Button>
           </div>
         )}
@@ -115,7 +118,7 @@ export const PositionsTab = memo(function PositionsTab({
         {Object.keys(positionsByMinistry).length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           <Users className="w-10 h-10 mx-auto mb-2 opacity-50" />
-          <p className="text-sm">No positions added yet</p>
+          <p className="text-sm">{t('noPositions')}</p>
         </div>
       ) : (
         <div className={isMobile ? 'space-y-3' : 'space-y-4'}>
@@ -158,7 +161,7 @@ export const PositionsTab = memo(function PositionsTab({
                                 onClick={() => onAssignVolunteer(position)}
                               >
                                 <UserPlus className={isMobile ? 'w-3 h-3 mr-0.5' : 'w-3 h-3 mr-1'} />
-                                Assign
+                                {t('assign')}
                               </Button>
                             )}
                             <Button
@@ -219,6 +222,7 @@ const AssignmentCard = memo(function AssignmentCard({
   onUnassign: (assignment: Assignment, positionTitle: string) => void
   isMobile: boolean
 }) {
+  const t = useTranslations('events.positions')
   const isMultiAssigned = multiAssignedProfiles.has(assignment.profile.id)
   const otherPositions = isMultiAssigned
     ? multiAssignedProfiles.get(assignment.profile.id)?.filter((p) => p !== positionTitle) || []
@@ -246,18 +250,18 @@ const AssignmentCard = memo(function AssignmentCard({
               className="text-xs border-amber-500 text-amber-600 dark:text-amber-400"
             >
               <AlertTriangle className="w-3 h-3 mr-1" />
-              Multiple roles
+              {t('multipleRoles')}
             </Badge>
           )}
         </div>
         {isMultiAssigned && isMobile && (
           <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-0.5 ml-6">
-            Multiple roles
+            {t('multipleRoles')}
           </p>
         )}
         {isMultiAssigned && otherPositions.length > 0 && !isMobile && (
           <p className="text-xs text-amber-600 dark:text-amber-400 mt-1 ml-8">
-            Also assigned to: {otherPositions.join(', ')}
+            {t('alsoAssignedTo')} {otherPositions.join(', ')}
           </p>
         )}
       </div>

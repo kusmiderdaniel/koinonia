@@ -1,6 +1,7 @@
 'use client'
 
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
@@ -10,9 +11,31 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts'
 import { MousePointerClick, TrendingUp, Calendar, BarChart3 } from 'lucide-react'
 import { useIsMobile } from '@/lib/hooks'
 import type { AnalyticsSummary, LinkTreeLinkRow } from '../types'
+
+// Chart colors for different links
+const CHART_COLORS = [
+  '#3B82F6', // Blue
+  '#10B981', // Green
+  '#F59E0B', // Amber
+  '#EF4444', // Red
+  '#8B5CF6', // Purple
+  '#EC4899', // Pink
+  '#06B6D4', // Cyan
+  '#F97316', // Orange
+]
 
 interface AnalyticsTabProps {
   analytics: AnalyticsSummary | null
@@ -23,15 +46,37 @@ export const AnalyticsTab = memo(function AnalyticsTab({
   analytics,
   links,
 }: AnalyticsTabProps) {
+  const t = useTranslations('links')
   const isMobile = useIsMobile()
+
+  // Prepare chart data with formatted dates
+  const chartData = useMemo(() => {
+    if (!analytics?.daily_clicks) return []
+    return analytics.daily_clicks.map((day) => {
+      const date = new Date(day.date)
+      return {
+        ...day,
+        dateLabel: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      }
+    })
+  }, [analytics?.daily_clicks])
+
+  // Get link info for chart legend
+  const linkInfo = useMemo(() => {
+    return links.map((link, index) => ({
+      id: link.id,
+      title: link.title,
+      color: CHART_COLORS[index % CHART_COLORS.length],
+    }))
+  }, [links])
 
   if (!analytics) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <BarChart3 className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="font-medium mb-1">No analytics data yet</h3>
+        <h3 className="font-medium mb-1">{t('analytics.empty.title')}</h3>
         <p className="text-sm text-muted-foreground">
-          Click data will appear here once people start clicking your links
+          {t('analytics.empty.description')}
         </p>
       </div>
     )
@@ -39,7 +84,7 @@ export const AnalyticsTab = memo(function AnalyticsTab({
 
   // Get link titles for the stats table
   const getLinkTitle = (linkId: string) => {
-    const link = links.find(l => l.id === linkId)
+    const link = links.find((l) => l.id === linkId)
     return link?.title || 'Unknown Link'
   }
 
@@ -48,93 +93,190 @@ export const AnalyticsTab = memo(function AnalyticsTab({
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
-          title="Total Clicks"
+          title={t('analytics.stats.totalClicks')}
           value={analytics.total_clicks}
           icon={MousePointerClick}
         />
         <StatCard
-          title="Today"
+          title={t('analytics.stats.today')}
           value={analytics.clicks_today}
           icon={Calendar}
         />
         <StatCard
-          title="This Week"
+          title={t('analytics.stats.thisWeek')}
           value={analytics.clicks_this_week}
           icon={TrendingUp}
         />
         <StatCard
-          title="This Month"
+          title={t('analytics.stats.thisMonth')}
           value={analytics.clicks_this_month}
           icon={BarChart3}
         />
       </div>
 
-      {/* Per-Link Stats */}
-      <div>
-        <h3 className="font-semibold mb-3">Clicks by Link</h3>
-        {analytics.links_stats.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No link data available</p>
-        ) : isMobile ? (
-          /* Mobile - card layout */
-          <div className="space-y-2">
-            {analytics.links_stats.map((stat) => (
-              <div
-                key={stat.id}
-                className="border border-black dark:border-zinc-700 rounded-lg p-3 space-y-2"
-              >
-                <div className="font-medium text-sm truncate">
-                  {stat.title || getLinkTitle(stat.id)}
-                </div>
-                <div className="grid grid-cols-4 gap-2 text-center">
-                  <div>
-                    <div className="text-lg font-bold">{stat.click_count || 0}</div>
-                    <div className="text-[10px] text-muted-foreground">Total</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold">{stat.clicks_today || 0}</div>
-                    <div className="text-[10px] text-muted-foreground">Today</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold">{stat.clicks_this_week || 0}</div>
-                    <div className="text-[10px] text-muted-foreground">Week</div>
-                  </div>
-                  <div>
-                    <div className="text-lg font-bold">{stat.clicks_this_month || 0}</div>
-                    <div className="text-[10px] text-muted-foreground">Month</div>
-                  </div>
-                </div>
+      {/* Chart and Table Section */}
+      <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
+        {/* Chart */}
+        <Card className="border border-black dark:border-zinc-700">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold">
+              {t('analytics.clicksOverTime')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {links.length === 0 ? (
+              <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                {t('analytics.noLinkData')}
               </div>
-            ))}
-          </div>
-        ) : (
-          /* Desktop - table layout */
-          <div className="border border-black dark:border-zinc-700 rounded-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Link</TableHead>
-                  <TableHead className="text-right">Total</TableHead>
-                  <TableHead className="text-right">Today</TableHead>
-                  <TableHead className="text-right">Week</TableHead>
-                  <TableHead className="text-right">Month</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {analytics.links_stats.map((stat) => (
-                  <TableRow key={stat.id}>
-                    <TableCell className="font-medium">
-                      {stat.title || getLinkTitle(stat.id)}
-                    </TableCell>
-                    <TableCell className="text-right">{stat.click_count || 0}</TableCell>
-                    <TableCell className="text-right">{stat.clicks_today || 0}</TableCell>
-                    <TableCell className="text-right">{stat.clicks_this_week || 0}</TableCell>
-                    <TableCell className="text-right">{stat.clicks_this_month || 0}</TableCell>
-                  </TableRow>
+            ) : (
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <XAxis
+                      dataKey="dateLabel"
+                      tick={{ fontSize: 12 }}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 12 }}
+                      tickLine={false}
+                      axisLine={false}
+                      allowDecimals={false}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'var(--background)',
+                        border: '1px solid var(--border)',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                      }}
+                      labelStyle={{ fontWeight: 600 }}
+                    />
+                    <Legend
+                      wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }}
+                      iconType="circle"
+                      iconSize={8}
+                    />
+                    {linkInfo.map((link) => (
+                      <Line
+                        key={link.id}
+                        type="monotone"
+                        dataKey={link.id}
+                        name={link.title}
+                        stroke={link.color}
+                        strokeWidth={2}
+                        dot={{ fill: link.color, strokeWidth: 0, r: 3 }}
+                        activeDot={{ r: 5, strokeWidth: 0 }}
+                      />
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Per-Link Stats Table */}
+        <Card className="border border-black dark:border-zinc-700">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base font-semibold">
+              {t('analytics.clicksByLink')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {analytics.links_stats.length === 0 ? (
+              <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                {t('analytics.noLinkData')}
+              </div>
+            ) : isMobile ? (
+              /* Mobile - card layout */
+              <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                {analytics.links_stats.map((stat, index) => (
+                  <div
+                    key={stat.id}
+                    className="border border-zinc-200 dark:border-zinc-700 rounded-lg p-3 space-y-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-3 h-3 rounded-full shrink-0"
+                        style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
+                      />
+                      <div className="font-medium text-sm truncate">
+                        {stat.title || getLinkTitle(stat.id)}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2 text-center">
+                      <div>
+                        <div className="text-lg font-bold">{stat.click_count || 0}</div>
+                        <div className="text-[10px] text-muted-foreground">
+                          {t('analytics.table.total')}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-lg font-bold">{stat.clicks_today || 0}</div>
+                        <div className="text-[10px] text-muted-foreground">
+                          {t('analytics.stats.today')}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-lg font-bold">{stat.clicks_this_week || 0}</div>
+                        <div className="text-[10px] text-muted-foreground">
+                          {t('analytics.stats.week')}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-lg font-bold">{stat.clicks_this_month || 0}</div>
+                        <div className="text-[10px] text-muted-foreground">
+                          {t('analytics.stats.month')}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+              </div>
+            ) : (
+              /* Desktop - table layout */
+              <div className="max-h-[300px] overflow-y-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t('analytics.table.link')}</TableHead>
+                      <TableHead className="text-right">{t('analytics.table.total')}</TableHead>
+                      <TableHead className="text-right">{t('analytics.stats.today')}</TableHead>
+                      <TableHead className="text-right">{t('analytics.stats.week')}</TableHead>
+                      <TableHead className="text-right">{t('analytics.stats.month')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {analytics.links_stats.map((stat, index) => (
+                      <TableRow key={stat.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-3 h-3 rounded-full shrink-0"
+                              style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
+                            />
+                            <span className="font-medium truncate max-w-[120px]">
+                              {stat.title || getLinkTitle(stat.id)}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right font-semibold">
+                          {stat.click_count || 0}
+                        </TableCell>
+                        <TableCell className="text-right">{stat.clicks_today || 0}</TableCell>
+                        <TableCell className="text-right">{stat.clicks_this_week || 0}</TableCell>
+                        <TableCell className="text-right">{stat.clicks_this_month || 0}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
@@ -148,14 +290,14 @@ interface StatCardProps {
 
 const StatCard = memo(function StatCard({ title, value, icon: Icon }: StatCardProps) {
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+    <Card className="border border-black dark:border-zinc-700 p-4 py-5 flex flex-col justify-between min-h-[100px]">
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium text-muted-foreground">{title}</span>
         <Icon className="h-4 w-4 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value.toLocaleString()}</div>
-      </CardContent>
+      </div>
+      <div className="flex justify-end">
+        <span className="text-2xl font-bold">{value.toLocaleString()}</span>
+      </div>
     </Card>
   )
 })

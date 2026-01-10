@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Copy, Check, ExternalLink, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { Campus } from './types'
@@ -19,6 +20,8 @@ export function PublicCalendarsCard({
   getPublicWebcalUrl,
   onCopy,
 }: PublicCalendarsCardProps) {
+  const t = useTranslations('calendar-integration')
+
   if (campuses.length === 0) {
     return null
   }
@@ -27,11 +30,10 @@ export function PublicCalendarsCard({
     <div>
       <div className="flex items-center gap-2 mb-2">
         <Globe className="h-5 w-5" />
-        <h2 className="text-lg font-semibold">Public Campus Calendars</h2>
+        <h2 className="text-lg font-semibold">{t('public.title')}</h2>
       </div>
       <p className="text-sm text-muted-foreground mb-4">
-        Subscribe to see all public events for a campus. Anyone can subscribe
-        to these calendars.
+        {t('public.description')}
       </p>
 
       <div className="space-y-3">
@@ -63,7 +65,7 @@ export function PublicCalendarsCard({
                 ) : (
                   <Copy className="h-3 w-3" />
                 )}
-                Copy
+                {t('public.copy')}
               </Button>
               <Button
                 variant="outline"
@@ -74,7 +76,7 @@ export function PublicCalendarsCard({
                 className="gap-1 !border !border-black dark:!border-white"
               >
                 <ExternalLink className="h-3 w-3" />
-                Add
+                {t('public.add')}
               </Button>
             </div>
           </div>

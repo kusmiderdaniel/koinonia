@@ -1,0 +1,36 @@
+{
+  "title": "Calendar Integration",
+  "description": "Subscribe to church calendars in Google Calendar, Apple Calendar, or any other calendar app",
+  "loading": "Loading calendar settings...",
+
+  "personal": {
+    "title": "My Calendar",
+    "description": "Events where you have assignments (invited or accepted) and hidden events you're invited to. Your role in each event is shown in the description.",
+    "copyUrl": "Copy URL",
+    "addToCalendar": "Add to Calendar",
+    "regenerateLink": "Regenerate Link",
+    "privateWarning": "Keep this link private. Anyone with this link can see your assigned events."
+  },
+
+  "regenerate": {
+    "title": "Regenerate Calendar Link?",
+    "description": "This will invalidate your current calendar subscription link. Any calendar apps using the old link will stop receiving updates. You'll need to re-subscribe with the new link.",
+    "cancel": "Cancel",
+    "confirm": "Regenerate"
+  },
+
+  "public": {
+    "title": "Public Campus Calendars",
+    "description": "Subscribe to see all public events for a campus. Anyone can subscribe to these calendars.",
+    "copy": "Copy",
+    "add": "Add"
+  },
+
+  "help": {
+    "title": "How It Works",
+    "subscription": "Subscription calendars automatically sync with your calendar app. When events are added or updated in Koinonia, they'll appear in your calendar within 24 hours.",
+    "google": "Google Calendar: Click \"Add to Calendar\" or go to Settings → Add calendar → From URL and paste the link.",
+    "apple": "Apple Calendar: Click \"Add to Calendar\" or go to File → New Calendar Subscription and paste the link.",
+    "note": "Note: These calendars are read-only. Changes made in your calendar app won't sync back to Koinonia."
+  }
+}

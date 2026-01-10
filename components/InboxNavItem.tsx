@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import {
   Tooltip,
@@ -21,6 +22,7 @@ interface InboxNavItemProps {
 }
 
 export function InboxNavItem({ collapsed, isMobile = false, onNavigate, onPrefetch }: InboxNavItemProps) {
+  const t = useTranslations('dashboard.navigation')
   const pathname = usePathname()
   const [unreadCount, setUnreadCount] = useState(0)
   const isActive = pathname === '/dashboard/inbox'
@@ -75,7 +77,7 @@ export function InboxNavItem({ collapsed, isMobile = false, onNavigate, onPrefet
       </div>
       {!collapsed && (
         <>
-          <span className={cn('pr-3', isMobile && 'text-base')}>Inbox</span>
+          <span className={cn('pr-3', isMobile && 'text-base')}>{t('inbox')}</span>
           {/* Badge for expanded mode - after label */}
           {unreadCount > 0 && (
             <span className="ml-auto mr-3 h-5 min-w-5 px-1.5 text-xs rounded-full flex items-center justify-center bg-red-600 text-white font-medium">
@@ -94,7 +96,7 @@ export function InboxNavItem({ collapsed, isMobile = false, onNavigate, onPrefet
           {linkContent}
         </TooltipTrigger>
         <TooltipContent side="right" className="flex items-center gap-2">
-          Inbox
+          {t('inbox')}
           {unreadCount > 0 && (
             <span className="h-5 min-w-5 px-1.5 text-xs rounded-full flex items-center justify-center bg-red-600 text-white font-medium">
               {unreadCount}

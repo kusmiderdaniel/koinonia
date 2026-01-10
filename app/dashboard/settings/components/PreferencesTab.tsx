@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -27,18 +28,19 @@ export const PreferencesTab = memo(function PreferencesTab({
   setError,
   setSuccess,
 }: PreferencesTabProps) {
+  const t = useTranslations('settings.preferences')
   return (
     <Card className="w-full md:min-w-[28rem]">
       <CardHeader className="p-4 md:p-6">
         <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
           <Globe className="w-4 h-4 md:w-5 md:h-5" />
-          Church Preferences
+          {t('title')}
         </CardTitle>
-        <CardDescription className="text-sm">Configure regional settings for your church</CardDescription>
+        <CardDescription className="text-sm">{t('description')}</CardDescription>
       </CardHeader>
       <CardContent className="p-4 md:p-6 pt-0 md:pt-0 space-y-4 md:space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="timezone">Timezone</Label>
+          <Label htmlFor="timezone">{t('timezone.label')}</Label>
           <Select
             value={preferencesManager.timezone}
             onValueChange={preferencesManager.setTimezone}
@@ -47,7 +49,7 @@ export const PreferencesTab = memo(function PreferencesTab({
               id="timezone"
               className="bg-white dark:bg-zinc-950 border border-input"
             >
-              <SelectValue placeholder="Select timezone" />
+              <SelectValue placeholder={t('timezone.placeholder')} />
             </SelectTrigger>
             <SelectContent
               align="start"
@@ -61,7 +63,7 @@ export const PreferencesTab = memo(function PreferencesTab({
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground">
-            This timezone will be used for displaying event times
+            {t('timezone.hint')}
           </p>
         </div>
 
@@ -70,25 +72,25 @@ export const PreferencesTab = memo(function PreferencesTab({
         <div className="space-y-2">
           <Label className="flex items-center gap-2 text-sm md:text-base">
             <Calendar className="w-3.5 h-3.5 md:w-4 md:h-4" />
-            First Day of Week
+            {t('firstDayOfWeek.label')}
           </Label>
           <Select
             value={preferencesManager.firstDayOfWeek.toString()}
             onValueChange={(val) => preferencesManager.setFirstDayOfWeek(parseInt(val))}
           >
             <SelectTrigger className="bg-white dark:bg-zinc-950 border border-input w-full md:w-[200px]">
-              <SelectValue placeholder="Select first day" />
+              <SelectValue placeholder={t('firstDayOfWeek.placeholder')} />
             </SelectTrigger>
             <SelectContent
               align="start"
               className="bg-white dark:bg-zinc-950 border border-input"
             >
-              <SelectItem value="1">Monday</SelectItem>
-              <SelectItem value="0">Sunday</SelectItem>
+              <SelectItem value="1">{t('firstDayOfWeek.monday')}</SelectItem>
+              <SelectItem value="0">{t('firstDayOfWeek.sunday')}</SelectItem>
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground">
-            Choose which day the calendar week starts on
+            {t('firstDayOfWeek.hint')}
           </p>
         </div>
 
@@ -97,25 +99,25 @@ export const PreferencesTab = memo(function PreferencesTab({
         <div className="space-y-2">
           <Label className="flex items-center gap-2 text-sm md:text-base">
             <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" />
-            Time Format
+            {t('timeFormat.label')}
           </Label>
           <Select
             value={preferencesManager.timeFormat}
             onValueChange={(val) => preferencesManager.setTimeFormat(val as '12h' | '24h')}
           >
             <SelectTrigger className="bg-white dark:bg-zinc-950 border border-input w-full md:w-[200px]">
-              <SelectValue placeholder="Select time format" />
+              <SelectValue placeholder={t('timeFormat.placeholder')} />
             </SelectTrigger>
             <SelectContent
               align="start"
               className="bg-white dark:bg-zinc-950 border border-input"
             >
-              <SelectItem value="24h">24-hour (14:30)</SelectItem>
-              <SelectItem value="12h">12-hour (2:30 PM)</SelectItem>
+              <SelectItem value="24h">{t('timeFormat.24h')}</SelectItem>
+              <SelectItem value="12h">{t('timeFormat.12h')}</SelectItem>
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground">
-            Choose how times are displayed throughout the app
+            {t('timeFormat.hint')}
           </p>
         </div>
 
@@ -124,7 +126,7 @@ export const PreferencesTab = memo(function PreferencesTab({
         <div className="space-y-2">
           <Label className="flex items-center gap-2 text-sm md:text-base">
             <Eye className="w-3.5 h-3.5 md:w-4 md:h-4" />
-            Default Event Visibility
+            {t('eventVisibility.label')}
           </Label>
           <Select
             value={preferencesManager.defaultEventVisibility}
@@ -136,9 +138,9 @@ export const PreferencesTab = memo(function PreferencesTab({
           >
             <SelectTrigger className="bg-white dark:bg-zinc-950 border border-input w-full md:w-[250px]">
               <SelectValue placeholder="Select visibility">
-                {preferencesManager.defaultEventVisibility === 'members' && 'All Members'}
-                {preferencesManager.defaultEventVisibility === 'volunteers' && 'Volunteers+'}
-                {preferencesManager.defaultEventVisibility === 'leaders' && 'Leaders+'}
+                {preferencesManager.defaultEventVisibility === 'members' && t('eventVisibility.members')}
+                {preferencesManager.defaultEventVisibility === 'volunteers' && t('eventVisibility.volunteers')}
+                {preferencesManager.defaultEventVisibility === 'leaders' && t('eventVisibility.leaders')}
               </SelectValue>
             </SelectTrigger>
             <SelectContent
@@ -147,30 +149,30 @@ export const PreferencesTab = memo(function PreferencesTab({
             >
               <SelectItem value="members">
                 <div>
-                  <div>All Members</div>
-                  <div className="text-xs text-muted-foreground">Visible to all church members</div>
+                  <div>{t('eventVisibility.members')}</div>
+                  <div className="text-xs text-muted-foreground">{t('eventVisibility.membersDescription')}</div>
                 </div>
               </SelectItem>
               <SelectItem value="volunteers">
                 <div>
-                  <div>Volunteers+</div>
+                  <div>{t('eventVisibility.volunteers')}</div>
                   <div className="text-xs text-muted-foreground">
-                    Visible to volunteers and above
+                    {t('eventVisibility.volunteersDescription')}
                   </div>
                 </div>
               </SelectItem>
               <SelectItem value="leaders">
                 <div>
-                  <div>Leaders+</div>
+                  <div>{t('eventVisibility.leaders')}</div>
                   <div className="text-xs text-muted-foreground">
-                    Visible to leaders and admins only
+                    {t('eventVisibility.leadersDescription')}
                   </div>
                 </div>
               </SelectItem>
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground">
-            New events will default to this visibility level
+            {t('eventVisibility.hint')}
           </p>
         </div>
 
@@ -180,7 +182,7 @@ export const PreferencesTab = memo(function PreferencesTab({
             disabled={preferencesManager.isSavingPreferences}
             className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white w-full sm:w-auto"
           >
-            {preferencesManager.isSavingPreferences ? 'Saving...' : 'Save Preferences'}
+            {preferencesManager.isSavingPreferences ? t('saving') : t('savePreferences')}
           </Button>
         </div>
       </CardContent>

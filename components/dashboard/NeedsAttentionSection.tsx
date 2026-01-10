@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -32,6 +33,7 @@ interface NeedsAttentionSectionProps {
 
 export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: NeedsAttentionSectionProps) {
   const router = useRouter()
+  const t = useTranslations('dashboard')
   const [loadingId, setLoadingId] = useState<string | null>(null)
   const [loadingAction, setLoadingAction] = useState<'accept' | 'decline' | 'complete' | null>(null)
 
@@ -52,13 +54,13 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success(response === 'accepted' ? 'Invitation accepted!' : 'Invitation declined')
+        toast.success(response === 'accepted' ? t('toasts.invitationAccepted') : t('toasts.invitationDeclined'))
         // Dispatch event to update notification counts immediately
         dispatchNotificationRefresh()
         router.refresh()
       }
     } catch {
-      toast.error('Something went wrong')
+      toast.error(t('toasts.somethingWentWrong'))
     } finally {
       setLoadingId(null)
       setLoadingAction(null)
@@ -75,11 +77,11 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success('Task completed!')
+        toast.success(t('toasts.taskCompleted'))
         router.refresh()
       }
     } catch {
-      toast.error('Something went wrong')
+      toast.error(t('toasts.somethingWentWrong'))
     } finally {
       setLoadingId(null)
       setLoadingAction(null)
@@ -105,14 +107,14 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
       <section className="p-4 border border-border rounded-lg bg-card h-full">
         <h2 className="text-base md:text-lg font-semibold mb-3 flex items-center gap-2">
           <CheckCircle className="h-5 w-5 text-green-600" />
-          All Caught Up
+          {t('needsAttention.allCaughtUp')}
         </h2>
         <Card className="bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800">
           <CardContent className="py-6 text-center">
             <CheckCircle className="h-8 w-8 mx-auto text-green-600 mb-2" />
-            <p className="text-green-700 dark:text-green-300 font-medium">No pending items</p>
+            <p className="text-green-700 dark:text-green-300 font-medium">{t('needsAttention.noPendingItems')}</p>
             <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-              You're all caught up! Check your week below.
+              {t('needsAttention.allCaughtUpDescription')}
             </p>
           </CardContent>
         </Card>
@@ -124,7 +126,7 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
     <section className="p-4 border border-border rounded-lg bg-card h-full">
       <h2 className="text-base md:text-lg font-semibold mb-3 flex items-center gap-2">
         <AlertCircle className="h-5 w-5 text-amber-500" />
-        Needs Your Attention
+        {t('needsAttention.title')}
         <Badge className="bg-amber-100 text-amber-700 border-amber-300 px-1.5 py-0 h-5 text-xs">
           {items.length}
         </Badge>
@@ -200,7 +202,7 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
                         ) : (
                           <>
                             <X className="w-3 h-3 mr-1" />
-                            Decline
+                            {t('needsAttention.decline')}
                           </>
                         )}
                       </Button>
@@ -215,7 +217,7 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
                         ) : (
                           <>
                             <Check className="w-3 h-3 mr-1" />
-                            Accept
+                            {t('needsAttention.accept')}
                           </>
                         )}
                       </Button>
@@ -233,7 +235,7 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
             className="w-full text-sm text-muted-foreground"
             onClick={() => router.push('/dashboard/tasks')}
           >
-            View {items.length - maxItems} more items
+            {t('needsAttention.viewMore', { count: items.length - maxItems })}
           </Button>
         )}
       </div>

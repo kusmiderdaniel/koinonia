@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Trash2, Users } from 'lucide-react'
@@ -13,6 +14,8 @@ export const TemplatePositionsSection = memo(function TemplatePositionsSection({
   onRemovePosition,
   onUpdateQuantity,
 }: TemplatePositionsSectionProps) {
+  const t = useTranslations('events.templatesTab')
+
   return (
     <div className="flex flex-col h-full">
       {/* Fixed header */}
@@ -20,7 +23,7 @@ export const TemplatePositionsSection = memo(function TemplatePositionsSection({
         <div className="flex items-center gap-3">
           {positions.length > 0 && (
             <p className="text-sm text-muted-foreground">
-              {positions.length} positions
+              {t('positionsCount', { count: positions.length })}
             </p>
           )}
         </div>
@@ -33,7 +36,7 @@ export const TemplatePositionsSection = memo(function TemplatePositionsSection({
               onClick={onAddPosition}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add Position
+              {t('addPosition')}
             </Button>
           </div>
         )}
@@ -44,7 +47,7 @@ export const TemplatePositionsSection = memo(function TemplatePositionsSection({
         {positions.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <Users className="w-10 h-10 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">No positions defined</p>
+            <p className="text-sm">{t('noPositionsDefined')}</p>
           </div>
         ) : (
           <div className="space-y-2">

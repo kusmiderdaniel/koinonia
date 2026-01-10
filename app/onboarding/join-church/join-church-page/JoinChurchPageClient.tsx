@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useJoinChurchPageState } from './useJoinChurchPageState'
@@ -9,6 +10,7 @@ import { Users, LogOut, CheckCircle2 } from 'lucide-react'
 
 export function JoinChurchPageClient() {
   const state = useJoinChurchPageState()
+  const t = useTranslations('onboarding')
 
   return (
     <div className="min-h-[100dvh] bg-gradient-to-b from-blue-500/5 via-background to-background">
@@ -21,7 +23,7 @@ export function JoinChurchPageClient() {
           onClick={state.handleSignOut}
         >
           <LogOut className="w-4 h-4" />
-          <span className="hidden sm:inline">Sign Out</span>
+          <span className="hidden sm:inline">{t('signOut')}</span>
         </Button>
       </div>
 
@@ -39,13 +41,13 @@ export function JoinChurchPageClient() {
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
               {state.step === 'code'
-                ? 'Join Your Church'
-                : `Join ${state.churchInfo?.name}`}
+                ? t('joinChurch.codeStep.title')
+                : t('joinChurch.campusStep.title', { churchName: state.churchInfo?.name || '' })}
             </h1>
             <p className="text-muted-foreground text-lg max-w-sm mx-auto">
               {state.step === 'code'
-                ? 'Enter the 6-character join code from your church admin'
-                : 'Complete your profile to join the church'}
+                ? t('joinChurch.codeStep.description')
+                : t('joinChurch.campusStep.description')}
             </p>
           </div>
 
@@ -83,7 +85,7 @@ export function JoinChurchPageClient() {
 
           {/* Footer */}
           <p className="text-center text-sm text-muted-foreground">
-            Need help? Contact us at{' '}
+            {t('needHelp')}{' '}
             <a href="mailto:support@koinonia.app" className="text-brand hover:underline">
               support@koinonia.app
             </a>

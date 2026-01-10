@@ -1,0 +1,9 @@
+{
+  "title": "Filtruj",
+  "ruleCount": "{count} filtr",
+  "emptyState": "Brak filtrow. Dodaj regule filtrowania, aby zawezic dane.",
+  "addRule": "Dodaj filtr",
+  "addGroup": "Dodaj grupe",
+  "deleteFilter": "Wyczysc wszystko",
+  "where": "Gdzie"
+}

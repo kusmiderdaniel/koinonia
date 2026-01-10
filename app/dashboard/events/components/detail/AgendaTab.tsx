@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { ListOrdered, Music, Plus, Printer } from 'lucide-react'
 import Link from 'next/link'
@@ -32,6 +33,7 @@ export const AgendaTab = memo(function AgendaTab({
   onMoveAgendaItemUp,
   onMoveAgendaItemDown,
 }: AgendaTabProps) {
+  const t = useTranslations('events.agenda')
   const isMobile = useIsMobile()
 
   return (
@@ -50,7 +52,7 @@ export const AgendaTab = memo(function AgendaTab({
                   onClick={onAddAgendaItem}
                 >
                   <Plus className="w-3.5 h-3.5 mr-1" />
-                  Add Item
+                  {t('addItem')}
                 </Button>
                 <Button
                   variant="outline-pill"
@@ -59,14 +61,14 @@ export const AgendaTab = memo(function AgendaTab({
                   onClick={onAddSong}
                 >
                   <Music className="w-3.5 h-3.5 mr-1" />
-                  Add Song
+                  {t('addSong')}
                 </Button>
               </div>
             )}
             {sortedAgendaItems.length > 0 && (
               <div className="flex items-center gap-2">
                 <p className="text-xs text-muted-foreground whitespace-nowrap">
-                  {sortedAgendaItems.length} items • Total: {formatDuration(totalDuration)}
+                  {t('itemsTotal', { count: sortedAgendaItems.length, duration: formatDuration(totalDuration) })}
                 </p>
                 <Link href={`/dashboard/events/${selectedEvent.id}/print`} target="_blank">
                   <Button
@@ -75,7 +77,7 @@ export const AgendaTab = memo(function AgendaTab({
                     className="h-6 px-2 gap-1 text-muted-foreground hover:text-foreground"
                   >
                     <Printer className="w-3 h-3" />
-                    <span className="text-xs">Print</span>
+                    <span className="text-xs">{t('print')}</span>
                   </Button>
                 </Link>
               </div>
@@ -88,7 +90,7 @@ export const AgendaTab = memo(function AgendaTab({
               {sortedAgendaItems.length > 0 && (
                 <>
                   <p className="text-sm text-muted-foreground">
-                    {sortedAgendaItems.length} items • Total: {formatDuration(totalDuration)}
+                    {t('itemsTotal', { count: sortedAgendaItems.length, duration: formatDuration(totalDuration) })}
                   </p>
                   <Link href={`/dashboard/events/${selectedEvent.id}/print`} target="_blank">
                     <Button
@@ -97,7 +99,7 @@ export const AgendaTab = memo(function AgendaTab({
                       className="h-7 gap-1 text-muted-foreground hover:text-foreground"
                     >
                       <Printer className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">Print</span>
+                      <span className="hidden sm:inline">{t('print')}</span>
                     </Button>
                   </Link>
                 </>
@@ -112,7 +114,7 @@ export const AgendaTab = memo(function AgendaTab({
                   onClick={onAddAgendaItem}
                 >
                   <Plus className="w-4 h-4 mr-1" />
-                  Add Item
+                  {t('addItem')}
                 </Button>
                 <Button
                   variant="outline-pill"
@@ -121,7 +123,7 @@ export const AgendaTab = memo(function AgendaTab({
                   onClick={onAddSong}
                 >
                   <Music className="w-4 h-4 mr-1" />
-                  Add Song
+                  {t('addSong')}
                 </Button>
               </div>
             )}
@@ -134,7 +136,7 @@ export const AgendaTab = memo(function AgendaTab({
         {sortedAgendaItems.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           <ListOrdered className="w-10 h-10 mx-auto mb-2 opacity-50" />
-          <p className="text-sm">No agenda items yet</p>
+          <p className="text-sm">{t('noItems')}</p>
         </div>
       ) : (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>

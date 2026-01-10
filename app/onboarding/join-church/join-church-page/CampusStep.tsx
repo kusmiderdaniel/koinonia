@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -46,11 +47,21 @@ export function CampusStep({
   onBack,
   onSubmit,
 }: CampusStepProps) {
+  const t = useTranslations('onboarding.joinChurch.campusStep')
+  const tErrors = useTranslations('onboarding.errors')
+
+  // Translate error if it's a known key, otherwise display as-is
+  const translatedError = error
+    ? (error === 'churchNotFound' || error === 'generic')
+      ? tErrors(error)
+      : error
+    : null
+
   return (
     <div className="space-y-8">
-      {error && (
+      {translatedError && (
         <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription>{translatedError}</AlertDescription>
         </Alert>
       )}
 
@@ -61,7 +72,7 @@ export function CampusStep({
             <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
               <MapPin className="w-4 h-4 text-green-600 dark:text-green-400" />
             </div>
-            <h3 className="font-semibold">Select Your Campus</h3>
+            <h3 className="font-semibold">{t('selectCampus.title')}</h3>
           </div>
 
           <RadioGroup
@@ -89,7 +100,7 @@ export function CampusStep({
                     <span className="font-medium">{campus.name}</span>
                     {campus.is_default && (
                       <span className="ml-2 text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                        Main Campus
+                        {t('selectCampus.mainCampus')}
                       </span>
                     )}
                   </div>
@@ -106,16 +117,16 @@ export function CampusStep({
           <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
             <User className="w-4 h-4 text-purple-600 dark:text-purple-400" />
           </div>
-          <h3 className="font-semibold">Your Information <span className="font-normal text-muted-foreground text-sm">(Optional)</span></h3>
+          <h3 className="font-semibold">{t('profileInfo.title')} <span className="font-normal text-muted-foreground text-sm">{t('profileInfo.optional')}</span></h3>
         </div>
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
+            <Label htmlFor="phone">{t('profileInfo.phone')}</Label>
             <Input
               id="phone"
               type="tel"
-              placeholder="(555) 123-4567"
+              placeholder={t('profileInfo.phonePlaceholder')}
               className="h-11"
               value={phone}
               onChange={(e) => onPhoneChange(e.target.value)}
@@ -125,7 +136,7 @@ export function CampusStep({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="dateOfBirth">Date of Birth</Label>
+              <Label htmlFor="dateOfBirth">{t('profileInfo.dateOfBirth')}</Label>
               <Input
                 id="dateOfBirth"
                 type="date"
@@ -137,14 +148,14 @@ export function CampusStep({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="sex">Gender</Label>
+              <Label htmlFor="sex">{t('profileInfo.gender')}</Label>
               <Select value={sex} onValueChange={onSexChange}>
                 <SelectTrigger className="h-11 bg-white dark:bg-zinc-950">
-                  <SelectValue placeholder="Select..." />
+                  <SelectValue placeholder={t('profileInfo.genderPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-zinc-950">
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="male">{t('profileInfo.male')}</SelectItem>
+                  <SelectItem value="female">{t('profileInfo.female')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -163,7 +174,7 @@ export function CampusStep({
           disabled={isLoading}
         >
           <ArrowLeft className="w-5 h-5" />
-          Back
+          {t('back')}
         </Button>
         <Button
           type="button"
@@ -175,10 +186,10 @@ export function CampusStep({
           {isLoading ? (
             <>
               <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-              Joining...
+              {t('submitting')}
             </>
           ) : (
-            'Join Church'
+            t('submit')
           )}
         </Button>
       </div>

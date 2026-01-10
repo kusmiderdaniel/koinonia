@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { useTranslations } from 'next-intl'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import type { Event, EventDetail, AgendaItem, Position, Assignment } from '../types'
 
@@ -194,6 +195,9 @@ export function EventDialogs({
   onSongEditorDataChange,
   onSongEditorReplaceSong,
 }: EventDialogsProps) {
+  const t = useTranslations('events.dialog')
+  const tCommon = useTranslations('common.buttons')
+
   return (
     <>
       {/* Event Dialog */}
@@ -209,9 +213,9 @@ export function EventDialogs({
       <ConfirmDialog
         open={deleteDialogOpen}
         onOpenChange={(open) => !open && closeDeleteDialog()}
-        title="Delete Event?"
-        description={<>Are you sure you want to delete <strong>{deletingEvent?.title}</strong>? This will also remove all volunteer assignments. This action cannot be undone.</>}
-        confirmLabel="Delete"
+        title={t('deleteTitle')}
+        description={t('deleteConfirmation', { name: deletingEvent?.title ?? '' })}
+        confirmLabel={tCommon('delete')}
         destructive
         isLoading={isDeleting}
         onConfirm={onDeleteEvent}
@@ -286,9 +290,9 @@ export function EventDialogs({
       <ConfirmDialog
         open={deleteAgendaDialogOpen}
         onOpenChange={(open) => !open && closeDeleteAgendaItemDialog()}
-        title="Remove Agenda Item?"
-        description={<>Are you sure you want to remove <strong>{deletingAgendaItem?.title}</strong> from the agenda?</>}
-        confirmLabel="Remove"
+        title={t('removeAgendaItemTitle')}
+        description={t('removeAgendaItemConfirmation', { name: deletingAgendaItem?.title ?? '' })}
+        confirmLabel={tCommon('remove')}
         destructive
         isLoading={isDeletingAgendaItem}
         onConfirm={onDeleteAgendaItem}
@@ -298,9 +302,9 @@ export function EventDialogs({
       <ConfirmDialog
         open={deletePositionDialogOpen}
         onOpenChange={(open) => !open && closeDeletePositionDialog()}
-        title="Remove Position?"
-        description={<>Are you sure you want to remove <strong>{deletingPosition?.title}</strong>? This will also remove all volunteer assignments for this position.</>}
-        confirmLabel="Remove"
+        title={t('removePositionTitle')}
+        description={t('removePositionConfirmation', { name: deletingPosition?.title ?? '' })}
+        confirmLabel={tCommon('remove')}
         destructive
         isLoading={isDeletingPosition}
         onConfirm={onDeletePosition}
@@ -310,9 +314,12 @@ export function EventDialogs({
       <ConfirmDialog
         open={unassignDialogOpen}
         onOpenChange={(open) => !open && closeUnassignDialog()}
-        title="Remove Assignment?"
-        description={<>Are you sure you want to remove <strong>{unassigningAssignment?.assignment.profile.first_name} {unassigningAssignment?.assignment.profile.last_name}</strong> from <strong>{unassigningAssignment?.positionTitle}</strong>?</>}
-        confirmLabel="Remove"
+        title={t('removeAssignmentTitle')}
+        description={t('removeAssignmentConfirmation', {
+          person: `${unassigningAssignment?.assignment.profile.first_name ?? ''} ${unassigningAssignment?.assignment.profile.last_name ?? ''}`.trim(),
+          position: unassigningAssignment?.positionTitle ?? ''
+        })}
+        confirmLabel={tCommon('remove')}
         destructive
         isLoading={isUnassigning}
         onConfirm={onUnassign}

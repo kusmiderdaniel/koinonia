@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -38,6 +39,8 @@ export function KeyPopover({
   isUpdating,
   onKeyChange,
 }: KeyPopoverProps) {
+  const t = useTranslations('songs.keyPicker')
+
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
@@ -51,12 +54,12 @@ export function KeyPopover({
           }`}
           disabled={!canManage || isUpdating}
         >
-          {currentKey ? `Key: ${currentKey}` : 'Set key'}
+          {currentKey ? `${t('key')}: ${currentKey}` : t('setKey')}
         </button>
       </PopoverTrigger>
       {canManage && (
         <PopoverContent className="w-[220px] p-2 bg-white dark:bg-zinc-950 border" align="start">
-          <div className="text-xs font-semibold text-muted-foreground px-1 py-1">Major</div>
+          <div className="text-xs font-semibold text-muted-foreground px-1 py-1">{t('major')}</div>
           <div className="grid grid-cols-5 gap-1 mb-2">
             {MAJOR_KEYS.map((k) => (
               <button
@@ -73,7 +76,7 @@ export function KeyPopover({
               </button>
             ))}
           </div>
-          <div className="text-xs font-semibold text-muted-foreground px-1 py-1 border-t pt-2">Minor</div>
+          <div className="text-xs font-semibold text-muted-foreground px-1 py-1 border-t pt-2">{t('minor')}</div>
           <div className="grid grid-cols-5 gap-1">
             {MINOR_KEYS.map((k) => (
               <button

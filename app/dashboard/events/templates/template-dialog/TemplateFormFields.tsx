@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,7 +16,7 @@ import { TimePicker } from '@/components/ui/time-picker'
 import { MapPin, X, Eye, Lock, User } from 'lucide-react'
 import { SingleCampusPicker } from '@/components/CampusPicker'
 import type { TemplateFormData, Location, Person, Campus } from './types'
-import { EVENT_TYPES, VISIBILITY_LEVELS, DURATION_OPTIONS } from './types'
+import { EVENT_TYPE_VALUES, VISIBILITY_VALUES, DURATION_VALUES } from './types'
 
 interface TemplateFormFieldsProps {
   formData: TemplateFormData
@@ -36,16 +37,18 @@ export function TemplateFormFields({
   onOpenResponsiblePersonPicker,
   timeFormat = '24h',
 }: TemplateFormFieldsProps) {
+  const t = useTranslations('events')
+
   return (
     <>
       {/* Template Name */}
       <div className="space-y-2">
-        <Label htmlFor="name">Template Name *</Label>
+        <Label htmlFor="name">{t('templateDialog.nameLabel')} *</Label>
         <Input
           id="name"
           value={formData.name}
           onChange={(e) => updateField('name', e.target.value)}
-          placeholder="e.g., Sunday Morning Service"
+          placeholder={t('templateDialog.namePlaceholder')}
           required
         />
       </div>
@@ -53,19 +56,19 @@ export function TemplateFormFields({
       {/* Event Type & Visibility */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="eventType">Event Type *</Label>
+          <Label htmlFor="eventType">{t('form.eventTypeRequired')}</Label>
           <Select value={formData.eventType} onValueChange={(v) => updateField('eventType', v)}>
             <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
               <SelectValue />
             </SelectTrigger>
             <SelectContent align="start" className="bg-white dark:bg-zinc-950 border border-input">
-              {EVENT_TYPES.map((type) => (
+              {EVENT_TYPE_VALUES.map((type) => (
                 <SelectItem
-                  key={type.value}
-                  value={type.value}
+                  key={type}
+                  value={type}
                   className="cursor-pointer [&>span.absolute]:hidden hover:!bg-gray-50 dark:hover:!bg-zinc-800/50 data-[state=checked]:!bg-gray-100 dark:data-[state=checked]:!bg-zinc-800 data-[state=checked]:font-medium"
                 >
-                  {type.label}
+                  {t(`types.${type}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -73,29 +76,29 @@ export function TemplateFormFields({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="visibility">Visibility</Label>
+          <Label htmlFor="visibility">{t('form.visibilityLabel')}</Label>
           <Select value={formData.visibility} onValueChange={(v) => updateField('visibility', v)}>
             <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white [&_[data-description]]:hidden">
               <div className="flex items-center gap-2">
                 {formData.visibility === 'hidden' ? (
-                  <Lock className="w-4 h-4 text-muted-foreground" />
+                  <Lock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 ) : (
-                  <Eye className="w-4 h-4 text-muted-foreground" />
+                  <Eye className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 )}
-                <SelectValue />
+                <span className="truncate">{t(`visibility.${formData.visibility}Short`)}</span>
               </div>
             </SelectTrigger>
             <SelectContent align="start" className="bg-white dark:bg-zinc-950 border border-input">
-              {VISIBILITY_LEVELS.map((v) => (
+              {VISIBILITY_VALUES.map((v) => (
                 <SelectItem
-                  key={v.value}
-                  value={v.value}
-                  textValue={v.label}
+                  key={v}
+                  value={v}
+                  textValue={t(`visibility.${v}`)}
                   className="py-2 cursor-pointer [&>span.absolute]:hidden hover:!bg-gray-50 dark:hover:!bg-zinc-800/50 data-[state=checked]:!bg-gray-100 dark:data-[state=checked]:!bg-zinc-800 data-[state=checked]:font-medium"
                 >
                   <div className="flex flex-col">
-                    <span>{v.label}</span>
-                    <span data-description className="text-xs text-muted-foreground font-normal">{v.description}</span>
+                    <span>{t(`visibility.${v}`)}</span>
+                    <span data-description className="text-xs text-muted-foreground font-normal">{t(`visibility.${v}Description`)}</span>
                   </div>
                 </SelectItem>
               ))}
@@ -107,18 +110,18 @@ export function TemplateFormFields({
       {/* Start Time & Duration */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2 min-w-0">
-          <Label htmlFor="defaultStartTime">Start Time *</Label>
+          <Label htmlFor="defaultStartTime">{t('form.startTimeRequired')}</Label>
           <TimePicker
             id="defaultStartTime"
             value={formData.defaultStartTime}
             onChange={(value) => updateField('defaultStartTime', value)}
             timeFormat={timeFormat}
-            placeholder="Select time"
+            placeholder={t('form.startTimePlaceholder')}
           />
         </div>
 
         <div className="space-y-2 min-w-0">
-          <Label htmlFor="duration">Duration</Label>
+          <Label htmlFor="duration">{t('templateDialog.durationLabel')}</Label>
           <Select
             value={formData.defaultDurationMinutes.toString()}
             onValueChange={(v) => updateField('defaultDurationMinutes', parseInt(v))}
@@ -127,13 +130,13 @@ export function TemplateFormFields({
               <SelectValue />
             </SelectTrigger>
             <SelectContent align="start" className="bg-white dark:bg-zinc-950 border border-input">
-              {DURATION_OPTIONS.map((opt) => (
+              {DURATION_VALUES.map((minutes) => (
                 <SelectItem
-                  key={opt.value}
-                  value={opt.value.toString()}
+                  key={minutes}
+                  value={minutes.toString()}
                   className="cursor-pointer [&>span.absolute]:hidden hover:!bg-gray-50 dark:hover:!bg-zinc-800/50 data-[state=checked]:!bg-gray-100 dark:data-[state=checked]:!bg-zinc-800 data-[state=checked]:font-medium"
                 >
-                  {opt.label}
+                  {t(`templateDialog.duration.${minutes}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -143,12 +146,12 @@ export function TemplateFormFields({
 
       {/* Description */}
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">{t('templateDialog.descriptionLabel')}</Label>
         <Textarea
           id="description"
           value={formData.description}
           onChange={(e) => updateField('description', e.target.value)}
-          placeholder="Template description..."
+          placeholder={t('templateDialog.descriptionPlaceholder')}
           rows={2}
         />
       </div>
@@ -156,22 +159,22 @@ export function TemplateFormFields({
       {/* Campus */}
       {campuses.length > 0 && (
         <div className="space-y-2">
-          <Label>Campus</Label>
+          <Label>{t('form.campusLabel')}</Label>
           <SingleCampusPicker
             campuses={campuses}
             selectedCampusId={formData.campusId}
             onChange={onCampusChange}
-            placeholder="All campuses"
+            placeholder={t('templateDialog.allCampuses')}
           />
           <p className="text-sm text-muted-foreground">
-            Leave empty for a church-wide template
+            {t('templateDialog.campusHint')}
           </p>
         </div>
       )}
 
       {/* Location */}
       <EntitySelectionField
-        label="Default Location"
+        label={t('templateDialog.defaultLocation')}
         icon={MapPin}
         value={formData.selectedLocation}
         onClear={() => updateField('selectedLocation', null)}
@@ -184,12 +187,12 @@ export function TemplateFormFields({
             )}
           </>
         )}
-        placeholder="Choose location..."
+        placeholder={t('form.chooseLocation')}
       />
 
       {/* Responsible Person */}
       <EntitySelectionField
-        label="Responsible Person"
+        label={t('form.responsiblePersonLabel')}
         icon={User}
         value={formData.selectedResponsiblePerson}
         onClear={() => updateField('selectedResponsiblePerson', null)}
@@ -204,7 +207,7 @@ export function TemplateFormFields({
             )}
           </>
         )}
-        placeholder="Choose responsible person..."
+        placeholder={t('form.chooseResponsiblePerson')}
       />
     </>
   )

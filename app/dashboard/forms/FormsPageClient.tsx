@@ -2,23 +2,24 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { useTranslations } from 'next-intl'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Plus, Search, FileText } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { EmptyState } from '@/components/EmptyState'
+import { ListDetailLayout } from '@/components/layouts'
 import { toast } from 'sonner'
 import { createForm, deleteForm, duplicateForm } from './actions'
-import { FormsListView } from './components/FormsListView'
+import { FormsListView, FormDetailPanel } from './components'
 import type { FormWithRelations } from './types'
 import type { FormAccessType } from '@/lib/validations/forms'
 
@@ -31,10 +32,15 @@ interface FormsPageClientProps {
   initialData: FormsInitialData
 }
 
+type StatusFilter = 'all' | 'draft' | 'published' | 'closed'
+
 export function FormsPageClient({ initialData }: FormsPageClientProps) {
   const router = useRouter()
+  const t = useTranslations('forms')
   const [forms, setForms] = useState(initialData.forms)
   const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [selectedForm, setSelectedForm] = useState<FormWithRelations | null>(null)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isCreating, setIsCreating] = useState(false)
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; form: FormWithRelations | null }>({
@@ -51,17 +57,16 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
   const accessTypeOptions = [
     {
       value: 'internal' as FormAccessType,
-      title: 'Church Members Only',
-      description: 'Only signed-in members can respond',
+      title: t('access.membersOnly'),
+      description: t('access.membersOnlyDescription'),
     },
     {
       value: 'public' as FormAccessType,
-      title: 'Anyone (Public)',
-      description: 'Anyone with the link can respond',
+      title: t('access.anyone'),
+      description: t('access.anyoneDescription'),
     },
   ]
 
-  
   // Filter forms based on search query
   const filteredForms = useMemo(() => {
     if (!searchQuery.trim()) return forms
@@ -75,7 +80,7 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
 
   const handleCreateForm = useCallback(async () => {
     if (!newFormTitle.trim()) {
-      toast.error('Please enter a form title')
+      toast.error(t('toast.titleRequired'))
       return
     }
 
@@ -92,7 +97,7 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
       return
     }
 
-    toast.success('Form created')
+    toast.success(t('toast.created'))
     setIsCreateDialogOpen(false)
     setNewFormTitle('')
     setNewFormDescription('')
@@ -103,7 +108,7 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
     if (result.data) {
       router.push(`/dashboard/forms/${result.data.id}`)
     }
-  }, [newFormTitle, newFormDescription, newFormAccessType, router])
+  }, [newFormTitle, newFormDescription, newFormAccessType, router, t])
 
   const handleDeleteForm = useCallback(async () => {
     if (!deleteDialog.form) return
@@ -117,11 +122,15 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
       return
     }
 
-    toast.success('Form deleted')
+    toast.success(t('toast.deleted'))
+    // Clear selection if deleted form was selected
+    if (selectedForm?.id === deleteDialog.form.id) {
+      setSelectedForm(null)
+    }
     setForms((prev) => prev.filter((f) => f.id !== deleteDialog.form!.id))
     setDeleteDialog({ open: false, form: null })
     setIsDeleting(false)
-  }, [deleteDialog.form])
+  }, [deleteDialog.form, selectedForm, t])
 
   const handleDuplicateForm = useCallback(
     async (form: FormWithRelations) => {
@@ -132,119 +141,87 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
         return
       }
 
-      toast.success('Form duplicated')
+      toast.success(t('toast.created'))
       if (result.data) {
         router.push(`/dashboard/forms/${result.data.id}`)
       }
     },
-    [router]
+    [router, t]
   )
 
-  const handleFormClick = useCallback(
+  const handleEditForm = useCallback(
     (form: FormWithRelations) => {
       router.push(`/dashboard/forms/${form.id}`)
     },
     [router]
   )
 
-  const handleResponsesClick = useCallback(
-    (form: FormWithRelations, e: React.MouseEvent) => {
-      e.stopPropagation()
-      router.push(`/dashboard/forms/${form.id}?tab=responses`)
-    },
-    [router]
-  )
+  const handleSelectForm = useCallback((form: FormWithRelations) => {
+    setSelectedForm(form)
+  }, [])
 
-  const openDeleteDialog = useCallback((form: FormWithRelations, e: React.MouseEvent) => {
-    e.stopPropagation()
+  const handleClearSelection = useCallback(() => {
+    setSelectedForm(null)
+  }, [])
+
+  const openDeleteDialog = useCallback((form: FormWithRelations) => {
     setDeleteDialog({ open: true, form })
   }, [])
 
-  return (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 h-[72px] border-b">
-        <div className="flex items-center gap-3">
-          <FileText className="h-6 w-6 text-muted-foreground" />
-          <h1 className="text-xl font-semibold">Forms</h1>
-        </div>
-        <Button
-          onClick={() => setIsCreateDialogOpen(true)}
-          className="rounded-full bg-brand hover:bg-brand/90 text-white"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          New Form
-        </Button>
-      </div>
+  const openCreateDialog = useCallback(() => {
+    setIsCreateDialogOpen(true)
+  }, [])
 
-      {/* Search */}
-      <div className="p-4 border-b">
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search forms..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-      </div>
+  const handleFormPublished = useCallback(() => {
+    // Update the form status in local state
+    if (selectedForm) {
+      const updatedForm = { ...selectedForm, status: 'published' as const }
+      setSelectedForm(updatedForm)
+      setForms((prev) =>
+        prev.map((f) => (f.id === selectedForm.id ? updatedForm : f))
+      )
+    }
+  }, [selectedForm])
 
-      {/* Content */}
-      <div className="flex-1 overflow-auto p-4">
-        {forms.length === 0 ? (
-          <EmptyState
-            icon={FileText}
-            title="No forms yet"
-            description="Create your first form to start collecting responses from your church community."
-            action={{
-              label: 'Create Form',
-              onClick: () => setIsCreateDialogOpen(true),
-            }}
-          />
-        ) : filteredForms.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            No forms match your search.
-          </div>
-        ) : (
-          <FormsListView
-            forms={filteredForms}
-            onFormClick={handleFormClick}
-            onDeleteClick={openDeleteDialog}
-            onDuplicateClick={handleDuplicateForm}
-            onResponsesClick={handleResponsesClick}
-          />
-        )}
-      </div>
+  // Header content
+  const headerContent = (
+    <div>
+      <h1 className="text-2xl font-bold">{t('title')}</h1>
+      <p className="text-muted-foreground">{t('subtitle')}</p>
+    </div>
+  )
 
+  // Dialogs
+  const dialogsContent = (
+    <>
       {/* Create Form Dialog */}
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
           <DialogHeader>
-            <DialogTitle>Create New Form</DialogTitle>
+            <DialogTitle>{t('createDialog.title')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Title *</Label>
+              <Label htmlFor="title">{t('createDialog.titleLabel')}</Label>
               <Input
                 id="title"
                 value={newFormTitle}
                 onChange={(e) => setNewFormTitle(e.target.value)}
-                placeholder="e.g., Event Registration, Volunteer Signup"
+                placeholder={t('createDialog.titlePlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('createDialog.descriptionLabel')}</Label>
               <Textarea
                 id="description"
                 value={newFormDescription}
                 onChange={(e) => setNewFormDescription(e.target.value)}
-                placeholder="What is this form for?"
+                placeholder={t('createDialog.descriptionPlaceholder')}
                 rows={3}
               />
             </div>
             <div className="space-y-2">
-              <Label>Who can respond?</Label>
+              <Label>{t('createDialog.accessLabel')}</Label>
               <RadioGroup
                 value={newFormAccessType}
                 onValueChange={(value) => setNewFormAccessType(value as FormAccessType)}
@@ -283,7 +260,7 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
               disabled={isCreating}
               className="px-4 py-2 rounded-full border border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 disabled:opacity-50"
             >
-              Cancel
+              {t('createDialog.cancel')}
             </button>
             <button
               type="button"
@@ -292,7 +269,7 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
               className="px-4 py-2 rounded-full text-white disabled:opacity-50 hover:opacity-90"
               style={{ backgroundColor: '#f49f1e' }}
             >
-              {isCreating ? 'Creating...' : 'Create Form'}
+              {isCreating ? t('createDialog.creating') : t('createForm')}
             </button>
           </div>
         </DialogContent>
@@ -302,19 +279,85 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
       <ConfirmDialog
         open={deleteDialog.open}
         onOpenChange={(open) => setDeleteDialog({ open, form: deleteDialog.form })}
-        title="Delete Form"
-        description={
-          <span>
-            Are you sure you want to delete <strong>{deleteDialog.form?.title}</strong>? This will
-            also delete all {deleteDialog.form?.submissions_count || 0} responses. This action
-            cannot be undone.
-          </span>
-        }
-        confirmLabel="Delete"
+        title={t('deleteDialog.title')}
+        description={t('deleteDialog.description', {
+          title: deleteDialog.form?.title ?? '',
+          count: deleteDialog.form?.submissions_count || 0,
+        })}
+        confirmLabel={t('deleteDialog.confirm')}
         destructive
         isLoading={isDeleting}
         onConfirm={handleDeleteForm}
       />
-    </div>
+    </>
+  )
+
+  // Empty state when no forms exist
+  if (forms.length === 0) {
+    return (
+      <ListDetailLayout
+        header={headerContent}
+        listView={
+          <div className="h-full flex items-center justify-center">
+            <EmptyState
+              icon={FileText}
+              title={t('empty.title')}
+              description={t('empty.description')}
+              action={{
+                label: t('createForm'),
+                onClick: openCreateDialog,
+                variant: 'outline',
+              }}
+            />
+          </div>
+        }
+        detailView={null}
+        hasSelection={false}
+        onClearSelection={() => {}}
+        emptyIcon={FileText}
+        emptyTitle={t('detail.selectForm')}
+        emptyDescription={t('detail.selectFormDescription')}
+        dialogs={dialogsContent}
+      />
+    )
+  }
+
+  return (
+    <ListDetailLayout
+      header={headerContent}
+      listView={
+        <FormsListView
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+          forms={filteredForms}
+          selectedForm={selectedForm}
+          onSelectForm={handleSelectForm}
+          onCreateForm={openCreateDialog}
+          onEditForm={handleEditForm}
+          onDuplicateForm={handleDuplicateForm}
+          onDeleteForm={openDeleteDialog}
+          className="h-full"
+        />
+      }
+      detailView={
+        selectedForm ? (
+          <FormDetailPanel
+            form={selectedForm}
+            onBack={handleClearSelection}
+            onDelete={() => openDeleteDialog(selectedForm)}
+            onPublish={handleFormPublished}
+          />
+        ) : null
+      }
+      hasSelection={!!selectedForm}
+      selectionTitle={selectedForm?.title || t('title')}
+      onClearSelection={handleClearSelection}
+      emptyIcon={FileText}
+      emptyTitle={t('detail.selectForm')}
+      emptyDescription={t('detail.selectFormDescription')}
+      dialogs={dialogsContent}
+    />
   )
 }

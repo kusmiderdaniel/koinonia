@@ -1,0 +1,9 @@
+{
+  "title": "Sortuj",
+  "sortCount": "{count} sortowanie",
+  "emptyState": "Brak sortowania. Dodaj regule sortowania, aby uporzadkowac dane.",
+  "addSort": "Dodaj sortowanie",
+  "deleteSort": "Wyczysc wszystko",
+  "ascending": "Rosnaco",
+  "descending": "Malejaco"
+}

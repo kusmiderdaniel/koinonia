@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -30,8 +31,10 @@ export const UnavailabilityList = memo(function UnavailabilityList({
   onEdit,
   onDelete,
 }: UnavailabilityListProps) {
+  const t = useTranslations('availability')
+
   if (isLoading) {
-    return <LoadingState message="Loading availability..." />
+    return <LoadingState message={t('loading')} />
   }
 
   if (unavailability.length === 0) {
@@ -43,9 +46,9 @@ export const UnavailabilityList = memo(function UnavailabilityList({
               <CalendarOff className="h-12 w-12 text-muted-foreground" />
             </div>
             <div className="space-y-1">
-              <p className="font-medium">No unavailable dates marked yet</p>
+              <p className="font-medium">{t('empty.title')}</p>
               <p className="text-sm text-muted-foreground max-w-sm">
-                Click on the calendar to get started.
+                {t('empty.description')}
               </p>
             </div>
           </div>
@@ -61,20 +64,20 @@ export const UnavailabilityList = memo(function UnavailabilityList({
           value="upcoming"
           className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
         >
-          Upcoming
+          {t('tabs.upcoming')}
         </TabsTrigger>
         <TabsTrigger
           value="past"
           className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
         >
-          Past
+          {t('tabs.past')}
         </TabsTrigger>
       </TabsList>
 
       <TabsContent value="upcoming" className="mt-4">
         {upcomingItems.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground text-sm">
-            No upcoming unavailability
+            {t('noUpcoming')}
           </div>
         ) : (
           <div className="space-y-1.5">
@@ -94,7 +97,7 @@ export const UnavailabilityList = memo(function UnavailabilityList({
       <TabsContent value="past" className="mt-4">
         {pastItems.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground text-sm">
-            No past unavailability
+            {t('noPast')}
           </div>
         ) : (
           <div className="space-y-1.5 opacity-70">

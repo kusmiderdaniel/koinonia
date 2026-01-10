@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import * as LucideIcons from 'lucide-react'
 import { Instagram, Facebook, Youtube, Twitter, Globe, Mail, Music } from 'lucide-react'
@@ -56,6 +57,7 @@ export const LivePreview = memo(function LivePreview({
   churchName,
   churchLogo,
 }: LivePreviewProps) {
+  const t = useTranslations('links')
   // Build background style
   const backgroundStyle: React.CSSProperties = {}
   if (settings?.background_gradient_start && settings?.background_gradient_end) {
@@ -83,7 +85,7 @@ export const LivePreview = memo(function LivePreview({
           <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
           <div className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
           <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
-          <span className="ml-2 text-xs text-muted-foreground">Preview</span>
+          <span className="ml-2 text-xs text-muted-foreground">{t('preview.label')}</span>
         </div>
       </div>
 
@@ -231,7 +233,7 @@ export const LivePreview = memo(function LivePreview({
               className="text-center py-6 text-xs opacity-50"
               style={{ color: getContrastColor(settings?.background_color || '#FFFFFF') }}
             >
-              No active links
+              {t('preview.noActiveLinks')}
             </div>
           )}
 
@@ -255,7 +257,7 @@ export const LivePreview = memo(function LivePreview({
 
           {/* Powered by */}
           <div className="mt-4 text-center text-[10px] opacity-40">
-            Powered by Koinonia
+            {t('preview.poweredBy')}
           </div>
         </div>
       </div>

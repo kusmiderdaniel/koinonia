@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -23,6 +24,8 @@ export const EventDialog = memo(function EventDialog({
   onSuccess,
   timeFormat = '24h',
 }: EventDialogProps) {
+  const t = useTranslations('events')
+  const tCommon = useTranslations('common.buttons')
   const isMobile = useIsMobile()
   const [title, setTitle] = useState('')
   const [eventType, setEventType] = useState('service')
@@ -120,7 +123,7 @@ export const EventDialog = memo(function EventDialog({
     const start = new Date(startTime)
     const end = new Date(endTime)
     if (end <= start) {
-      setError('End time must be after start time')
+      setError(t('form.endTimeError'))
       setIsLoading(false)
       return
     }
@@ -156,12 +159,12 @@ export const EventDialog = memo(function EventDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`sm:max-w-xl bg-white dark:bg-zinc-950 max-h-[100dvh] sm:max-h-[90vh] flex flex-col justify-start w-full sm:w-auto fixed inset-x-0 top-0 bottom-auto sm:inset-auto sm:top-[50%] sm:left-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] rounded-none sm:rounded-lg overflow-x-hidden ${isMobile ? 'p-3 gap-1' : ''}`}>
         <DialogHeader className={isMobile ? 'gap-0' : ''}>
-          <DialogTitle className={isMobile ? 'text-base' : ''}>{isEditing ? 'Edit Event' : 'Create Event'}</DialogTitle>
+          <DialogTitle className={isMobile ? 'text-base' : ''}>{isEditing ? t('dialog.editTitle') : t('dialog.createTitle')}</DialogTitle>
           {!isMobile && (
             <DialogDescription>
               {isEditing
-                ? 'Update the event details below.'
-                : 'Add a new event to your church calendar.'}
+                ? t('dialog.editDescription')
+                : t('dialog.createDescription')}
             </DialogDescription>
           )}
         </DialogHeader>
@@ -209,7 +212,7 @@ export const EventDialog = memo(function EventDialog({
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
             >
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button
               type="submit"
@@ -220,11 +223,11 @@ export const EventDialog = memo(function EventDialog({
             >
               {isLoading
                 ? isEditing
-                  ? 'Saving...'
-                  : 'Creating...'
+                  ? t('form.saving')
+                  : t('form.creating')
                 : isEditing
-                  ? 'Save Changes'
-                  : 'Create Event'}
+                  ? t('form.saveChanges')
+                  : t('form.createEvent')}
             </Button>
           </DialogFooter>
         </form>

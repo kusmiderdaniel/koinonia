@@ -1,0 +1,84 @@
+{
+  "title": "Twój profil",
+  "subtitle": "Zarządzaj ustawieniami konta",
+  "loading": "Ładowanie profilu...",
+  "tabs": {
+    "personal": "Dane osobowe",
+    "password": "Hasło",
+    "notifications": "Ustawienia powiadomień",
+    "language": "Język"
+  },
+  "tabDescriptions": {
+    "personal": "Imię, e-mail, telefon i więcej",
+    "password": "Zmień swoje hasło",
+    "notifications": "Zarządzaj preferencjami powiadomień",
+    "language": "Wybierz preferowany język"
+  },
+  "personalInfo": {
+    "title": "Dane osobowe",
+    "description": "Zaktualizuj swoje dane kontaktowe",
+    "firstName": "Imię *",
+    "lastName": "Nazwisko *",
+    "email": "E-mail",
+    "emailHint": "E-mail nie może być zmieniony",
+    "phone": "Telefon",
+    "phonePlaceholder": "+48 123 456 789",
+    "dateOfBirth": "Data urodzenia",
+    "dateOfBirthPlaceholder": "Wybierz datę",
+    "sex": "Płeć",
+    "sexPlaceholder": "Wybierz...",
+    "male": "Mężczyzna",
+    "female": "Kobieta",
+    "saving": "Zapisywanie...",
+    "saveChanges": "Zapisz zmiany"
+  },
+  "password": {
+    "title": "Hasło",
+    "description": "Zmień hasło do konta",
+    "changeButton": "Zmień hasło",
+    "currentPassword": "Obecne hasło",
+    "newPassword": "Nowe hasło",
+    "confirmPassword": "Potwierdź nowe hasło",
+    "changing": "Zmienianie...",
+    "updateButton": "Zaktualizuj hasło",
+    "cancel": "Anuluj",
+    "success": "Hasło zostało zmienione"
+  },
+  "notifications": {
+    "title": "Ustawienia powiadomień",
+    "description": "Kontroluj, które powiadomienia otrzymujesz",
+    "inApp": "W aplikacji",
+    "email": "E-mail",
+    "sections": {
+      "ministryInvitations": "Zaproszenia do służby",
+      "ministryInvitationsDescription": "Dla pozycji w służbach, które prowadzisz",
+      "eventInvitations": "Zaproszenia na wydarzenia",
+      "eventInvitationsDescription": "Dla wydarzeń, za które jesteś odpowiedzialny",
+      "reminders": "Przypomnienia",
+      "other": "Inne"
+    },
+    "categories": {
+      "invitationAccepted": "Zaproszenie zaakceptowane",
+      "invitationAcceptedDescription": "Gdy wolontariusz zaakceptuje zaproszenie",
+      "invitationDeclined": "Zaproszenie odrzucone",
+      "invitationDeclinedDescription": "Gdy wolontariusz odrzuci zaproszenie",
+      "unfilledPositionsReminder": "Przypomnienie o nieobsadzonych stanowiskach",
+      "unfilledPositionsReminderDescription": "Przypomnij mi o nieobsadzonych lub odrzuconych stanowiskach",
+      "pendingMembers": "Nowi oczekujący członkowie",
+      "pendingMembersDescription": "Gdy ktoś prosi o dołączenie do twojego kościoła"
+    },
+    "reminderDays": {
+      "day": "dzień",
+      "days": "dni",
+      "beforeEvent": "przed wydarzeniem"
+    },
+    "saving": "Zapisywanie...",
+    "saveSettings": "Zapisz ustawienia"
+  },
+  "language": {
+    "title": "Język",
+    "label": "Język interfejsu",
+    "description": "Wybierz preferowany język interfejsu",
+    "updated": "Preferencja językowa została zaktualizowana"
+  }
+}

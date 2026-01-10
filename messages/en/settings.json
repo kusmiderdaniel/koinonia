@@ -1,0 +1,229 @@
+{
+  "title": "Church Settings",
+  "subtitle": "Manage your church details and preferences",
+  "subtitleDesktop": "Manage your church details and invite new members",
+  "adminOnlyMobile": "Only administrators can modify settings.",
+  "adminOnly": "Only church administrators can modify settings. Contact your admin for changes.",
+
+  "tabs": {
+    "details": "Details",
+    "invite": "Invite Members",
+    "locations": "Locations",
+    "campuses": "Campuses",
+    "presets": "Agenda Items",
+    "preferences": "Preferences",
+    "transfer": "Transfer Ownership"
+  },
+
+  "tabDescriptions": {
+    "details": "Name, logo, contact info",
+    "invite": "Share join code with new members",
+    "locations": "Manage church locations",
+    "campuses": "Manage church campuses",
+    "presets": "Default agenda item templates",
+    "preferences": "App settings and defaults",
+    "transfer": "Transfer church to another admin"
+  },
+
+  "details": {
+    "logo": {
+      "label": "Church Logo",
+      "upload": "Upload",
+      "uploading": "Uploading...",
+      "remove": "Remove",
+      "removing": "Removing...",
+      "hint": "Square image, 200x200px min. Max 5MB.",
+      "uploadSuccess": "Logo uploaded successfully",
+      "removeSuccess": "Logo removed"
+    },
+    "name": "Church Name *",
+    "email": "Church Email",
+    "emailPlaceholder": "info@yourchurch.org",
+    "phone": "Phone",
+    "phonePlaceholder": "(555) 123-4567",
+    "website": "Website",
+    "websitePlaceholder": "https://yourchurch.org",
+    "address": "Address",
+    "addressPlaceholder": "123 Main Street",
+    "country": "Country",
+    "city": "City",
+    "zipCode": "ZIP Code",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes"
+  },
+
+  "invite": {
+    "title": "Invite Members",
+    "description": "Share the join code to invite people to your church",
+    "joinCodeLabel": "Church Join Code",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "regenerate": "Regenerate",
+    "regenerating": "Regenerating...",
+    "shareHint": "Share this code with new members to connect them to your church.",
+    "regenerateDialog": {
+      "title": "Regenerate Join Code?",
+      "description": "This will create a new code and invalidate the current one. Anyone with the old code won't be able to join.",
+      "cancel": "Cancel",
+      "confirm": "Regenerate"
+    }
+  },
+
+  "locations": {
+    "title": "Locations",
+    "description": "Manage your church's venues and rooms",
+    "addLocation": "Add Location",
+    "empty": {
+      "title": "No locations yet",
+      "description": "Add your first location to use in events"
+    },
+    "dialog": {
+      "addTitle": "Add Location",
+      "editTitle": "Edit Location",
+      "addDescription": "Add a new location for your events.",
+      "editDescription": "Update the location details below.",
+      "nameLabel": "Location Name *",
+      "namePlaceholder": "e.g., Main Sanctuary",
+      "addressLabel": "Address",
+      "addressPlaceholder": "e.g., 123 Church Street",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "e.g., Enter through side door",
+      "campusLabel": "Campus",
+      "campusPlaceholder": "All campuses",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "addButton": "Add Location"
+    },
+    "deleteDialog": {
+      "title": "Delete Location?",
+      "description": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    }
+  },
+
+  "campuses": {
+    "title": "Campuses",
+    "description": "Manage your church's campus locations",
+    "addCampus": "Add Campus",
+    "default": "Default",
+    "setDefault": "Set Default",
+    "empty": {
+      "title": "No campuses yet",
+      "description": "Add your first campus to organize your church locations"
+    },
+    "dialog": {
+      "addTitle": "Add Campus",
+      "editTitle": "Edit Campus",
+      "addDescription": "Add a new campus for your church.",
+      "editDescription": "Update the campus details below.",
+      "nameLabel": "Campus Name *",
+      "namePlaceholder": "e.g., Main Campus",
+      "colorLabel": "Campus Color",
+      "isDefaultLabel": "Set as Default Campus",
+      "isDefaultHint": "New members will be assigned to this campus by default",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "addButton": "Add Campus"
+    },
+    "deleteDialog": {
+      "title": "Delete Campus?",
+      "description": "Are you sure you want to delete \"{name}\"? Members and events assigned to this campus will need to be reassigned. This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    }
+  },
+
+  "presets": {
+    "title": "Agenda Items",
+    "description": "Reusable agenda items for events",
+    "addItem": "Add Item",
+    "empty": {
+      "title": "No agenda items yet",
+      "description": "Add your first agenda item to use in events"
+    },
+    "dialog": {
+      "addTitle": "Add Agenda Item",
+      "editTitle": "Edit Agenda Item",
+      "addDescription": "Create a reusable agenda item for your events and templates.",
+      "editDescription": "Update the agenda item details. Changes won't affect items already added to events.",
+      "titleLabel": "Title *",
+      "titlePlaceholder": "e.g., Welcome & Announcements",
+      "durationLabel": "Duration (MM:SS) *",
+      "durationError": "Duration must be greater than 0",
+      "ministryLabel": "Ministry",
+      "ministryPlaceholder": "Select a ministry...",
+      "noMinistry": "No ministry assigned",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Optional notes or details...",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "createButton": "Create Agenda Item",
+      "createdSuccess": "Agenda item created",
+      "updatedSuccess": "Agenda item updated"
+    },
+    "deleteDialog": {
+      "title": "Delete agenda item?",
+      "description": "This will remove \"{title}\" from your agenda items library. Items already added to events or templates will not be affected.",
+      "cancel": "Cancel",
+      "confirm": "Delete",
+      "deleting": "Deleting...",
+      "deletedSuccess": "Agenda item deleted"
+    }
+  },
+
+  "preferences": {
+    "title": "Church Preferences",
+    "description": "Configure regional settings for your church",
+    "timezone": {
+      "label": "Timezone",
+      "placeholder": "Select timezone",
+      "hint": "This timezone will be used for displaying event times"
+    },
+    "firstDayOfWeek": {
+      "label": "First Day of Week",
+      "placeholder": "Select first day",
+      "monday": "Monday",
+      "sunday": "Sunday",
+      "hint": "Choose which day the calendar week starts on"
+    },
+    "timeFormat": {
+      "label": "Time Format",
+      "placeholder": "Select time format",
+      "24h": "24-hour (14:30)",
+      "12h": "12-hour (2:30 PM)",
+      "hint": "Choose how times are displayed throughout the app"
+    },
+    "eventVisibility": {
+      "label": "Default Event Visibility",
+      "members": "All Members",
+      "membersDescription": "Visible to all church members",
+      "volunteers": "Volunteers+",
+      "volunteersDescription": "Visible to volunteers and above",
+      "leaders": "Leaders+",
+      "leadersDescription": "Visible to leaders and admins only",
+      "hint": "New events will default to this visibility level"
+    },
+    "saving": "Saving...",
+    "savePreferences": "Save Preferences"
+  },
+
+  "transfer": {
+    "title": "Transfer Ownership",
+    "description": "Transfer ownership of this church to an admin. This action cannot be undone. You will become an admin after transferring ownership.",
+    "noAdmins": "No admins available to transfer ownership to. Promote a member to admin first from the People page.",
+    "selectNewOwner": "Select New Owner",
+    "selectHint": "Only admins can become the new owner. Click to select.",
+    "transferButton": "Transfer Ownership",
+    "dialog": {
+      "title": "Transfer Church Ownership?",
+      "description": "You are about to transfer ownership to <strong>{name}</strong>. This action cannot be undone. You will become an admin and lose owner privileges.",
+      "cancel": "Cancel",
+      "confirm": "Yes, Transfer Ownership",
+      "transferring": "Transferring..."
+    }
+  }
+}

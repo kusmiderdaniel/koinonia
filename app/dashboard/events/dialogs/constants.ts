@@ -1,17 +1,8 @@
-export const EVENT_TYPES = [
-  { value: 'service', label: 'Service' },
-  { value: 'rehearsal', label: 'Rehearsal' },
-  { value: 'meeting', label: 'Meeting' },
-  { value: 'special_event', label: 'Special Event' },
-  { value: 'other', label: 'Other' },
-]
+// Event type values - labels are in translation files
+export const EVENT_TYPE_VALUES = ['service', 'rehearsal', 'meeting', 'special_event', 'other'] as const
 
-export const VISIBILITY_LEVELS = [
-  { value: 'members', label: 'All Members', description: 'Visible to all church members' },
-  { value: 'volunteers', label: 'Volunteers+', description: 'Visible to volunteers, leaders, and admins' },
-  { value: 'leaders', label: 'Leaders+', description: 'Visible to leaders and admins only' },
-  { value: 'hidden', label: 'Private', description: 'Only visible to invited users' },
-]
+// Visibility level values - labels are in translation files
+export const VISIBILITY_VALUES = ['members', 'volunteers', 'leaders', 'hidden'] as const
 
 /**
  * Format a date string to datetime-local input format

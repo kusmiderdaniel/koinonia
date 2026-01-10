@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { LoadingState } from '@/components/LoadingState'
 import { useCalendarIntegrationState } from './useCalendarIntegrationState'
@@ -8,6 +9,7 @@ import { PublicCalendarsCard } from './PublicCalendarsCard'
 import { HelpCard } from './HelpCard'
 
 export function CalendarIntegrationPageClient() {
+  const t = useTranslations('calendar-integration')
   const {
     campuses,
     isLoading,
@@ -26,7 +28,7 @@ export function CalendarIntegrationPageClient() {
   if (isLoading) {
     return (
       <div className="flex h-[calc(100vh-3.5rem)] md:h-screen items-center justify-center">
-        <LoadingState message="Loading calendar settings..." />
+        <LoadingState message={t('loading')} />
       </div>
     )
   }
@@ -36,10 +38,9 @@ export function CalendarIntegrationPageClient() {
       <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 shrink-0">
           <div>
-            <h1 className="text-2xl font-bold">Calendar Integration</h1>
+            <h1 className="text-2xl font-bold">{t('title')}</h1>
             <p className="text-muted-foreground">
-              Subscribe to church calendars in Google Calendar, Apple Calendar, or
-              any other calendar app
+              {t('description')}
             </p>
           </div>
         </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Eye, RotateCcw, X } from 'lucide-react'
 import { useFormBuilder } from '../../../hooks/useFormBuilder'
@@ -9,6 +10,7 @@ import { PreviewFieldRenderer } from './PreviewFieldRenderer'
 import type { PreviewPanelProps } from './types'
 
 export function PreviewPanel({ onClose, weekStartsOn: weekStartsOnProp }: PreviewPanelProps) {
+  const t = useTranslations('forms')
   const { form, fields, conditions, weekStartsOn: weekStartsOnStore } = useFormBuilder()
   const weekStartsOn = weekStartsOnProp ?? weekStartsOnStore
 
@@ -41,11 +43,11 @@ export function PreviewPanel({ onClose, weekStartsOn: weekStartsOnProp }: Previe
         <div className="flex items-center gap-2">
           <Button size="sm" className="pointer-events-none !border !border-black dark:!border-white bg-white dark:bg-zinc-900">
             <Eye className="h-4 w-4 mr-1" />
-            Preview
+            {t('previewPanel.preview')}
           </Button>
           <Button size="sm" onClick={handleReset} className="!border !border-black dark:!border-white bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800">
             <RotateCcw className="h-3.5 w-3.5 mr-1" />
-            Reset
+            {t('previewPanel.reset')}
           </Button>
         </div>
         {onClose && (
@@ -70,13 +72,11 @@ export function PreviewPanel({ onClose, weekStartsOn: weekStartsOnProp }: Previe
           <div className="p-4 space-y-4">
             {fields.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-8">
-                Add fields to see them in preview
+                {t('previewPanel.addFields')}
               </p>
             ) : visibleFields.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-8">
-                All fields are hidden by conditions.
-                <br />
-                Change values above to show fields.
+                {t('previewPanel.allHidden')}
               </p>
             ) : (
               visibleFields.map((field) => (
@@ -100,7 +100,7 @@ export function PreviewPanel({ onClose, weekStartsOn: weekStartsOnProp }: Previe
                   className="px-8 h-9 rounded-full text-white text-sm font-medium disabled:opacity-50"
                   style={{ backgroundColor: '#f49f1e' }}
                 >
-                  Submit
+                  {t('previewPanel.submit')}
                 </button>
               </div>
             )}
@@ -110,7 +110,7 @@ export function PreviewPanel({ onClose, weekStartsOn: weekStartsOnProp }: Previe
         {/* Hidden fields indicator */}
         {fields.length > 0 && hiddenFieldCount > 0 && (
           <p className="text-xs text-muted-foreground text-center mt-4">
-            {hiddenFieldCount} field(s) hidden by conditions
+            {t('previewPanel.hiddenByConditions', { count: hiddenFieldCount })}
           </p>
         )}
       </div>

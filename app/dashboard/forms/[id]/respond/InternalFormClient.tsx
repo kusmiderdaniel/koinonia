@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
@@ -47,6 +48,7 @@ export function InternalFormClient({
   hasExistingSubmission,
   weekStartsOn = 0,
 }: InternalFormClientProps) {
+  const t = useTranslations('forms')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
@@ -79,7 +81,7 @@ export function InternalFormClient({
       e.preventDefault()
 
       if (!validateForm()) {
-        toast.error('Please fill in all required fields')
+        toast.error(t('toast.fillRequired'))
         return
       }
 
@@ -101,17 +103,17 @@ export function InternalFormClient({
         }
 
         setIsSubmitted(true)
-        toast.success('Form submitted successfully!')
+        toast.success(t('toast.submitted'))
       } catch (error) {
         console.error('Submission error:', error)
         toast.error(
-          error instanceof Error ? error.message : 'Failed to submit form'
+          error instanceof Error ? error.message : t('toast.submitFailed')
         )
       } finally {
         setIsSubmitting(false)
       }
     },
-    [formId, visibleFields, values, validateForm]
+    [formId, visibleFields, values, validateForm, t]
   )
 
   // Success state
@@ -125,13 +127,13 @@ export function InternalFormClient({
             </div>
           </div>
 
-          <h1 className="text-2xl font-bold mb-2">Thank you!</h1>
+          <h1 className="text-2xl font-bold mb-2">{t('internal.thankYou')}</h1>
           <p className="text-muted-foreground mb-6">
-            Your response has been submitted successfully.
+            {t('internal.successMessage')}
           </p>
 
           <Button variant="outline" asChild>
-            <Link href="/dashboard">Back to Dashboard</Link>
+            <Link href="/dashboard">{t('internal.backToDashboard')}</Link>
           </Button>
         </div>
       </div>
@@ -146,7 +148,7 @@ export function InternalFormClient({
           <Button variant="ghost" size="sm" asChild>
             <Link href="/dashboard">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
+              {t('internal.backToDashboard')}
             </Link>
           </Button>
         </div>
@@ -156,8 +158,7 @@ export function InternalFormClient({
           <Alert className="mb-4 border-amber-500 bg-amber-50 dark:bg-amber-950/30">
             <AlertTriangle className="h-4 w-4 text-amber-600" />
             <AlertDescription className="text-amber-800 dark:text-amber-200">
-              You have already submitted a response to this form. Submitting
-              again will create a new response.
+              {t('internal.alreadySubmitted')}
             </AlertDescription>
           </Alert>
         )}
@@ -177,10 +178,7 @@ export function InternalFormClient({
           {/* Respondent info */}
           <div className="px-6 md:px-8 py-4 bg-muted/30 border-b">
             <p className="text-sm text-muted-foreground">
-              Responding as{' '}
-              <span className="font-medium text-foreground">
-                {respondent.name || respondent.email}
-              </span>
+              {t('internal.respondingAs', { name: respondent.name || respondent.email })}
             </p>
           </div>
 
@@ -207,10 +205,10 @@ export function InternalFormClient({
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Submitting...
+                  {t('internal.submitting')}
                 </>
               ) : (
-                'Submit'
+                t('internal.submit')
               )}
             </button>
           </div>

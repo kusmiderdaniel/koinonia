@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Popover,
@@ -23,6 +24,8 @@ export const KeyPicker = memo(function KeyPicker({
   onOpenChange,
   onSelect,
 }: KeyPickerProps) {
+  const t = useTranslations('songs.keyPicker')
+
   const handleSelect = (key: string) => {
     onSelect(key)
     onOpenChange(false)
@@ -32,12 +35,12 @@ export const KeyPicker = memo(function KeyPicker({
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
         <Button variant="outline" className="w-full justify-between !border !border-input">
-          {value || <span className="text-muted-foreground">Select</span>}
+          {value || <span className="text-muted-foreground">{t('selectKey')}</span>}
           <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[240px] p-2 bg-white dark:bg-zinc-950 border" align="start">
-        <div className="text-xs font-semibold text-muted-foreground px-1 py-1">Major</div>
+        <div className="text-xs font-semibold text-muted-foreground px-1 py-1">{t('major')}</div>
         <div className="grid grid-cols-5 gap-1 mb-2">
           {MAJOR_KEYS.map((k) => (
             <button
@@ -54,7 +57,7 @@ export const KeyPicker = memo(function KeyPicker({
             </button>
           ))}
         </div>
-        <div className="text-xs font-semibold text-muted-foreground px-1 py-1 border-t pt-2">Minor</div>
+        <div className="text-xs font-semibold text-muted-foreground px-1 py-1 border-t pt-2">{t('minor')}</div>
         <div className="grid grid-cols-5 gap-1">
           {MINOR_KEYS.map((k) => (
             <button

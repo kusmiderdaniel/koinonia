@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -23,6 +24,7 @@ export function InboxPageClient({
   initialUnreadCount,
   initialActionableCount,
 }: InboxPageClientProps) {
+  const t = useTranslations('inbox')
   const router = useRouter()
   const [notifications, setNotifications] = useState(initialNotifications)
   const [unreadCount, setUnreadCount] = useState(initialUnreadCount)
@@ -67,11 +69,11 @@ export function InboxPageClient({
       if (result.error) {
         toast.error(result.error)
       } else {
-        toast.success('All notifications marked as read')
+        toast.success(t('toast.markedAllRead'))
         await refreshNotifications()
       }
     } catch {
-      toast.error('Failed to mark all as read')
+      toast.error(t('toast.markAllReadError'))
     } finally {
       setIsMarkingAllRead(false)
     }
@@ -104,10 +106,10 @@ export function InboxPageClient({
           <div className="flex items-center gap-2 md:gap-3 min-w-0">
             <Inbox className="h-6 w-6 md:h-7 md:w-7 flex-shrink-0" />
             <div className="min-w-0">
-              <h1 className="text-xl md:text-2xl font-bold">Inbox</h1>
+              <h1 className="text-xl md:text-2xl font-bold">{t('title')}</h1>
               <p className="text-xs md:text-sm text-muted-foreground truncate">
-                {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}
-                {actionableCount > 0 && ` · ${actionableCount} pending`}
+                {unreadCount > 0 ? t('unreadCount', { count: unreadCount }) : t('allCaughtUp')}
+                {actionableCount > 0 && ` · ${t('pendingCount', { count: actionableCount })}`}
               </p>
             </div>
           </div>
@@ -124,8 +126,8 @@ export function InboxPageClient({
               ) : (
                 <CheckCheck className="h-3.5 w-3.5 md:h-4 md:w-4" />
               )}
-              <span className="hidden sm:inline">Mark all read</span>
-              <span className="sm:hidden">Read all</span>
+              <span className="hidden sm:inline">{t('markAllRead')}</span>
+              <span className="sm:hidden">{t('markAllReadShort')}</span>
             </Button>
           )}
         </div>
@@ -137,14 +139,14 @@ export function InboxPageClient({
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
               <TabsList className="mb-4 w-full border border-black dark:border-zinc-700">
                 <TabsTrigger value="all" className="flex-1 text-xs md:text-sm py-2 md:py-1.5 data-[state=active]:bg-brand data-[state=active]:text-white">
-                  All
+                  {t('tabs.all')}
                 </TabsTrigger>
                 <TabsTrigger value="unread" className="flex-1 text-xs md:text-sm py-2 md:py-1.5 data-[state=active]:bg-brand data-[state=active]:text-white">
-                  Unread
+                  {t('tabs.unread')}
                 </TabsTrigger>
                 <TabsTrigger value="actionable" className="flex-1 text-xs md:text-sm py-2 md:py-1.5 data-[state=active]:bg-brand data-[state=active]:text-white">
-                  <span className="hidden sm:inline">Needs Response</span>
-                  <span className="sm:hidden">Pending</span>
+                  <span className="hidden sm:inline">{t('tabs.actionable')}</span>
+                  <span className="sm:hidden">{t('tabs.actionableShort')}</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -160,14 +162,10 @@ export function InboxPageClient({
                         )}
                       </div>
                       <h3 className="font-medium mb-1">
-                        {activeTab === 'all' && 'No notifications yet'}
-                        {activeTab === 'unread' && 'All caught up!'}
-                        {activeTab === 'actionable' && 'No pending invitations'}
+                        {t(`empty.${activeTab}.title`)}
                       </h3>
                       <p className="text-sm text-muted-foreground">
-                        {activeTab === 'all' && "You'll receive notifications for event invitations, task assignments, and more."}
-                        {activeTab === 'unread' && "You've read all your notifications."}
-                        {activeTab === 'actionable' && "You've responded to all invitations."}
+                        {t(`empty.${activeTab}.description`)}
                       </p>
                     </CardContent>
                   </Card>

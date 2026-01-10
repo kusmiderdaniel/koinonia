@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -30,23 +31,24 @@ export function RejectDialog({
   onRejectReasonChange,
   onConfirm,
 }: RejectDialogProps) {
+  const t = useTranslations('people')
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Reject Registration</DialogTitle>
+          <DialogTitle>{t('rejectDialog.title')}</DialogTitle>
           <DialogDescription>
-            Are you sure you want to reject {registration?.first_name}{' '}
-            {registration?.last_name}&apos;s registration?
+            {t('rejectDialog.description', { name: `${registration?.first_name} ${registration?.last_name}` })}
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
-          <Label htmlFor="reason">Reason (optional)</Label>
+          <Label htmlFor="reason">{t('rejectDialog.reasonLabel')}</Label>
           <Textarea
             id="reason"
             value={rejectReason}
             onChange={(e) => onRejectReasonChange(e.target.value)}
-            placeholder="Provide a reason for rejection..."
+            placeholder={t('rejectDialog.reasonPlaceholder')}
             className="mt-2"
           />
         </div>
@@ -56,14 +58,14 @@ export function RejectDialog({
             className="!border !border-black dark:!border-white"
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            {t('actions.cancel')}
           </Button>
           <Button
             variant="destructive"
             className="!bg-red-600 hover:!bg-red-700 !text-white !border !border-red-600"
             onClick={onConfirm}
           >
-            Reject Registration
+            {t('rejectDialog.confirmButton')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,0 +1,99 @@
+{
+  "signOut": "Wyloguj się",
+  "needHelp": "Potrzebujesz pomocy? Skontaktuj się z nami:",
+  "errors": {
+    "churchNotFound": "Nie znaleziono kościoła. Sprawdź kod dołączenia i spróbuj ponownie.",
+    "generic": "Wystąpił nieoczekiwany błąd"
+  },
+  "main": {
+    "title": "Witaj w Koinonii",
+    "description": "Zacznijmy konfigurację.\nCzy zakładasz nowy kościół, czy dołączasz do istniejącego?",
+    "createChurch": {
+      "title": "Utwórz nowy kościół",
+      "description": "Skonfiguruj swoją organizację kościelną i zaproś innych",
+      "feature1": "Pełny dostęp administracyjny",
+      "feature2": "Zarządzaj służbami i wydarzeniami",
+      "feature3": "Zapraszaj wolontariuszy i liderów",
+      "feature4": "Otrzymaj unikalny kod dołączenia dla członków",
+      "button": "Utwórz kościół"
+    },
+    "joinChurch": {
+      "title": "Dołącz do istniejącego kościoła",
+      "description": "Połącz się ze swoim kościołem i zacznij służyć",
+      "feature1": "Zapisz się na wydarzenia i nabożeństwa",
+      "feature2": "Zarządzaj swoją dostępnością",
+      "feature3": "Połącz się ze swoimi służbami",
+      "feature4": "Otrzymuj powiadomienia i aktualizacje",
+      "button": "Dołącz do kościoła"
+    }
+  },
+  "createChurch": {
+    "title": "Utwórz swój kościół",
+    "description": "Skonfiguruj swoją organizację kościelną i zacznij zapraszać swój zespół",
+    "basicInfo": {
+      "title": "Podstawowe informacje",
+      "churchName": "Nazwa kościoła",
+      "churchNamePlaceholder": "Kościół Baptystyczny",
+      "churchUrl": "Adres URL kościoła",
+      "churchUrlPlaceholder": "twoj-kosciol",
+      "subdomainAvailable": "Ta subdomena jest dostępna!",
+      "subdomainUnavailable": "Ta subdomena nie jest dostępna"
+    },
+    "contact": {
+      "title": "Informacje kontaktowe",
+      "email": "E-mail kościoła",
+      "emailPlaceholder": "kontakt@twojkosciol.pl",
+      "phone": "Telefon kościoła",
+      "phonePlaceholder": "+48 123 456 789"
+    },
+    "location": {
+      "title": "Lokalizacja",
+      "optional": "(Opcjonalnie)",
+      "address": "Adres",
+      "addressPlaceholder": "ul. Główna 123",
+      "city": "Miasto",
+      "cityPlaceholder": "Warszawa",
+      "zipCode": "Kod pocztowy",
+      "zipCodePlaceholder": "00-001",
+      "country": "Kraj"
+    },
+    "back": "Wstecz",
+    "submit": "Utwórz kościół",
+    "submitting": "Tworzenie...",
+    "error": "Wystąpił nieoczekiwany błąd"
+  },
+  "joinChurch": {
+    "codeStep": {
+      "title": "Dołącz do kościoła",
+      "description": "Wprowadź 6-znakowy kod od administratora kościoła",
+      "sectionTitle": "Wprowadź kod dołączenia",
+      "placeholder": "ABC123",
+      "hint": "Poproś administratora kościoła o 6-znakowy kod",
+      "back": "Wstecz",
+      "continue": "Kontynuuj",
+      "validating": "Sprawdzanie..."
+    },
+    "campusStep": {
+      "title": "Dołącz do {churchName}",
+      "description": "Uzupełnij swój profil, aby dołączyć do kościoła",
+      "selectCampus": {
+        "title": "Wybierz swój kampus",
+        "mainCampus": "Główny kampus"
+      },
+      "profileInfo": {
+        "title": "Twoje dane",
+        "optional": "(Opcjonalnie)",
+        "phone": "Numer telefonu",
+        "phonePlaceholder": "+48 123 456 789",
+        "dateOfBirth": "Data urodzenia",
+        "gender": "Płeć",
+        "genderPlaceholder": "Wybierz...",
+        "male": "Mężczyzna",
+        "female": "Kobieta"
+      },
+      "back": "Wstecz",
+      "submit": "Dołącz do kościoła",
+      "submitting": "Dołączanie..."
+    }
+  }
+}

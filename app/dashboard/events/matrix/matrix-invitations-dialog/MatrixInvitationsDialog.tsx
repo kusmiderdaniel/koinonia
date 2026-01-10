@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -20,6 +21,8 @@ export function MatrixInvitationsDialog({
   eventIds,
   onSuccess,
 }: MatrixInvitationsDialogProps) {
+  const t = useTranslations('events.invitationsDialog')
+  const tCommon = useTranslations('common')
   const state = useMatrixInvitationsState({
     open,
     eventIds,
@@ -33,11 +36,10 @@ export function MatrixInvitationsDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Send className="w-5 h-5" />
-            Send Invitations
+            {t('title')}
           </DialogTitle>
           <DialogDescription>
-            Send invitations to volunteers assigned to positions across multiple
-            events.
+            {t('descriptionMultiple')}
           </DialogDescription>
         </DialogHeader>
 
@@ -48,9 +50,9 @@ export function MatrixInvitationsDialog({
         ) : state.pendingCounts?.total === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <Users className="w-10 h-10 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">No pending assignments to invite</p>
+            <p className="text-sm">{t('noPending')}</p>
             <p className="text-xs mt-1">
-              All assigned volunteers have already been invited
+              {t('allInvited')}
             </p>
           </div>
         ) : state.pendingCounts ? (
@@ -58,10 +60,10 @@ export function MatrixInvitationsDialog({
             {/* Summary */}
             <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
               <p className="text-sm text-blue-700 dark:text-blue-300">
-                <strong>{state.pendingCounts.total}</strong> volunteer
-                {state.pendingCounts.total !== 1 ? 's' : ''} assigned but not yet
-                invited across {state.pendingCounts.byEvent.length} event
-                {state.pendingCounts.byEvent.length !== 1 ? 's' : ''}
+                {t('summaryWithEvents', {
+                  count: state.pendingCounts.total,
+                  eventCount: state.pendingCounts.byEvent.length,
+                })}
               </p>
             </div>
 
@@ -88,7 +90,7 @@ export function MatrixInvitationsDialog({
             onClick={() => onOpenChange(false)}
             disabled={state.isSending}
           >
-            Cancel
+            {tCommon('buttons.cancel')}
           </Button>
           <Button
             onClick={state.handleSend}
@@ -98,12 +100,12 @@ export function MatrixInvitationsDialog({
             {state.isSending ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Sending...
+                {t('sending')}
               </>
             ) : (
               <>
                 <Send className="w-4 h-4 mr-2" />
-                Send {state.inviteCount > 0 ? `(${state.inviteCount})` : ''}
+                {t('send')} {state.inviteCount > 0 ? `(${state.inviteCount})` : ''}
               </>
             )}
           </Button>

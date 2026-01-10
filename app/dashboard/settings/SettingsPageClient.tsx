@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -58,12 +59,13 @@ type TabKey = 'details' | 'invite' | 'locations' | 'campuses' | 'presets' | 'pre
 
 interface TabItem {
   key: TabKey
-  label: string
-  description: string
+  labelKey: string
+  descriptionKey: string
   show: boolean
 }
 
 export function SettingsPageClient({ initialData, defaultTab = 'details' }: SettingsPageClientProps) {
+  const t = useTranslations('settings')
   const isMobile = useIsMobile()
   const settings = useChurchSettings(initialData)
   const locationManager = useLocationManager()
@@ -86,13 +88,13 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
 
   // Tab items configuration
   const tabItems: TabItem[] = [
-    { key: 'details', label: 'Church Details', description: 'Name, logo, contact info', show: true },
-    { key: 'invite', label: 'Invite Members', description: 'Share join code with new members', show: true },
-    { key: 'locations', label: 'Locations', description: 'Manage church locations', show: settings.canManageLocations },
-    { key: 'campuses', label: 'Campuses', description: 'Manage church campuses', show: settings.isAdmin },
-    { key: 'presets', label: 'Agenda Items', description: 'Default agenda item templates', show: settings.isAdmin },
-    { key: 'preferences', label: 'Preferences', description: 'App settings and defaults', show: settings.isAdmin },
-    { key: 'transfer', label: 'Transfer Ownership', description: 'Transfer church to another admin', show: settings.isOwner },
+    { key: 'details', labelKey: 'tabs.details', descriptionKey: 'tabDescriptions.details', show: true },
+    { key: 'invite', labelKey: 'tabs.invite', descriptionKey: 'tabDescriptions.invite', show: true },
+    { key: 'locations', labelKey: 'tabs.locations', descriptionKey: 'tabDescriptions.locations', show: settings.canManageLocations },
+    { key: 'campuses', labelKey: 'tabs.campuses', descriptionKey: 'tabDescriptions.campuses', show: settings.isAdmin },
+    { key: 'presets', labelKey: 'tabs.presets', descriptionKey: 'tabDescriptions.presets', show: settings.isAdmin },
+    { key: 'preferences', labelKey: 'tabs.preferences', descriptionKey: 'tabDescriptions.preferences', show: settings.isAdmin },
+    { key: 'transfer', labelKey: 'tabs.transfer', descriptionKey: 'tabDescriptions.transfer', show: settings.isOwner },
   ]
 
   const visibleTabs = tabItems.filter(t => t.show)
@@ -194,15 +196,15 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <div>
-                  <h1 className="text-lg font-bold">{selectedTabItem?.label}</h1>
-                  <p className="text-xs text-muted-foreground">{selectedTabItem?.description}</p>
+                  <h1 className="text-lg font-bold">{selectedTabItem ? t(selectedTabItem.labelKey) : ''}</h1>
+                  <p className="text-xs text-muted-foreground">{selectedTabItem ? t(selectedTabItem.descriptionKey) : ''}</p>
                 </div>
               </div>
             ) : (
               <div>
-                <h1 className="text-xl font-bold">Church Settings</h1>
+                <h1 className="text-xl font-bold">{t('title')}</h1>
                 <p className="text-sm text-muted-foreground">
-                  Manage your church details and preferences
+                  {t('subtitle')}
                 </p>
               </div>
             )}
@@ -222,7 +224,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
           {!settings.isAdmin && !mobileSelectedTab && (
             <Alert className="mx-4 mb-2 shrink-0">
               <AlertDescription>
-                Only administrators can modify settings.
+                {t('adminOnlyMobile')}
               </AlertDescription>
             </Alert>
           )}
@@ -244,8 +246,8 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
                     className="w-full flex items-center justify-between p-4 border border-black dark:border-zinc-700 rounded-lg bg-card hover:bg-muted/50 transition-colors text-left"
                   >
                     <div>
-                      <div className="font-medium">{tab.label}</div>
-                      <div className="text-sm text-muted-foreground">{tab.description}</div>
+                      <div className="font-medium">{t(tab.labelKey)}</div>
+                      <div className="text-sm text-muted-foreground">{t(tab.descriptionKey)}</div>
                     </div>
                     <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
                   </button>
@@ -264,9 +266,9 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
       <div className="flex-1 flex flex-col p-6 overflow-hidden">
         <div className="flex items-center justify-between gap-4 mb-4 shrink-0">
           <div>
-            <h1 className="text-2xl font-bold">Church Settings</h1>
+            <h1 className="text-2xl font-bold">{t('title')}</h1>
             <p className="text-muted-foreground">
-              Manage your church details and invite new members
+              {t('subtitleDesktop')}
             </p>
           </div>
         </div>
@@ -286,7 +288,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
         {!settings.isAdmin && (
           <Alert className="mb-4 shrink-0">
             <AlertDescription>
-              Only church administrators can modify settings. Contact your admin for changes.
+              {t('adminOnly')}
             </AlertDescription>
           </Alert>
         )}
@@ -300,20 +302,20 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
                   value="details"
                   className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
                 >
-                  Details
+                  {t('tabs.details')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="invite"
                   className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
                 >
-                  Invite Members
+                  {t('tabs.invite')}
                 </TabsTrigger>
                 {settings.canManageLocations && (
                   <TabsTrigger
                     value="locations"
                     className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
                   >
-                    Locations
+                    {t('tabs.locations')}
                   </TabsTrigger>
                 )}
                 {settings.isAdmin && (
@@ -321,7 +323,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
                     value="campuses"
                     className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
                   >
-                    Campuses
+                    {t('tabs.campuses')}
                   </TabsTrigger>
                 )}
                 {settings.isAdmin && (
@@ -329,7 +331,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
                     value="presets"
                     className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
                   >
-                    Agenda Items
+                    {t('tabs.presets')}
                   </TabsTrigger>
                 )}
                 {settings.isAdmin && (
@@ -337,7 +339,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
                     value="preferences"
                     className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
                   >
-                    Preferences
+                    {t('tabs.preferences')}
                   </TabsTrigger>
                 )}
                 {settings.isOwner && (
@@ -345,7 +347,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
                     value="transfer"
                     className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
                   >
-                    Transfer Ownership
+                    {t('tabs.transfer')}
                   </TabsTrigger>
                 )}
               </TabsList>

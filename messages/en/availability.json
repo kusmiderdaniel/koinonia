@@ -1,0 +1,54 @@
+{
+  "title": "My Unavailability",
+  "descriptionDesktop": "Click on a date to mark it as unavailable. Click a second date to select a range.",
+  "descriptionMobile": "Tap dates to mark unavailable",
+
+  "loading": "Loading availability...",
+
+  "empty": {
+    "title": "No unavailable dates marked yet",
+    "description": "Click on the calendar to get started."
+  },
+
+  "tabs": {
+    "upcoming": "Upcoming",
+    "past": "Past"
+  },
+
+  "noUpcoming": "No upcoming unavailability",
+  "noPast": "No past unavailability",
+
+  "calendar": {
+    "selected": "Selected:",
+    "clickForRange": "Click another date for a range, or",
+    "tapForRange": "Tap another date for range, or",
+    "addSingleDay": "Add Single Day"
+  },
+
+  "addDialog": {
+    "title": "Add Unavailability",
+    "markingAs": "Marking as unavailable",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholder": "e.g., Vacation, Family event...",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "add": "Add"
+  },
+
+  "editDialog": {
+    "title": "Edit Unavailability",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "selectDate": "Select date",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholder": "e.g., Vacation, Family event...",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes"
+  },
+
+  "errors": {
+    "endDateBeforeStart": "End date must be on or after start date"
+  }
+}

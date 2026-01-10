@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import {
@@ -21,13 +22,13 @@ interface EventCalendarProps {
   onMonthChange?: (month: number, year: number) => void
 }
 
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-]
+const MONTH_KEYS = [
+  'january', 'february', 'march', 'april', 'may', 'june',
+  'july', 'august', 'september', 'october', 'november', 'december',
+] as const
 
-const DAYS_SUNDAY_START = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const DAYS_MONDAY_START = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const DAYS_SUNDAY_START_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const
+const DAYS_MONDAY_START_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const
 
 const EVENT_TYPE_COLORS: Record<string, string> = {
   service: 'bg-blue-500',
@@ -70,6 +71,7 @@ export function EventCalendar({
   timeFormat = '24h',
   onMonthChange,
 }: EventCalendarProps) {
+  const t = useTranslations('dashboard')
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDay, setSelectedDay] = useState<number | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -80,7 +82,7 @@ export function EventCalendar({
   const daysInMonth = getDaysInMonth(currentYear, currentMonth)
   const firstDayOffset = getFirstDayOffset(currentYear, currentMonth, firstDayOfWeek)
 
-  const dayLabels = firstDayOfWeek === 0 ? DAYS_SUNDAY_START : DAYS_MONDAY_START
+  const dayLabelKeys = firstDayOfWeek === 0 ? DAYS_SUNDAY_START_KEYS : DAYS_MONDAY_START_KEYS
 
   // Group events by day
   const eventsByDay = useMemo(() => {
@@ -178,13 +180,13 @@ export function EventCalendar({
       <div className="h-full">
         <h2 className="flex items-center gap-2 text-lg font-semibold mb-4">
           <Calendar className="h-5 w-5" />
-          Church Calendar
+          {t('calendar.title')}
         </h2>
         <Card className="border border-black dark:border-zinc-700">
           <CardHeader className="pt-5 pb-2">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">
-                {MONTHS[currentMonth]} {currentYear}
+                {t(`calendar.months.${MONTH_KEYS[currentMonth]}`)} {currentYear}
               </h3>
               <div className="flex items-center gap-2">
                 <Button
@@ -193,7 +195,7 @@ export function EventCalendar({
                   className="rounded-full h-8 px-3"
                   onClick={goToToday}
                 >
-                  Today
+                  {t('calendar.today')}
                 </Button>
                 <Button
                   variant="outline"
@@ -217,15 +219,18 @@ export function EventCalendar({
           <CardContent className="p-2 md:p-4">
           {/* Day headers */}
           <div className="grid grid-cols-7 mb-2">
-            {dayLabels.map((day) => (
-              <div
-                key={day}
-                className="text-center text-xs md:text-sm font-medium text-muted-foreground py-2"
-              >
-                <span className="md:hidden">{day.charAt(0)}</span>
-                <span className="hidden md:inline">{day}</span>
-              </div>
-            ))}
+            {dayLabelKeys.map((dayKey) => {
+              const dayLabel = t(`calendar.daysShort.${dayKey}`)
+              return (
+                <div
+                  key={dayKey}
+                  className="text-center text-xs md:text-sm font-medium text-muted-foreground py-2"
+                >
+                  <span className="md:hidden">{dayLabel.charAt(0)}</span>
+                  <span className="hidden md:inline">{dayLabel}</span>
+                </div>
+              )
+            })}
           </div>
 
           {/* Calendar grid */}
@@ -314,7 +319,7 @@ export function EventCalendar({
                         ))}
                         {moreCount > 0 && (
                           <span className="text-[10px] text-muted-foreground truncate">
-                            +{moreCount} more
+                            {t('calendar.more', { count: moreCount })}
                           </span>
                         )}
                       </div>
@@ -330,7 +335,7 @@ export function EventCalendar({
             {Object.entries(EVENT_TYPE_COLORS).map(([type, color]) => (
               <div key={type} className="flex items-center gap-1">
                 <div className={cn('w-2 h-2 rounded-full', color)} />
-                <span className="capitalize">{type.replace('_', ' ')}</span>
+                <span>{t(`calendar.eventTypes.${type}`)}</span>
               </div>
             ))}
           </div>
@@ -352,7 +357,7 @@ export function EventCalendar({
             {selectedDayEvents.length === 0 ? (
               <div className="rounded-lg border bg-muted/50 p-8">
                 <p className="text-muted-foreground text-center">
-                  No events on this day
+                  {t('calendar.noEventsOnDay')}
                 </p>
               </div>
             ) : (

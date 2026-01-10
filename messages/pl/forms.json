@@ -1,0 +1,315 @@
+{
+  "title": "Formularze",
+  "subtitle": "Twórz i zarządzaj formularzami do zbierania odpowiedzi od społeczności kościelnej.",
+  "newForm": "Nowy formularz",
+  "createForm": "Utwórz formularz",
+  "searchPlaceholder": "Szukaj formularzy...",
+
+  "empty": {
+    "title": "Brak formularzy",
+    "description": "Utwórz swój pierwszy formularz, aby zacząć zbierać odpowiedzi od społeczności kościelnej.",
+    "noMatch": "Nie znaleziono formularzy pasujących do wyszukiwania."
+  },
+
+  "filter": {
+    "all": "Wszystkie",
+    "draft": "Szkice",
+    "published": "Opublikowane"
+  },
+
+  "detail": {
+    "selectForm": "Wybierz formularz",
+    "selectFormDescription": "Wybierz formularz z listy, aby zobaczyć jego podgląd i szczegóły.",
+    "preview": "Podgląd formularza",
+    "noFields": "Ten formularz nie ma jeszcze żadnych pól.",
+    "addFields": "Dodaj pola",
+    "responses": "Odpowiedzi",
+    "edit": "Edytuj",
+    "created": "Utworzono {time}"
+  },
+
+  "status": {
+    "draft": "Szkic",
+    "published": "Opublikowany",
+    "closed": "Zamknięty"
+  },
+
+  "access": {
+    "public": "Publiczny",
+    "internal": "Wewnętrzny",
+    "membersOnly": "Tylko członkowie kościoła",
+    "membersOnlyDescription": "Tylko zalogowani członkowie mogą odpowiadać",
+    "anyone": "Każdy (Publiczny)",
+    "anyoneDescription": "Każdy z linkiem może odpowiadać"
+  },
+
+  "createDialog": {
+    "title": "Utwórz nowy formularz",
+    "titleLabel": "Tytuł *",
+    "titlePlaceholder": "np. Rejestracja na wydarzenie, Zgłoszenie wolontariusza",
+    "descriptionLabel": "Opis",
+    "descriptionPlaceholder": "Do czego służy ten formularz?",
+    "accessLabel": "Kto może odpowiadać?",
+    "creating": "Tworzenie...",
+    "cancel": "Anuluj"
+  },
+
+  "deleteDialog": {
+    "title": "Usuń formularz",
+    "description": "Czy na pewno chcesz usunąć \"{title}\"? To usunie również wszystkie {count} odpowiedzi. Tej operacji nie można cofnąć.",
+    "confirm": "Usuń"
+  },
+
+  "toast": {
+    "titleRequired": "Wprowadź tytuł formularza",
+    "created": "Formularz utworzony",
+    "deleted": "Formularz usunięty",
+    "submitted": "Formularz został pomyślnie przesłany!",
+    "submitFailed": "Nie udało się przesłać formularza",
+    "fillRequired": "Wypełnij wszystkie wymagane pola",
+    "responseDeleted": "Odpowiedź usunięta",
+    "exportDownloaded": "Eksport pobrany",
+    "exportFailed": "Nie udało się wyeksportować odpowiedzi",
+    "saved": "Formularz zapisany",
+    "saveFailed": "Nie udało się zapisać formularza",
+    "published": "Formularz opublikowany",
+    "unpublished": "Publikacja formularza cofnięta",
+    "closed": "Formularz zamknięty",
+    "linkCopiedNote": "Link skopiowany! Uwaga: Formularz musi być opublikowany, aby link działał.",
+    "linkCopied": "Link skopiowany do schowka"
+  },
+
+  "list": {
+    "response": "odpowiedź",
+    "responses": "odpowiedzi",
+    "responseCount": "{count, plural, one {# odpowiedź} few {# odpowiedzi} other {# odpowiedzi}}",
+    "duplicate": "Duplikuj",
+    "delete": "Usuń"
+  },
+
+  "responses": {
+    "title": "Odpowiedzi",
+    "empty": {
+      "title": "Brak odpowiedzi",
+      "description": "Odpowiedzi pojawią się tutaj, gdy ludzie zaczną wypełniać formularz."
+    },
+    "exportCsv": "Eksportuj CSV",
+    "submitted": "Przesłano",
+    "respondent": "Respondent",
+    "anonymous": "Anonimowy",
+    "yes": "Tak",
+    "no": "Nie",
+    "emptyValue": "-",
+    "loadMore": "Załaduj więcej",
+    "deleteDialog": {
+      "title": "Usuń odpowiedź",
+      "description": "Czy na pewno chcesz usunąć tę odpowiedź? Tej operacji nie można cofnąć."
+    }
+  },
+
+  "builder": {
+    "tabs": {
+      "build": "Buduj",
+      "responses": "Odpowiedzi ({count})",
+      "settings": "Ustawienia"
+    },
+    "preview": "Podgląd",
+    "previewTitle": "Podgląd formularza",
+    "empty": {
+      "title": "Zacznij budować formularz",
+      "descriptionMobile": "Dotknij przycisk +, aby dodać pola do formularza.",
+      "descriptionDesktop": "Przeciągnij pola z lewego panelu lub kliknij, aby dodać je do formularza."
+    },
+    "addField": "Dodaj pole",
+    "editField": "Edytuj pole"
+  },
+
+  "header": {
+    "preview": "Podgląd",
+    "publish": "Opublikuj",
+    "live": "Aktywny",
+    "closed": "Zamknięty",
+    "unsavedChanges": "Niezapisane zmiany",
+    "publicForm": "Formularz publiczny",
+    "internalForm": "Formularz wewnętrzny",
+    "unpublish": "Cofnij publikację (wróć do szkicu)",
+    "closeForm": "Zamknij formularz",
+    "closeFormDesc": "Zamknij formularz (przestań przyjmować odpowiedzi)",
+    "reopenForm": "Otwórz ponownie formularz",
+    "backToForms": "Powrót do formularzy",
+    "copied": "Skopiowano!",
+    "copyLink": "Kopiuj link",
+    "share": "Udostępnij",
+    "save": "Zapisz",
+    "saving": "Zapisywanie..."
+  },
+
+  "internal": {
+    "backToDashboard": "Powrót do panelu",
+    "alreadySubmitted": "Już przesłałeś odpowiedź do tego formularza. Ponowne przesłanie utworzy nową odpowiedź.",
+    "respondingAs": "Odpowiadasz jako {name}",
+    "submit": "Prześlij",
+    "submitting": "Przesyłanie...",
+    "thankYou": "Dziękujemy!",
+    "successMessage": "Twoja odpowiedź została pomyślnie przesłana.",
+    "unavailable": {
+      "title": "Formularz niedostępny",
+      "message": "Ten formularz obecnie nie przyjmuje odpowiedzi."
+    }
+  },
+
+  "public": {
+    "submit": "Prześlij",
+    "submitting": "Przesyłanie...",
+    "emailOptional": "Twój email (opcjonalnie)",
+    "emailDescription": "Podaj swój email, jeśli chcesz otrzymywać aktualizacje dotyczące tego zgłoszenia",
+    "poweredBy": "Powered by Koinonia"
+  },
+
+  "palette": {
+    "title": "Dodaj pola"
+  },
+
+  "fieldTypes": {
+    "text": "Krótki tekst",
+    "textDesc": "Jednoliniowy tekst",
+    "textarea": "Długi tekst",
+    "textareaDesc": "Wieloliniowy tekst",
+    "number": "Liczba",
+    "numberDesc": "Pole numeryczne",
+    "email": "Email",
+    "emailDesc": "Adres email",
+    "date": "Data",
+    "dateDesc": "Wybór daty",
+    "single_select": "Lista rozwijana",
+    "single_selectDesc": "Pojedynczy wybór",
+    "multi_select": "Pola wyboru",
+    "multi_selectDesc": "Wielokrotny wybór",
+    "checkbox": "Tak/Nie",
+    "checkboxDesc": "Pole przełącznika"
+  },
+
+  "defaultLabels": {
+    "text": "Krótka odpowiedź",
+    "textarea": "Długa odpowiedź",
+    "number": "Liczba",
+    "email": "Email",
+    "date": "Data",
+    "single_select": "Lista rozwijana",
+    "multi_select": "Wielokrotny wybór",
+    "checkbox": "Pole wyboru",
+    "question": "Pytanie"
+  },
+
+  "fieldPlaceholders": {
+    "text": "Krótka odpowiedź",
+    "textarea": "Długa odpowiedź",
+    "number": "0",
+    "email": "email@example.com",
+    "date": "Wybierz datę",
+    "single_select": "Wybierz opcję",
+    "checkbox": "Tak"
+  },
+
+  "fieldEditor": {
+    "tabs": {
+      "settings": "Ustawienia",
+      "logic": "Logika"
+    },
+    "selectField": "Wybierz pole, aby edytować jego właściwości",
+    "done": "Gotowe",
+    "logicInstruction": "Pokaż/ukryj to pole na podstawie odpowiedzi",
+    "add": "Dodaj",
+    "required": "Wymagane",
+    "requiredHelp": "Ustaw to pole jako obowiązkowe",
+    "question": "Pytanie",
+    "questionPlaceholder": "Wprowadź pytanie",
+    "description": "Opis",
+    "descriptionOptional": "Opis (opcjonalny)",
+    "descriptionPlaceholder": "Tekst pomocniczy",
+    "placeholder": "Placeholder",
+    "placeholderOptional": "Placeholder (opcjonalny)",
+    "placeholderPlaceholder": "Tekst placeholdera",
+    "options": "Opcje",
+    "addOption": "Dodaj opcję",
+    "moreOptions": "+{count} więcej opcji"
+  },
+
+  "numberSettings": {
+    "title": "Ustawienia liczby",
+    "format": "Format",
+    "min": "Min",
+    "max": "Max",
+    "decimalPlaces": "Miejsca dziesiętne",
+    "noMin": "Brak min",
+    "noMax": "Brak max",
+    "formats": {
+      "number": "Liczba",
+      "currency": "Waluta",
+      "percentage": "Procent"
+    }
+  },
+
+  "conditions": {
+    "title": "Pokaż/ukryj na podstawie poprzednich odpowiedzi",
+    "firstFieldMobile": "Pierwsze pole nie może mieć warunków.",
+    "firstFieldDesktop": "Pierwsze pole nie może mieć warunków. Warunki opierają się na poprzednich polach.",
+    "addFieldsFirst": "Dodaj pola powyżej, aby utworzyć logikę warunkową.",
+    "noConditionsMobile": "Brak warunków.",
+    "noConditionsDesktop": "Brak warunków. Dodaj jeden, aby kontrolować widoczność tego pola.",
+    "action": "Akcja",
+    "when": "Gdy",
+    "condition": "Warunek",
+    "value": "Wartość",
+    "fieldMobile": "Pole",
+    "fieldDesktop": "Wybierz pole",
+    "show": "Pokaż",
+    "hide": "Ukryj",
+    "removeMobile": "Usuń",
+    "removeDesktop": "Usuń warunek",
+    "enterValue": "Wprowadź wartość",
+    "enterValueMobile": "Wartość",
+    "pickDate": "Wybierz datę",
+    "pickDateMobile": "Data",
+    "selectValue": "Wybierz wartość",
+    "selectValueMobile": "Wartość",
+    "noOptions": "Brak dostępnych opcji"
+  },
+
+  "operators": {
+    "equals": "równa się",
+    "not_equals": "nie równa się",
+    "contains": "zawiera",
+    "is_empty": "jest puste",
+    "is_not_empty": "nie jest puste",
+    "before": "przed",
+    "after": "po",
+    "is_any_of": "jest którymkolwiek z",
+    "is_not_any_of": "nie jest żadnym z",
+    "is_every_of": "jest każdym z"
+  },
+
+  "previewPanel": {
+    "preview": "Podgląd",
+    "reset": "Reset",
+    "addFields": "Dodaj pola, aby zobaczyć je w podglądzie",
+    "allHidden": "Wszystkie pola są ukryte przez warunki. Zmień wartości powyżej, aby pokazać pola.",
+    "submit": "Prześlij",
+    "hiddenByConditions": "{count} pole/pól ukrytych przez warunki"
+  },
+
+  "settings": {
+    "title": "Ustawienia formularza",
+    "description": "Skonfiguruj podstawowe informacje i ustawienia dostępu do formularza.",
+    "formTitle": "Tytuł formularza",
+    "formDescription": "Opis",
+    "descriptionHelp": "Ten opis będzie wyświetlany respondentom na górze formularza.",
+    "accessType": "Kto może odpowiadać?",
+    "formStatus": "Aktualny status",
+    "statusHelp": {
+      "draft": "Formularz nie jest jeszcze opublikowany. Tylko Ty możesz go zobaczyć.",
+      "published": "Formularz jest aktywny i przyjmuje odpowiedzi.",
+      "closed": "Formularz jest zamknięty i nie przyjmuje już odpowiedzi."
+    }
+  }
+}

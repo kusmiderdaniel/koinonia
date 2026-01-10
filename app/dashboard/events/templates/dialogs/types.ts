@@ -12,6 +12,7 @@ export interface Ministry {
   id: string
   name: string
   color: string
+  is_system?: boolean
 }
 
 export interface Preset {

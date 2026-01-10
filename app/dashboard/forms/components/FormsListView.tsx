@@ -1,140 +1,133 @@
 'use client'
 
 import { memo } from 'react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-  MoreHorizontal,
-  Copy,
-  Trash2,
-  Globe,
-  Lock,
-  FileText,
-  Users,
-} from 'lucide-react'
-import { formatDistanceToNow } from 'date-fns'
+import { Input } from '@/components/ui/input'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { FileText, Plus, Search } from 'lucide-react'
+import { EmptyState } from '@/components/EmptyState'
+import { FormCard } from './FormCard'
 import type { FormWithRelations } from '../types'
 
-interface FormsListViewProps {
-  forms: FormWithRelations[]
-  onFormClick: (form: FormWithRelations) => void
-  onDeleteClick: (form: FormWithRelations, e: React.MouseEvent) => void
-  onDuplicateClick: (form: FormWithRelations) => void
-  onResponsesClick: (form: FormWithRelations, e: React.MouseEvent) => void
-}
+type StatusFilter = 'all' | 'draft' | 'published' | 'closed'
 
-const statusConfig = {
-  draft: { label: 'Draft', variant: 'secondary' as const },
-  published: { label: 'Published', variant: 'default' as const },
-  closed: { label: 'Closed', variant: 'outline' as const },
+interface FormsListViewProps {
+  searchQuery: string
+  onSearchChange: (query: string) => void
+  statusFilter: StatusFilter
+  onStatusFilterChange: (filter: StatusFilter) => void
+  forms: FormWithRelations[]
+  selectedForm: FormWithRelations | null
+  onSelectForm: (form: FormWithRelations) => void
+  onCreateForm?: () => void
+  onEditForm?: (form: FormWithRelations) => void
+  onDuplicateForm?: (form: FormWithRelations) => void
+  onDeleteForm?: (form: FormWithRelations) => void
+  className?: string
 }
 
 export const FormsListView = memo(function FormsListView({
+  searchQuery,
+  onSearchChange,
+  statusFilter,
+  onStatusFilterChange,
   forms,
-  onFormClick,
-  onDeleteClick,
-  onDuplicateClick,
-  onResponsesClick,
+  selectedForm,
+  onSelectForm,
+  onCreateForm,
+  onEditForm,
+  onDuplicateForm,
+  onDeleteForm,
+  className,
 }: FormsListViewProps) {
+  const t = useTranslations('forms')
+
+  // Filter forms based on status
+  const filteredForms = forms.filter((form) => {
+    if (statusFilter === 'all') return true
+    return form.status === statusFilter
+  })
+
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {forms.map((form) => (
-        <Card
-          key={form.id}
-          className="cursor-pointer hover:shadow-md transition-shadow border border-black dark:border-white"
-          onClick={() => onFormClick(form)}
+    <div className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card overflow-hidden ${className ?? ''}`}>
+      {/* Search + Add Button */}
+      <div className="p-3 border-b flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder={t('searchPlaceholder')}
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        {onCreateForm && (
+          <Button
+            variant="outline"
+            size="icon"
+            className="flex-shrink-0 rounded-full !border !border-black dark:!border-white"
+            onClick={onCreateForm}
+            title={t('newForm')}
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+        )}
+      </div>
+
+      {/* Status Filter Toggle */}
+      <div className="p-2 border-b">
+        <ToggleGroup
+          type="single"
+          value={statusFilter}
+          onValueChange={(value) => value && onStatusFilterChange(value as StatusFilter)}
+          className="w-full"
         >
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex items-start gap-2 min-w-0 flex-1">
-                <div className="p-1.5 rounded-md bg-muted">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-medium truncate text-sm">{form.title}</h3>
-                  {form.description && (
-                    <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
-                      {form.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onDuplicateClick(form)
-                    }}
-                  >
-                    <Copy className="h-4 w-4 mr-2" />
-                    Duplicate
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="text-red-600"
-                    onClick={(e) => onDeleteClick(form, e)}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+          <ToggleGroupItem
+            value="all"
+            className="flex-1 rounded-full text-xs data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
+          >
+            {t('filter.all')}
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="draft"
+            className="flex-1 rounded-full text-xs data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
+          >
+            {t('filter.draft')}
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="published"
+            className="flex-1 rounded-full text-xs data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
+          >
+            {t('filter.published')}
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
 
-            <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-              <Badge variant={statusConfig[form.status as keyof typeof statusConfig]?.variant || 'secondary'} className="text-xs px-1.5 py-0">
-                {statusConfig[form.status as keyof typeof statusConfig]?.label || form.status}
-              </Badge>
-              <Badge variant="outline" className="gap-1 text-xs px-1.5 py-0">
-                {form.access_type === 'public' ? (
-                  <>
-                    <Globe className="h-3 w-3" />
-                    Public
-                  </>
-                ) : (
-                  <>
-                    <Lock className="h-3 w-3" />
-                    Internal
-                  </>
-                )}
-              </Badge>
-            </div>
-
-            <div className="flex items-center justify-between mt-2 pt-2 border-t text-xs text-muted-foreground">
-              <button
-                type="button"
-                className="flex items-center gap-1 hover:text-foreground transition-colors"
-                onClick={(e) => onResponsesClick(form, e)}
-              >
-                <Users className="h-3 w-3" />
-                <span>
-                  {form.submissions_count || 0}{' '}
-                  {form.submissions_count === 1 ? 'response' : 'responses'}
-                </span>
-              </button>
-              {form.created_at && (
-                <span>
-                  {formatDistanceToNow(new Date(form.created_at), { addSuffix: true })}
-                </span>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+      {/* Forms List */}
+      <div className="flex-1 overflow-y-auto p-2">
+        {filteredForms.length > 0 ? (
+          <div className="space-y-2">
+            {filteredForms.map((form) => (
+              <FormCard
+                key={form.id}
+                form={form}
+                isSelected={selectedForm?.id === form.id}
+                onClick={() => onSelectForm(form)}
+                onEdit={onEditForm}
+                onDuplicate={onDuplicateForm}
+                onDelete={onDeleteForm}
+              />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            icon={FileText}
+            title={forms.length === 0 ? t('empty.title') : t('empty.noMatch')}
+            size="sm"
+          />
+        )}
+      </div>
     </div>
   )
 })

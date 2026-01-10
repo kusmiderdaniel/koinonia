@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -49,6 +50,7 @@ export function AgendaPresetsTab({
   setError,
   setSuccess,
 }: AgendaPresetsTabProps) {
+  const t = useTranslations('settings.presets')
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingPreset, setEditingPreset] = useState<Preset | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -80,7 +82,7 @@ export function AgendaPresetsTab({
     if (result.error) {
       toast.error(result.error)
     } else {
-      toast.success('Agenda item deleted')
+      toast.success(t('deleteDialog.deletedSuccess'))
       setPresets(presets.filter(p => p.id !== presetToDelete.id))
     }
 
@@ -104,14 +106,14 @@ export function AgendaPresetsTab({
         <CardHeader className="p-4 md:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-6">
             <div>
-              <CardTitle className="text-lg md:text-xl">Agenda Items</CardTitle>
+              <CardTitle className="text-lg md:text-xl">{t('title')}</CardTitle>
               <CardDescription className="text-sm">
-                Reusable agenda items for events
+                {t('description')}
               </CardDescription>
             </div>
             <Button onClick={handleAddPreset} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
-              Add Item
+              {t('addItem')}
             </Button>
           </div>
         </CardHeader>
@@ -119,8 +121,8 @@ export function AgendaPresetsTab({
           {presets.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <ListChecks className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>No agenda items yet</p>
-              <p className="text-sm">Add your first agenda item to use in events</p>
+              <p>{t('empty.title')}</p>
+              <p className="text-sm">{t('empty.description')}</p>
             </div>
           ) : (
             <div className="space-y-1.5 md:space-y-2">
@@ -187,20 +189,19 @@ export function AgendaPresetsTab({
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-[90vw] md:max-w-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete agenda item?</AlertDialogTitle>
+            <AlertDialogTitle>{t('deleteDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will remove &quot;{presetToDelete?.title}&quot; from your agenda items library.
-              Items already added to events or templates will not be affected.
+              {t('deleteDialog.description', { title: presetToDelete?.title ?? '' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-            <AlertDialogCancel className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">{t('deleteDialog.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               disabled={isDeleting}
               className="rounded-full !border !border-red-600 !bg-red-600 hover:!bg-red-700 !text-white px-4 py-2"
             >
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? t('deleteDialog.deleting') : t('deleteDialog.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

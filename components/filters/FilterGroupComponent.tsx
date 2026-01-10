@@ -1,6 +1,7 @@
 'use client'
 
 import { memo, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Plus, X } from 'lucide-react'
 import { FilterRuleRow } from './FilterRuleRow'
@@ -35,6 +36,7 @@ export const FilterGroupComponent = memo(function FilterGroupComponent({
   onUpdate,
   onRemove,
 }: FilterGroupComponentProps) {
+  const t = useTranslations('filter')
   const handleAddRule = useCallback(() => {
     onUpdate({
       ...group,
@@ -81,17 +83,17 @@ export const FilterGroupComponent = memo(function FilterGroupComponent({
             <button
               type="button"
               onClick={() => onParentConjunctionChange(parentConjunction === 'and' ? 'or' : 'and')}
-              className="h-8 px-3 text-xs rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors capitalize"
+              className="h-8 px-3 text-xs rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
             >
-              {parentConjunction}
+              {t(parentConjunction)}
             </button>
           ) : (
-            <span className="text-xs text-muted-foreground px-2 capitalize">
-              {parentConjunction}
+            <span className="text-xs text-muted-foreground px-2">
+              {t(parentConjunction)}
             </span>
           )
         ) : (
-          <span className="text-xs text-muted-foreground px-2">Where</span>
+          <span className="text-xs text-muted-foreground px-2">{t('where')}</span>
         )}
       </div>
 
@@ -118,7 +120,7 @@ export const FilterGroupComponent = memo(function FilterGroupComponent({
           onClick={handleAddRule}
         >
           <Plus className="h-3 w-3" />
-          Add filter rule
+          {t('addRule')}
         </Button>
       </div>
 

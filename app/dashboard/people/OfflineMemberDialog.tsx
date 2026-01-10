@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Loader2, UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -32,6 +33,7 @@ interface OfflineMemberDialogProps {
 }
 
 export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMemberDialogProps) {
+  const t = useTranslations('people')
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
   const [open, setOpen] = useState(false)
@@ -54,7 +56,7 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
     e.preventDefault()
 
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
-      toast.error('First name and last name are required')
+      toast.error(t('offlineMember.errorRequired'))
       return
     }
 
@@ -72,7 +74,7 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
     if (result.error) {
       toast.error(result.error)
     } else {
-      toast.success(`${formData.firstName} ${formData.lastName} has been added`)
+      toast.success(t('offlineMember.successMessage', { name: `${formData.firstName} ${formData.lastName}` }))
       setOpen(false)
       setFormData({
         firstName: '',
@@ -91,7 +93,7 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
     return trigger || (
       <Button variant="outline" className="!border !border-black dark:!border-white">
         <UserPlus className="h-4 w-4 mr-2" />
-        Add Offline Member
+        {t('offlineMember.button')}
       </Button>
     )
   }
@@ -102,85 +104,85 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
         {trigger || (
           <Button variant="outline" className="!border !border-black dark:!border-white">
             <UserPlus className="h-4 w-4 mr-2" />
-            Add Offline Member
+            {t('offlineMember.button')}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Add Offline Member</DialogTitle>
+            <DialogTitle>{t('offlineMember.title')}</DialogTitle>
             <DialogDescription>
-              Add a church member who doesn&apos;t have an account (e.g., children). They can be linked to an account later if they sign up.
+              {t('offlineMember.description')}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="firstName">First Name *</Label>
+                <Label htmlFor="firstName">{t('offlineMember.firstNameRequired')}</Label>
                 <Input
                   id="firstName"
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  placeholder="John"
+                  placeholder={t('offlineMember.firstNamePlaceholder')}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name *</Label>
+                <Label htmlFor="lastName">{t('offlineMember.lastNameRequired')}</Label>
                 <Input
                   id="lastName"
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  placeholder="Doe"
+                  placeholder={t('offlineMember.lastNamePlaceholder')}
                   required
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email (optional)</Label>
+              <Label htmlFor="email">{t('offlineMember.emailOptional')}</Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="john@example.com"
+                placeholder={t('offlineMember.emailPlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone (optional)</Label>
+              <Label htmlFor="phone">{t('offlineMember.phoneOptional')}</Label>
               <Input
                 id="phone"
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="+1 (555) 123-4567"
+                placeholder={t('offlineMember.phonePlaceholder')}
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                <Label htmlFor="dateOfBirth">{t('offlineMember.dateOfBirth')}</Label>
                 <DatePicker
                   id="dateOfBirth"
                   value={formData.dateOfBirth}
                   onChange={(value) => setFormData({ ...formData, dateOfBirth: value })}
-                  placeholder="Select date"
+                  placeholder={t('offlineMember.selectDate')}
                   disabled={loading}
                   weekStartsOn={weekStartsOn}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="sex">Gender</Label>
+                <Label htmlFor="sex">{t('offlineMember.gender')}</Label>
                 <Select
                   value={formData.sex}
                   onValueChange={(value) => setFormData({ ...formData, sex: value })}
                 >
                   <SelectTrigger id="sex" className="w-full">
-                    <SelectValue placeholder="Select..." />
+                    <SelectValue placeholder={t('offlineMember.selectPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="male">{t('sex.male')}</SelectItem>
+                    <SelectItem value="female">{t('sex.female')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -188,11 +190,11 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" className="!border !border-black dark:!border-white" onClick={() => setOpen(false)}>
-              Cancel
+              {t('actions.cancel')}
             </Button>
             <Button type="submit" disabled={loading} className="!bg-brand hover:!bg-brand/90 !text-white !border !border-brand">
               {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Add Member
+              {t('addMember')}
             </Button>
           </DialogFooter>
         </form>

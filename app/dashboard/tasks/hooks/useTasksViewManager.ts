@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { deleteSavedView, setDefaultView, updateSavedView } from '@/lib/actions/saved-views'
 import { createDefaultTaskFilterState, generateFilterId } from '../filter-types'
@@ -17,6 +18,9 @@ export function useTasksViewManager({
   initialViews,
   currentUserId,
 }: UseTasksViewManagerOptions) {
+  const t = useTranslations('tasks')
+  const tViews = useTranslations('views')
+
   // Sort, Filter, and Group state
   const [searchQuery, setSearchQuery] = useState('')
   const [sortState, setSortState] = useState<SortState>(createEmptySortState)
@@ -54,7 +58,7 @@ export function useTasksViewManager({
     return [
       {
         id: 'my-tasks',
-        name: 'My Tasks',
+        name: t('builtInViews.myTasks'),
         filterState: {
           conjunction: 'and',
           rules: [
@@ -90,7 +94,7 @@ export function useTasksViewManager({
         groupBy: myTasksPrefs?.groupBy || 'none',
       },
     ]
-  }, [currentUserId, builtInViewPrefs])
+  }, [currentUserId, builtInViewPrefs, t])
 
   // Handler for selecting a built-in view
   const handleSelectBuiltInView = useCallback((view: BuiltInView) => {
@@ -169,14 +173,14 @@ export function useTasksViewManager({
     if (result.error) {
       toast.error(result.error)
     } else {
-      toast.success('View deleted')
+      toast.success(tViews('dialog.viewDeleted'))
       setViews((prev) => prev.filter((v) => v.id !== viewToDelete.id))
       if (selectedViewId === viewToDelete.id) {
         setSelectedViewId(null)
       }
     }
     setViewToDelete(null)
-  }, [viewToDelete, selectedViewId])
+  }, [viewToDelete, selectedViewId, tViews])
 
   const handleSetDefaultView = useCallback(async (view: SavedView) => {
     const result = await setDefaultView(view.id)
@@ -191,7 +195,7 @@ export function useTasksViewManager({
         }))
       )
     }
-  }, [])
+  }, [tViews])
 
   const handleSaveViewChanges = useCallback(async () => {
     if (!selectedViewId) return
@@ -206,9 +210,9 @@ export function useTasksViewManager({
       setBuiltInViewPrefs(newPrefs)
       try {
         localStorage.setItem('builtInViewPrefs', JSON.stringify(newPrefs))
-        toast.success('View preferences saved')
+        toast.success(tViews('dialog.preferencesSaved'))
       } catch {
-        toast.error('Failed to save preferences')
+        toast.error(tViews('dialog.preferencesFailed'))
       }
       return
     }
@@ -227,7 +231,7 @@ export function useTasksViewManager({
     if (result.error) {
       toast.error(result.error)
     } else {
-      toast.success('View updated')
+      toast.success(tViews('dialog.viewUpdated'))
       if (result.data) {
         setViews((prev) =>
           prev.map((v) => (v.id === result.data!.id ? result.data! : v))
@@ -242,6 +246,7 @@ export function useTasksViewManager({
     filterState,
     sortState,
     groupBy,
+    tViews,
   ])
 
   const handleOpenCreateView = useCallback(() => {

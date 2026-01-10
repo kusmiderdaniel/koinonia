@@ -1,0 +1,162 @@
+{
+  "title": "Church Members",
+  "titleLeader": "Campus Members",
+  "subtitle": "All members who have joined your church.",
+  "subtitleLeader": "Members in your campus.",
+  "subtitleClickRole": "Click on a role to change it.",
+  "members": "Members",
+  "addMember": "Add Member",
+  "inviteMember": "Invite Member",
+  "noMembers": "No members yet. Share your invite link to get started!",
+  "noMembersLeader": "No members in your campus yet.",
+  "search": "Search members...",
+  "pendingBadge": "Pending",
+  "showingMembers": "Showing {filtered} of {total} {total, plural, =1 {member} other {members}}",
+  "you": "(you)",
+  "offline": "Offline",
+  "noEmail": "No email",
+  "fields": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "role": "Role",
+    "status": "Status",
+    "dateOfBirth": "Date of Birth",
+    "sex": "Sex",
+    "baptism": "Baptism",
+    "baptismDate": "Baptism Date",
+    "skills": "Skills",
+    "bio": "Bio",
+    "emergencyContactName": "Emergency Contact Name",
+    "emergencyContactPhone": "Emergency Contact Phone"
+  },
+  "roles": {
+    "owner": "Owner",
+    "admin": "Admin",
+    "leader": "Leader",
+    "volunteer": "Volunteer"
+  },
+  "sex": {
+    "male": "Male",
+    "female": "Female",
+    "other": "Other"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "tableHeader": {
+    "active": "Active",
+    "name": "Name",
+    "email": "Email",
+    "emailTooltip": "Cannot be changed",
+    "role": "Role",
+    "campus": "Campus",
+    "ministryRoles": "Ministry Roles",
+    "gender": "Gender",
+    "genderTooltip": "Can be changed in user's profile settings",
+    "dateOfBirth": "Date of Birth",
+    "dateOfBirthTooltip": "Can be changed in user's profile settings",
+    "age": "Age",
+    "baptized": "Baptized",
+    "baptismDate": "Baptism Date",
+    "departureDate": "Departure Date",
+    "departureReason": "Departure Reason",
+    "joined": "Joined"
+  },
+  "table": {
+    "showing": "Showing {count} of {total} member{total, plural, =1 {} other {s}}",
+    "noResults": "No members match your search",
+    "selectAll": "Select all",
+    "selected": "{count} selected",
+    "updating": "Updating...",
+    "reasonForDeparture": "Reason for Departure",
+    "enterReason": "Enter reason for departure..."
+  },
+  "card": {
+    "gender": "Gender",
+    "age": "Age",
+    "dob": "DOB",
+    "joined": "Joined",
+    "campus": "Campus",
+    "baptized": "Baptized",
+    "yes": "Yes",
+    "no": "No",
+    "date": "Date",
+    "departure": "Departure",
+    "reason": "Reason"
+  },
+  "invite": {
+    "button": "Invite Members",
+    "title": "Church Join Code",
+    "description": "Share this code with new members to join your church."
+  },
+  "offlineMember": {
+    "button": "Add Offline Member",
+    "title": "Add Offline Member",
+    "description": "Add a church member who doesn't have an account (e.g., children). They can be linked to an account later if they sign up.",
+    "firstNameRequired": "First Name *",
+    "firstNamePlaceholder": "John",
+    "lastNameRequired": "Last Name *",
+    "lastNamePlaceholder": "Doe",
+    "emailOptional": "Email (optional)",
+    "emailPlaceholder": "john@example.com",
+    "phoneOptional": "Phone (optional)",
+    "phonePlaceholder": "+1 (555) 123-4567",
+    "dateOfBirth": "Date of Birth",
+    "selectDate": "Select date",
+    "gender": "Gender",
+    "selectPlaceholder": "Select...",
+    "successMessage": "{name} has been added",
+    "errorRequired": "First name and last name are required"
+  },
+  "views": {
+    "title": "Views",
+    "create": "Create View",
+    "delete": "Delete View",
+    "deleteTitle": "Delete View",
+    "deleteConfirmation": "Are you sure you want to delete the view \"{name}\"? This action cannot be undone."
+  },
+  "dialog": {
+    "editTitle": "Edit Member",
+    "deleteTitle": "Delete Member",
+    "deleteConfirmation": "Are you sure you want to remove \"{name}\" from the church? This action cannot be undone."
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "delete": "Delete"
+  },
+  "pending": {
+    "title": "Pending Registrations",
+    "subtitle": "Review and approve new member registrations",
+    "noRegistrations": "No pending registrations",
+    "noRegistrationsDescription": "New signups will appear here for approval",
+    "name": "Name",
+    "email": "Email",
+    "campus": "Campus",
+    "campusNotSpecified": "Not specified",
+    "registered": "Registered",
+    "actionsColumn": "Actions",
+    "link": "Link",
+    "reject": "Reject",
+    "approve": "Approve"
+  },
+  "rejectDialog": {
+    "title": "Reject Registration",
+    "description": "Are you sure you want to reject {name}'s registration?",
+    "reason": "Reason (optional)",
+    "reasonPlaceholder": "Provide a reason for rejection...",
+    "confirmButton": "Reject Registration"
+  },
+  "linkDialog": {
+    "title": "Link to Existing Member",
+    "description": "Link {name}'s account to an existing offline member record.",
+    "searchPlaceholder": "Search members...",
+    "noMatch": "No members match your search",
+    "noOfflineMembers": "No offline members available",
+    "confirmButton": "Link Account"
+  }
+}

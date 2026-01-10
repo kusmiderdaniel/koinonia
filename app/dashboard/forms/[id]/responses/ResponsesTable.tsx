@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -34,6 +35,7 @@ export const ResponsesTable = memo(function ResponsesTable({
   formId,
   fields,
 }: ResponsesTableProps) {
+  const t = useTranslations('forms')
   const [submissions, setSubmissions] = useState<FormSubmission[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [hasMore, setHasMore] = useState(false)
@@ -90,7 +92,7 @@ export const ResponsesTable = memo(function ResponsesTable({
       return
     }
 
-    toast.success('Response deleted')
+    toast.success(t('toast.responseDeleted'))
     setSubmissions((prev) => prev.filter((s) => s.id !== deleteDialog.id))
     setDeleteDialog({ open: false, id: null })
     setIsDeleting(false)
@@ -111,18 +113,18 @@ export const ResponsesTable = memo(function ResponsesTable({
       a.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
-      toast.success('Export downloaded')
+      toast.success(t('toast.exportDownloaded'))
     } catch {
-      toast.error('Failed to export responses')
+      toast.error(t('toast.exportFailed'))
     }
   }, [formId])
 
   const formatFieldValue = (field: FormField, value: unknown): string => {
-    if (value === null || value === undefined || value === '') return '-'
+    if (value === null || value === undefined || value === '') return t('responses.emptyValue')
 
     switch (field.type) {
       case 'checkbox':
-        return value ? 'Yes' : 'No'
+        return value ? t('responses.yes') : t('responses.no')
       case 'multi_select':
         if (Array.isArray(value)) {
           return value.join(', ')
@@ -179,8 +181,8 @@ export const ResponsesTable = memo(function ResponsesTable({
     return (
       <div className="p-6">
         <EmptyState
-          title="No responses yet"
-          description="Responses will appear here once people start submitting your form."
+          title={t('responses.empty.title')}
+          description={t('responses.empty.description')}
         />
       </div>
     )
@@ -194,11 +196,11 @@ export const ResponsesTable = memo(function ResponsesTable({
       {/* Header */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          {submissions.length} response{submissions.length !== 1 ? 's' : ''}
+          {t('list.responseCount', { count: submissions.length })}
         </p>
         <Button variant="outline" size="sm" onClick={handleExport} className="gap-2 !border !border-black dark:!border-white">
           <Download className="h-4 w-4" />
-          Export CSV
+          {t('responses.exportCsv')}
         </Button>
       </div>
 
@@ -208,8 +210,8 @@ export const ResponsesTable = memo(function ResponsesTable({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="whitespace-nowrap">Submitted</TableHead>
-                <TableHead className="whitespace-nowrap">Respondent</TableHead>
+                <TableHead className="whitespace-nowrap">{t('responses.submitted')}</TableHead>
+                <TableHead className="whitespace-nowrap">{t('responses.respondent')}</TableHead>
                 {displayFields.map((field) => (
                   <TableHead key={field.id} className="whitespace-nowrap">
                     {field.label}
@@ -236,7 +238,7 @@ export const ResponsesTable = memo(function ResponsesTable({
                         {submission.respondent_email}
                       </span>
                     ) : (
-                      <span className="text-sm text-muted-foreground italic">Anonymous</span>
+                      <span className="text-sm text-muted-foreground italic">{t('responses.anonymous')}</span>
                     )}
                   </TableCell>
                   {displayFields.map((field) => (
@@ -257,7 +259,7 @@ export const ResponsesTable = memo(function ResponsesTable({
                           onClick={() => setDeleteDialog({ open: true, id: submission.id })}
                         >
                           <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
+                          {t('list.delete')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -274,7 +276,7 @@ export const ResponsesTable = memo(function ResponsesTable({
         <div className="flex justify-center">
           <Button variant="outline" onClick={handleLoadMore} className="gap-2">
             <ChevronDown className="h-4 w-4" />
-            Load More
+            {t('responses.loadMore')}
           </Button>
         </div>
       )}
@@ -283,9 +285,9 @@ export const ResponsesTable = memo(function ResponsesTable({
       <ConfirmDialog
         open={deleteDialog.open}
         onOpenChange={(open) => setDeleteDialog({ open, id: deleteDialog.id })}
-        title="Delete Response"
-        description="Are you sure you want to delete this response? This action cannot be undone."
-        confirmLabel="Delete"
+        title={t('responses.deleteDialog.title')}
+        description={t('responses.deleteDialog.description')}
+        confirmLabel={t('list.delete')}
         destructive
         isLoading={isDeleting}
         onConfirm={handleDelete}

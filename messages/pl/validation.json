@@ -1,0 +1,20 @@
+{
+  "required": "Pole {field} jest wymagane",
+  "email": "Wprowadź prawidłowy adres e-mail",
+  "minLength": "Pole {field} musi mieć co najmniej {min} znaków",
+  "maxLength": "Pole {field} może mieć maksymalnie {max} znaków",
+  "password": {
+    "min": "Hasło musi mieć co najmniej {min} znaków",
+    "uppercase": "Hasło musi zawierać co najmniej jedną wielką literę",
+    "lowercase": "Hasło musi zawierać co najmniej jedną małą literę",
+    "number": "Hasło musi zawierać co najmniej jedną cyfrę",
+    "special": "Hasło musi zawierać co najmniej jeden znak specjalny",
+    "mismatch": "Hasła nie są zgodne"
+  },
+  "phone": "Wprowadź prawidłowy numer telefonu",
+  "url": "Wprowadź prawidłowy adres URL",
+  "date": "Wprowadź prawidłową datę",
+  "number": "Wprowadź prawidłową liczbę",
+  "positiveNumber": "Wprowadź liczbę dodatnią",
+  "integer": "Wprowadź liczbę całkowitą"
+}

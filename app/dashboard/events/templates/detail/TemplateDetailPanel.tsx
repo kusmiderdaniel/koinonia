@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Music, Users } from 'lucide-react'
@@ -57,6 +58,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
   onClose,
   onTemplateUpdated,
 }: TemplateDetailPanelProps) {
+  const t = useTranslations('events.templatesTab')
   const isMobile = useIsMobile()
   const [activeTab, setActiveTab] = useState('agenda')
   const [agendaItemDialogOpen, setAgendaItemDialogOpen] = useState(false)
@@ -104,7 +106,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
     if (result.error) {
       toast.error(result.error)
     } else {
-      toast.success(`Template duplicated as "${template.name} - copy"`)
+      toast.success(t('duplicatedAs', { name: `${template.name} - copy` }))
       onTemplateUpdated()
     }
   }
@@ -232,14 +234,14 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
               className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
               <Music className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
-              Agenda
+              {t('agendaTab')}
             </TabsTrigger>
             <TabsTrigger
               value="positions"
               className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
               <Users className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
-              Positions
+              {t('positionsTab')}
             </TabsTrigger>
           </TabsList>
         </div>

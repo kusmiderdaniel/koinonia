@@ -1,6 +1,7 @@
 'use client'
 
 import { memo, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Button } from '@/components/ui/button'
@@ -18,12 +19,11 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useIsMobile } from '@/lib/hooks'
-import {
-  VISIBILITY_LABELS,
-  type LinkTreeLinkRow,
-  type LinkVisibility,
-  type CardSize,
-  type HoverEffect,
+import type {
+  LinkTreeLinkRow,
+  LinkVisibility,
+  CardSize,
+  HoverEffect,
 } from '../types'
 import { useLinkItemHandlers } from './link-item/useLinkItemHandlers'
 import { ColorPickerPopover } from './link-item/ColorPickerPopover'
@@ -56,6 +56,7 @@ export const SortableLinkItem = memo(function SortableLinkItem({
   index = 0,
   totalLinks = 0,
 }: SortableLinkItemProps) {
+  const t = useTranslations('links')
   const isMobile = useIsMobile()
   const [iconOpen, setIconOpen] = useState(false)
   const [imageOpen, setImageOpen] = useState(false)
@@ -93,7 +94,7 @@ export const SortableLinkItem = memo(function SortableLinkItem({
     transition,
   }
 
-  const visibilityInfo = VISIBILITY_LABELS[link.visibility as LinkVisibility]
+  const visibilityLabel = t(`visibility.${link.visibility as LinkVisibility}.label`)
   const currentSize = (link.card_size as CardSize) || 'medium'
   const currentHover = (link.hover_effect as HoverEffect) || 'none'
 
@@ -129,7 +130,7 @@ export const SortableLinkItem = memo(function SortableLinkItem({
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-                  {visibilityInfo?.label || link.visibility}
+                  {visibilityLabel}
                 </Badge>
                 {clickCount !== undefined && clickCount > 0 && (
                   <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
@@ -204,7 +205,7 @@ export const SortableLinkItem = memo(function SortableLinkItem({
                 className="h-8 px-2 gap-1"
               >
                 <Pencil className="h-3.5 w-3.5" />
-                <span className="text-xs">Edit</span>
+                <span className="text-xs">{t('linkItem.edit')}</span>
               </Button>
               <Button
                 variant="ghost"
@@ -259,7 +260,7 @@ export const SortableLinkItem = memo(function SortableLinkItem({
               variant="outline"
               className="text-xs"
             >
-              {visibilityInfo?.label || link.visibility}
+              {visibilityLabel}
             </Badge>
           </div>
           <a
@@ -278,7 +279,7 @@ export const SortableLinkItem = memo(function SortableLinkItem({
           <Switch
             checked={link.is_active ?? false}
             onCheckedChange={handleToggleActive}
-            title={link.is_active ? 'Hide link' : 'Show link'}
+            title={link.is_active ? t('linkItem.hideLink') : t('linkItem.showLink')}
           />
 
           <Button

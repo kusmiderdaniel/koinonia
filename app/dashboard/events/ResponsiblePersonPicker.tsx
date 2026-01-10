@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { useDebouncedValue } from '@/lib/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -29,6 +30,8 @@ export function ResponsiblePersonPicker({
   selectedPersonId,
   onSelect,
 }: ResponsiblePersonPickerProps) {
+  const t = useTranslations('events.responsiblePerson')
+  const tActions = useTranslations('events.actions')
   const [members, setMembers] = useState<Person[]>([])
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebouncedValue(search, 300)
@@ -80,9 +83,9 @@ export function ResponsiblePersonPicker({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Choose Responsible Person</DialogTitle>
+          <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>
-            Select the person responsible for this event
+            {t('description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -96,7 +99,7 @@ export function ResponsiblePersonPicker({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name..."
+            placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -107,15 +110,15 @@ export function ResponsiblePersonPicker({
         <div className="max-h-[300px] overflow-y-auto -mx-4 px-4">
           {isLoading ? (
             <p className="text-sm text-muted-foreground text-center py-4">
-              Loading members...
+              {t('loading')}
             </p>
           ) : filteredMembers.length === 0 ? (
             <div className="text-center py-6">
               <User className="w-10 h-10 mx-auto mb-2 opacity-50" />
               <p className="text-sm text-muted-foreground">
                 {members.length === 0
-                  ? 'No members available'
-                  : 'No members found'}
+                  ? t('noMembers')
+                  : t('noMembersFound')}
               </p>
             </div>
           ) : (
@@ -162,7 +165,7 @@ export function ResponsiblePersonPicker({
               className="rounded-full"
               onClick={handleClearSelection}
             >
-              Clear
+              {tActions('clear')}
             </Button>
           )}
           <Button
@@ -171,7 +174,7 @@ export function ResponsiblePersonPicker({
             className="rounded-full"
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            {tActions('cancel')}
           </Button>
         </DialogFooter>
       </DialogContent>

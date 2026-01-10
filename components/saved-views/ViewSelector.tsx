@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,6 +40,7 @@ export function ViewSelector({
   builtInViews = [],
   onSelectBuiltInView,
 }: ViewSelectorProps) {
+  const t = useTranslations('views')
   const selectedView = views.find((v) => v.id === selectedViewId)
   const selectedBuiltInView = builtInViews.find((v) => v.id === selectedViewId)
   const hasViews = views.length > 0
@@ -61,7 +63,7 @@ export function ViewSelector({
             ) : (
               <Bookmark className="h-4 w-4" />
             )}
-            Views
+            {t('title')}
           </Button>
         </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-64 bg-white dark:bg-zinc-950">
@@ -70,7 +72,7 @@ export function ViewSelector({
           onClick={() => onSelectView(null)}
           className="cursor-pointer flex items-center justify-between"
         >
-          <span>All</span>
+          <span>{t('all')}</span>
           {!hasSelectedView && <Check className="h-4 w-4 text-brand" />}
         </DropdownMenuItem>
 
@@ -107,7 +109,7 @@ export function ViewSelector({
           ))
         ) : (
           <div className="px-2 py-1.5 text-sm text-muted-foreground">
-            No saved views
+            {t('noSavedViews')}
           </div>
         )}
 
@@ -117,7 +119,7 @@ export function ViewSelector({
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={onCreateView} className="cursor-pointer">
               <Plus className="h-4 w-4 mr-2" />
-              Save current view...
+              {t('saveCurrentView')}
             </DropdownMenuItem>
           </>
         )}
@@ -139,7 +141,7 @@ export function ViewSelector({
           ) : (
             <Save className="h-4 w-4" />
           )}
-          <span className="hidden sm:inline">Save</span>
+          <span className="hidden sm:inline">{t('save')}</span>
         </Button>
       )}
     </div>
@@ -164,6 +166,7 @@ function ViewMenuItem({
   onDelete: () => void
   onSetDefault: () => void
 }) {
+  const t = useTranslations('views')
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
@@ -203,7 +206,7 @@ function ViewMenuItem({
               }}
             >
               <Pencil className="h-4 w-4 mr-2" />
-              Edit
+              {t('edit')}
             </DropdownMenuItem>
             {!view.is_default && (
               <DropdownMenuItem
@@ -213,7 +216,7 @@ function ViewMenuItem({
                 }}
               >
                 <Star className="h-4 w-4 mr-2" />
-                Set as default
+                {t('setAsDefault')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
@@ -225,7 +228,7 @@ function ViewMenuItem({
               className="text-red-600 focus:text-red-600"
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Delete
+              {t('delete')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

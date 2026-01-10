@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -24,6 +25,7 @@ export function FieldEditorBasicFields({
   onDescriptionChange,
   onPlaceholderChange,
 }: FieldEditorBasicFieldsProps) {
+  const t = useTranslations('forms')
   const isMobile = useIsMobile()
 
   const fieldWrapper = `border rounded-lg bg-muted/30 ${isMobile ? 'p-2 space-y-1' : 'p-3 space-y-2'}`
@@ -32,12 +34,12 @@ export function FieldEditorBasicFields({
     <>
       {/* Label */}
       <div className={fieldWrapper}>
-        <Label htmlFor="label" className={isMobile ? 'text-sm' : ''}>Question</Label>
+        <Label htmlFor="label" className={isMobile ? 'text-sm' : ''}>{t('fieldEditor.question')}</Label>
         <Input
           id="label"
           value={label}
           onChange={(e) => onLabelChange(e.target.value)}
-          placeholder="Enter your question"
+          placeholder={t('fieldEditor.questionPlaceholder')}
           className={isMobile ? 'h-9' : ''}
         />
       </div>
@@ -45,13 +47,13 @@ export function FieldEditorBasicFields({
       {/* Description */}
       <div className={fieldWrapper}>
         <Label htmlFor="description" className={isMobile ? 'text-sm' : ''}>
-          Description {!isMobile && '(optional)'}
+          {isMobile ? t('fieldEditor.description') : t('fieldEditor.descriptionOptional')}
         </Label>
         <Textarea
           id="description"
           value={description || ''}
           onChange={(e) => onDescriptionChange(e.target.value)}
-          placeholder="Help text"
+          placeholder={t('fieldEditor.descriptionPlaceholder')}
           rows={isMobile ? 1 : 2}
           className={isMobile ? 'min-h-[36px] py-2' : ''}
         />
@@ -61,13 +63,13 @@ export function FieldEditorBasicFields({
       {showPlaceholder && (
         <div className={fieldWrapper}>
           <Label htmlFor="placeholder" className={isMobile ? 'text-sm' : ''}>
-            Placeholder {!isMobile && '(optional)'}
+            {isMobile ? t('fieldEditor.placeholder') : t('fieldEditor.placeholderOptional')}
           </Label>
           <Input
             id="placeholder"
             value={placeholder || ''}
             onChange={(e) => onPlaceholderChange(e.target.value)}
-            placeholder="Placeholder text"
+            placeholder={t('fieldEditor.placeholderPlaceholder')}
             className={isMobile ? 'h-9' : ''}
           />
         </div>

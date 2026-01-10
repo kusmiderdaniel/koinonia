@@ -291,6 +291,32 @@ export async function getAnalytics(): Promise<{ analytics: AnalyticsSummary | nu
     } as LinkWithStats
   })
 
+  // Generate daily click data for the last 14 days
+  const dailyClicks: { date: string; [key: string]: number | string }[] = []
+  const chartStartDate = new Date(todayStart)
+  chartStartDate.setDate(chartStartDate.getDate() - 13) // Last 14 days including today
+
+  for (let i = 0; i < 14; i++) {
+    const currentDate = new Date(chartStartDate)
+    currentDate.setDate(chartStartDate.getDate() + i)
+    const nextDate = new Date(currentDate)
+    nextDate.setDate(nextDate.getDate() + 1)
+
+    const dateStr = currentDate.toISOString().split('T')[0]
+    const dayData: { date: string; [key: string]: number | string } = { date: dateStr }
+
+    // Count clicks per link for this day
+    for (const link of links || []) {
+      const linkDayClicks = allClicks.filter(c => {
+        const clickDate = new Date(c.clicked_at)
+        return c.link_id === link.id && clickDate >= currentDate && clickDate < nextDate
+      }).length
+      dayData[link.id] = linkDayClicks
+    }
+
+    dailyClicks.push(dayData)
+  }
+
   return {
     analytics: {
       total_clicks: totalClicks,
@@ -298,6 +324,7 @@ export async function getAnalytics(): Promise<{ analytics: AnalyticsSummary | nu
       clicks_this_week: clicksThisWeek,
       clicks_this_month: clicksThisMonth,
       links_stats: linksStats,
+      daily_clicks: dailyClicks,
     },
     error: null,
   }

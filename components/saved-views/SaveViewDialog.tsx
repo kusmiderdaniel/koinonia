@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -28,6 +29,8 @@ export function SaveViewDialog({
   editingView,
   onSuccess,
 }: SaveViewDialogProps) {
+  const t = useTranslations('views.dialog')
+  const tCommon = useTranslations('common.buttons')
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [isDefault, setIsDefault] = useState(false)
@@ -54,7 +57,7 @@ export function SaveViewDialog({
     e.preventDefault()
 
     if (!name.trim()) {
-      toast.error('View name is required')
+      toast.error(t('nameRequired'))
       return
     }
 
@@ -79,7 +82,7 @@ export function SaveViewDialog({
     if (result.error) {
       toast.error(result.error)
     } else {
-      toast.success(isEditing ? 'View updated' : 'View saved')
+      toast.success(isEditing ? t('viewUpdated') : t('viewSaved'))
       onOpenChange(false)
       if (result.data && onSuccess) {
         onSuccess(result.data)
@@ -92,33 +95,31 @@ export function SaveViewDialog({
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{isEditing ? 'Edit View' : 'Save View'}</DialogTitle>
+            <DialogTitle>{isEditing ? t('editTitle') : t('saveTitle')}</DialogTitle>
             <DialogDescription>
-              {isEditing
-                ? 'Update the view name and settings.'
-                : 'Save your current filters and sort settings as a reusable view.'}
+              {isEditing ? t('editDescription') : t('saveDescription')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="name">Name *</Label>
+              <Label htmlFor="name">{t('nameLabel')}</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g., My Assigned Tasks"
+                placeholder={t('namePlaceholder')}
                 autoFocus
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('descriptionLabel')}</Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Optional description..."
+                placeholder={t('descriptionPlaceholder')}
                 rows={2}
               />
             </div>
@@ -126,10 +127,10 @@ export function SaveViewDialog({
             <div className="flex items-center justify-between">
               <div>
                 <Label htmlFor="is-default" className="font-medium">
-                  Set as default
+                  {t('setAsDefault')}
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  This view will load automatically for all members.
+                  {t('defaultHint')}
                 </p>
               </div>
               <Switch id="is-default" checked={isDefault} onCheckedChange={setIsDefault} />
@@ -143,14 +144,14 @@ export function SaveViewDialog({
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
             >
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
               className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white"
             >
-              {isLoading ? 'Saving...' : isEditing ? 'Save Changes' : 'Save View'}
+              {isLoading ? t('saving') : isEditing ? t('saveChanges') : t('saveView')}
             </Button>
           </DialogFooter>
         </form>

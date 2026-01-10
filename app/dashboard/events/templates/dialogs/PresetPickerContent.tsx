@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { DialogFooter } from '@/components/ui/dialog'
@@ -33,6 +34,9 @@ export function PresetPickerContent({
   onStartCreateNew,
   onClose,
 }: PresetPickerContentProps) {
+  const t = useTranslations('events.agendaPicker')
+  const tCommon = useTranslations('common')
+
   return (
     <>
       {error && (
@@ -44,7 +48,7 @@ export function PresetPickerContent({
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
-          placeholder="Search agenda items..."
+          placeholder={t('searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-9"
@@ -53,7 +57,7 @@ export function PresetPickerContent({
 
       <div className="max-h-[300px] overflow-y-auto space-y-1 py-2">
         {isLoading ? (
-          <p className="text-center py-4 text-muted-foreground">Loading...</p>
+          <p className="text-center py-4 text-muted-foreground">{t('loading')}</p>
         ) : (
           <>
             {filteredPresets.map((preset) => (
@@ -75,7 +79,7 @@ export function PresetPickerContent({
                   )}
                   {!preset.ministry_id && (
                     <span className="text-xs px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
-                      No ministry
+                      {t('noMinistry')}
                     </span>
                   )}
                 </div>
@@ -88,7 +92,7 @@ export function PresetPickerContent({
 
             {filteredPresets.length === 0 && !showCreateOption && (
               <p className="text-center py-4 text-muted-foreground">
-                No agenda items found. Start typing to create one.
+                {t('noItemsFound')}
               </p>
             )}
 
@@ -100,7 +104,7 @@ export function PresetPickerContent({
               >
                 <Plus className="w-4 h-4 text-primary" />
                 <span>
-                  Create &quot;<strong>{searchQuery.trim()}</strong>&quot;
+                  {t('create', { name: searchQuery.trim() })}
                 </span>
               </button>
             )}
@@ -119,7 +123,7 @@ export function PresetPickerContent({
             className="flex items-center gap-1.5"
           >
             <Settings className="w-3.5 h-3.5" />
-            Manage Agenda Items
+            {t('manageItems')}
           </Link>
         </Button>
         <Button
@@ -127,7 +131,7 @@ export function PresetPickerContent({
           className="!border !border-black dark:!border-white"
           onClick={onClose}
         >
-          Cancel
+          {tCommon('buttons.cancel')}
         </Button>
       </DialogFooter>
     </>

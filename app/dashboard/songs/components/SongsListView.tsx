@@ -1,9 +1,10 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Search, Music } from 'lucide-react'
+import { Plus, Search, Music } from 'lucide-react'
 import { EmptyState } from '@/components/EmptyState'
 import { SongCard } from './SongCard'
 import type { Song, Tag } from '../types'
@@ -19,6 +20,8 @@ interface SongsListViewProps {
   onClearFilters: () => void
   selectedSongId: string | null
   onSelectSong: (song: Song) => void
+  onAddClick?: () => void
+  canManage?: boolean
   className?: string
 }
 
@@ -33,20 +36,36 @@ export function SongsListView({
   onClearFilters,
   selectedSongId,
   onSelectSong,
+  onAddClick,
+  canManage,
   className,
 }: SongsListViewProps) {
+  const t = useTranslations('songs')
+
   return (
     <div className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card overflow-hidden ${className ?? 'w-full md:w-80 md:flex-shrink-0'}`}>
-      {/* Search */}
+      {/* Search and Add Button */}
       <div className="p-3 border-b">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search songs..."
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9"
-          />
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder={t('search.placeholder')}
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          {canManage && onAddClick && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="shrink-0 rounded-full !border !border-black dark:!border-white"
+              onClick={onAddClick}
+            >
+              <Plus className="w-4 h-4" />
+            </Button>
+          )}
         </div>
       </div>
 
@@ -72,7 +91,7 @@ export function SongsListView({
                 className="h-5 px-2 text-xs"
                 onClick={onClearFilters}
               >
-                Clear
+                {t('search.clear')}
               </Button>
             )}
           </div>
@@ -84,15 +103,15 @@ export function SongsListView({
         {songs.length === 0 ? (
           <EmptyState
             icon={Music}
-            title="No songs yet"
-            description="Add your first song to get started"
+            title={t('search.noSongsYet')}
+            description={t('search.noSongsYetDescription')}
             size="sm"
           />
         ) : filteredSongs.length === 0 ? (
           <EmptyState
             icon={Search}
-            title="No songs found"
-            description="Try a different search term or filter"
+            title={t('search.noSongsFound')}
+            description={t('search.noSongsFoundDescription')}
             size="sm"
           />
         ) : (

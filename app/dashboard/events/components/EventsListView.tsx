@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -45,6 +46,8 @@ export function EventsListView({
   onDeleteEvent,
   className,
 }: EventsListViewProps) {
+  const t = useTranslations('events')
+
   return (
     <div className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card overflow-hidden ${className ?? 'w-full md:w-80 md:flex-shrink-0'}`}>
       {/* Search + Add Button */}
@@ -52,7 +55,7 @@ export function EventsListView({
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search events..."
+            placeholder={t('searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9"
@@ -64,7 +67,7 @@ export function EventsListView({
             size="icon"
             className="flex-shrink-0 rounded-full !border !border-black dark:!border-white"
             onClick={onCreateEvent}
-            title="Create event"
+            title={t('createEvent')}
           >
             <Plus className="w-4 h-4" />
           </Button>
@@ -83,13 +86,13 @@ export function EventsListView({
             value="upcoming"
             className="flex-1 rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
           >
-            Upcoming
+            {t('filter.upcoming')}
           </ToggleGroupItem>
           <ToggleGroupItem
             value="past"
             className="flex-1 rounded-full data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
           >
-            Past
+            {t('filter.past')}
           </ToggleGroupItem>
         </ToggleGroup>
       </div>
@@ -116,7 +119,7 @@ export function EventsListView({
           ) : (
             <EmptyState
               icon={Calendar}
-              title="No upcoming events"
+              title={t('noUpcomingEvents')}
               size="sm"
             />
           )
@@ -140,7 +143,7 @@ export function EventsListView({
           ) : (
             <EmptyState
               icon={Calendar}
-              title="No past events"
+              title={t('noPastEvents')}
               size="sm"
             />
           )

@@ -1,0 +1,84 @@
+{
+  "title": "Your Profile",
+  "subtitle": "Manage your account settings",
+  "loading": "Loading profile...",
+  "tabs": {
+    "personal": "Personal Information",
+    "password": "Password",
+    "notifications": "Notification Settings",
+    "language": "Language"
+  },
+  "tabDescriptions": {
+    "personal": "Name, email, phone, and more",
+    "password": "Change your password",
+    "notifications": "Manage notification preferences",
+    "language": "Choose your preferred language"
+  },
+  "personalInfo": {
+    "title": "Personal Information",
+    "description": "Update your name and contact details",
+    "firstName": "First Name *",
+    "lastName": "Last Name *",
+    "email": "Email",
+    "emailHint": "Email cannot be changed",
+    "phone": "Phone",
+    "phonePlaceholder": "(555) 123-4567",
+    "dateOfBirth": "Date of Birth",
+    "dateOfBirthPlaceholder": "Select date",
+    "sex": "Gender",
+    "sexPlaceholder": "Select...",
+    "male": "Male",
+    "female": "Female",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes"
+  },
+  "password": {
+    "title": "Password",
+    "description": "Change your account password",
+    "changeButton": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "changing": "Changing...",
+    "updateButton": "Update Password",
+    "cancel": "Cancel",
+    "success": "Password changed successfully"
+  },
+  "notifications": {
+    "title": "Notification Settings",
+    "description": "Control which notifications you receive",
+    "inApp": "In-App",
+    "email": "Email",
+    "sections": {
+      "ministryInvitations": "Ministry Invitations",
+      "ministryInvitationsDescription": "For positions in ministries you lead",
+      "eventInvitations": "Event Invitations",
+      "eventInvitationsDescription": "For events you're responsible for",
+      "reminders": "Reminders",
+      "other": "Other"
+    },
+    "categories": {
+      "invitationAccepted": "Invitation Accepted",
+      "invitationAcceptedDescription": "When a volunteer accepts an invitation",
+      "invitationDeclined": "Invitation Declined",
+      "invitationDeclinedDescription": "When a volunteer declines an invitation",
+      "unfilledPositionsReminder": "Unfilled Positions Reminder",
+      "unfilledPositionsReminderDescription": "Remind me about unfilled or declined positions",
+      "pendingMembers": "New Pending Members",
+      "pendingMembersDescription": "When someone requests to join your church"
+    },
+    "reminderDays": {
+      "day": "day",
+      "days": "days",
+      "beforeEvent": "before event"
+    },
+    "saving": "Saving...",
+    "saveSettings": "Save Settings"
+  },
+  "language": {
+    "title": "Language",
+    "label": "Display Language",
+    "description": "Choose your preferred language for the interface",
+    "updated": "Language preference updated"
+  }
+}

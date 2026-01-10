@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -63,6 +64,7 @@ export function MinistryDetailPanel({
   onUpdateMemberRoles,
   onRemoveMember,
 }: MinistryDetailPanelProps) {
+  const t = useTranslations('ministries')
   const isMobile = useIsMobile()
 
   if (!ministry) {
@@ -70,7 +72,7 @@ export function MinistryDetailPanel({
       <Card className="border border-black dark:border-zinc-700">
         <div className={`flex flex-col items-center justify-center ${isMobile ? 'py-8' : 'py-12'}`}>
           <Users className={`text-muted-foreground mb-4 opacity-50 ${isMobile ? 'w-10 h-10' : 'w-12 h-12'}`} />
-          <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>Select a ministry to view details</p>
+          <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>{t('selectMinistryDescription')}</p>
         </div>
       </Card>
     )
@@ -107,7 +109,7 @@ export function MinistryDetailPanel({
             )}
             {ministry.leader && (
               <p className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm mt-1'}`}>
-                Led by <span className="font-medium text-foreground">
+                {t('ledBy')} <span className="font-medium text-foreground">
                   {ministry.leader.first_name} {ministry.leader.last_name}
                 </span>
               </p>
@@ -119,17 +121,17 @@ export function MinistryDetailPanel({
       {/* Tabs */}
       {isLoading ? (
         <div className="flex-1 flex items-center justify-center">
-          <LoadingState message="Loading details..." size="sm" />
+          <LoadingState message={t('loadingDetails')} size="sm" />
         </div>
       ) : (
         <Tabs defaultValue="roles" className="flex-1 flex flex-col overflow-hidden !gap-0">
           <div className={`py-0 pt-0 pb-0 mt-0 border-b ${isMobile ? 'px-3' : 'px-6'}`}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="roles" className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-sm' : ''}`}>
-                Roles ({roles.length})
+                {t('tabs.rolesCount', { count: roles.length })}
               </TabsTrigger>
               <TabsTrigger value="members" className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-sm' : ''}`}>
-                Members ({members.length})
+                {t('tabs.membersCount', { count: members.length })}
               </TabsTrigger>
             </TabsList>
           </div>
@@ -139,14 +141,14 @@ export function MinistryDetailPanel({
               {canManage && (
                 <Button variant="outline-pill" className="!border !border-black dark:!border-white" size="sm" onClick={onAddRole}>
                   <Plus className={isMobile ? 'w-3.5 h-3.5 mr-1' : 'w-4 h-4 mr-1'} />
-                  Add Role
+                  {t('roles.addRole')}
                 </Button>
               )}
             </div>
             {roles.length === 0 ? (
               <div className={`text-center text-muted-foreground ${isMobile ? 'py-6' : 'py-8'}`}>
                 <Users className={`mx-auto mb-2 opacity-50 ${isMobile ? 'w-8 h-8' : 'w-10 h-10'}`} />
-                <p className={isMobile ? 'text-xs' : 'text-sm'}>No roles defined yet</p>
+                <p className={isMobile ? 'text-xs' : 'text-sm'}>{t('roles.noRoles')}</p>
               </div>
             ) : (
               <div className={isMobile ? 'space-y-1.5' : 'space-y-2'}>
@@ -203,7 +205,7 @@ export function MinistryDetailPanel({
             {members.length === 0 ? (
               <div className={`text-center text-muted-foreground ${isMobile ? 'py-6' : 'py-8'}`}>
                 <Users className={`mx-auto mb-2 opacity-50 ${isMobile ? 'w-8 h-8' : 'w-10 h-10'}`} />
-                <p className={isMobile ? 'text-xs' : 'text-sm'}>No members assigned yet</p>
+                <p className={isMobile ? 'text-xs' : 'text-sm'}>{t('members.noMembers')}</p>
               </div>
             ) : (
               <div className={isMobile ? 'space-y-1.5' : 'space-y-2'}>

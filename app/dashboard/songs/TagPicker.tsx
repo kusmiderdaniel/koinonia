@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -43,13 +44,14 @@ export const TagPicker = memo(function TagPicker({
   onChange,
   onTagCreated,
 }: TagPickerProps) {
+  const t = useTranslations('songs')
   const [isOpen, setIsOpen] = useState(false)
   const [newTagName, setNewTagName] = useState('')
   const [newTagColor, setNewTagColor] = useState(PRESET_COLORS[0])
   const [isCreating, setIsCreating] = useState(false)
   const [showCreateForm, setShowCreateForm] = useState(false)
 
-  const selectedTags = availableTags.filter((t) => selectedTagIds.includes(t.id))
+  const selectedTags = availableTags.filter((tag) => selectedTagIds.includes(tag.id))
 
   const handleToggleTag = (tagId: string) => {
     if (selectedTagIds.includes(tagId)) {
@@ -92,7 +94,7 @@ export const TagPicker = memo(function TagPicker({
         >
           <div className="flex flex-wrap gap-1 flex-1 text-left">
             {selectedTags.length === 0 ? (
-              <span className="text-muted-foreground">Select tags...</span>
+              <span className="text-muted-foreground">{t('tagPicker.placeholder')}</span>
             ) : (
               selectedTags.map((tag) => (
                 <Badge
@@ -151,7 +153,7 @@ export const TagPicker = memo(function TagPicker({
         {showCreateForm ? (
           <div className="space-y-3">
             <Input
-              placeholder="Tag name"
+              placeholder={t('tagPicker.tagNamePlaceholder')}
               value={newTagName}
               onChange={(e) => setNewTagName(e.target.value)}
               onKeyDown={(e) => {
@@ -187,7 +189,7 @@ export const TagPicker = memo(function TagPicker({
                   setNewTagName('')
                 }}
               >
-                Cancel
+                {t('actions.cancel')}
               </Button>
               <Button
                 type="button"
@@ -196,7 +198,7 @@ export const TagPicker = memo(function TagPicker({
                 onClick={handleCreateTag}
                 disabled={!newTagName.trim() || isCreating}
               >
-                {isCreating ? 'Creating...' : 'Create'}
+                {isCreating ? t('tagPicker.creating') : t('tagPicker.create')}
               </Button>
             </div>
           </div>
@@ -209,7 +211,7 @@ export const TagPicker = memo(function TagPicker({
             onClick={() => setShowCreateForm(true)}
           >
             <Plus className="w-4 h-4 mr-2" />
-            Create new tag
+            {t('tagPicker.createNewTag')}
           </Button>
         )}
       </PopoverContent>

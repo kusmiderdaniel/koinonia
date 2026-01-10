@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Badge } from '@/components/ui/badge'
 import { CampusBadge } from '@/components/CampusBadge'
 import type { Ministry } from '../types'
@@ -12,6 +13,8 @@ interface MinistryCardProps {
 }
 
 export const MinistryCard = memo(function MinistryCard({ ministry, isSelected, onClick }: MinistryCardProps) {
+  const t = useTranslations('ministries')
+
   return (
     <button
       onClick={onClick}
@@ -28,7 +31,7 @@ export const MinistryCard = memo(function MinistryCard({ ministry, isSelected, o
         />
         <span className="font-medium truncate">{ministry.name}</span>
         {!ministry.is_active && (
-          <Badge variant="secondary" className="text-xs">Inactive</Badge>
+          <Badge variant="secondary" className="text-xs">{t('inactive')}</Badge>
         )}
         {ministry.campus && (
           <CampusBadge name={ministry.campus.name} color={ministry.campus.color} size="sm" />

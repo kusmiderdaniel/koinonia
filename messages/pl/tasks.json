@@ -1,0 +1,195 @@
+{
+  "title": "Zadania",
+  "task": "zadanie",
+  "tasks": "zadania",
+  "taskCount": "{count, plural, one {# zadanie} few {# zadania} other {# zadań}}",
+  "newTask": "Nowe zadanie",
+  "new": "Nowe",
+  "createTask": "Utwórz zadanie",
+  "editTask": "Edytuj zadanie",
+  "noTasksFound": "Nie znaleziono zadań",
+  "createFirstTask": "Utwórz pierwsze zadanie",
+
+  "search": {
+    "placeholder": "Szukaj zadań..."
+  },
+
+  "status": {
+    "pending": "Oczekujące",
+    "in_progress": "W trakcie",
+    "completed": "Ukończone",
+    "cancelled": "Anulowane"
+  },
+
+  "priority": {
+    "low": "Niski",
+    "medium": "Średni",
+    "high": "Wysoki",
+    "urgent": "Pilny"
+  },
+
+  "columns": {
+    "title": "Tytuł",
+    "status": "Status",
+    "priority": "Priorytet",
+    "assignee": "Przypisany",
+    "ministry": "Posługa",
+    "campus": "Kampus",
+    "dueDate": "Termin",
+    "created": "Utworzono",
+    "event": "Wydarzenie"
+  },
+
+  "groupBy": {
+    "none": "Bez grupowania",
+    "noneShort": "Brak",
+    "priority": "Priorytet",
+    "priorityShort": "Pri",
+    "assignee": "Przypisany",
+    "assigneeShort": "Osoba",
+    "ministry": "Posługa",
+    "ministryShort": "Posl",
+    "campus": "Kampus",
+    "campusShort": "Kamp",
+    "group": "Grupuj",
+    "unassigned": "Nieprzypisane",
+    "noMinistry": "Brak posługi",
+    "noCampus": "Brak kampusu"
+  },
+
+  "dates": {
+    "today": "Dzisiaj",
+    "tomorrow": "Jutro",
+    "pickDate": "Wybierz datę",
+    "from": "Od",
+    "to": "Do",
+    "startDate": "Data początkowa",
+    "endDate": "Data końcowa"
+  },
+
+  "dialog": {
+    "editTitle": "Edytuj zadanie",
+    "createTitle": "Utwórz zadanie",
+    "editDescription": "Zaktualizuj szczegóły zadania poniżej.",
+    "createDescription": "Dodaj nowe zadanie do swojej listy.",
+    "titleLabel": "Tytuł *",
+    "titlePlaceholder": "Wprowadź tytuł zadania",
+    "statusLabel": "Status",
+    "campusLabel": "Kampus",
+    "ministryLabel": "Posługa",
+    "dueDateLabel": "Termin",
+    "assignToLabel": "Przypisz do",
+    "selectPerson": "Wybierz osobę",
+    "linkToEventLabel": "Powiąż z wydarzeniem",
+    "priorityLabel": "Priorytet",
+    "descriptionLabel": "Opis",
+    "descriptionPlaceholder": "Dodaj więcej szczegółów o zadaniu...",
+    "none": "Brak",
+    "saving": "Zapisywanie...",
+    "saveChanges": "Zapisz zmiany"
+  },
+
+  "deleteDialog": {
+    "title": "Usuń zadanie",
+    "description": "Czy na pewno chcesz usunąć \"{title}\"? Tej operacji nie można cofnąć.",
+    "confirm": "Usuń"
+  },
+
+  "deleteViewDialog": {
+    "title": "Usuń widok",
+    "description": "Czy na pewno chcesz usunąć widok \"{name}\"? Tej operacji nie można cofnąć."
+  },
+
+  "memberPicker": {
+    "title": "Przypisz członka",
+    "description": "Wybierz członka kościoła, którego chcesz przypisać do tego zadania",
+    "searchPlaceholder": "Szukaj po imieniu...",
+    "unassign": "Usuń przypisanie",
+    "noMembersFound": "Nie znaleziono członków",
+    "noMembersMatch": "Nie znaleziono członków pasujących do wyszukiwania",
+    "currentlyAssigned": "(Aktualnie przypisany)"
+  },
+
+  "eventPicker": {
+    "title": "Powiąż z wydarzeniem",
+    "description": "Wybierz wydarzenie do powiązania z tym zadaniem",
+    "searchPlaceholder": "Szukaj wydarzeń...",
+    "showPastEvents": "Pokaż przeszłe wydarzenia",
+    "removeLink": "Usuń powiązanie",
+    "loading": "Ładowanie wydarzeń...",
+    "noEventsFound": "Nie znaleziono wydarzeń",
+    "noEventsMatch": "Żadne wydarzenie nie pasuje do filtrów",
+    "cancel": "Anuluj",
+    "allTypes": "Wszystkie typy",
+    "typesCount": "{count} typy",
+    "allCampuses": "Wszystkie kampusy",
+    "campusesCount": "{count} kampusy",
+    "clearSelection": "Wyczyść wybór"
+  },
+
+  "inlineEditor": {
+    "unassign": "Usuń przypisanie",
+    "noDate": "Brak daty",
+    "clearDueDate": "Usuń termin",
+    "clearDate": "Usuń datę",
+    "noMinistry": "Brak posługi",
+    "noCampus": "Brak kampusu"
+  },
+
+  "filters": {
+    "title": "Tytuł",
+    "status": "Status",
+    "priority": "Priorytet",
+    "dueDate": "Termin",
+    "assignee": "Przypisany",
+    "ministry": "Posługa",
+    "campus": "Kampus",
+    "event": "Wydarzenie",
+    "unassigned": "Nieprzypisane",
+    "noMinistry": "Brak posługi",
+    "noCampus": "Brak kampusu",
+    "noEvent": "Brak wydarzenia"
+  },
+
+  "operators": {
+    "contains": "zawiera",
+    "doesNotContain": "nie zawiera",
+    "equals": "równa się",
+    "doesNotEqual": "nie równa się",
+    "isEmpty": "jest puste",
+    "isNotEmpty": "nie jest puste",
+    "is": "jest",
+    "isNot": "nie jest",
+    "isBefore": "jest przed",
+    "isAfter": "jest po"
+  },
+
+  "toast": {
+    "taskCompleted": "Zadanie ukończone!",
+    "statusUpdated": "Status zaktualizowany",
+    "priorityUpdated": "Priorytet zaktualizowany",
+    "assigneeUpdated": "Przypisanie zaktualizowane",
+    "assigneeRemoved": "Przypisanie usunięte",
+    "dueDateUpdated": "Termin zaktualizowany",
+    "dueDateRemoved": "Termin usunięty",
+    "eventLinked": "Wydarzenie powiązane",
+    "eventRemoved": "Powiązanie z wydarzeniem usunięte",
+    "ministryUpdated": "Posługa zaktualizowana",
+    "ministryRemoved": "Posługa usunięta",
+    "campusUpdated": "Kampus zaktualizowany",
+    "campusRemoved": "Kampus usunięty",
+    "descriptionUpdated": "Opis zaktualizowany",
+    "descriptionRemoved": "Opis usunięty",
+    "taskDeleted": "Zadanie usunięte"
+  },
+
+  "actions": {
+    "edit": "Edytuj",
+    "delete": "Usuń",
+    "cancel": "Anuluj"
+  },
+
+  "builtInViews": {
+    "myTasks": "Moje zadania"
+  }
+}

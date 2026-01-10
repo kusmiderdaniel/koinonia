@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { DashboardHeader } from './DashboardHeader'
 import { NeedsAttentionSection } from './NeedsAttentionSection'
 import { WeekTimelineSection } from './WeekTimelineSection'
@@ -91,6 +92,7 @@ export function DashboardClient({
   linksData,
 }: DashboardClientProps) {
   const router = useRouter()
+  const t = useTranslations('dashboard')
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [taskSheetOpen, setTaskSheetOpen] = useState(false)
   const [currentCalendarEvents, setCurrentCalendarEvents] = useState<CalendarEvent[]>(calendarEvents)
@@ -187,7 +189,7 @@ export function DashboardClient({
           <div className="w-full lg:w-1/3">
             <h2 className="flex items-center gap-2 text-lg font-semibold mb-4">
               <Link2 className="h-5 w-5" />
-              Quick Links
+              {t('quickLinks.title')}
             </h2>
             <Card className="border border-black dark:border-zinc-700">
               <CardContent className="p-4 pt-5">

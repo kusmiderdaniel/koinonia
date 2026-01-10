@@ -1,6 +1,7 @@
 'use client'
 
 import { memo, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Button } from '@/components/ui/button'
@@ -15,7 +16,7 @@ import {
 import { useIsMobile } from '@/lib/hooks'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { deleteSongSection } from '../../actions/song-sections'
-import { SECTION_TYPE_LABELS, SECTION_TYPE_COLORS, type SongSection } from '../../types'
+import { SECTION_TYPE_COLORS, type SongSection } from '../../types'
 
 interface SortableSectionItemProps {
   section: SongSection
@@ -36,6 +37,7 @@ export const SortableSectionItem = memo(function SortableSectionItem({
   onDelete,
   onReorder,
 }: SortableSectionItemProps) {
+  const t = useTranslations('songs')
   const isMobile = useIsMobile()
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -82,7 +84,7 @@ export const SortableSectionItem = memo(function SortableSectionItem({
   }
 
   // Get display label
-  const baseLabel = SECTION_TYPE_LABELS[section.section_type]
+  const baseLabel = t(`sectionTypes.${section.section_type}`)
   const typesWithNumbers = ['VERSE', 'BRIDGE', 'INTERLUDE']
   const showNumber = typesWithNumbers.includes(section.section_type) && section.section_number > 0
   const displayLabel = section.label || (showNumber ? `${baseLabel} ${section.section_number}` : baseLabel)
@@ -192,9 +194,9 @@ export const SortableSectionItem = memo(function SortableSectionItem({
       <ConfirmDialog
         open={showDeleteConfirm}
         onOpenChange={setShowDeleteConfirm}
-        title="Delete Section"
-        description={`Are you sure you want to delete "${displayLabel}"? This will also remove it from any arrangements.`}
-        confirmLabel="Delete"
+        title={t('deleteSectionDialog.title')}
+        description={t('deleteSectionDialog.description', { label: displayLabel })}
+        confirmLabel={t('actions.delete')}
         onConfirm={handleDelete}
         isLoading={isDeleting}
         destructive

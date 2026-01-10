@@ -1,6 +1,7 @@
 'use client'
 
-import { useMemo, useCallback } from 'react'
+import React, { useMemo, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { useDebouncedValue } from '@/lib/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -38,6 +39,8 @@ export function SongList({
   onCreateNew,
   onClose,
 }: SongListProps) {
+  const t = useTranslations('events.songPicker')
+  const tCommon = useTranslations('common.buttons')
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 300)
   const [tagFilterOpen, setTagFilterOpen] = React.useState(false)
 
@@ -79,7 +82,7 @@ export function SongList({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search by title or artist..."
+            placeholder={t('searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9"
@@ -98,7 +101,7 @@ export function SongList({
 
       {/* Song List */}
       {isLoading ? (
-        <p className="text-center py-4 text-muted-foreground">Loading songs...</p>
+        <p className="text-center py-4 text-muted-foreground">{t('loading')}</p>
       ) : (
         <SmartVirtualizedList
           items={filteredSongs}
@@ -110,8 +113,8 @@ export function SongList({
               <Music className="w-10 h-10 mx-auto mb-2 opacity-50" />
               <p className="text-sm">
                 {songs.length === 0
-                  ? 'No songs in your library yet'
-                  : 'No songs match your search'}
+                  ? t('noSongs')
+                  : t('noMatch')}
               </p>
             </div>
           }
@@ -135,18 +138,15 @@ export function SongList({
           className="w-full rounded-full !border-black dark:!border-white"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Create New Song
+          {t('createNew')}
         </Button>
       </div>
 
       <DialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
         <Button variant="outline-pill-muted" onClick={onClose} className="!border-black dark:!border-white">
-          Cancel
+          {tCommon('cancel')}
         </Button>
       </DialogFooter>
     </>
   )
 }
-
-// Add React import for useState
-import React from 'react'

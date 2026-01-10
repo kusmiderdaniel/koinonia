@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import {
@@ -39,11 +40,13 @@ export const AddDialog = memo(function AddDialog({
   onSave,
   onCancel,
 }: AddDialogProps) {
+  const t = useTranslations('availability')
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Add Unavailability</DialogTitle>
+          <DialogTitle>{t('addDialog.title')}</DialogTitle>
         </DialogHeader>
 
         <div className="py-4">
@@ -51,7 +54,7 @@ export const AddDialog = memo(function AddDialog({
             <div className="mb-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg">
               <div className="flex items-center gap-2 text-red-700 dark:text-red-300 mb-3">
                 <CalendarOff className="h-4 w-4" />
-                <span className="text-sm font-medium">Marking as unavailable</span>
+                <span className="text-sm font-medium">{t('addDialog.markingAs')}</span>
               </div>
               {toDateString(selectedStart) === toDateString(selectedEnd) ? (
                 <div className="flex justify-center">
@@ -92,10 +95,10 @@ export const AddDialog = memo(function AddDialog({
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="reason">Reason (optional)</Label>
+            <Label htmlFor="reason">{t('addDialog.reasonLabel')}</Label>
             <Textarea
               id="reason"
-              placeholder="e.g., Vacation, Family event..."
+              placeholder={t('addDialog.reasonPlaceholder')}
               value={reason}
               onChange={(e) => onReasonChange(e.target.value)}
               rows={2}
@@ -113,14 +116,14 @@ export const AddDialog = memo(function AddDialog({
             onClick={onCancel}
             disabled={isSaving}
           >
-            Cancel
+            {t('addDialog.cancel')}
           </Button>
           <Button
             className="!bg-brand hover:!bg-brand/90 !text-brand-foreground"
             onClick={onSave}
             disabled={isSaving}
           >
-            {isSaving ? 'Saving...' : 'Add'}
+            {isSaving ? t('addDialog.saving') : t('addDialog.add')}
           </Button>
         </DialogFooter>
       </DialogContent>

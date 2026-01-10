@@ -1,6 +1,7 @@
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { getTranslations } from 'next-intl/server'
 import { UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -12,6 +13,7 @@ import { isAdminOrOwner, isLeader } from '@/lib/permissions'
 import type { SavedView } from '@/types/saved-views'
 
 export default async function PeoplePage() {
+  const t = await getTranslations('people')
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -212,9 +214,9 @@ export default async function PeoplePage() {
       <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
           <div>
-            <h1 className="text-2xl font-bold">{userIsLeader ? 'Campus Members' : 'Church Members'}</h1>
+            <h1 className="text-2xl font-bold">{userIsLeader ? t('titleLeader') : t('title')}</h1>
             <p className="text-muted-foreground">
-              {userIsLeader ? 'Members in your campus.' : 'All members who have joined your church.'} {userIsAdmin && 'Click on a role to change it.'}
+              {userIsLeader ? t('subtitleLeader') : t('subtitle')} {userIsAdmin && t('subtitleClickRole')}
             </p>
           </div>
           {(userIsAdmin || userIsLeader) && (
@@ -223,7 +225,7 @@ export default async function PeoplePage() {
                 <Button variant="outline" asChild className="!border !border-black dark:!border-white">
                   <Link href="/dashboard/people/pending" className="flex items-center gap-2">
                     <UserPlus className="h-4 w-4" />
-                    <span className="hidden md:inline">Pending</span>
+                    <span className="hidden md:inline">{t('pendingBadge')}</span>
                     <Badge variant="destructive" className="bg-red-500 text-white rounded-full">
                       {pendingCount}
                     </Badge>
@@ -247,7 +249,7 @@ export default async function PeoplePage() {
             />
           ) : (
             <p className="text-center text-muted-foreground py-8">
-              {userIsLeader ? 'No members in your campus yet.' : 'No members yet. Share your invite link to get started!'}
+              {userIsLeader ? t('noMembersLeader') : t('noMembers')}
             </p>
           )}
         </div>

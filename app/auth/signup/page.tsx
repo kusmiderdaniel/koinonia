@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { signUp } from '../actions'
@@ -13,6 +14,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert'
 
 function SignUpContent() {
+  const t = useTranslations('auth.signup')
+  const tErrors = useTranslations('auth.errors')
+  const tSuccess = useTranslations('auth.success')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -33,12 +37,13 @@ function SignUpContent() {
     try {
       const result = await signUp(data)
       if (result?.error) {
-        setError(result.error)
-      } else if (result?.success) {
-        setSuccess(result.message || 'Account created successfully!')
+        // Error is now a translation key
+        setError(tErrors(result.error))
+      } else if (result?.success && result?.messageKey) {
+        setSuccess(tSuccess(result.messageKey))
       }
-    } catch (err) {
-      setError('An unexpected error occurred')
+    } catch {
+      setError(tErrors('generic'))
     } finally {
       setIsLoading(false)
     }
@@ -47,9 +52,9 @@ function SignUpContent() {
   return (
     <Card className="w-full max-w-md border-0 shadow-none sm:border sm:shadow-sm">
       <CardHeader className="space-y-1 px-0 sm:px-6 sm:pt-6">
-        <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+        <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
         <CardDescription>
-          Enter your information to create your account
+          {t('description')}
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -68,10 +73,10 @@ function SignUpContent() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First name</Label>
+              <Label htmlFor="firstName">{t('firstName')}</Label>
               <Input
                 id="firstName"
-                placeholder="John"
+                placeholder={t('firstNamePlaceholder')}
                 className="h-11"
                 {...register('firstName')}
                 disabled={isLoading}
@@ -82,10 +87,10 @@ function SignUpContent() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last name</Label>
+              <Label htmlFor="lastName">{t('lastName')}</Label>
               <Input
                 id="lastName"
-                placeholder="Doe"
+                placeholder={t('lastNamePlaceholder')}
                 className="h-11"
                 {...register('lastName')}
                 disabled={isLoading}
@@ -97,11 +102,11 @@ function SignUpContent() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('email')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t('emailPlaceholder')}
               className="h-11"
               {...register('email')}
               disabled={isLoading}
@@ -112,7 +117,7 @@ function SignUpContent() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('password')}</Label>
             <Input
               id="password"
               type="password"
@@ -122,7 +127,7 @@ function SignUpContent() {
               disabled={isLoading}
             />
             <p className="text-xs text-muted-foreground">
-              Min. 12 characters with uppercase, lowercase, number, and special character
+              {t('passwordHint')}
             </p>
             {errors.password && (
               <p className="text-sm text-red-500">{errors.password.message}</p>
@@ -130,7 +135,7 @@ function SignUpContent() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm password</Label>
+            <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
             <Input
               id="confirmPassword"
               type="password"
@@ -147,13 +152,13 @@ function SignUpContent() {
 
         <CardFooter className="flex flex-col space-y-4 border-t-0 bg-transparent px-0 sm:px-6 pt-2">
           <Button type="submit" className="w-full h-11 !rounded-full !bg-brand hover:!bg-brand/90 text-white" disabled={isLoading}>
-            {isLoading ? 'Creating account...' : 'Create account'}
+            {isLoading ? t('submitting') : t('submitButton')}
           </Button>
 
           <p className="text-center text-sm text-muted-foreground">
-            Already have an account?{' '}
+            {t('hasAccount')}{' '}
             <Link href="/auth/signin" className="text-brand font-semibold hover:underline">
-              Sign in
+              {t('signinLink')}
             </Link>
           </p>
         </CardFooter>
@@ -163,9 +168,11 @@ function SignUpContent() {
 }
 
 export default function SignUpPage() {
+  const tCommon = useTranslations('common')
+
   return (
     <div className="flex min-h-[100dvh] items-center justify-center p-4 sm:p-6">
-      <Suspense fallback={<Card className="w-full max-w-md border-0 shadow-none sm:border sm:shadow-sm"><CardContent className="p-6">Loading...</CardContent></Card>}>
+      <Suspense fallback={<Card className="w-full max-w-md border-0 shadow-none sm:border sm:shadow-sm"><CardContent className="p-6">{tCommon('loading.default')}</CardContent></Card>}>
         <SignUpContent />
       </Suspense>
     </div>

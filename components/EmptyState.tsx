@@ -16,6 +16,7 @@ interface EmptyStateProps {
   action?: {
     label: string
     onClick: () => void
+    variant?: 'default' | 'outline'
   }
   /** Optional custom content below description */
   children?: ReactNode
@@ -100,7 +101,12 @@ export const EmptyState = memo(function EmptyState({
         )}
       </div>
       {action && (
-        <Button onClick={action.onClick} size={size === 'sm' ? 'sm' : 'default'}>
+        <Button
+          onClick={action.onClick}
+          size={size === 'sm' ? 'sm' : 'default'}
+          variant={action.variant || 'default'}
+          className={action.variant === 'outline' ? '!border !border-black dark:!border-white' : ''}
+        >
           {action.label}
         </Button>
       )}

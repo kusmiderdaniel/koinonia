@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -54,6 +55,7 @@ export function AgendaPresetDialog({
   ministries,
   onSuccess,
 }: AgendaPresetDialogProps) {
+  const t = useTranslations('settings.presets.dialog')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [durationMinutes, setDurationMinutes] = useState('5')
@@ -111,7 +113,7 @@ export function AgendaPresetDialog({
     const totalSeconds = mins * 60 + secs
 
     if (totalSeconds <= 0) {
-      setError('Duration must be greater than 0')
+      setError(t('durationError'))
       setIsLoading(false)
       return
     }
@@ -135,7 +137,7 @@ export function AgendaPresetDialog({
     }
 
     if (result.data) {
-      toast.success(isEditing ? 'Agenda item updated' : 'Agenda item created')
+      toast.success(isEditing ? t('updatedSuccess') : t('createdSuccess'))
       onSuccess(result.data as Preset, !isEditing)
     }
   }
@@ -144,11 +146,9 @@ export function AgendaPresetDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-white dark:bg-zinc-950">
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'Edit Agenda Item' : 'Add Agenda Item'}</DialogTitle>
+          <DialogTitle>{isEditing ? t('editTitle') : t('addTitle')}</DialogTitle>
           <DialogDescription>
-            {isEditing
-              ? 'Update the agenda item details. Changes won\'t affect items already added to events.'
-              : 'Create a reusable agenda item for your events and templates.'}
+            {isEditing ? t('editDescription') : t('addDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -161,18 +161,18 @@ export function AgendaPresetDialog({
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="title">Title *</Label>
+              <Label htmlFor="title">{t('titleLabel')}</Label>
               <Input
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g., Welcome & Announcements"
+                placeholder={t('titlePlaceholder')}
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label>Duration (MM:SS) *</Label>
+              <Label>{t('durationLabel')}</Label>
               <div className="flex items-center gap-1">
                 <Input
                   value={durationMinutes}
@@ -195,13 +195,13 @@ export function AgendaPresetDialog({
             </div>
 
             <div className="space-y-2">
-              <Label>Ministry</Label>
+              <Label>{t('ministryLabel')}</Label>
               <Select value={ministryId} onValueChange={setMinistryId}>
                 <SelectTrigger className="bg-white dark:bg-zinc-950 border border-input">
-                  <SelectValue placeholder="Select a ministry..." />
+                  <SelectValue placeholder={t('ministryPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent align="start" className="bg-white dark:bg-zinc-950 border border-input">
-                  <SelectItem value="none">No ministry assigned</SelectItem>
+                  <SelectItem value="none">{t('noMinistry')}</SelectItem>
                   {ministries.map((ministry) => (
                     <SelectItem key={ministry.id} value={ministry.id}>
                       <div className="flex items-center gap-2">
@@ -218,12 +218,12 @@ export function AgendaPresetDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('descriptionLabel')}</Label>
               <Textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Optional notes or details..."
+                placeholder={t('descriptionPlaceholder')}
                 rows={3}
               />
             </div>
@@ -236,14 +236,14 @@ export function AgendaPresetDialog({
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               type="submit"
               disabled={isLoading || !title.trim()}
               className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white !px-4 !py-2 disabled:!opacity-50"
             >
-              {isLoading ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Agenda Item'}
+              {isLoading ? t('saving') : isEditing ? t('saveChanges') : t('createButton')}
             </Button>
           </DialogFooter>
         </form>

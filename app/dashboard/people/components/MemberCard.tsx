@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -50,6 +51,7 @@ export const MemberCard = memo(function MemberCard({
   onRoleChange,
   onActiveChange,
 }: MemberCardProps) {
+  const t = useTranslations('people')
   const [expanded, setExpanded] = useState(false)
 
   return (
@@ -71,11 +73,11 @@ export const MemberCard = memo(function MemberCard({
               {member.first_name} {member.last_name}
             </span>
             {member.id === currentUserId && (
-              <span className="text-xs text-muted-foreground flex-shrink-0">(you)</span>
+              <span className="text-xs text-muted-foreground flex-shrink-0">{t('you')}</span>
             )}
             {member.member_type === 'offline' && (
               <span className="inline-flex items-center bg-amber-50 text-amber-700 border-amber-200 border rounded-full px-1.5 py-0.5 text-[10px] font-medium flex-shrink-0">
-                Offline
+                {t('offline')}
               </span>
             )}
           </div>
@@ -135,13 +137,13 @@ export const MemberCard = memo(function MemberCard({
         <div className="mt-3 pt-3 border-t space-y-3 ml-7">
           {/* Email */}
           <p className="text-sm text-muted-foreground">
-            {member.email || 'No email'}
+            {member.email || t('noEmail')}
           </p>
 
           {/* Campus */}
           {member.campuses && member.campuses.length > 0 && (
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Campus:</span>
+              <span className="text-sm text-muted-foreground">{t('card.campus')}:</span>
               <CampusBadges campuses={member.campuses} size="sm" maxVisible={3} />
             </div>
           )}
@@ -179,19 +181,19 @@ export const MemberCard = memo(function MemberCard({
           {/* Details Grid */}
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div>
-              <span className="text-muted-foreground">Gender:</span>
+              <span className="text-muted-foreground">{t('card.gender')}:</span>
               <span className="ml-1.5 capitalize">{member.sex || '—'}</span>
             </div>
             <div>
-              <span className="text-muted-foreground">Age:</span>
+              <span className="text-muted-foreground">{t('card.age')}:</span>
               <span className="ml-1.5">{calculateAge(member.date_of_birth)}</span>
             </div>
             <div>
-              <span className="text-muted-foreground">DOB:</span>
+              <span className="text-muted-foreground">{t('card.dob')}:</span>
               <span className="ml-1.5">{formatDateOfBirth(member.date_of_birth)}</span>
             </div>
             <div>
-              <span className="text-muted-foreground">Joined:</span>
+              <span className="text-muted-foreground">{t('card.joined')}:</span>
               <span className="ml-1.5">{formatDate(member.created_at)}</span>
             </div>
           </div>
@@ -199,12 +201,12 @@ export const MemberCard = memo(function MemberCard({
           {/* Baptism Info */}
           <div className="flex items-center gap-4 text-sm">
             <div className="flex items-center gap-1.5">
-              <span className="text-muted-foreground">Baptized:</span>
-              <span>{member.baptism ? 'Yes' : 'No'}</span>
+              <span className="text-muted-foreground">{t('card.baptized')}:</span>
+              <span>{member.baptism ? t('card.yes') : t('card.no')}</span>
             </div>
             {member.baptism && member.baptism_date && (
               <div>
-                <span className="text-muted-foreground">Date:</span>
+                <span className="text-muted-foreground">{t('card.date')}:</span>
                 <span className="ml-1.5">{formatDate(member.baptism_date)}</span>
               </div>
             )}
@@ -215,13 +217,13 @@ export const MemberCard = memo(function MemberCard({
             <div className="text-sm">
               {member.date_of_departure && (
                 <div>
-                  <span className="text-muted-foreground">Departure:</span>
+                  <span className="text-muted-foreground">{t('card.departure')}:</span>
                   <span className="ml-1.5">{formatDate(member.date_of_departure)}</span>
                 </div>
               )}
               {member.reason_for_departure && (
                 <div className="mt-1">
-                  <span className="text-muted-foreground">Reason:</span>
+                  <span className="text-muted-foreground">{t('card.reason')}:</span>
                   <span className="ml-1.5">{member.reason_for_departure}</span>
                 </div>
               )}

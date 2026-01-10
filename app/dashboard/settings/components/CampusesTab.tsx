@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -48,20 +49,21 @@ export const CampusesTab = memo(function CampusesTab({
   setError,
   setSuccess,
 }: CampusesTabProps) {
+  const t = useTranslations('settings.campuses')
   return (
     <>
       <Card className="w-full md:min-w-[28rem]">
         <CardHeader className="p-4 md:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-6">
             <div>
-              <CardTitle className="text-lg md:text-xl">Campuses</CardTitle>
+              <CardTitle className="text-lg md:text-xl">{t('title')}</CardTitle>
               <CardDescription className="text-sm">
-                Manage your church&apos;s campus locations
+                {t('description')}
               </CardDescription>
             </div>
             <Button onClick={() => campusManager.openCampusDialog()} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
-              Add Campus
+              {t('addCampus')}
             </Button>
           </div>
         </CardHeader>
@@ -69,8 +71,8 @@ export const CampusesTab = memo(function CampusesTab({
           {campuses.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <Building2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>No campuses yet</p>
-              <p className="text-sm">Add your first campus to organize your church locations</p>
+              <p>{t('empty.title')}</p>
+              <p className="text-sm">{t('empty.description')}</p>
             </div>
           ) : (
             <div className="space-y-1.5 md:space-y-2">
@@ -88,7 +90,7 @@ export const CampusesTab = memo(function CampusesTab({
                     {campus.is_default && (
                       <Badge variant="secondary" className="text-[10px] md:text-xs px-1.5 py-0 h-5">
                         <Star className="w-2.5 h-2.5 md:w-3 md:h-3 mr-0.5 md:mr-1" />
-                        Default
+                        {t('default')}
                       </Badge>
                     )}
                   </div>
@@ -102,7 +104,7 @@ export const CampusesTab = memo(function CampusesTab({
                         }
                         className="text-[10px] md:text-xs h-7 md:h-8 px-2 hidden sm:flex"
                       >
-                        Set Default
+                        {t('setDefault')}
                       </Button>
                     )}
                     <Button
@@ -138,29 +140,29 @@ export const CampusesTab = memo(function CampusesTab({
         <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-[90vw] md:max-w-lg overflow-hidden">
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {campusManager.editingCampus ? 'Edit Campus' : 'Add Campus'}
+              {campusManager.editingCampus ? t('dialog.editTitle') : t('dialog.addTitle')}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {campusManager.editingCampus
-                ? 'Update the campus details below.'
-                : 'Add a new campus for your church.'}
+                ? t('dialog.editDescription')
+                : t('dialog.addDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto overflow-x-hidden">
             {/* Campus Name */}
             <div className="space-y-2">
-              <Label htmlFor="campusName">Campus Name *</Label>
+              <Label htmlFor="campusName">{t('dialog.nameLabel')}</Label>
               <Input
                 id="campusName"
                 value={campusManager.campusName}
                 onChange={(e) => campusManager.setCampusName(e.target.value)}
-                placeholder="e.g., Main Campus"
+                placeholder={t('dialog.namePlaceholder')}
               />
             </div>
 
             {/* Color */}
             <div className="space-y-2">
-              <Label>Campus Color</Label>
+              <Label>{t('dialog.colorLabel')}</Label>
               <div className="flex flex-wrap gap-2 justify-center">
                 {CAMPUS_COLORS.map((color) => (
                   <button
@@ -182,9 +184,9 @@ export const CampusesTab = memo(function CampusesTab({
             {campusManager.editingCampus && !campusManager.editingCampus.is_default && (
               <div className="flex items-center justify-between py-2">
                 <div>
-                  <Label htmlFor="campusIsDefault" className="text-base">Set as Default Campus</Label>
+                  <Label htmlFor="campusIsDefault" className="text-base">{t('dialog.isDefaultLabel')}</Label>
                   <p className="text-sm text-muted-foreground">
-                    New members will be assigned to this campus by default
+                    {t('dialog.isDefaultHint')}
                   </p>
                 </div>
                 <Switch
@@ -196,7 +198,7 @@ export const CampusesTab = memo(function CampusesTab({
             )}
           </div>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-            <AlertDialogCancel disabled={campusManager.isSavingCampus} className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={campusManager.isSavingCampus} className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">{t('dialog.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() =>
                 campusManager.handleSaveCampus(campuses, setCampuses, setError, setSuccess)
@@ -205,10 +207,10 @@ export const CampusesTab = memo(function CampusesTab({
               className="rounded-full !border !border-brand !bg-brand hover:!bg-brand/90 !text-white px-4 py-2 disabled:!opacity-50"
             >
               {campusManager.isSavingCampus
-                ? 'Saving...'
+                ? t('dialog.saving')
                 : campusManager.editingCampus
-                  ? 'Save Changes'
-                  : 'Add Campus'}
+                  ? t('dialog.saveChanges')
+                  : t('dialog.addButton')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -221,22 +223,20 @@ export const CampusesTab = memo(function CampusesTab({
       >
         <AlertDialogContent className="max-w-[90vw] md:max-w-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Campus?</AlertDialogTitle>
+            <AlertDialogTitle>{t('deleteDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete &quot;{campusManager.campusToDelete?.name}&quot;?
-              Members and events assigned to this campus will need to be reassigned.
-              This action cannot be undone.
+              {t('deleteDialog.description', { name: campusManager.campusToDelete?.name ?? '' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-            <AlertDialogCancel className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">{t('deleteDialog.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() =>
                 campusManager.handleDeleteCampus(campuses, setCampuses, setError, setSuccess)
               }
               className="rounded-full !border !border-red-600 !bg-red-600 hover:!bg-red-700 !text-white px-4 py-2"
             >
-              Delete
+              {t('deleteDialog.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

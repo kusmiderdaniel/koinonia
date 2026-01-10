@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Popover,
   PopoverContent,
@@ -26,6 +27,7 @@ export function InlineAssigneeEditor({
   onUpdate,
   disabled = false,
 }: InlineAssigneeEditorProps) {
+  const t = useTranslations('tasks')
   const [open, setOpen] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
   const [search, setSearch] = useState('')
@@ -68,7 +70,7 @@ export function InlineAssigneeEditor({
                 {assignee.first_name} {assignee.last_name}
               </span>
             ) : (
-              <span className="text-muted-foreground">Unassigned</span>
+              <span className="text-muted-foreground">{t('groupBy.unassigned')}</span>
             )}
           </span>
         </button>
@@ -82,7 +84,7 @@ export function InlineAssigneeEditor({
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search members..."
+              placeholder={t('memberPicker.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-8 h-9"
@@ -99,14 +101,14 @@ export function InlineAssigneeEditor({
               className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-muted cursor-pointer border-b border-gray-100 dark:border-gray-800"
             >
               <X className="h-4 w-4 text-muted-foreground" />
-              <span className="text-muted-foreground">Unassign</span>
+              <span className="text-muted-foreground">{t('inlineEditor.unassign')}</span>
             </button>
           )}
 
           {/* Members */}
           {filteredMembers.length === 0 ? (
             <div className="px-3 py-4 text-sm text-muted-foreground text-center">
-              No members found
+              {t('memberPicker.noMembersFound')}
             </div>
           ) : (
             filteredMembers.map((member, index) => (
@@ -122,7 +124,7 @@ export function InlineAssigneeEditor({
                   {member.first_name} {member.last_name}
                 </span>
                 {member.id === assigneeId && (
-                  <span className="text-xs text-brand shrink-0">Assigned</span>
+                  <span className="text-xs text-brand shrink-0">{t('memberPicker.currentlyAssigned')}</span>
                 )}
               </button>
             ))

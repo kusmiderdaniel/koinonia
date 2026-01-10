@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -16,6 +17,8 @@ import { TemplateFormFields } from './TemplateFormFields'
 import type { TemplateDialogProps, Person } from './types'
 
 export function TemplateDialog({ open, onOpenChange, template, onSuccess, timeFormat }: TemplateDialogProps) {
+  const t = useTranslations('events.templateDialog')
+  const tCommon = useTranslations('common')
   const {
     formData,
     updateField,
@@ -36,11 +39,11 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess, timeFo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950">
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'Edit Template' : 'Create Template'}</DialogTitle>
+          <DialogTitle>{isEditing ? t('editTitle') : t('createTitle')}</DialogTitle>
           <DialogDescription>
             {isEditing
-              ? 'Update the template details below.'
-              : 'Create a reusable event template.'}
+              ? t('editDescription')
+              : t('createDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -84,7 +87,7 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess, timeFo
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
             >
-              Cancel
+              {tCommon('buttons.cancel')}
             </Button>
             <Button
               type="submit"
@@ -94,11 +97,11 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess, timeFo
             >
               {isLoading
                 ? isEditing
-                  ? 'Saving...'
-                  : 'Creating...'
+                  ? tCommon('loading.saving')
+                  : tCommon('loading.processing')
                 : isEditing
-                ? 'Save'
-                : 'Create'}
+                ? tCommon('buttons.save')
+                : tCommon('buttons.create')}
             </Button>
           </DialogFooter>
         </form>

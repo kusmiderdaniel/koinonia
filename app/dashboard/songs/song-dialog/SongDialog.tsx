@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -26,6 +27,7 @@ export const SongDialog = memo(function SongDialog({
   title: dialogTitle,
   submitText,
 }: SongDialogProps) {
+  const t = useTranslations('songs')
   const state = useSongDialogState(open, song, { customAction })
 
   return (
@@ -33,7 +35,7 @@ export const SongDialog = memo(function SongDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {dialogTitle ?? (state.isEditing ? 'Edit Song' : 'Add Song')}
+            {dialogTitle ?? (state.isEditing ? t('dialog.editTitle') : t('dialog.addTitle'))}
           </DialogTitle>
         </DialogHeader>
 
@@ -49,18 +51,18 @@ export const SongDialog = memo(function SongDialog({
 
           {/* Title */}
           <div className="space-y-2">
-            <Label htmlFor="title">Title *</Label>
+            <Label htmlFor="title">{t('dialog.titleLabel')}</Label>
             <Input
               id="title"
               value={state.title}
               onChange={(e) => state.setTitle(e.target.value)}
-              placeholder="Song title"
+              placeholder={t('dialog.titlePlaceholder')}
             />
           </div>
 
           {/* Artist */}
           <div className="space-y-2">
-            <Label>Artist</Label>
+            <Label>{t('dialog.artistLabel')}</Label>
             <ArtistPicker
               artists={state.availableArtists}
               value={state.artist}
@@ -73,7 +75,7 @@ export const SongDialog = memo(function SongDialog({
           <div className="grid grid-cols-2 gap-4">
             {/* Default Key */}
             <div className="space-y-2">
-              <Label>Default Key</Label>
+              <Label>{t('dialog.defaultKeyLabel')}</Label>
               <KeyPicker
                 value={state.defaultKey}
                 open={state.keyPickerOpen}
@@ -84,7 +86,7 @@ export const SongDialog = memo(function SongDialog({
 
             {/* Duration */}
             <div className="space-y-2">
-              <Label>Duration</Label>
+              <Label>{t('dialog.durationLabel')}</Label>
               <div className="flex items-center gap-1">
                 <Input
                   value={state.durationMinutes}
@@ -109,7 +111,7 @@ export const SongDialog = memo(function SongDialog({
 
           {/* Tags */}
           <div className="space-y-2">
-            <Label>Tags</Label>
+            <Label>{t('dialog.tagsLabel')}</Label>
             <TagPicker
               availableTags={state.availableTags}
               selectedTagIds={state.selectedTagIds}
@@ -126,7 +128,7 @@ export const SongDialog = memo(function SongDialog({
               onClick={() => onOpenChange(false)}
               disabled={state.isLoading}
             >
-              Cancel
+              {t('actions.cancel')}
             </Button>
             <Button
               type="submit"
@@ -135,8 +137,8 @@ export const SongDialog = memo(function SongDialog({
               className="!bg-brand hover:!bg-brand/90 !text-white !border-brand"
             >
               {state.isLoading
-                ? 'Saving...'
-                : submitText ?? (state.isEditing ? 'Save Changes' : 'Add Song')}
+                ? t('dialog.saving')
+                : submitText ?? (state.isEditing ? t('dialog.saveChanges') : t('dialog.addSong'))}
             </Button>
           </DialogFooter>
         </form>

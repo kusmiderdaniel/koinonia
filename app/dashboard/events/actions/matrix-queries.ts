@@ -113,14 +113,24 @@ export async function getMatrixData(options: GetMatrixDataOptions): Promise<{ da
   }
 
   // Filter by ministry if specified
+  // Check both event_positions AND event_agenda_items for ministry matches
   if (filters.ministryIds && filters.ministryIds.length > 0) {
     filteredEvents = filteredEvents.filter((event) => {
-      const eventMinistryIds = (event.event_positions || []).map((p: { ministry: { id: string } | { id: string }[] }) => {
+      // Get ministry IDs from positions
+      const positionMinistryIds = (event.event_positions || []).map((p: { ministry: { id: string } | { id: string }[] }) => {
         const ministry = Array.isArray(p.ministry) ? p.ministry[0] : p.ministry
         return ministry?.id
       }).filter(Boolean)
 
-      return eventMinistryIds.some((mid: string) => filters.ministryIds!.includes(mid))
+      // Get ministry IDs from agenda items (includes songs)
+      const agendaMinistryIds = (event.event_agenda_items || []).map((item: { ministry_id: string | null }) => {
+        return item.ministry_id
+      }).filter(Boolean)
+
+      // Combine both sets of ministry IDs
+      const eventMinistryIds = [...new Set([...positionMinistryIds, ...agendaMinistryIds])].filter((id): id is string => id !== null)
+
+      return eventMinistryIds.some((mid) => filters.ministryIds!.includes(mid))
     })
   }
 

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
+import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Calendar } from 'lucide-react'
@@ -85,6 +86,7 @@ interface EventsPageClientProps {
 }
 
 export function EventsPageClient({ initialData }: EventsPageClientProps) {
+  const t = useTranslations('events')
   const queryClient = useQueryClient()
   const eventList = useEventList(initialData)
   const eventDetail = useEventDetail()
@@ -297,7 +299,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
               if (result.error) {
                 toast.error(result.error)
               } else {
-                toast.success(`Event duplicated as "${event.title} (copy)"`)
+                toast.success(t('duplicatedAs', { name: `${event.title} (copy)` }))
                 eventList.refreshEvents()
               }
             }}
@@ -311,7 +313,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
             emptyDetailContent={
               <EmptyState
                 icon={Calendar}
-                title="Select an event to view details"
+                title={t('selectEventToViewDetails')}
                 size="lg"
               />
             }

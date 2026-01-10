@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -51,6 +52,8 @@ export const ValueInput = memo(function ValueInput({
   weekStartsOn,
   onChange,
 }: ValueInputProps) {
+  const t = useTranslations('forms')
+
   if (isDate) {
     return (
       <Popover>
@@ -66,7 +69,7 @@ export const ValueInput = memo(function ValueInput({
             <CalendarIcon className={isMobile ? 'mr-1 h-3 w-3' : 'mr-2 h-4 w-4'} />
             {value
               ? format(new Date(value), isMobile ? 'PP' : 'PPP')
-              : isMobile ? 'Date' : 'Pick a date'}
+              : isMobile ? t('conditions.pickDateMobile') : t('conditions.pickDate')}
           </Button>
         </PopoverTrigger>
         <PopoverContent
@@ -115,7 +118,7 @@ export const ValueInput = memo(function ValueInput({
           )
         })}
         {options.length === 0 && (
-          <p className="text-xs text-muted-foreground">No options available</p>
+          <p className="text-xs text-muted-foreground">{t('conditions.noOptions')}</p>
         )}
       </div>
     )
@@ -125,7 +128,7 @@ export const ValueInput = memo(function ValueInput({
     return (
       <Select value={value || ''} onValueChange={onChange}>
         <SelectTrigger className={isMobile ? 'h-7 text-xs' : 'h-8 text-sm'}>
-          <SelectValue placeholder={isMobile ? 'Value' : 'Select a value'} />
+          <SelectValue placeholder={isMobile ? t('conditions.selectValueMobile') : t('conditions.selectValue')} />
         </SelectTrigger>
         <SelectContent
           position="popper"
@@ -147,7 +150,7 @@ export const ValueInput = memo(function ValueInput({
     <Input
       value={value || ''}
       onChange={(e) => onChange(e.target.value)}
-      placeholder={isMobile ? 'Value' : 'Enter value'}
+      placeholder={isMobile ? t('conditions.enterValueMobile') : t('conditions.enterValue')}
       className={isMobile ? 'h-7 text-xs' : 'h-8 text-sm'}
     />
   )

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { InlineBadgeEditor, type BadgeOption } from '@/components/editors'
 import { TaskStatusBadge } from './TaskBadges'
 import type { TaskStatus } from '../types'
@@ -10,18 +11,20 @@ interface InlineStatusEditorProps {
   disabled?: boolean
 }
 
-const statusOptions: BadgeOption<TaskStatus>[] = [
-  { value: 'pending', label: 'Pending' },
-  { value: 'in_progress', label: 'In Progress' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'cancelled', label: 'Cancelled' },
-]
+const statusValues: TaskStatus[] = ['pending', 'in_progress', 'completed', 'cancelled']
 
 export function InlineStatusEditor({
   status,
   onUpdate,
   disabled = false,
 }: InlineStatusEditorProps) {
+  const t = useTranslations('tasks')
+
+  const statusOptions: BadgeOption<TaskStatus>[] = statusValues.map((s) => ({
+    value: s,
+    label: t(`status.${s}`),
+  }))
+
   return (
     <InlineBadgeEditor
       value={status}

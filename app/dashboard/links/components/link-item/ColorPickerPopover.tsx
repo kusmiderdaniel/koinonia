@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -32,6 +33,7 @@ export function ColorPickerPopover({
   showTooltip = false,
   triggerClassName,
 }: ColorPickerPopoverProps) {
+  const t = useTranslations('links')
   const color = currentColor || '#3B82F6'
 
   const handleChange = (newColor: string) => {
@@ -45,7 +47,7 @@ export function ColorPickerPopover({
           className="h-4 w-4 rounded-full border"
           style={{ backgroundColor: color }}
         />
-        <span className="text-xs">Color</span>
+        <span className="text-xs">{t('linkItem.color.button')}</span>
       </Button>
     </PopoverTrigger>
   )
@@ -55,7 +57,7 @@ export function ColorPickerPopover({
       {showTooltip ? (
         <Tooltip>
           <TooltipTrigger asChild>{trigger}</TooltipTrigger>
-          <TooltipContent>Card color</TooltipContent>
+          <TooltipContent>{t('linkItem.color.tooltip')}</TooltipContent>
         </Tooltip>
       ) : (
         trigger

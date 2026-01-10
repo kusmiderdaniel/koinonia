@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   DndContext,
   closestCenter,
@@ -32,7 +33,6 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { GripVertical, X } from 'lucide-react'
 import { createSongArrangement, updateSongArrangement } from '../../actions/song-arrangements'
 import {
-  SECTION_TYPE_LABELS,
   SECTION_TYPE_COLORS,
   type SongSection,
   type SongArrangement,
@@ -54,23 +54,16 @@ interface ArrangementItem {
   sectionId: string // Reference to the actual section
 }
 
-// Helper to get section display label
-function getSectionLabel(section: SongSection): string {
-  if (section.label) return section.label
-  const baseLabel = SECTION_TYPE_LABELS[section.section_type]
-  const typesWithNumbers = ['VERSE', 'BRIDGE', 'INTERLUDE']
-  const showNumber = typesWithNumbers.includes(section.section_type) && section.section_number > 0
-  return showNumber ? `${baseLabel} ${section.section_number}` : baseLabel
-}
-
 // Sortable section item in the arrangement order
 function SortableArrangementItem({
   item,
   section,
+  label,
   onRemove,
 }: {
   item: ArrangementItem
   section: SongSection
+  label: string
   onRemove: () => void
 }) {
   const {
@@ -108,7 +101,7 @@ function SortableArrangementItem({
         className="text-xs text-white flex-1 justify-center rounded-full"
         style={{ backgroundColor: color }}
       >
-        {getSectionLabel(section)}
+        {label}
       </Badge>
       <Button
         variant="ghost"
@@ -130,7 +123,17 @@ export function ArrangementDialog({
   arrangement,
   onSuccess,
 }: ArrangementDialogProps) {
+  const t = useTranslations('songs')
   const isEditing = !!arrangement
+
+  // Helper to get section display label
+  const getSectionLabel = (section: SongSection): string => {
+    if (section.label) return section.label
+    const baseLabel = t(`sectionTypes.${section.section_type}`)
+    const typesWithNumbers = ['VERSE', 'BRIDGE', 'INTERLUDE']
+    const showNumber = typesWithNumbers.includes(section.section_type) && section.section_number > 0
+    return showNumber ? `${baseLabel} ${section.section_number}` : baseLabel
+  }
 
   const [name, setName] = useState('')
   const [durationMinutes, setDurationMinutes] = useState('')
@@ -213,12 +216,12 @@ export function ArrangementDialog({
     e.preventDefault()
 
     if (!name.trim()) {
-      setError('Arrangement name is required')
+      setError(t('arrangementDialog.nameRequired'))
       return
     }
 
     if (arrangementItems.length === 0) {
-      setError('Add at least one section to the arrangement')
+      setError(t('arrangementDialog.sectionsRequired'))
       return
     }
 
@@ -259,17 +262,17 @@ export function ArrangementDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? 'Edit Arrangement' : 'New Arrangement'}
+            {isEditing ? t('arrangementDialog.editTitle') : t('arrangementDialog.addTitle')}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-3">
           {/* Name */}
           <div className="space-y-1">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">{t('arrangementDialog.nameLabel')}</Label>
             <Input
               id="name"
-              placeholder="e.g., Short Version, Sunday Service"
+              placeholder={t('arrangementDialog.namePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -278,9 +281,9 @@ export function ArrangementDialog({
           {/* Duration (optional) */}
           <div className="space-y-1">
             <Label>
-              Duration{' '}
+              {t('arrangementDialog.durationLabel')}{' '}
               <span className="text-muted-foreground font-normal text-xs">
-                (optional - overrides song default)
+                {t('arrangementDialog.durationHint')}
               </span>
             </Label>
             <div className="flex items-center gap-2">
@@ -316,9 +319,9 @@ export function ArrangementDialog({
           {/* Section Palette - Click to add */}
           <div className="space-y-1">
             <Label>
-              Sections{' '}
+              {t('arrangementDialog.sectionsLabel')}{' '}
               <span className="text-muted-foreground font-normal text-xs">
-                (click to add)
+                {t('arrangementDialog.sectionsHint')}
               </span>
             </Label>
             <div className="flex flex-wrap gap-1.5 p-2 border rounded-md bg-muted/30">
@@ -334,7 +337,7 @@ export function ArrangementDialog({
               ))}
               {sections.length === 0 && (
                 <p className="text-sm text-muted-foreground">
-                  No sections available. Add sections to the song first.
+                  {t('arrangementDialog.noSectionsAvailable')}
                 </p>
               )}
             </div>
@@ -343,15 +346,15 @@ export function ArrangementDialog({
           {/* Arrangement Order (Reorderable) */}
           <div className="space-y-1">
             <Label>
-              Arrangement Order{' '}
+              {t('arrangementDialog.orderLabel')}{' '}
               <span className="text-muted-foreground font-normal text-xs">
-                (drag to reorder)
+                {t('arrangementDialog.orderHint')}
               </span>
             </Label>
             <ScrollArea className="border rounded-md p-2 h-[250px]">
               {arrangementItems.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-8">
-                  Click sections above to build your arrangement
+                  {t('arrangementDialog.emptyOrder')}
                 </p>
               ) : (
                 <DndContext
@@ -372,6 +375,7 @@ export function ArrangementDialog({
                             key={item.id}
                             item={item}
                             section={section}
+                            label={getSectionLabel(section)}
                             onRemove={() => handleRemoveItem(item.id)}
                           />
                         )
@@ -394,7 +398,7 @@ export function ArrangementDialog({
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('actions.cancel')}
             </Button>
             <Button
               type="submit"
@@ -404,11 +408,11 @@ export function ArrangementDialog({
             >
               {isSubmitting
                 ? isEditing
-                  ? 'Saving...'
-                  : 'Creating...'
+                  ? t('arrangementDialog.saving')
+                  : t('arrangementDialog.creating')
                 : isEditing
-                  ? 'Save'
-                  : 'Create'}
+                  ? t('arrangementDialog.save')
+                  : t('arrangementDialog.create')}
             </Button>
           </DialogFooter>
         </form>

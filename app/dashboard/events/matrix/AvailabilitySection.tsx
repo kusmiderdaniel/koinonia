@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import {
   Tooltip,
   TooltipContent,
@@ -26,12 +27,13 @@ export function AvailabilitySection({
   unavailability,
   multiAssignments,
 }: AvailabilitySectionProps) {
+  const t = useTranslations('events.matrix')
   const hasContent = unavailability.length > 0 || multiAssignments.length > 0
 
   if (!hasContent) {
     return (
       <div className="min-h-[60px] p-2 text-xs text-muted-foreground text-center">
-        No conflicts
+        {t('noConflicts')}
       </div>
     )
   }
@@ -52,7 +54,7 @@ export function AvailabilitySection({
                 <TooltipContent side="bottom" className="max-w-[200px]">
                   <p className="font-medium">{person.firstName} {person.lastName}</p>
                   <p className="text-xs text-muted-foreground">
-                    {person.reason || 'Marked as unavailable'}
+                    {person.reason || t('markedAsUnavailable')}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -78,7 +80,7 @@ export function AvailabilitySection({
                 <TooltipContent side="bottom" className="max-w-[200px]">
                   <p className="font-medium">{person.firstName} {person.lastName}</p>
                   <p className="text-xs text-muted-foreground">
-                    Assigned to: {person.positions.join(', ')}
+                    {t('assignedTo')} {person.positions.join(', ')}
                   </p>
                 </TooltipContent>
               </Tooltip>

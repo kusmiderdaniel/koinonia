@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, memo, ReactNode } from 'react'
+import { useTranslations } from 'next-intl'
 import { useIsMobile } from '@/lib/hooks'
 import { Button } from '@/components/ui/button'
 import {
@@ -78,6 +79,7 @@ export const SortBuilder = memo(function SortBuilder({
   onChange,
   sortFields,
 }: SortBuilderProps) {
+  const t = useTranslations('sort')
   const [isOpen, setIsOpen] = useState(false)
   const isMobile = useIsMobile()
   const activeSortCount = countActiveSorts(sortState)
@@ -141,11 +143,11 @@ export const SortBuilder = memo(function SortBuilder({
           {activeSortCount > 0 ? (
             <span className="inline-flex items-center gap-1">
               <span className="bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded">
-                {activeSortCount} sort{activeSortCount !== 1 ? 's' : ''}
+                {t('sortCount', { count: activeSortCount })}
               </span>
             </span>
           ) : (
-            'Sort'
+            t('title')
           )}
         </Button>
       </PopoverTrigger>
@@ -181,7 +183,7 @@ export const SortBuilder = memo(function SortBuilder({
           {/* Empty state */}
           {sortState.length === 0 && (
             <p className="text-sm text-muted-foreground text-center py-4">
-              No sorts applied. Add a sort to order your data.
+              {t('emptyState')}
             </p>
           )}
 
@@ -195,7 +197,7 @@ export const SortBuilder = memo(function SortBuilder({
               disabled={sortState.length >= sortFields.length}
             >
               <Plus className="h-4 w-4" />
-              Add sort
+              {t('addSort')}
             </Button>
           </div>
 
@@ -209,7 +211,7 @@ export const SortBuilder = memo(function SortBuilder({
                 onClick={handleClearAll}
               >
                 <Trash2 className="h-4 w-4" />
-                Delete sort
+                {t('deleteSort')}
               </Button>
             </div>
           )}
@@ -235,6 +237,7 @@ const SortRuleRow = memo(function SortRuleRow({
   onUpdate,
   onRemove,
 }: SortRuleRowProps) {
+  const t = useTranslations('sort')
   const {
     attributes,
     listeners,
@@ -299,10 +302,10 @@ const SortRuleRow = memo(function SortRuleRow({
         </SelectTrigger>
         <SelectContent className="border border-black dark:border-zinc-700">
           <SelectItem value="asc" className="hover:bg-zinc-100 dark:hover:bg-zinc-800">
-            Ascending
+            {t('ascending')}
           </SelectItem>
           <SelectItem value="desc" className="hover:bg-zinc-100 dark:hover:bg-zinc-800">
-            Descending
+            {t('descending')}
           </SelectItem>
         </SelectContent>
       </Select>

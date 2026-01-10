@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
@@ -13,7 +14,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import { HOVER_EFFECT_LABELS, type HoverEffect } from '../../types'
+import { type HoverEffect } from '../../types'
 import { HOVER_ICONS } from './constants'
 
 interface HoverEffectPopoverProps {
@@ -24,6 +25,8 @@ interface HoverEffectPopoverProps {
   showTooltip?: boolean
 }
 
+const HOVER_EFFECTS: HoverEffect[] = ['none', 'scale', 'glow', 'lift']
+
 export function HoverEffectPopover({
   open,
   onOpenChange,
@@ -31,6 +34,7 @@ export function HoverEffectPopover({
   onEffectChange,
   showTooltip = false,
 }: HoverEffectPopoverProps) {
+  const t = useTranslations('links')
   const HoverIcon = HOVER_ICONS[currentEffect]
 
   const trigger = (
@@ -44,7 +48,7 @@ export function HoverEffectPopover({
         )}
       >
         <HoverIcon className="h-4 w-4" />
-        <span className="text-xs">Hover</span>
+        <span className="text-xs">{t('linkItem.hover.button')}</span>
       </Button>
     </PopoverTrigger>
   )
@@ -54,7 +58,7 @@ export function HoverEffectPopover({
       {showTooltip ? (
         <Tooltip>
           <TooltipTrigger asChild>{trigger}</TooltipTrigger>
-          <TooltipContent>Hover effect</TooltipContent>
+          <TooltipContent>{t('linkItem.hover.tooltip')}</TooltipContent>
         </Tooltip>
       ) : (
         trigger
@@ -64,9 +68,9 @@ export function HoverEffectPopover({
         align="start"
       >
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Hover Effect</Label>
+          <Label className="text-sm font-medium">{t('linkItem.hover.label')}</Label>
           <div className="grid grid-cols-2 gap-2">
-            {(Object.keys(HOVER_EFFECT_LABELS) as HoverEffect[]).map((effect) => {
+            {HOVER_EFFECTS.map((effect) => {
               const Icon = HOVER_ICONS[effect]
               return (
                 <Button
@@ -81,7 +85,7 @@ export function HoverEffectPopover({
                   onClick={() => onEffectChange(effect)}
                 >
                   <Icon className="h-4 w-4 mr-1" />
-                  {HOVER_EFFECT_LABELS[effect].label}
+                  {t(`hoverEffect.${effect}`)}
                 </Button>
               )
             })}

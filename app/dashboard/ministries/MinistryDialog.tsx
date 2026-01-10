@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, memo, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -81,6 +82,7 @@ const PRESET_COLORS = [
 ]
 
 export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange, ministry, onSuccess }: MinistryDialogProps) {
+  const t = useTranslations('ministries')
   const isMobile = useIsMobile()
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -194,12 +196,12 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`sm:max-w-md ${isMobile ? 'max-h-[90vh] overflow-y-auto' : ''}`}>
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'Edit Ministry' : 'Create Ministry'}</DialogTitle>
+          <DialogTitle>{isEditing ? t('dialog.editTitle') : t('dialog.createTitle')}</DialogTitle>
           {!isMobile && (
             <DialogDescription>
               {isEditing
-                ? 'Update the ministry details below.'
-                : 'Add a new ministry team to your church.'}
+                ? t('dialog.editDescription')
+                : t('dialog.createDescription')}
             </DialogDescription>
           )}
         </DialogHeader>
@@ -212,31 +214,31 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
           )}
 
           <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
-            <Label htmlFor="name" className={isMobile ? 'text-sm' : ''}>Ministry Name *</Label>
+            <Label htmlFor="name" className={isMobile ? 'text-sm' : ''}>{t('fields.nameRequired')}</Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Worship Team"
+              placeholder={t('fields.namePlaceholder')}
               required
               className={isMobile ? 'h-9' : ''}
             />
           </div>
 
           <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
-            <Label htmlFor="description" className={isMobile ? 'text-sm' : ''}>Description</Label>
+            <Label htmlFor="description" className={isMobile ? 'text-sm' : ''}>{t('fields.description')}</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Brief description of this ministry..."
+              placeholder={t('fields.descriptionPlaceholder')}
               rows={isMobile ? 2 : 3}
               className={isMobile ? 'text-sm' : ''}
             />
           </div>
 
           <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
-            <Label className={isMobile ? 'text-sm' : ''}>Color</Label>
+            <Label className={isMobile ? 'text-sm' : ''}>{t('fields.color')}</Label>
             <div className={`flex justify-between ${isMobile ? 'gap-1' : 'gap-2'}`}>
               {PRESET_COLORS.map((presetColor) => (
                 <button
@@ -257,22 +259,22 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
           </div>
 
           <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
-            <Label className={isMobile ? 'text-sm' : ''}>Campus</Label>
+            <Label className={isMobile ? 'text-sm' : ''}>{t('fields.campus')}</Label>
             <SingleCampusPicker
               campuses={campuses}
               selectedCampusId={campusId}
               onChange={setCampusId}
-              placeholder="All campuses"
+              placeholder={t('fields.allCampuses')}
             />
             {!isMobile && (
               <p className="text-sm text-muted-foreground">
-                Leave empty for a church-wide ministry
+                {t('fields.campusHint')}
               </p>
             )}
           </div>
 
           <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
-            <Label className={isMobile ? 'text-sm' : ''}>Ministry Leader *</Label>
+            <Label className={isMobile ? 'text-sm' : ''}>{t('fields.leaderRequired')}</Label>
             <LeaderPicker
               selectedLeaderId={leaderId}
               onSelect={setLeaderId}
@@ -282,7 +284,7 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
             />
             {!isEditing && !leaderId && !isMobile && (
               <p className="text-sm text-muted-foreground">
-                A leader must be assigned to create a ministry
+                {t('fields.leaderHint')}
               </p>
             )}
           </div>
@@ -295,7 +297,7 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
               disabled={isLoading}
               className="!border !border-black dark:!border-white"
             >
-              Cancel
+              {t('actions.cancel')}
             </Button>
             <Button
               type="submit"
@@ -305,11 +307,11 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
             >
               {isLoading
                 ? isEditing
-                  ? 'Saving...'
-                  : 'Creating...'
+                  ? t('actions.saving')
+                  : t('actions.creating')
                 : isEditing
-                ? 'Save Changes'
-                : 'Create Ministry'}
+                ? t('actions.saveChanges')
+                : t('actions.create')}
             </Button>
           </DialogFooter>
         </form>

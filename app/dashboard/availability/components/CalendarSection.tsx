@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Calendar } from '@/components/ui/calendar'
@@ -38,6 +39,7 @@ export const CalendarSection = memo(function CalendarSection({
   onClearSelection,
   onAddSingleDay,
 }: CalendarSectionProps) {
+  const t = useTranslations('availability')
   // Format month name
   const monthName = calendarMonth.toLocaleString('default', { month: 'long', year: 'numeric' })
 
@@ -101,7 +103,7 @@ export const CalendarSection = memo(function CalendarSection({
             <div className="mt-3 md:mt-4 p-2 md:p-3 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
               <div className="flex items-center justify-between">
                 <div className="text-xs md:text-sm">
-                  <span className="font-medium">Selected: </span>
+                  <span className="font-medium">{t('calendar.selected')} </span>
                   {selectedEnd ? (
                     <span>
                       {formatDateShort(selectedStart)} - {formatDateShort(selectedEnd)}
@@ -118,11 +120,11 @@ export const CalendarSection = memo(function CalendarSection({
               {!selectedEnd && (
                 <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-2">
                   <span className="text-xs text-muted-foreground">
-                    <span className="hidden sm:inline">Click another date for a range, or</span>
-                    <span className="sm:hidden">Tap another date for range, or</span>
+                    <span className="hidden sm:inline">{t('calendar.clickForRange')}</span>
+                    <span className="sm:hidden">{t('calendar.tapForRange')}</span>
                   </span>
                   <Button size="sm" className="w-full sm:w-auto text-xs h-7" onClick={onAddSingleDay}>
-                    Add Single Day
+                    {t('calendar.addSingleDay')}
                   </Button>
                 </div>
               )}

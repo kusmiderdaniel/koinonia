@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -26,13 +27,16 @@ export function SongPlaceholderAddDialog({
   error,
   onAdd,
 }: SongPlaceholderAddDialogProps) {
+  const t = useTranslations('events.songPlaceholderDialog')
+  const tCommon = useTranslations('common')
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
         <DialogHeader>
-          <DialogTitle>Add Song Placeholder</DialogTitle>
+          <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>
-            This will create a placeholder for a song to be selected later.
+            {t('description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -46,10 +50,10 @@ export function SongPlaceholderAddDialog({
           <Music className="w-8 h-8 text-purple-500" />
           <div>
             <p className="font-medium text-purple-900 dark:text-purple-100">
-              Song Placeholder
+              {t('songPlaceholder')}
             </p>
             <p className="text-sm text-purple-700 dark:text-purple-300">
-              Duration will be set from the song&apos;s default when selected.
+              {t('durationHint')}
             </p>
           </div>
         </div>
@@ -62,7 +66,7 @@ export function SongPlaceholderAddDialog({
             onClick={() => onOpenChange(false)}
             disabled={isAdding}
           >
-            Cancel
+            {tCommon('buttons.cancel')}
           </Button>
           <Button
             variant="outline-pill"
@@ -70,7 +74,7 @@ export function SongPlaceholderAddDialog({
             disabled={isAdding}
             className="!border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
           >
-            {isAdding ? 'Adding...' : 'Add Song'}
+            {isAdding ? t('adding') : t('addSong')}
           </Button>
         </DialogFooter>
       </DialogContent>

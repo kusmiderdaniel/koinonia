@@ -2,6 +2,7 @@
 
 import { memo } from 'react'
 import dynamic from 'next/dynamic'
+import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { FileText } from 'lucide-react'
 import { DetailPanelSkeleton } from '@/components/DynamicLoadingFallback'
@@ -25,6 +26,7 @@ interface TemplatesTabProps {
 }
 
 export const TemplatesTab = memo(function TemplatesTab({ timeFormat }: TemplatesTabProps) {
+  const t = useTranslations('events.templatesTab')
   const isMobile = useIsMobile()
   const state = useTemplatesTabState()
 
@@ -120,7 +122,7 @@ export const TemplatesTab = memo(function TemplatesTab({ timeFormat }: Templates
             <div className="text-center">
               <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
               <p className="text-muted-foreground">
-                Select a template to view details
+                {t('selectToView')}
               </p>
             </div>
           </Card>

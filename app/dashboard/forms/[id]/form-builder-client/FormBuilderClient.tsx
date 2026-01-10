@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Sheet,
@@ -10,12 +11,14 @@ import {
 import { FormBuilder } from '../builder/FormBuilder'
 import { PreviewPanel } from '../builder/preview-panel'
 import { ResponsesTable } from '../responses/ResponsesTable'
+import { FormSettings } from '../settings/FormSettings'
 import { useFormBuilderClientState } from './useFormBuilderClientState'
 import { FormBuilderHeader } from './FormBuilderHeader'
 import { useIsMobile } from '@/lib/hooks'
 import type { FormBuilderClientProps } from './types'
 
 export function FormBuilderClient({ initialData }: FormBuilderClientProps) {
+  const t = useTranslations('forms')
   const state = useFormBuilderClientState({ initialData })
   const isMobile = useIsMobile()
 
@@ -60,13 +63,19 @@ export function FormBuilderClient({ initialData }: FormBuilderClientProps) {
               value="build"
               className="h-8 px-3 rounded-md data-[state=active]:bg-brand data-[state=active]:text-white"
             >
-              Build
+              {t('builder.tabs.build')}
             </TabsTrigger>
             <TabsTrigger
               value="responses"
               className="h-8 px-3 rounded-md data-[state=active]:bg-brand data-[state=active]:text-white"
             >
-              Responses ({initialData.submissionsCount})
+              {t('builder.tabs.responses', { count: initialData.submissionsCount })}
+            </TabsTrigger>
+            <TabsTrigger
+              value="settings"
+              className="h-8 px-3 rounded-md data-[state=active]:bg-brand data-[state=active]:text-white"
+            >
+              {t('builder.tabs.settings')}
             </TabsTrigger>
           </TabsList>
         </div>
@@ -81,6 +90,13 @@ export function FormBuilderClient({ initialData }: FormBuilderClientProps) {
         >
           <ResponsesTable formId={state.currentForm.id} fields={initialData.fields} />
         </TabsContent>
+
+        <TabsContent
+          value="settings"
+          className="flex-1 mt-0 min-h-0 overflow-y-auto"
+        >
+          <FormSettings />
+        </TabsContent>
       </Tabs>
 
       {/* Preview Sheet */}
@@ -92,7 +108,7 @@ export function FormBuilderClient({ initialData }: FormBuilderClientProps) {
           showCloseButton={false}
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>Form Preview</SheetTitle>
+            <SheetTitle>{t('builder.previewTitle')}</SheetTitle>
           </SheetHeader>
           <PreviewPanel
             onClose={() => state.setIsPreviewOpen(false)}

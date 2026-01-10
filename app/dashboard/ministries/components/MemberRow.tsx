@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -28,6 +29,7 @@ export const MemberRow = memo(function MemberRow({
   onUpdateRoles,
   onRemove,
 }: MemberRowProps) {
+  const t = useTranslations('ministries')
   const isMobile = useIsMobile()
   const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>(
     member.roles.map((r) => r.id)
@@ -71,11 +73,11 @@ export const MemberRow = memo(function MemberRow({
             <PopoverTrigger asChild>
               <Button variant="ghost" className={`justify-between !border !border-black dark:!border-white ${isMobile ? 'min-w-[70px] text-xs h-8' : 'min-w-[140px] text-sm'}`}>
                 {member.roles.length === 0 ? (
-                  <span className="text-muted-foreground">No roles</span>
+                  <span className="text-muted-foreground">{t('members.noRoles')}</span>
                 ) : member.roles.length === 1 ? (
                   <span className="truncate">{member.roles[0].name}</span>
                 ) : (
-                  <span>{member.roles.length} roles</span>
+                  <span>{t('members.rolesCount', { count: member.roles.length })}</span>
                 )}
                 <ChevronDown className={`shrink-0 opacity-50 ${isMobile ? 'ml-1 h-3 w-3' : 'ml-2 h-4 w-4'}`} />
               </Button>
@@ -100,10 +102,10 @@ export const MemberRow = memo(function MemberRow({
               </div>
               <div className="flex justify-end gap-2 mt-3 pt-3 border-t">
                 <Button variant="ghost" size="sm" onClick={handleCancel} className="!border !border-black dark:!border-white">
-                  Cancel
+                  {t('actions.cancel')}
                 </Button>
                 <Button size="sm" onClick={handleSave} className="!bg-brand hover:!bg-brand/90 !text-white">
-                  Save
+                  {t('actions.save')}
                 </Button>
               </div>
             </PopoverContent>
@@ -111,7 +113,7 @@ export const MemberRow = memo(function MemberRow({
         ) : (
           <div className="flex flex-wrap gap-1">
             {member.roles.length === 0 ? (
-              <span className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>No roles</span>
+              <span className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>{t('members.noRoles')}</span>
             ) : (
               member.roles.map((role) => (
                 <Badge key={role.id} variant="secondary" className={isMobile ? 'text-xs' : ''}>

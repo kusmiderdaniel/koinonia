@@ -1,6 +1,7 @@
 'use client'
 
 import { memo, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -40,6 +41,7 @@ export const FilterRuleRow = memo(function FilterRuleRow({
   onUpdate,
   onRemove,
 }: FilterRuleRowProps) {
+  const t = useTranslations('filter')
   const field = filterFields.find((f) => f.id === rule.field)
   const operators = field ? operatorsByType[field.type] ?? [] : []
   const needsValue = operatorNeedsValue(rule.operator)
@@ -68,17 +70,17 @@ export const FilterRuleRow = memo(function FilterRuleRow({
               <button
                 type="button"
                 onClick={() => onConjunctionChange(conjunction === 'and' ? 'or' : 'and')}
-                className="h-8 px-3 text-xs rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors capitalize"
+                className="h-8 px-3 text-xs rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
               >
-                {conjunction}
+                {t(conjunction)}
               </button>
             ) : (
-              <span className="text-xs text-muted-foreground px-2 capitalize">
-                {conjunction}
+              <span className="text-xs text-muted-foreground px-2">
+                {t(conjunction)}
               </span>
             )
           ) : (
-            <span className="text-xs text-muted-foreground px-2">Where</span>
+            <span className="text-xs text-muted-foreground px-2">{t('where')}</span>
           )}
         </div>
 

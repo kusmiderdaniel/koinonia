@@ -1,6 +1,7 @@
 'use client'
 
 import { memo, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
@@ -14,6 +15,7 @@ import { FieldEditorOptions } from './FieldEditorOptions'
 import { useIsMobile } from '@/lib/hooks'
 
 export const FieldEditor = memo(function FieldEditor() {
+  const t = useTranslations('forms')
   const handlers = useFieldEditorHandlers()
   const { handleAddCondition, canAddCondition } = useConditionActions()
   const isMobile = useIsMobile()
@@ -22,7 +24,7 @@ export const FieldEditor = memo(function FieldEditor() {
   if (!handlers.selectedField) {
     return (
       <div className="p-4 text-center text-muted-foreground">
-        <p className="text-sm">Select a field to edit its properties</p>
+        <p className="text-sm">{t('fieldEditor.selectField')}</p>
       </div>
     )
   }
@@ -43,13 +45,13 @@ export const FieldEditor = memo(function FieldEditor() {
               value="settings"
               className={`${isMobile ? 'text-xs px-3 h-7' : 'text-sm px-4'} data-[state=active]:bg-brand data-[state=active]:text-white`}
             >
-              Settings
+              {t('fieldEditor.tabs.settings')}
             </TabsTrigger>
             <TabsTrigger
               value="logic"
               className={`${isMobile ? 'text-xs px-3 h-7' : 'text-sm px-4'} data-[state=active]:bg-brand data-[state=active]:text-white`}
             >
-              Logic
+              {t('fieldEditor.tabs.logic')}
             </TabsTrigger>
           </TabsList>
           {!isMobile && (
@@ -59,7 +61,7 @@ export const FieldEditor = memo(function FieldEditor() {
               onClick={handlers.handleClose}
               className="text-xs"
             >
-              Done
+              {t('fieldEditor.done')}
             </Button>
           )}
         </div>
@@ -97,10 +99,10 @@ export const FieldEditor = memo(function FieldEditor() {
           {/* Required toggle */}
           <div className={`flex items-center justify-between gap-4 border rounded-lg bg-muted/30 ${isMobile ? 'p-2' : 'p-3'}`}>
             <div className="space-y-0.5 min-w-0 flex-1">
-              <Label htmlFor="required" className={isMobile ? 'text-sm' : ''}>Required</Label>
+              <Label htmlFor="required" className={isMobile ? 'text-sm' : ''}>{t('fieldEditor.required')}</Label>
               {!isMobile && (
                 <p className="text-xs text-muted-foreground">
-                  Make this field mandatory
+                  {t('fieldEditor.requiredHelp')}
                 </p>
               )}
             </div>
@@ -115,7 +117,7 @@ export const FieldEditor = memo(function FieldEditor() {
         <TabsContent value="logic" className={`mt-0 ${isMobile ? 'space-y-2' : 'space-y-3'}`}>
           <div className="flex items-center justify-between">
             <p className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>
-              Show/hide this field based on answers
+              {t('fieldEditor.logicInstruction')}
             </p>
             {canAddCondition && (
               <Button
@@ -125,7 +127,7 @@ export const FieldEditor = memo(function FieldEditor() {
                 className={`text-xs !border-black dark:!border-white ${isMobile ? 'h-6 px-2' : 'h-7'}`}
               >
                 <Plus className="h-3 w-3 mr-1" />
-                Add
+                {t('fieldEditor.add')}
               </Button>
             )}
           </div>

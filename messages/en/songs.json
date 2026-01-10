@@ -1,0 +1,176 @@
+{
+  "title": "Songs",
+  "subtitle": "Manage your song library",
+  "newSong": "New Song",
+  "selectSong": "Select a song",
+  "selectSongDescription": "Choose a song from the list to view details",
+  "songDetails": "Song Details",
+
+  "search": {
+    "placeholder": "Search songs...",
+    "noSongsYet": "No songs yet",
+    "noSongsYetDescription": "Add your first song to get started",
+    "noSongsFound": "No songs found",
+    "noSongsFoundDescription": "Try a different search term or filter",
+    "clear": "Clear"
+  },
+
+  "detail": {
+    "tabs": {
+      "details": "Details",
+      "lyrics": "Lyrics",
+      "arrangements": "Arrangements"
+    },
+    "defaultKey": "Default Key",
+    "duration": "Duration",
+    "tags": "Tags",
+    "noTags": "No tags",
+    "attachments": "Attachments",
+    "uploading": "Uploading...",
+    "uploadPdf": "Upload PDF",
+    "noAttachments": "No attachments"
+  },
+
+  "dialog": {
+    "addTitle": "Add Song",
+    "editTitle": "Edit Song",
+    "titleLabel": "Title *",
+    "titlePlaceholder": "Song title",
+    "artistLabel": "Artist",
+    "defaultKeyLabel": "Default Key",
+    "durationLabel": "Duration",
+    "tagsLabel": "Tags",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes",
+    "addSong": "Add Song"
+  },
+
+  "deleteDialog": {
+    "title": "Delete Song?",
+    "description": "Are you sure you want to delete {title}? This will also delete all attachments. This action cannot be undone.",
+    "confirm": "Delete"
+  },
+
+  "lyrics": {
+    "view": "View:",
+    "allSections": "All Sections",
+    "import": "Import",
+    "add": "Add",
+    "noLyricsYet": "No lyrics yet",
+    "noLyricsYetManage": "Add song sections to store lyrics",
+    "noLyricsYetView": "No lyrics have been added to this song",
+    "importLyrics": "Import Lyrics",
+    "addSection": "Add Section"
+  },
+
+  "sectionDialog": {
+    "addTitle": "Add Section",
+    "editTitle": "Edit Section",
+    "typeLabel": "Type",
+    "numberLabel": "Number",
+    "customLabel": "Custom Label",
+    "optional": "(optional)",
+    "customLabelPlaceholder": "e.g., \"{type} 1\" or custom name",
+    "lyricsLabel": "Lyrics",
+    "lyricsPlaceholder": "Enter lyrics for this section...",
+    "lyricsRequired": "Lyrics are required",
+    "saving": "Saving...",
+    "adding": "Adding...",
+    "save": "Save",
+    "addButton": "Add"
+  },
+
+  "importDialog": {
+    "title": "Import Lyrics",
+    "description": "Paste formatted lyrics with section headers. Supports formats like [Verse 1] or CHORUS:",
+    "pasteLyrics": "Paste Lyrics",
+    "preview": "Preview",
+    "previewCount": "Preview ({count, plural, one {# section} other {# sections}})",
+    "loadExample": "Load Example",
+    "pasteToPreview": "Paste lyrics to see preview",
+    "noSectionsFound": "No sections found. Please add section headers like [Verse 1] or CHORUS:",
+    "importing": "Importing...",
+    "importButton": "Import {count, plural, one {# Section} other {# Sections}}",
+    "paste": "Paste"
+  },
+
+  "arrangements": {
+    "title": "Arrangements",
+    "new": "New",
+    "newArrangement": "New Arrangement",
+    "noArrangementsYet": "No arrangements yet. Create one to define the section order.",
+    "default": "Default",
+    "deleteTitle": "Delete Arrangement",
+    "deleteDescription": "Are you sure you want to delete \"{name}\"? This cannot be undone."
+  },
+
+  "arrangementDialog": {
+    "addTitle": "New Arrangement",
+    "editTitle": "Edit Arrangement",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g., Short Version, Sunday Service",
+    "durationLabel": "Duration",
+    "durationHint": "(optional - overrides song default)",
+    "sectionsLabel": "Sections",
+    "sectionsHint": "(click to add)",
+    "noSectionsAvailable": "No sections available. Add sections to the song first.",
+    "orderLabel": "Arrangement Order",
+    "orderHint": "(drag to reorder)",
+    "emptyOrder": "Click sections above to build your arrangement",
+    "nameRequired": "Arrangement name is required",
+    "sectionsRequired": "Add at least one section to the arrangement",
+    "saving": "Saving...",
+    "creating": "Creating...",
+    "save": "Save",
+    "create": "Create"
+  },
+
+  "deleteSectionDialog": {
+    "title": "Delete Section",
+    "description": "Are you sure you want to delete \"{label}\"? This will also remove it from any arrangements."
+  },
+
+  "tagPicker": {
+    "placeholder": "Select tags...",
+    "tagNamePlaceholder": "Tag name",
+    "creating": "Creating...",
+    "create": "Create",
+    "createNewTag": "Create new tag"
+  },
+
+  "artistPicker": {
+    "placeholder": "Select or add artist...",
+    "searchPlaceholder": "Search or add new artist...",
+    "noArtistsFound": "No artists found",
+    "noArtistsYet": "No artists yet",
+    "addArtist": "Add \"{artist}\""
+  },
+
+  "keyPicker": {
+    "selectKey": "Select key",
+    "setKey": "Set key",
+    "key": "Key",
+    "noKey": "No key",
+    "major": "Major",
+    "minor": "Minor"
+  },
+
+  "sectionTypes": {
+    "VERSE": "Verse",
+    "CHORUS": "Chorus",
+    "PRE_CHORUS": "Pre-Chorus",
+    "BRIDGE": "Bridge",
+    "TAG": "Tag",
+    "INTRO": "Intro",
+    "OUTRO": "Outro",
+    "INTERLUDE": "Interlude",
+    "ENDING": "Ending"
+  },
+
+  "actions": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "edit": "Edit"
+  }
+}

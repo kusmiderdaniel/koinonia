@@ -1,5 +1,8 @@
+'use client'
+
 import { memo } from 'react'
-import { EVENT_TYPE_LABELS, EVENT_TYPE_COLORS } from '@/lib/constants/event'
+import { useTranslations } from 'next-intl'
+import { EVENT_TYPE_COLORS } from '@/lib/constants/event'
 
 interface EventTypeBadgeProps {
   type: string
@@ -12,7 +15,8 @@ export const EventTypeBadge = memo(function EventTypeBadge({
   className = '',
   size = 'default'
 }: EventTypeBadgeProps) {
-  const label = EVENT_TYPE_LABELS[type] || type
+  const t = useTranslations('events.types')
+  const label = t(type as 'service' | 'rehearsal' | 'meeting' | 'special_event' | 'other')
   const colorClass = EVENT_TYPE_COLORS[type] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
   const sizeClass = size === 'sm' ? 'text-[10px] px-1.5 py-0' : 'text-xs px-2 py-0.5'
 

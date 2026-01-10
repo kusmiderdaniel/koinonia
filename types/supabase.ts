@@ -1755,6 +1755,7 @@ export type Database = {
           emergency_contact_phone: string | null
           first_name: string
           id: string
+          language: string | null
           last_name: string
           member_type: string
           notification_preferences: Json | null
@@ -1783,6 +1784,7 @@ export type Database = {
           emergency_contact_phone?: string | null
           first_name: string
           id: string
+          language?: string | null
           last_name: string
           member_type?: string
           notification_preferences?: Json | null
@@ -1811,6 +1813,7 @@ export type Database = {
           emergency_contact_phone?: string | null
           first_name?: string
           id?: string
+          language?: string | null
           last_name?: string
           member_type?: string
           notification_preferences?: Json | null

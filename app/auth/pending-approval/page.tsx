@@ -1,11 +1,15 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { getTranslations, getLocale } from 'next-intl/server'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Clock, LogOut, XCircle, Check, Mail, Bell, LayoutDashboard } from 'lucide-react'
 
 export default async function PendingApprovalPage() {
   const supabase = await createClient()
+  const t = await getTranslations('auth.pendingApproval')
+  const tSignout = await getTranslations('auth.signout')
+  const locale = await getLocale()
 
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -34,7 +38,7 @@ export default async function PendingApprovalPage() {
 
   const status = pendingReg?.status || 'pending'
   const createdAt = pendingReg?.created_at
-    ? new Date(pendingReg.created_at).toLocaleDateString('en-GB', {
+    ? new Date(pendingReg.created_at).toLocaleDateString(locale === 'pl' ? 'pl-PL' : 'en-GB', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
@@ -42,7 +46,12 @@ export default async function PendingApprovalPage() {
     : null
 
   const isPending = status === 'pending'
-  const isRejected = status === 'rejected'
+
+  const steps = [
+    { icon: Check, text: t('step1') },
+    { icon: Mail, text: t('step2') },
+    { icon: LayoutDashboard, text: t('step3') },
+  ]
 
   return (
     <div className={`min-h-[100dvh] ${isPending ? 'bg-gradient-to-b from-amber-500/5 via-background to-background' : 'bg-gradient-to-b from-red-500/5 via-background to-background'}`}>
@@ -56,7 +65,7 @@ export default async function PendingApprovalPage() {
             type="submit"
           >
             <LogOut className="w-4 h-4" />
-            <span className="hidden sm:inline">Sign Out</span>
+            <span className="hidden sm:inline">{tSignout('button')}</span>
           </Button>
         </form>
       </div>
@@ -74,16 +83,14 @@ export default async function PendingApprovalPage() {
               )}
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
-              {isPending ? 'Awaiting Approval' : 'Registration Rejected'}
+              {isPending ? t('title') : t('rejectedTitle')}
             </h1>
             <p className="text-muted-foreground text-lg max-w-sm mx-auto">
-              {isPending
-                ? 'Your registration is pending approval from a church administrator'
-                : 'Unfortunately, your registration was not approved'}
+              {isPending ? t('description') : t('rejectedDescription')}
             </p>
             {isPending && createdAt && (
               <p className="text-sm text-muted-foreground">
-                Submitted on {createdAt}
+                {t('submittedOn', { date: createdAt })}
               </p>
             )}
           </div>
@@ -95,13 +102,9 @@ export default async function PendingApprovalPage() {
                 <div className="space-y-6">
                   {/* What happens next */}
                   <div className="space-y-4">
-                    <h3 className="font-semibold text-center">What happens next?</h3>
+                    <h3 className="font-semibold text-center">{t('whatNext')}</h3>
                     <ul className="space-y-3">
-                      {[
-                        { icon: Check, text: 'A church administrator will review your registration' },
-                        { icon: Mail, text: "You'll receive an email once approved" },
-                        { icon: LayoutDashboard, text: 'After approval, you can access the church dashboard' },
-                      ].map((item, i) => (
+                      {steps.map((item, i) => (
                         <li key={i} className="flex items-start gap-3 text-sm">
                           <div className="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mt-0.5">
                             <item.icon className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
@@ -116,7 +119,7 @@ export default async function PendingApprovalPage() {
                   <div className="flex items-center gap-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
                     <Bell className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
                     <p className="text-sm text-amber-800 dark:text-amber-200">
-                      Check your email for approval notifications
+                      {t('checkEmail')}
                     </p>
                   </div>
                 </div>
@@ -125,7 +128,7 @@ export default async function PendingApprovalPage() {
                   {/* Rejection message */}
                   <div className="text-center space-y-2">
                     <p className="text-muted-foreground">
-                      Please contact the church administrator for more information about your registration.
+                      {t('contactAdmin')}
                     </p>
                   </div>
 
@@ -133,7 +136,7 @@ export default async function PendingApprovalPage() {
                   <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
                     <Mail className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
                     <p className="text-sm text-red-800 dark:text-red-200">
-                      Reach out to your church for assistance
+                      {t('reachOut')}
                     </p>
                   </div>
                 </div>
@@ -142,7 +145,7 @@ export default async function PendingApprovalPage() {
               {/* User info */}
               <div className="mt-6 pt-6 border-t">
                 <p className="text-sm text-center text-muted-foreground">
-                  Signed in as <span className="font-medium">{user.email}</span>
+                  {t('signedInAs')} <span className="font-medium">{user.email}</span>
                 </p>
               </div>
             </CardContent>
@@ -157,13 +160,13 @@ export default async function PendingApprovalPage() {
               type="submit"
             >
               <LogOut className="w-5 h-5" />
-              Sign Out
+              {tSignout('button')}
             </Button>
           </form>
 
           {/* Footer */}
           <p className="text-center text-sm text-muted-foreground">
-            Need help? Contact us at{' '}
+            {t('needHelp')}{' '}
             <a href="mailto:support@koinonia.app" className="text-brand hover:underline">
               support@koinonia.app
             </a>

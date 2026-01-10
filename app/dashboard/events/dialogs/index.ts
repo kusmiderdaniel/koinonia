@@ -1,7 +1,7 @@
 export { EventDialog } from './EventDialog'
 export { EventFormFields } from './EventFormFields'
 export { InviteUsersPicker } from './InviteUsersPicker'
-export { EVENT_TYPES, VISIBILITY_LEVELS } from './constants'
+export { EVENT_TYPE_VALUES, VISIBILITY_VALUES } from './constants'
 export {
   formatDateTimeLocal,
   getDefaultStartTime,

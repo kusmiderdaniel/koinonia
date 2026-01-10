@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import {
@@ -49,40 +50,42 @@ export const EditDialog = memo(function EditDialog({
   onDelete,
   onCancel,
 }: EditDialogProps) {
+  const t = useTranslations('availability')
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Edit Unavailability</DialogTitle>
+          <DialogTitle>{t('editDialog.title')}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Start Date</Label>
+              <Label>{t('editDialog.startDate')}</Label>
               <DatePicker
                 value={startDate}
                 onChange={onStartDateChange}
-                placeholder="Select date"
+                placeholder={t('editDialog.selectDate')}
                 weekStartsOn={firstDayOfWeek}
               />
             </div>
             <div className="space-y-2">
-              <Label>End Date</Label>
+              <Label>{t('editDialog.endDate')}</Label>
               <DatePicker
                 value={endDate}
                 onChange={onEndDateChange}
-                placeholder="Select date"
+                placeholder={t('editDialog.selectDate')}
                 weekStartsOn={firstDayOfWeek}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="editReason">Reason (optional)</Label>
+            <Label htmlFor="editReason">{t('editDialog.reasonLabel')}</Label>
             <Textarea
               id="editReason"
-              placeholder="e.g., Vacation, Family event..."
+              placeholder={t('editDialog.reasonPlaceholder')}
               value={reason}
               onChange={(e) => onReasonChange(e.target.value)}
               rows={2}
@@ -100,7 +103,7 @@ export const EditDialog = memo(function EditDialog({
             disabled={isSaving}
           >
             <Trash2 className="h-4 w-4 mr-2" />
-            Delete
+            {t('editDialog.delete')}
           </Button>
           <div className="flex gap-2">
             <Button
@@ -109,14 +112,14 @@ export const EditDialog = memo(function EditDialog({
               onClick={onCancel}
               disabled={isSaving}
             >
-              Cancel
+              {t('editDialog.cancel')}
             </Button>
             <Button
               className="!bg-brand hover:!bg-brand/90 !text-brand-foreground"
               onClick={onSave}
               disabled={isSaving}
             >
-              {isSaving ? 'Saving...' : 'Save Changes'}
+              {isSaving ? t('editDialog.saving') : t('editDialog.saveChanges')}
             </Button>
           </div>
         </DialogFooter>

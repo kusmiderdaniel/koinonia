@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Popover,
@@ -41,6 +42,7 @@ export function LabelStylesPopover({
   onToggleUnderline,
   showTooltip = false,
 }: LabelStylesPopoverProps) {
+  const t = useTranslations('links')
   const hasStyles = hideLabel || labelBold || labelItalic || labelUnderline
 
   const trigger = (
@@ -54,7 +56,7 @@ export function LabelStylesPopover({
         )}
       >
         {hideLabel ? <EyeOff className="h-4 w-4" /> : <Type className="h-4 w-4" />}
-        <span className="text-xs">Label</span>
+        <span className="text-xs">{t('linkItem.label.button')}</span>
       </Button>
     </PopoverTrigger>
   )
@@ -64,7 +66,7 @@ export function LabelStylesPopover({
       {showTooltip ? (
         <Tooltip>
           <TooltipTrigger asChild>{trigger}</TooltipTrigger>
-          <TooltipContent>Label options</TooltipContent>
+          <TooltipContent>{t('linkItem.label.tooltip')}</TooltipContent>
         </Tooltip>
       ) : (
         trigger
@@ -83,7 +85,7 @@ export function LabelStylesPopover({
               !hideLabel && 'hover:bg-zinc-100 dark:hover:bg-zinc-800'
             )}
             onClick={onToggleHideLabel}
-            title="Hide label"
+            title={t('linkItem.label.hideLabel')}
           >
             <EyeOff className="h-3.5 w-3.5" />
           </Button>
@@ -97,7 +99,7 @@ export function LabelStylesPopover({
               !labelBold && 'hover:bg-zinc-100 dark:hover:bg-zinc-800'
             )}
             onClick={onToggleBold}
-            title="Bold"
+            title={t('linkItem.label.bold')}
           >
             <Bold className="h-3.5 w-3.5" />
           </Button>
@@ -110,7 +112,7 @@ export function LabelStylesPopover({
               !labelItalic && 'hover:bg-zinc-100 dark:hover:bg-zinc-800'
             )}
             onClick={onToggleItalic}
-            title="Italic"
+            title={t('linkItem.label.italic')}
           >
             <Italic className="h-3.5 w-3.5" />
           </Button>
@@ -123,7 +125,7 @@ export function LabelStylesPopover({
               !labelUnderline && 'hover:bg-zinc-100 dark:hover:bg-zinc-800'
             )}
             onClick={onToggleUnderline}
-            title="Underline"
+            title={t('linkItem.label.underline')}
           >
             <Underline className="h-3.5 w-3.5" />
           </Button>

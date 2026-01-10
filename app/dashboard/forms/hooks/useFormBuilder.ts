@@ -1,16 +1,17 @@
 import { create } from 'zustand'
 import type { Form, BuilderField, BuilderCondition, FormBuilderState, INITIAL_BUILDER_STATE } from '../types'
-import type { FieldType } from '@/lib/validations/forms'
+import type { FieldType, FormAccessType } from '@/lib/validations/forms'
 
 interface FormBuilderActions {
   // Form actions
   setForm: (form: Form | null) => void
   updateFormTitle: (title: string) => void
   updateFormDescription: (description: string | null) => void
+  updateFormAccessType: (accessType: FormAccessType) => void
 
   // Field actions
   setFields: (fields: BuilderField[]) => void
-  addField: (type: FieldType, index?: number) => string // returns new field ID
+  addField: (type: FieldType, label?: string, index?: number) => string // returns new field ID
   duplicateField: (id: string) => string | null // returns new field ID or null if not found
   updateField: (id: string, updates: Partial<BuilderField>) => void
   deleteField: (id: string) => void
@@ -37,18 +38,16 @@ type FormBuilderStore = FormBuilderState & FormBuilderActions
 
 const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
 
-const getDefaultFieldLabel = (type: FieldType): string => {
-  const labels: Record<FieldType, string> = {
-    text: 'Short Answer',
-    textarea: 'Long Answer',
-    number: 'Number',
-    email: 'Email',
-    date: 'Date',
-    single_select: 'Dropdown',
-    multi_select: 'Multiple Choice',
-    checkbox: 'Checkbox',
-  }
-  return labels[type] || 'Question'
+// Fallback labels if translations aren't provided (shouldn't happen in normal usage)
+const FALLBACK_LABELS: Record<FieldType, string> = {
+  text: 'Short Answer',
+  textarea: 'Long Answer',
+  number: 'Number',
+  email: 'Email',
+  date: 'Date',
+  single_select: 'Dropdown',
+  multi_select: 'Multiple Choice',
+  checkbox: 'Checkbox',
 }
 
 export const useFormBuilder = create<FormBuilderStore>((set, get) => ({
@@ -77,10 +76,16 @@ export const useFormBuilder = create<FormBuilderStore>((set, get) => ({
       isDirty: true,
     })),
 
+  updateFormAccessType: (access_type) =>
+    set((state) => ({
+      form: state.form ? { ...state.form, access_type } : null,
+      isDirty: true,
+    })),
+
   // Field actions
   setFields: (fields) => set({ fields }),
 
-  addField: (type, index) => {
+  addField: (type, label, index) => {
     const id = generateTempId()
     const { fields } = get()
     const insertIndex = index !== undefined ? index : fields.length
@@ -88,7 +93,7 @@ export const useFormBuilder = create<FormBuilderStore>((set, get) => ({
     const newField: BuilderField = {
       id,
       type,
-      label: getDefaultFieldLabel(type),
+      label: label || FALLBACK_LABELS[type] || 'Question',
       description: null,
       placeholder: null,
       required: false,

@@ -2,9 +2,16 @@
 
 import * as React from "react"
 import { format, isValid, setHours, setMinutes } from "date-fns"
+import { enUS, pl } from "date-fns/locale"
+import { useLocale } from "next-intl"
 import { CalendarIcon, Clock } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+
+const localeMap = {
+  en: enUS,
+  pl: pl,
+} as const
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -65,6 +72,8 @@ export function DateTimePicker({
   timeFormat = '24h',
 }: DateTimePickerProps) {
   const [open, setOpen] = React.useState(false)
+  const locale = useLocale()
+  const dateLocale = localeMap[locale as keyof typeof localeMap] || enUS
 
   // Parse value to Date
   const dateValue = React.useMemo(() => {
@@ -192,6 +201,7 @@ export function DateTimePicker({
           selected={dateValue}
           onSelect={handleDateSelect}
           defaultMonth={dateValue || new Date()}
+          locale={dateLocale}
           classNames={{
             caption_label: "text-sm font-medium",
             month_caption: "flex justify-center relative items-center h-7 mx-16",

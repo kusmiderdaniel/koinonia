@@ -87,12 +87,12 @@ export async function addSongToAgenda(
       .select('title, default_key, duration_seconds')
       .eq('id', songId)
       .single(),
+    // Get the system ministry (Worship) - query by is_system flag, not name (name can be changed)
     adminClient
       .from('ministries')
       .select('id')
       .eq('church_id', profile.church_id)
       .eq('is_system', true)
-      .eq('name', 'Worship')
       .single(),
     adminClient
       .from('event_agenda_items')
@@ -170,12 +170,12 @@ export async function replaceSongPlaceholder(
       .eq('id', songId)
       .eq('church_id', profile.church_id)
       .single(),
+    // Get the system ministry (Worship) - query by is_system flag, not name (name can be changed)
     adminClient
       .from('ministries')
       .select('id')
       .eq('church_id', profile.church_id)
       .eq('is_system', true)
-      .eq('name', 'Worship')
       .single(),
     // Only fetch arrangement if one is specified
     arrangementId

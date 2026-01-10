@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -23,7 +24,7 @@ import {
   Check,
 } from 'lucide-react'
 import { useIsMobile } from '@/lib/hooks'
-import { statusConfig } from './types'
+import { statusVariants } from './types'
 import type { Form } from './types'
 
 interface FormBuilderHeaderProps {
@@ -65,6 +66,7 @@ export function FormBuilderHeader({
   onPreview,
   onNavigateToForms,
 }: FormBuilderHeaderProps) {
+  const t = useTranslations('forms')
   const isMobile = useIsMobile()
 
   // Mobile layout - more compact with actions in dropdown
@@ -122,15 +124,15 @@ export function FormBuilderHeader({
               onClick={onPublish}
               className="h-8 px-3 text-xs rounded-full !bg-brand hover:!bg-brand/90 !text-white"
             >
-              Publish
+              {t('header.publish')}
             </Button>
           ) : currentForm.status === 'published' ? (
             <Badge variant="default" className="!bg-green-600 !text-white rounded-full text-xs">
-              Live
+              {t('header.live')}
             </Badge>
           ) : (
             <Badge variant="secondary" className="rounded-full text-xs">
-              Closed
+              {t('header.closed')}
             </Badge>
           )}
 
@@ -144,23 +146,23 @@ export function FormBuilderHeader({
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem onClick={onPreview} className="gap-2">
                 <Eye className="h-4 w-4" />
-                Preview
+                {t('header.preview')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={onCopyLink} className="gap-2">
                 {copiedLink ? <Check className="h-4 w-4" /> : <LinkIcon className="h-4 w-4" />}
-                {copiedLink ? 'Copied!' : 'Copy link'}
+                {copiedLink ? t('header.copied') : t('header.copyLink')}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="gap-2" disabled>
                 {currentForm.access_type === 'public' ? (
                   <>
                     <Globe className="h-4 w-4" />
-                    Public form
+                    {t('header.publicForm')}
                   </>
                 ) : (
                   <>
                     <Lock className="h-4 w-4" />
-                    Internal form
+                    {t('header.internalForm')}
                   </>
                 )}
               </DropdownMenuItem>
@@ -168,23 +170,23 @@ export function FormBuilderHeader({
               {currentForm.status === 'published' && (
                 <>
                   <DropdownMenuItem onClick={onUnpublish}>
-                    Unpublish (back to draft)
+                    {t('header.unpublish')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={onClose}>
-                    Close form
+                    {t('header.closeForm')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                 </>
               )}
               {currentForm.status === 'closed' && (
                 <>
-                  <DropdownMenuItem onClick={onPublish}>Reopen form</DropdownMenuItem>
+                  <DropdownMenuItem onClick={onPublish}>{t('header.reopenForm')}</DropdownMenuItem>
                   <DropdownMenuSeparator />
                 </>
               )}
               <DropdownMenuItem onClick={onNavigateToForms} className="gap-2">
                 <ArrowLeft className="h-4 w-4" />
-                Back to Forms
+                {t('header.backToForms')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -227,28 +229,28 @@ export function FormBuilderHeader({
 
           <Badge
             variant={
-              statusConfig[currentForm.status as keyof typeof statusConfig]?.variant
+              statusVariants[currentForm.status as keyof typeof statusVariants]
             }
           >
-            {statusConfig[currentForm.status as keyof typeof statusConfig]?.label}
+            {t(`status.${currentForm.status}`)}
           </Badge>
 
           <Badge variant="outline" className="gap-1">
             {currentForm.access_type === 'public' ? (
               <>
                 <Globe className="h-3 w-3" />
-                Public
+                {t('access.public')}
               </>
             ) : (
               <>
                 <Lock className="h-3 w-3" />
-                Internal
+                {t('access.internal')}
               </>
             )}
           </Badge>
 
           {isDirty && (
-            <span className="text-xs text-muted-foreground">Unsaved changes</span>
+            <span className="text-xs text-muted-foreground">{t('header.unsavedChanges')}</span>
           )}
         </div>
       </div>
@@ -261,7 +263,7 @@ export function FormBuilderHeader({
           className="gap-2"
         >
           {copiedLink ? <Check className="h-4 w-4" /> : <LinkIcon className="h-4 w-4" />}
-          {copiedLink ? 'Copied!' : 'Share'}
+          {copiedLink ? t('header.copied') : t('header.share')}
         </Button>
 
         <Button
@@ -271,7 +273,7 @@ export function FormBuilderHeader({
           className="gap-2"
         >
           <Eye className="h-4 w-4" />
-          Preview
+          {t('header.preview')}
         </Button>
 
         <Button
@@ -282,7 +284,7 @@ export function FormBuilderHeader({
           className="gap-2"
         >
           <Save className="h-4 w-4" />
-          {isSaving ? 'Saving...' : 'Save'}
+          {isSaving ? t('header.saving') : t('header.save')}
         </Button>
 
         {currentForm.status === 'draft' ? (
@@ -291,11 +293,11 @@ export function FormBuilderHeader({
             onClick={onPublish}
             className="gap-2 rounded-full !bg-brand hover:!bg-brand/90 !text-white"
           >
-            Publish
+            {t('header.publish')}
           </Button>
         ) : currentForm.status === 'published' ? (
           <Badge variant="default" className="!bg-green-600 !text-white rounded-full">
-            Live
+            {t('header.live')}
           </Badge>
         ) : null}
 
@@ -309,23 +311,23 @@ export function FormBuilderHeader({
             {currentForm.status === 'published' && (
               <>
                 <DropdownMenuItem onClick={onUnpublish}>
-                  Unpublish (back to draft)
+                  {t('header.unpublish')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onClose}>
-                  Close form (stop accepting responses)
+                  {t('header.closeFormDesc')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
               </>
             )}
             {currentForm.status === 'closed' && (
               <>
-                <DropdownMenuItem onClick={onPublish}>Reopen form</DropdownMenuItem>
+                <DropdownMenuItem onClick={onPublish}>{t('header.reopenForm')}</DropdownMenuItem>
                 <DropdownMenuSeparator />
               </>
             )}
             <DropdownMenuItem onClick={onNavigateToForms}>
               <Copy className="h-4 w-4 mr-2" />
-              Back to Forms
+              {t('header.backToForms')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

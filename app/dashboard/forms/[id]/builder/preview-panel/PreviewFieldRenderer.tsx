@@ -232,7 +232,7 @@ function SingleSelectField({
   value,
   onValueChange,
 }: Pick<FieldRendererProps, 'field' | 'value' | 'onValueChange'>) {
-  const selectedOption = field.options?.find(o => o.value === value)
+  const selectedOption = field.options?.find((o: { value: string }) => o.value === value)
   const colorClasses = selectedOption ? getOptionColorClasses(selectedOption.color) : null
 
   return (
@@ -251,7 +251,7 @@ function SingleSelectField({
           )}
         </SelectTrigger>
         <SelectContent position="popper" sideOffset={4} className="!border !border-black dark:!border-white">
-          {field.options?.map((option) => {
+          {field.options?.map((option: { value: string; label: string; color?: string | null }) => {
             const optionColor = getOptionColorClasses(option.color)
             return (
               <SelectItem key={option.value} value={option.value}>
@@ -278,7 +278,7 @@ function MultiSelectField({
   return (
     <FieldWrapper field={field}>
       <div className="space-y-2">
-        {field.options?.map((option) => {
+        {field.options?.map((option: { value: string; label: string; color?: string | null }) => {
           const isChecked = currentValues.includes(option.value)
           const optionColor = getOptionColorClasses(option.color)
           return (

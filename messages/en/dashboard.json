@@ -1,0 +1,118 @@
+{
+  "title": "Dashboard",
+  "welcome": "Welcome back, {name}!",
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "events": "Events",
+    "ministries": "Ministries",
+    "people": "People",
+    "songs": "Songs",
+    "tasks": "Tasks",
+    "forms": "Forms",
+    "links": "Links",
+    "settings": "Settings",
+    "profile": "Profile",
+    "inbox": "Inbox"
+  },
+  "header": {
+    "search": "Search...",
+    "notifications": "Notifications",
+    "noNotifications": "No new notifications",
+    "pending": "pending",
+    "tasks": "tasks",
+    "thisWeek": "this week"
+  },
+  "sidebar": {
+    "collapse": "Collapse",
+    "expand": "Expand sidebar",
+    "navigationMenu": "Navigation menu"
+  },
+  "userMenu": {
+    "profile": "Profile",
+    "unavailability": "Unavailability",
+    "calendarIntegration": "Calendar Integration",
+    "signOut": "Sign out"
+  },
+  "needsAttention": {
+    "title": "Needs Your Attention",
+    "allCaughtUp": "All Caught Up",
+    "noPendingItems": "No pending items",
+    "allCaughtUpDescription": "You're all caught up! Check your week below.",
+    "decline": "Decline",
+    "accept": "Accept",
+    "viewMore": "View {count} more items"
+  },
+  "yourWeek": {
+    "title": "Your Week",
+    "nothingScheduled": "Nothing scheduled",
+    "emptyDescription": "Your upcoming assignments and tasks will appear here.",
+    "itemsThisWeek": "{count} items this week",
+    "tapToExpand": "Tap to expand",
+    "today": "Today",
+    "tomorrow": "Tomorrow"
+  },
+  "quickAccess": {
+    "title": "Quick Access",
+    "upcomingEvents": "Upcoming Events",
+    "noUpcomingEvents": "No upcoming events",
+    "moreEvents": "+{count} more events",
+    "myUnavailability": "My Unavailability",
+    "loading": "Loading...",
+    "noUpcomingUnavailable": "No upcoming unavailable dates",
+    "more": "+{count} more",
+    "addUnavailability": "Add Unavailability",
+    "unavailabilityDeleted": "Unavailability deleted",
+    "failedToDelete": "Failed to delete"
+  },
+  "quickLinks": {
+    "title": "Quick Links"
+  },
+  "birthdays": {
+    "title": "Upcoming Birthdays",
+    "showLess": "Show less",
+    "showMore": "Show {count} more"
+  },
+  "calendar": {
+    "title": "Church Calendar",
+    "today": "Today",
+    "more": "+{count} more",
+    "noEventsOnDay": "No events on this day",
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+    "daysShort": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    },
+    "eventTypes": {
+      "service": "Service",
+      "rehearsal": "Rehearsal",
+      "meeting": "Meeting",
+      "special_event": "Special Event",
+      "other": "Other"
+    }
+  },
+  "toasts": {
+    "invitationAccepted": "Invitation accepted!",
+    "invitationDeclined": "Invitation declined",
+    "taskCompleted": "Task completed!",
+    "somethingWentWrong": "Something went wrong"
+  }
+}

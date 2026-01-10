@@ -1,7 +1,9 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Search, Users } from 'lucide-react'
+import { Plus, Search, Users } from 'lucide-react'
 import { EmptyState } from '@/components/EmptyState'
 import { MinistryCard } from './MinistryCard'
 import type { Ministry } from '../types'
@@ -13,6 +15,8 @@ interface MinistriesListViewProps {
   filteredMinistries: Ministry[]
   selectedMinistryId: string | null
   onSelectMinistry: (ministry: Ministry) => void
+  onAddClick?: () => void
+  canManage?: boolean
   className?: string
 }
 
@@ -23,20 +27,36 @@ export function MinistriesListView({
   filteredMinistries,
   selectedMinistryId,
   onSelectMinistry,
+  onAddClick,
+  canManage,
   className,
 }: MinistriesListViewProps) {
+  const t = useTranslations('ministries')
+
   return (
     <div className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card overflow-hidden ${className ?? 'w-full md:w-80 md:flex-shrink-0'}`}>
-      {/* Search */}
+      {/* Search and Add Button */}
       <div className="p-3 border-b">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search ministries..."
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9"
-          />
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder={t('searchPlaceholder')}
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          {canManage && onAddClick && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="shrink-0 rounded-full !border !border-black dark:!border-white"
+              onClick={onAddClick}
+            >
+              <Plus className="w-4 h-4" />
+            </Button>
+          )}
         </div>
       </div>
 
@@ -45,14 +65,14 @@ export function MinistriesListView({
         {ministries.length === 0 ? (
           <EmptyState
             icon={Users}
-            title="No ministries yet"
+            title={t('noMinistries')}
             size="sm"
           />
         ) : filteredMinistries.length === 0 ? (
           <EmptyState
             icon={Search}
-            title="No ministries found"
-            description="Try a different search term"
+            title={t('noMinistriesFound')}
+            description={t('tryDifferentSearch')}
             size="sm"
           />
         ) : (

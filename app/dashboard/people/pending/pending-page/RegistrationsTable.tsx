@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Check, X, Link2, Loader2, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -44,6 +45,8 @@ export function RegistrationsTable({
   onReject,
   onLink,
 }: RegistrationsTableProps) {
+  const t = useTranslations('people')
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -56,8 +59,8 @@ export function RegistrationsTable({
     return (
       <div className="text-center py-8 text-muted-foreground">
         <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-        <p>No pending registrations</p>
-        <p className="text-sm">New signups will appear here for approval</p>
+        <p>{t('pending.noRegistrations')}</p>
+        <p className="text-sm">{t('pending.noRegistrationsDescription')}</p>
       </div>
     )
   }
@@ -66,11 +69,11 @@ export function RegistrationsTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Campus</TableHead>
-          <TableHead>Registered</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+          <TableHead>{t('pending.name')}</TableHead>
+          <TableHead>{t('pending.email')}</TableHead>
+          <TableHead>{t('pending.campus')}</TableHead>
+          <TableHead>{t('pending.registered')}</TableHead>
+          <TableHead className="text-right">{t('pending.actionsColumn')}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -89,7 +92,7 @@ export function RegistrationsTable({
                 />
               ) : (
                 <span className="text-muted-foreground text-sm">
-                  Not specified
+                  {t('pending.campusNotSpecified')}
                 </span>
               )}
             </TableCell>
@@ -105,7 +108,7 @@ export function RegistrationsTable({
                     className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                   >
                     <Link2 className="h-4 w-4 mr-1" />
-                    Link
+                    {t('pending.link')}
                   </Button>
                 )}
                 <Button
@@ -115,7 +118,7 @@ export function RegistrationsTable({
                   className="!bg-red-600 hover:!bg-red-700 !text-white"
                 >
                   <X className="h-4 w-4 mr-1" />
-                  Reject
+                  {t('pending.reject')}
                 </Button>
                 <Button
                   size="sm"
@@ -128,7 +131,7 @@ export function RegistrationsTable({
                   ) : (
                     <Check className="h-4 w-4 mr-1" />
                   )}
-                  Approve
+                  {t('pending.approve')}
                 </Button>
               </div>
             </TableCell>

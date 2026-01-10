@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,6 +15,7 @@ interface InvitePopoverProps {
 }
 
 export function InvitePopover({ joinCode }: InvitePopoverProps) {
+  const t = useTranslations('people')
   const [copied, setCopied] = useState(false)
 
   const copyJoinCode = async () => {
@@ -26,12 +28,12 @@ export function InvitePopover({ joinCode }: InvitePopoverProps) {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" className="!border !border-black dark:!border-white">
-          Invite Members
+          {t('invite.button')}
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-64 bg-white dark:bg-zinc-950 border border-black dark:border-zinc-700 shadow-lg">
         <div className="space-y-3">
-          <div className="text-sm font-medium">Church Join Code</div>
+          <div className="text-sm font-medium">{t('invite.title')}</div>
           <div className="flex items-center gap-2">
             <div className="flex-1 py-2 px-3 bg-muted rounded-lg border border-black/10 dark:border-zinc-700 text-center">
               <span className="text-lg font-mono font-bold tracking-[0.2em]">
@@ -52,7 +54,7 @@ export function InvitePopover({ joinCode }: InvitePopoverProps) {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            Share this code with new members to join your church.
+            {t('invite.description')}
           </p>
         </div>
       </PopoverContent>

@@ -1,0 +1,195 @@
+{
+  "title": "Tasks",
+  "task": "task",
+  "tasks": "tasks",
+  "taskCount": "{count, plural, one {# task} other {# tasks}}",
+  "newTask": "New Task",
+  "new": "New",
+  "createTask": "Create Task",
+  "editTask": "Edit Task",
+  "noTasksFound": "No tasks found",
+  "createFirstTask": "Create your first task",
+
+  "search": {
+    "placeholder": "Search tasks..."
+  },
+
+  "status": {
+    "pending": "Pending",
+    "in_progress": "In Progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+
+  "priority": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "urgent": "Urgent"
+  },
+
+  "columns": {
+    "title": "Title",
+    "status": "Status",
+    "priority": "Priority",
+    "assignee": "Assignee",
+    "ministry": "Ministry",
+    "campus": "Campus",
+    "dueDate": "Due Date",
+    "created": "Created",
+    "event": "Event"
+  },
+
+  "groupBy": {
+    "none": "No grouping",
+    "noneShort": "None",
+    "priority": "Priority",
+    "priorityShort": "Pri",
+    "assignee": "Assignee",
+    "assigneeShort": "Asgn",
+    "ministry": "Ministry",
+    "ministryShort": "Min",
+    "campus": "Campus",
+    "campusShort": "Cmp",
+    "group": "Group",
+    "unassigned": "Unassigned",
+    "noMinistry": "No Ministry",
+    "noCampus": "No Campus"
+  },
+
+  "dates": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "pickDate": "Pick a date",
+    "from": "From",
+    "to": "To",
+    "startDate": "Start date",
+    "endDate": "End date"
+  },
+
+  "dialog": {
+    "editTitle": "Edit Task",
+    "createTitle": "Create Task",
+    "editDescription": "Update the task details below.",
+    "createDescription": "Add a new task to your list.",
+    "titleLabel": "Title *",
+    "titlePlaceholder": "Enter task title",
+    "statusLabel": "Status",
+    "campusLabel": "Campus",
+    "ministryLabel": "Ministry",
+    "dueDateLabel": "Due Date",
+    "assignToLabel": "Assign To",
+    "selectPerson": "Select a person",
+    "linkToEventLabel": "Link to Event",
+    "priorityLabel": "Priority",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Add more details about the task...",
+    "none": "None",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes"
+  },
+
+  "deleteDialog": {
+    "title": "Delete Task",
+    "description": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
+    "confirm": "Delete"
+  },
+
+  "deleteViewDialog": {
+    "title": "Delete View",
+    "description": "Are you sure you want to delete the view \"{name}\"? This action cannot be undone."
+  },
+
+  "memberPicker": {
+    "title": "Assign Member",
+    "description": "Select a church member to assign to this task",
+    "searchPlaceholder": "Search by name...",
+    "unassign": "Unassign task",
+    "noMembersFound": "No members found",
+    "noMembersMatch": "No members found matching your search",
+    "currentlyAssigned": "(Currently assigned)"
+  },
+
+  "eventPicker": {
+    "title": "Link to Event",
+    "description": "Select an event to link to this task",
+    "searchPlaceholder": "Search events...",
+    "showPastEvents": "Show past events",
+    "removeLink": "Remove event link",
+    "loading": "Loading events...",
+    "noEventsFound": "No events found",
+    "noEventsMatch": "No events match your filters",
+    "cancel": "Cancel",
+    "allTypes": "All Types",
+    "typesCount": "{count} types",
+    "allCampuses": "All Campuses",
+    "campusesCount": "{count} campuses",
+    "clearSelection": "Clear selection"
+  },
+
+  "inlineEditor": {
+    "unassign": "Unassign task",
+    "noDate": "No date",
+    "clearDueDate": "Clear due date",
+    "clearDate": "Clear date",
+    "noMinistry": "No ministry",
+    "noCampus": "No campus"
+  },
+
+  "filters": {
+    "title": "Title",
+    "status": "Status",
+    "priority": "Priority",
+    "dueDate": "Due Date",
+    "assignee": "Assignee",
+    "ministry": "Ministry",
+    "campus": "Campus",
+    "event": "Event",
+    "unassigned": "Unassigned",
+    "noMinistry": "No ministry",
+    "noCampus": "No campus",
+    "noEvent": "No event"
+  },
+
+  "operators": {
+    "contains": "contains",
+    "doesNotContain": "does not contain",
+    "equals": "equals",
+    "doesNotEqual": "does not equal",
+    "isEmpty": "is empty",
+    "isNotEmpty": "is not empty",
+    "is": "is",
+    "isNot": "is not",
+    "isBefore": "is before",
+    "isAfter": "is after"
+  },
+
+  "toast": {
+    "taskCompleted": "Task completed!",
+    "statusUpdated": "Status updated",
+    "priorityUpdated": "Priority updated",
+    "assigneeUpdated": "Assignee updated",
+    "assigneeRemoved": "Assignee removed",
+    "dueDateUpdated": "Due date updated",
+    "dueDateRemoved": "Due date removed",
+    "eventLinked": "Event linked",
+    "eventRemoved": "Event removed",
+    "ministryUpdated": "Ministry updated",
+    "ministryRemoved": "Ministry removed",
+    "campusUpdated": "Campus updated",
+    "campusRemoved": "Campus removed",
+    "descriptionUpdated": "Description updated",
+    "descriptionRemoved": "Description removed",
+    "taskDeleted": "Task deleted"
+  },
+
+  "actions": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel"
+  },
+
+  "builtInViews": {
+    "myTasks": "My Tasks"
+  }
+}

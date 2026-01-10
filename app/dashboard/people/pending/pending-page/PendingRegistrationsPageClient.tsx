@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -10,6 +11,7 @@ import { RejectDialog } from './RejectDialog'
 import { LinkDialog } from './LinkDialog'
 
 export function PendingRegistrationsPageClient() {
+  const t = useTranslations('people')
   const state = usePendingRegistrationsState()
 
   return (
@@ -24,7 +26,7 @@ export function PendingRegistrationsPageClient() {
             </Button>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold">Pending Registrations</h1>
+                <h1 className="text-2xl font-bold">{t('pending.title')}</h1>
                 {state.registrations.length > 0 && (
                   <Badge variant="destructive" className="bg-red-500 text-white rounded-full">
                     {state.registrations.length}
@@ -32,7 +34,7 @@ export function PendingRegistrationsPageClient() {
                 )}
               </div>
               <p className="text-muted-foreground">
-                Review and approve new member registrations
+                {t('pending.subtitle')}
               </p>
             </div>
           </div>

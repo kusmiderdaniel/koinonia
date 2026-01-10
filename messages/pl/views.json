@@ -1,0 +1,28 @@
+{
+  "title": "Widoki",
+  "all": "Wszystkie",
+  "noSavedViews": "Brak zapisanych widokow",
+  "saveCurrentView": "Zapisz obecny widok",
+  "save": "Zapisz",
+  "edit": "Edytuj",
+  "setAsDefault": "Ustaw jako domyslny",
+  "delete": "Usun",
+  "dialog": {
+    "saveTitle": "Zapisz widok",
+    "editTitle": "Edytuj widok",
+    "saveDescription": "Zapisz obecne filtry i sortowanie jako widok do ponownego wykorzystania.",
+    "editDescription": "Zaktualizuj ustawienia tego zapisanego widoku.",
+    "nameLabel": "Nazwa",
+    "namePlaceholder": "np. Moje zadania, Nadchodzace wydarzenia",
+    "nameRequired": "Wprowadz nazwe dla tego widoku",
+    "descriptionLabel": "Opis",
+    "descriptionPlaceholder": "Opcjonalny opis...",
+    "setAsDefault": "Ustaw jako domyslny",
+    "defaultHint": "Ten widok zaladuje sie automatycznie po otwarciu tej strony",
+    "saving": "Zapisywanie...",
+    "saveView": "Zapisz widok",
+    "saveChanges": "Zapisz zmiany",
+    "viewSaved": "Widok zapisany pomyslnie",
+    "viewUpdated": "Widok zaktualizowany pomyslnie"
+  }
+}

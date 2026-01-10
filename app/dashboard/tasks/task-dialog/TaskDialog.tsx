@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -26,6 +27,7 @@ export function TaskDialog({
   weekStartsOn = 0,
   timeFormat,
 }: TaskDialogProps) {
+  const t = useTranslations('tasks')
   const state = useTaskDialogState({
     open,
     task,
@@ -42,12 +44,12 @@ export function TaskDialog({
         <form onSubmit={state.handleSubmit}>
           <DialogHeader>
             <DialogTitle>
-              {state.isEditing ? 'Edit Task' : 'Create Task'}
+              {state.isEditing ? t('dialog.editTitle') : t('dialog.createTitle')}
             </DialogTitle>
             <DialogDescription>
               {state.isEditing
-                ? 'Update the task details below.'
-                : 'Add a new task to your list.'}
+                ? t('dialog.editDescription')
+                : t('dialog.createDescription')}
             </DialogDescription>
           </DialogHeader>
 
@@ -83,7 +85,7 @@ export function TaskDialog({
               disabled={state.isLoading}
               className="!border-black dark:!border-white"
             >
-              Cancel
+              {t('actions.cancel')}
             </Button>
             <Button
               type="submit"
@@ -92,10 +94,10 @@ export function TaskDialog({
               className="!bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
             >
               {state.isLoading
-                ? 'Saving...'
+                ? t('dialog.saving')
                 : state.isEditing
-                  ? 'Save Changes'
-                  : 'Create Task'}
+                  ? t('dialog.saveChanges')
+                  : t('createTask')}
             </Button>
           </DialogFooter>
         </form>

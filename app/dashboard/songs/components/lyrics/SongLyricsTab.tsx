@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   DndContext,
   closestCenter,
@@ -39,6 +40,7 @@ interface SongLyricsTabProps {
 }
 
 export function SongLyricsTab({ song, canManage, onSongUpdated }: SongLyricsTabProps) {
+  const t = useTranslations('songs')
   const isMobile = useIsMobile()
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
@@ -136,13 +138,13 @@ export function SongLyricsTab({ song, canManage, onSongUpdated }: SongLyricsTabP
       {sections.length > 0 && (
         <div className={`flex ${isMobile ? 'flex-col gap-2' : 'items-center justify-between'}`}>
           <div className="flex items-center gap-2">
-            <span className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>View:</span>
+            <span className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>{t('lyrics.view')}</span>
             <Select value={selectedView} onValueChange={setSelectedView}>
               <SelectTrigger className={`h-8 ${isMobile ? 'w-[140px] text-xs' : 'w-[180px] text-sm'}`}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="border border-black dark:border-white">
-                <SelectItem value="sections">All Sections</SelectItem>
+                <SelectItem value="sections">{t('lyrics.allSections')}</SelectItem>
                 {arrangements.map((arr) => (
                   <SelectItem key={arr.id} value={arr.id}>
                     {arr.name}
@@ -160,7 +162,7 @@ export function SongLyricsTab({ song, canManage, onSongUpdated }: SongLyricsTabP
                 onClick={() => setIsImportDialogOpen(true)}
               >
                 <FileText className={isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'} />
-                Import
+                {t('lyrics.import')}
               </Button>
               <Button
                 variant="outline"
@@ -169,7 +171,7 @@ export function SongLyricsTab({ song, canManage, onSongUpdated }: SongLyricsTabP
                 onClick={() => setIsCreateDialogOpen(true)}
               >
                 <Plus className={isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'} />
-                Add
+                {t('lyrics.add')}
               </Button>
             </div>
           )}
@@ -183,11 +185,11 @@ export function SongLyricsTab({ song, canManage, onSongUpdated }: SongLyricsTabP
           <div className="border rounded-lg p-6">
             <EmptyState
               icon={FileText}
-              title="No lyrics yet"
+              title={t('lyrics.noLyricsYet')}
               description={
                 canManage
-                  ? 'Add song sections to store lyrics'
-                  : 'No lyrics have been added to this song'
+                  ? t('lyrics.noLyricsYetManage')
+                  : t('lyrics.noLyricsYetView')
               }
               size="sm"
             />
@@ -199,14 +201,14 @@ export function SongLyricsTab({ song, canManage, onSongUpdated }: SongLyricsTabP
                   onClick={() => setIsImportDialogOpen(true)}
                 >
                   <FileText className="w-4 h-4 mr-2" />
-                  Import Lyrics
+                  {t('lyrics.importLyrics')}
                 </Button>
                 <Button
                   className="!bg-brand hover:!bg-brand/90 !text-white !border-0"
                   onClick={() => setIsCreateDialogOpen(true)}
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Add Section
+                  {t('lyrics.addSection')}
                 </Button>
               </div>
             )}

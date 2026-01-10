@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -28,23 +29,6 @@ interface TaskCardProps {
 
 const statusOptions: TaskStatus[] = ['pending', 'in_progress', 'completed', 'cancelled']
 
-function formatDueDate(dueDate: string | null) {
-  if (!dueDate) return null
-  const date = parseISO(dueDate)
-  if (!isValid(date)) return null
-
-  if (isToday(date)) {
-    return { label: 'Today', className: 'text-orange-600' }
-  }
-  if (isTomorrow(date)) {
-    return { label: 'Tomorrow', className: 'text-orange-600' }
-  }
-  if (isPast(date)) {
-    return { label: format(date, 'MMM d'), className: 'text-red-600' }
-  }
-  return { label: format(date, 'MMM d'), className: 'text-muted-foreground' }
-}
-
 export const TaskCard = memo(function TaskCard({
   task,
   isSelected,
@@ -54,8 +38,27 @@ export const TaskCard = memo(function TaskCard({
   onEdit,
   onDelete,
 }: TaskCardProps) {
+  const t = useTranslations('tasks')
   const isMobile = useIsMobile()
   const isCompleted = task.status === 'completed'
+
+  const formatDueDate = (dueDate: string | null) => {
+    if (!dueDate) return null
+    const date = parseISO(dueDate)
+    if (!isValid(date)) return null
+
+    if (isToday(date)) {
+      return { label: t('dates.today'), className: 'text-orange-600' }
+    }
+    if (isTomorrow(date)) {
+      return { label: t('dates.tomorrow'), className: 'text-orange-600' }
+    }
+    if (isPast(date)) {
+      return { label: format(date, 'MMM d'), className: 'text-red-600' }
+    }
+    return { label: format(date, 'MMM d'), className: 'text-muted-foreground' }
+  }
+
   const dueDateInfo = formatDueDate(task.due_date)
 
   return (
@@ -149,7 +152,7 @@ export const TaskCard = memo(function TaskCard({
               onEdit(task)
             }}
           >
-            Edit
+            {t('actions.edit')}
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={(e) => {
@@ -159,7 +162,7 @@ export const TaskCard = memo(function TaskCard({
             className="text-red-600"
           >
             <Trash2 className="h-4 w-4 mr-2" />
-            Delete
+            {t('actions.delete')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { TaskDialog } from './task-dialog'
 import { TaskDetailSheet } from '@/components/TaskDetailSheet'
@@ -34,6 +35,7 @@ interface TasksPageClientProps {
 }
 
 export function TasksPageClient({ initialData }: TasksPageClientProps) {
+  const t = useTranslations('tasks')
   const isMobile = useIsMobile()
 
   // Task state
@@ -230,9 +232,9 @@ export function TasksPageClient({ initialData }: TasksPageClientProps) {
       <ConfirmDialog
         open={handlers.deleteConfirmOpen}
         onOpenChange={handlers.setDeleteConfirmOpen}
-        title="Delete Task"
-        description={`Are you sure you want to delete "${handlers.taskToDelete?.title}"? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={t('deleteDialog.title')}
+        description={t('deleteDialog.description', { title: handlers.taskToDelete?.title ?? '' })}
+        confirmLabel={t('deleteDialog.confirm')}
         destructive
         onConfirm={handlers.handleDeleteConfirm}
         isLoading={handlers.isDeleting}
@@ -265,9 +267,9 @@ export function TasksPageClient({ initialData }: TasksPageClientProps) {
       <ConfirmDialog
         open={!!viewManager.viewToDelete}
         onOpenChange={(open) => !open && viewManager.setViewToDelete(null)}
-        title="Delete View"
-        description={`Are you sure you want to delete the view "${viewManager.viewToDelete?.name}"? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={t('deleteViewDialog.title')}
+        description={t('deleteViewDialog.description', { name: viewManager.viewToDelete?.name ?? '' })}
+        confirmLabel={t('deleteDialog.confirm')}
         destructive
         onConfirm={viewManager.handleDeleteViewConfirm}
         isLoading={viewManager.isDeletingView}

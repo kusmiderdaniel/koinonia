@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { useIsMobile } from '@/lib/hooks'
 import { Button } from '@/components/ui/button'
 import {
@@ -44,6 +45,7 @@ export const FilterBuilder = memo(function FilterBuilder({
   operatorsByType = DEFAULT_OPERATORS_BY_TYPE,
   defaultField,
 }: FilterBuilderProps) {
+  const t = useTranslations('filter')
   const [isOpen, setIsOpen] = useState(false)
   const isMobile = useIsMobile()
   const activeFilterCount = countActiveFilters(filterState)
@@ -133,11 +135,11 @@ export const FilterBuilder = memo(function FilterBuilder({
           {activeFilterCount > 0 ? (
             <span className="inline-flex items-center gap-1">
               <span className="bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded">
-                {activeFilterCount} rule{activeFilterCount !== 1 ? 's' : ''}
+                {t('ruleCount', { count: activeFilterCount })}
               </span>
             </span>
           ) : (
-            'Filter'
+            t('title')
           )}
         </Button>
       </PopoverTrigger>
@@ -186,7 +188,7 @@ export const FilterBuilder = memo(function FilterBuilder({
           {/* Empty state */}
           {filterState.rules.length === 0 && filterState.groups.length === 0 && (
             <p className="text-sm text-muted-foreground text-center py-4">
-              No filters applied. Add a filter rule to get started.
+              {t('emptyState')}
             </p>
           )}
 
@@ -199,7 +201,7 @@ export const FilterBuilder = memo(function FilterBuilder({
               onClick={handleAddRule}
             >
               <Plus className="h-4 w-4" />
-              Add filter rule
+              {t('addRule')}
             </Button>
             <Button
               variant="outline"
@@ -208,7 +210,7 @@ export const FilterBuilder = memo(function FilterBuilder({
               onClick={handleAddGroup}
             >
               <Plus className="h-4 w-4" />
-              Add filter group
+              {t('addGroup')}
             </Button>
           </div>
 
@@ -222,7 +224,7 @@ export const FilterBuilder = memo(function FilterBuilder({
                 onClick={handleClearAll}
               >
                 <Trash2 className="h-4 w-4" />
-                Delete filter
+                {t('deleteFilter')}
               </Button>
             </div>
           )}

@@ -1,6 +1,9 @@
+'use client'
+
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Eye, Lock } from 'lucide-react'
-import { VISIBILITY_LABELS, VISIBILITY_STYLES } from '@/lib/constants/event'
+import { VISIBILITY_STYLES } from '@/lib/constants/event'
 
 interface VisibilityBadgeProps {
   visibility: string
@@ -13,7 +16,8 @@ export const VisibilityBadge = memo(function VisibilityBadge({
   showIcon = true,
   className = ''
 }: VisibilityBadgeProps) {
-  const label = VISIBILITY_LABELS[visibility] || visibility
+  const t = useTranslations('events.visibility')
+  const label = t(visibility as 'members' | 'volunteers' | 'leaders' | 'hidden')
   const colorClass = VISIBILITY_STYLES[visibility] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
   const Icon = visibility === 'hidden' ? Lock : Eye
 

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
@@ -36,6 +37,8 @@ interface NotificationRowProps {
   inApp: boolean
   email: boolean
   disabled: boolean
+  inAppLabel: string
+  emailLabel: string
   onInAppChange: (value: boolean) => void
   onEmailChange: (value: boolean) => void
   children?: React.ReactNode
@@ -48,6 +51,8 @@ function NotificationRow({
   inApp,
   email,
   disabled,
+  inAppLabel,
+  emailLabel,
   onInAppChange,
   onEmailChange,
   children,
@@ -72,7 +77,7 @@ function NotificationRow({
             htmlFor={`${id}-in-app`}
             className="text-sm text-muted-foreground cursor-pointer"
           >
-            In-App
+            {inAppLabel}
           </Label>
         </div>
         <div className="flex items-center gap-2">
@@ -86,7 +91,7 @@ function NotificationRow({
             htmlFor={`${id}-email`}
             className="text-sm text-muted-foreground cursor-pointer"
           >
-            Email
+            {emailLabel}
           </Label>
         </div>
         {children}
@@ -101,6 +106,7 @@ export function NotificationSettingsCard({
   onPreferencesChange,
   onSave,
 }: NotificationSettingsCardProps) {
+  const t = useTranslations('profile.notifications')
   const updatePreference = <K extends keyof NotificationPreferences>(
     key: K,
     field: keyof NotificationPreferences[K],
@@ -118,29 +124,31 @@ export function NotificationSettingsCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Notification Settings</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>
-          Control which notifications you receive
+          {t('description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-0">
         {/* Ministry Invitation Section */}
         <div className="pb-2">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-            Ministry Invitations
+            {t('sections.ministryInvitations')}
           </h4>
           <p className="text-xs text-muted-foreground">
-            For positions in ministries you lead
+            {t('sections.ministryInvitationsDescription')}
           </p>
         </div>
 
         <NotificationRow
           id="ministry-accepted"
-          label="Invitation Accepted"
-          description="When a volunteer accepts an invitation"
+          label={t('categories.invitationAccepted')}
+          description={t('categories.invitationAcceptedDescription')}
           inApp={preferences.ministry_invitation_accepted.in_app}
           email={preferences.ministry_invitation_accepted.email}
           disabled={isLoading}
+          inAppLabel={t('inApp')}
+          emailLabel={t('email')}
           onInAppChange={(value) =>
             updatePreference('ministry_invitation_accepted', 'in_app', value)
           }
@@ -151,11 +159,13 @@ export function NotificationSettingsCard({
 
         <NotificationRow
           id="ministry-declined"
-          label="Invitation Declined"
-          description="When a volunteer declines an invitation"
+          label={t('categories.invitationDeclined')}
+          description={t('categories.invitationDeclinedDescription')}
           inApp={preferences.ministry_invitation_declined.in_app}
           email={preferences.ministry_invitation_declined.email}
           disabled={isLoading}
+          inAppLabel={t('inApp')}
+          emailLabel={t('email')}
           onInAppChange={(value) =>
             updatePreference('ministry_invitation_declined', 'in_app', value)
           }
@@ -167,20 +177,22 @@ export function NotificationSettingsCard({
         {/* Event Invitation Section */}
         <div className="pb-2 pt-4">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-            Event Invitations
+            {t('sections.eventInvitations')}
           </h4>
           <p className="text-xs text-muted-foreground">
-            For events you&apos;re responsible for
+            {t('sections.eventInvitationsDescription')}
           </p>
         </div>
 
         <NotificationRow
           id="event-accepted"
-          label="Invitation Accepted"
-          description="When a volunteer accepts an invitation"
+          label={t('categories.invitationAccepted')}
+          description={t('categories.invitationAcceptedDescription')}
           inApp={preferences.event_invitation_accepted.in_app}
           email={preferences.event_invitation_accepted.email}
           disabled={isLoading}
+          inAppLabel={t('inApp')}
+          emailLabel={t('email')}
           onInAppChange={(value) =>
             updatePreference('event_invitation_accepted', 'in_app', value)
           }
@@ -191,11 +203,13 @@ export function NotificationSettingsCard({
 
         <NotificationRow
           id="event-declined"
-          label="Invitation Declined"
-          description="When a volunteer declines an invitation"
+          label={t('categories.invitationDeclined')}
+          description={t('categories.invitationDeclinedDescription')}
           inApp={preferences.event_invitation_declined.in_app}
           email={preferences.event_invitation_declined.email}
           disabled={isLoading}
+          inAppLabel={t('inApp')}
+          emailLabel={t('email')}
           onInAppChange={(value) =>
             updatePreference('event_invitation_declined', 'in_app', value)
           }
@@ -207,17 +221,19 @@ export function NotificationSettingsCard({
         {/* Reminders Section */}
         <div className="pb-2 pt-4">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-            Reminders
+            {t('sections.reminders')}
           </h4>
         </div>
 
         <NotificationRow
           id="unfilled-reminder"
-          label="Unfilled Positions Reminder"
-          description="Remind me about unfilled or declined positions"
+          label={t('categories.unfilledPositionsReminder')}
+          description={t('categories.unfilledPositionsReminderDescription')}
           inApp={preferences.unfilled_positions_reminder.in_app}
           email={preferences.unfilled_positions_reminder.email}
           disabled={isLoading}
+          inAppLabel={t('inApp')}
+          emailLabel={t('email')}
           onInAppChange={(value) =>
             updatePreference('unfilled_positions_reminder', 'in_app', value)
           }
@@ -243,29 +259,31 @@ export function NotificationSettingsCard({
               <SelectContent className="bg-white dark:bg-zinc-950">
                 {REMINDER_DAYS_OPTIONS.map((days) => (
                   <SelectItem key={days} value={days.toString()}>
-                    {days} {days === 1 ? 'day' : 'days'}
+                    {days} {days === 1 ? t('reminderDays.day') : t('reminderDays.days')}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <span className="text-sm text-muted-foreground">before event</span>
+            <span className="text-sm text-muted-foreground">{t('reminderDays.beforeEvent')}</span>
           </div>
         </NotificationRow>
 
         {/* Other Section */}
         <div className="pb-2 pt-4">
           <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-            Other
+            {t('sections.other')}
           </h4>
         </div>
 
         <NotificationRow
           id="pending-members"
-          label="New Pending Members"
-          description="When someone requests to join your church"
+          label={t('categories.pendingMembers')}
+          description={t('categories.pendingMembersDescription')}
           inApp={preferences.pending_member_registrations.in_app}
           email={preferences.pending_member_registrations.email}
           disabled={isLoading}
+          inAppLabel={t('inApp')}
+          emailLabel={t('email')}
           onInAppChange={(value) =>
             updatePreference('pending_member_registrations', 'in_app', value)
           }
@@ -281,7 +299,7 @@ export function NotificationSettingsCard({
             onClick={onSave}
             className="!bg-brand hover:!bg-brand/90 !text-brand-foreground"
           >
-            {isLoading ? 'Saving...' : 'Save Settings'}
+            {isLoading ? t('saving') : t('saveSettings')}
           </Button>
         </div>
       </CardContent>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Dialog,
   DialogContent,
@@ -48,6 +49,7 @@ export function ImportLyricsDialog({
   songId,
   onSuccess,
 }: ImportLyricsDialogProps) {
+  const t = useTranslations('songs')
   const isMobile = useIsMobile()
   const [rawLyrics, setRawLyrics] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -62,7 +64,7 @@ export function ImportLyricsDialog({
 
   const handleSubmit = async () => {
     if (parsedSections.length === 0) {
-      setError('No sections found. Please add section headers like [Verse 1] or CHORUS:')
+      setError(t('importDialog.noSectionsFound'))
       return
     }
 
@@ -100,7 +102,7 @@ export function ImportLyricsDialog({
       {parsedSections.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm py-8">
           <AlertCircle className="w-8 h-8 mb-2 opacity-50" />
-          <p>Paste lyrics to see preview</p>
+          <p>{t('importDialog.pasteToPreview')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -128,13 +130,11 @@ export function ImportLyricsDialog({
         <DialogHeader className={isMobile ? 'pb-2' : ''}>
           <DialogTitle className={`flex items-center gap-2 ${isMobile ? 'text-base' : ''}`}>
             <FileText className={isMobile ? 'w-4 h-4' : 'w-5 h-5'} />
-            Import Lyrics
+            {t('importDialog.title')}
           </DialogTitle>
           {!isMobile && (
             <DialogDescription>
-              Paste formatted lyrics with section headers. Supports formats like{' '}
-              <code className="bg-muted px-1 rounded">[Verse 1]</code> or{' '}
-              <code className="bg-muted px-1 rounded">CHORUS:</code>
+              {t('importDialog.description')}
             </DialogDescription>
           )}
         </DialogHeader>
@@ -153,7 +153,7 @@ export function ImportLyricsDialog({
                 }`}
               >
                 <FileText className="w-3 h-3 mr-1" />
-                Paste Lyrics
+                {t('importDialog.pasteLyrics')}
               </button>
               <button
                 type="button"
@@ -165,7 +165,7 @@ export function ImportLyricsDialog({
                 }`}
               >
                 <Eye className="w-3 h-3 mr-1" />
-                Preview ({parsedSections.length})
+                {t('importDialog.preview')} ({parsedSections.length})
               </button>
             </div>
 
@@ -179,7 +179,7 @@ export function ImportLyricsDialog({
                     onClick={handleLoadExample}
                     className="text-xs h-6 px-2"
                   >
-                    Load Example
+                    {t('importDialog.loadExample')}
                   </Button>
                 </div>
                 <Textarea
@@ -209,7 +209,7 @@ I once was lost but now I'm found`}
             {/* Input */}
             <div className="flex flex-col">
               <div className="flex items-center justify-between mb-2 h-6">
-                <Label htmlFor="rawLyrics">Paste</Label>
+                <Label htmlFor="rawLyrics">{t('importDialog.paste')}</Label>
                 <Button
                   type="button"
                   variant="ghost"
@@ -217,7 +217,7 @@ I once was lost but now I'm found`}
                   onClick={handleLoadExample}
                   className="text-xs h-6 px-2"
                 >
-                  Load Example
+                  {t('importDialog.loadExample')}
                 </Button>
               </div>
               <Textarea
@@ -242,7 +242,7 @@ Was blind but now I see`}
             <div className="flex flex-col">
               <div className="flex items-center justify-between mb-2 h-6">
                 <Label>
-                  Preview ({parsedSections.length} section{parsedSections.length !== 1 ? 's' : ''})
+                  {t('importDialog.previewCount', { count: parsedSections.length })}
                 </Label>
               </div>
               <ScrollArea className="h-[350px] border rounded-md p-3">
@@ -268,7 +268,7 @@ Was blind but now I see`}
             onClick={handleClose}
             disabled={isSubmitting}
           >
-            Cancel
+            {t('actions.cancel')}
           </Button>
           <Button
             size="sm"
@@ -277,8 +277,8 @@ Was blind but now I see`}
             disabled={isSubmitting || parsedSections.length === 0}
           >
             {isSubmitting
-              ? 'Importing...'
-              : `Import ${parsedSections.length} Section${parsedSections.length !== 1 ? 's' : ''}`}
+              ? t('importDialog.importing')
+              : t('importDialog.importButton', { count: parsedSections.length })}
           </Button>
         </DialogFooter>
       </DialogContent>

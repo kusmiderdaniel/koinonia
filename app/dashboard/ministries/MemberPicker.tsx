@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, memo, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { useDebouncedValue } from '@/lib/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -53,6 +54,7 @@ export const MemberPicker = memo(function MemberPicker({
   onAdd,
   isAdding,
 }: MemberPickerProps) {
+  const t = useTranslations('ministries')
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebouncedValue(search, 300)
@@ -122,20 +124,20 @@ export const MemberPicker = memo(function MemberPicker({
     <>
       <Button variant="ghost" className="rounded-full !border !border-black dark:!border-white" size="sm" onClick={() => setOpen(true)}>
         <UserPlus className="w-4 h-4 mr-1" />
-        Add Member
+        {t('members.addMember')}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
           <DialogHeader>
-            <DialogTitle>Add Member to Ministry</DialogTitle>
+            <DialogTitle>{t('members.addMemberToMinistry')}</DialogTitle>
           </DialogHeader>
 
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name..."
+              placeholder={t('members.searchByName')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
@@ -151,8 +153,8 @@ export const MemberPicker = memo(function MemberPicker({
             emptyMessage={
               <p className="text-sm text-muted-foreground text-center py-4">
                 {availableMembers.length === 0
-                  ? 'All church members are already in this ministry'
-                  : 'No members found'}
+                  ? t('members.allMembersInMinistry')
+                  : t('members.noMembersFound')}
               </p>
             }
             renderItem={(member) => {
@@ -197,7 +199,7 @@ export const MemberPicker = memo(function MemberPicker({
           {/* Role Selection with Checkboxes */}
           {selectedMember && ministryRoles.length > 0 && (
             <div className="space-y-3 pt-3 border-t">
-              <label className="text-sm font-medium">Assign Roles (optional)</label>
+              <label className="text-sm font-medium">{t('members.assignRoles')}</label>
               <div className="space-y-2">
                 {ministryRoles.map((role) => (
                   <div key={role.id} className="flex items-center space-x-2">
@@ -221,10 +223,10 @@ export const MemberPicker = memo(function MemberPicker({
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="outline-pill" onClick={handleCancel} disabled={isAdding} className="!border !border-black dark:!border-white">
-              Cancel
+              {t('actions.cancel')}
             </Button>
             <Button variant="outline-pill" onClick={handleAdd} disabled={!selectedMemberId || isAdding} className="!bg-brand hover:!bg-brand/90 !text-white !border-0">
-              {isAdding ? 'Adding...' : 'Add Member'}
+              {isAdding ? t('actions.adding') : t('members.addMember')}
             </Button>
           </div>
         </DialogContent>

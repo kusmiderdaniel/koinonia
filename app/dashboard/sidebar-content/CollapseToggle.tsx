@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import {
   Tooltip,
@@ -15,6 +16,8 @@ interface CollapseToggleProps {
 }
 
 export function CollapseToggle({ collapsed, onToggle }: CollapseToggleProps) {
+  const t = useTranslations('dashboard.sidebar')
+
   return (
     <div
       className={cn(
@@ -40,13 +43,13 @@ export function CollapseToggle({ collapsed, onToggle }: CollapseToggleProps) {
             ) : (
               <>
                 <ChevronsLeft className="w-4 h-4" />
-                <span className="text-xs">Collapse</span>
+                <span className="text-xs">{t('collapse')}</span>
               </>
             )}
           </Button>
         </TooltipTrigger>
         {collapsed && (
-          <TooltipContent side="right">Expand sidebar</TooltipContent>
+          <TooltipContent side="right">{t('expand')}</TooltipContent>
         )}
       </Tooltip>
     </div>

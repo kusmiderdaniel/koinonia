@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -25,6 +26,7 @@ export function EventPicker({
   weekStartsOn = 0,
   timeFormat,
 }: EventPickerProps) {
+  const t = useTranslations('tasks')
   const state = useEventPickerState({ open })
 
   const handleSelect = useCallback((eventId: string | null) => {
@@ -44,9 +46,9 @@ export function EventPicker({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950 max-h-[85vh] overflow-y-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Link to Event</DialogTitle>
+          <DialogTitle>{t('eventPicker.title')}</DialogTitle>
           <p className="text-sm text-muted-foreground">
-            Select an event to link to this task
+            {t('eventPicker.description')}
           </p>
         </DialogHeader>
 
@@ -60,7 +62,7 @@ export function EventPicker({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search events..."
+            placeholder={t('eventPicker.searchPlaceholder')}
             value={state.search}
             onChange={(e) => state.setSearch(e.target.value)}
             className="pl-9"
@@ -86,21 +88,21 @@ export function EventPicker({
         {/* Date Range Filters */}
         <div className="grid grid-cols-2 gap-2">
           <div className="space-y-1">
-            <label className="text-xs text-muted-foreground">From</label>
+            <label className="text-xs text-muted-foreground">{t('dates.from')}</label>
             <DatePicker
               value={state.dateFromFilter}
               onChange={(v) => state.setDateFromFilter(v || '')}
-              placeholder="Start date"
+              placeholder={t('dates.startDate')}
               className="h-9 text-sm"
               weekStartsOn={weekStartsOn}
             />
           </div>
           <div className="space-y-1">
-            <label className="text-xs text-muted-foreground">To</label>
+            <label className="text-xs text-muted-foreground">{t('dates.to')}</label>
             <DatePicker
               value={state.dateToFilter}
               onChange={(v) => state.setDateToFilter(v || '')}
-              placeholder="End date"
+              placeholder={t('dates.endDate')}
               className="h-9 text-sm"
               weekStartsOn={weekStartsOn}
             />
@@ -113,7 +115,7 @@ export function EventPicker({
             checked={state.showPastEvents}
             onCheckedChange={(checked) => state.setShowPastEvents(checked === true)}
           />
-          <span className="text-sm text-muted-foreground">Show past events</span>
+          <span className="text-sm text-muted-foreground">{t('eventPicker.showPastEvents')}</span>
         </label>
 
         {/* Unlink option */}
@@ -125,7 +127,7 @@ export function EventPicker({
           >
             <div className="flex items-center gap-2 text-muted-foreground">
               <X className="h-4 w-4" />
-              <span>Remove event link</span>
+              <span>{t('eventPicker.removeLink')}</span>
             </div>
           </button>
         )}
@@ -133,13 +135,13 @@ export function EventPicker({
         {/* Event List */}
         {state.isLoading ? (
           <p className="text-sm text-muted-foreground text-center py-4">
-            Loading events...
+            {t('eventPicker.loading')}
           </p>
         ) : state.filteredEvents.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4">
             {state.events.length === 0
-              ? 'No events found'
-              : 'No events match your filters'}
+              ? t('eventPicker.noEventsFound')
+              : t('eventPicker.noEventsMatch')}
           </p>
         ) : (
           <div className="overflow-y-auto overscroll-contain" style={{ maxHeight: '200px' }}>
@@ -160,7 +162,7 @@ export function EventPicker({
         {/* Actions */}
         <div className="flex justify-end pt-2">
           <Button variant="outline-pill" className="!border !border-black dark:!border-white" onClick={() => handleOpenChange(false)}>
-            Cancel
+            {t('eventPicker.cancel')}
           </Button>
         </div>
       </DialogContent>

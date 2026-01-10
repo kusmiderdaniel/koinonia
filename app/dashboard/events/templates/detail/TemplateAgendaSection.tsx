@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { ListOrdered, Plus, Music } from 'lucide-react'
 import { DndContext, closestCenter } from '@dnd-kit/core'
@@ -19,6 +20,8 @@ export const TemplateAgendaSection = memo(function TemplateAgendaSection({
   onMoveItemUp,
   onMoveItemDown,
 }: TemplateAgendaSectionProps) {
+  const t = useTranslations('events.templatesTab')
+
   return (
     <div className="flex flex-col h-full">
       {/* Fixed header */}
@@ -26,7 +29,7 @@ export const TemplateAgendaSection = memo(function TemplateAgendaSection({
         <div className="flex items-center gap-3">
           {agendaItems.length > 0 && (
             <p className="text-sm text-muted-foreground">
-              {agendaItems.length} items
+              {t('itemsCount', { count: agendaItems.length })}
             </p>
           )}
         </div>
@@ -39,7 +42,7 @@ export const TemplateAgendaSection = memo(function TemplateAgendaSection({
               onClick={() => onAddItem(false)}
             >
               <Plus className="w-4 h-4 mr-1" />
-              Add Item
+              {t('addItem')}
             </Button>
             <Button
               variant="outline-pill"
@@ -48,7 +51,7 @@ export const TemplateAgendaSection = memo(function TemplateAgendaSection({
               onClick={() => onAddItem(true)}
             >
               <Music className="w-4 h-4 mr-1" />
-              Add Song
+              {t('addSong')}
             </Button>
           </div>
         )}
@@ -59,7 +62,7 @@ export const TemplateAgendaSection = memo(function TemplateAgendaSection({
         {agendaItems.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <ListOrdered className="w-10 h-10 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">No agenda items yet</p>
+            <p className="text-sm">{t('noAgendaItemsYet')}</p>
           </div>
         ) : (
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>

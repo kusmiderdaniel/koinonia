@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
@@ -52,6 +53,7 @@ export function SongDetailPanel({
   onDeleteAttachment,
   onSongUpdated,
 }: SongDetailPanelProps) {
+  const t = useTranslations('songs')
   const isMobile = useIsMobile()
 
   if (!song) {
@@ -59,8 +61,8 @@ export function SongDetailPanel({
       <Card className="h-full flex items-center justify-center border border-black dark:border-zinc-700">
         <EmptyState
           icon={Music}
-          title="Select a song"
-          description="Choose a song to view details"
+          title={t('selectSong')}
+          description={t('selectSongDescription')}
           size="sm"
         />
       </Card>
@@ -92,19 +94,19 @@ export function SongDetailPanel({
               value="details"
               className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : ''}`}
             >
-              Details
+              {t('detail.tabs.details')}
             </TabsTrigger>
             <TabsTrigger
               value="lyrics"
               className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : ''}`}
             >
-              Lyrics
+              {t('detail.tabs.lyrics')}
             </TabsTrigger>
             <TabsTrigger
               value="arrangements"
               className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : ''}`}
             >
-              Arrangements
+              {t('detail.tabs.arrangements')}
             </TabsTrigger>
           </TabsList>
         </div>
@@ -116,7 +118,7 @@ export function SongDetailPanel({
               {song.default_key && (
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
-                    Default Key
+                    {t('detail.defaultKey')}
                   </label>
                   <p className="text-lg font-medium flex items-center gap-2 mt-1">
                     <Key className="w-4 h-4 text-muted-foreground" />
@@ -127,7 +129,7 @@ export function SongDetailPanel({
               {song.duration_seconds && (
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
-                    Duration
+                    {t('detail.duration')}
                   </label>
                   <p className="text-lg font-medium flex items-center gap-2 mt-1">
                     <Clock className="w-4 h-4 text-muted-foreground" />
@@ -140,7 +142,7 @@ export function SongDetailPanel({
             {/* Tags */}
             <div>
               <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                Tags
+                {t('detail.tags')}
               </label>
               {song.tags && song.tags.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
@@ -155,7 +157,7 @@ export function SongDetailPanel({
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">No tags</p>
+                <p className="text-sm text-muted-foreground">{t('detail.noTags')}</p>
               )}
             </div>
 
@@ -163,7 +165,7 @@ export function SongDetailPanel({
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="text-sm font-medium text-muted-foreground">
-                  Attachments
+                  {t('detail.attachments')}
                 </label>
                 {canManage && (
                   <label className="cursor-pointer">
@@ -177,7 +179,7 @@ export function SongDetailPanel({
                     <Button variant="outline-pill" size="sm" className="!border !border-gray-300 dark:!border-gray-600" asChild disabled={isUploading}>
                       <span>
                         <Upload className="w-4 h-4 mr-1" />
-                        {isUploading ? 'Uploading...' : 'Upload PDF'}
+                        {isUploading ? t('detail.uploading') : t('detail.uploadPdf')}
                       </span>
                     </Button>
                   </label>
@@ -227,7 +229,7 @@ export function SongDetailPanel({
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">No attachments</p>
+                <p className="text-sm text-muted-foreground">{t('detail.noAttachments')}</p>
               )}
             </div>
           </div>

@@ -1,0 +1,9 @@
+{
+  "title": "Sort",
+  "sortCount": "{count} sort",
+  "emptyState": "No sorting applied. Add a sort rule to order your data.",
+  "addSort": "Add sort",
+  "deleteSort": "Clear all",
+  "ascending": "Ascending",
+  "descending": "Descending"
+}

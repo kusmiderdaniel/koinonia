@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
@@ -33,6 +34,7 @@ export function LinksPageClient({
   churchLogo,
   linksPageEnabled: initialLinksPageEnabled,
 }: LinksPageClientProps) {
+  const t = useTranslations('links')
   const [desktopTab, setDesktopTab] = useState('links')
   const [mobileTab, setMobileTab] = useState('links')
   const [settings, setSettings] = useState<LinkTreeSettingsRow | null>(initialSettings)
@@ -67,7 +69,7 @@ export function LinksPageClient({
       toast.error(result.error)
     } else {
       setLinksPageEnabled(checked)
-      toast.success(checked ? 'Links page enabled' : 'Links page disabled')
+      toast.success(checked ? t('toast.pageEnabled') : t('toast.pageDisabled'))
     }
     setIsTogglingPage(false)
   }
@@ -78,9 +80,9 @@ export function LinksPageClient({
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4 mb-4 shrink-0">
           <div>
-            <h1 className="text-xl md:text-2xl font-bold">Links</h1>
+            <h1 className="text-xl md:text-2xl font-bold">{t('title')}</h1>
             <p className="text-sm md:text-base text-muted-foreground">
-              Create a public page with links for your church
+              {t('description')}
             </p>
           </div>
           <div className="flex items-center gap-3 md:gap-4">
@@ -96,7 +98,7 @@ export function LinksPageClient({
                 htmlFor="links-page-enabled-header"
                 className="text-xs md:text-sm font-medium cursor-pointer"
               >
-                {linksPageEnabled ? 'Enabled' : 'Disabled'}
+                {linksPageEnabled ? t('status.enabled') : t('status.disabled')}
               </Label>
             </div>
 
@@ -144,21 +146,21 @@ export function LinksPageClient({
                   className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
                 >
                   <Link2 className="w-4 h-4" />
-                  Links
+                  {t('tabs.links')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="settings"
                   className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
                 >
                   <Settings className="w-4 h-4" />
-                  Settings
+                  {t('tabs.settings')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="analytics"
                   className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
                 >
                   <BarChart3 className="w-4 h-4" />
-                  Analytics
+                  {t('tabs.analytics')}
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -217,19 +219,19 @@ export function LinksPageClient({
                   value="links"
                   className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground rounded-md"
                 >
-                  Links
+                  {t('tabs.links')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="settings"
                   className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground rounded-md"
                 >
-                  Settings
+                  {t('tabs.settings')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="analytics"
                   className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground rounded-md"
                 >
-                  Analytics
+                  {t('tabs.analytics')}
                 </TabsTrigger>
               </TabsList>
 

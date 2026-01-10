@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,18 +18,15 @@ interface GroupBySelectorProps {
   onChange: (value: GroupByField) => void
 }
 
-const groupByOptions: { value: GroupByField; label: string; shortLabel: string }[] = [
-  { value: 'none', label: 'No grouping', shortLabel: 'None' },
-  { value: 'priority', label: 'Priority', shortLabel: 'Pri' },
-  { value: 'assignee', label: 'Assignee', shortLabel: 'Asgn' },
-  { value: 'ministry', label: 'Ministry', shortLabel: 'Min' },
-  { value: 'campus', label: 'Campus', shortLabel: 'Cmp' },
-]
+const groupByValues: GroupByField[] = ['none', 'priority', 'assignee', 'ministry', 'campus']
 
 export function GroupBySelector({ value, onChange }: GroupBySelectorProps) {
+  const t = useTranslations('tasks')
   const isMobile = useIsMobile()
-  const currentOption = groupByOptions.find((opt) => opt.value === value)
   const hasGrouping = value !== 'none'
+
+  const getLabel = (field: GroupByField) => t(`groupBy.${field}`)
+  const getShortLabel = (field: GroupByField) => t(`groupBy.${field}Short`)
 
   return (
     <DropdownMenu>
@@ -41,22 +39,22 @@ export function GroupBySelector({ value, onChange }: GroupBySelectorProps) {
           <Layers className={isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
           {hasGrouping ? (
             <span className={`bg-primary text-primary-foreground px-1.5 py-0.5 rounded ${isMobile ? 'text-[10px]' : 'text-xs'}`}>
-              {isMobile ? currentOption?.shortLabel : currentOption?.label}
+              {isMobile ? getShortLabel(value) : getLabel(value)}
             </span>
           ) : (
-            <span className={isMobile ? 'text-xs' : ''}>Group</span>
+            <span className={isMobile ? 'text-xs' : ''}>{t('groupBy.group')}</span>
           )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="bg-white dark:bg-zinc-950">
-        {groupByOptions.map((option) => (
+        {groupByValues.map((field) => (
           <DropdownMenuItem
-            key={option.value}
-            onClick={() => onChange(option.value)}
+            key={field}
+            onClick={() => onChange(field)}
             className="cursor-pointer flex items-center justify-between"
           >
-            <span>{option.label}</span>
-            {value === option.value && (
+            <span>{getLabel(field)}</span>
+            {value === field && (
               <Check className="h-4 w-4 text-brand" />
             )}
           </DropdownMenuItem>

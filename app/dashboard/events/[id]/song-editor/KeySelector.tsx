@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { MUSICAL_KEYS } from './types'
 
 interface KeySelectorProps {
@@ -13,12 +14,13 @@ export function KeySelector({
   onKeyChange,
   disabled = false,
 }: KeySelectorProps) {
+  const t = useTranslations('songs.keyPicker')
   const majorKeys = MUSICAL_KEYS.filter((k) => !k.endsWith('m'))
   const minorKeys = MUSICAL_KEYS.filter((k) => k.endsWith('m'))
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium">Key</label>
+      <label className="text-sm font-medium">{t('key')}</label>
       <div className="border rounded-lg p-3 bg-gray-50 dark:bg-zinc-900">
         {/* No key option */}
         <button
@@ -31,12 +33,12 @@ export function KeySelector({
               : 'hover:bg-gray-200 dark:hover:bg-zinc-700 text-muted-foreground'
           }`}
         >
-          No key
+          {t('noKey')}
         </button>
 
         {/* Major keys */}
         <div className="text-xs font-semibold text-muted-foreground px-1 py-1">
-          Major
+          {t('major')}
         </div>
         <div className="grid grid-cols-6 gap-1 mb-2">
           {majorKeys.map((k) => (
@@ -58,7 +60,7 @@ export function KeySelector({
 
         {/* Minor keys */}
         <div className="text-xs font-semibold text-muted-foreground px-1 py-1 border-t pt-2">
-          Minor
+          {t('minor')}
         </div>
         <div className="grid grid-cols-6 gap-1">
           {minorKeys.map((k) => (

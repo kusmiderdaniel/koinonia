@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/client'
@@ -9,12 +10,27 @@ import { Building2, Users, Check, ArrowRight, LogOut } from 'lucide-react'
 
 export default function OnboardingPage() {
   const router = useRouter()
+  const t = useTranslations('onboarding')
 
   const handleSignOut = async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
     router.push('/auth/signin')
   }
+
+  const createChurchFeatures = [
+    t('main.createChurch.feature1'),
+    t('main.createChurch.feature2'),
+    t('main.createChurch.feature3'),
+    t('main.createChurch.feature4'),
+  ]
+
+  const joinChurchFeatures = [
+    t('main.joinChurch.feature1'),
+    t('main.joinChurch.feature2'),
+    t('main.joinChurch.feature3'),
+    t('main.joinChurch.feature4'),
+  ]
 
   return (
     <div className="min-h-[100dvh] bg-gradient-to-b from-brand/5 via-background to-background">
@@ -27,7 +43,7 @@ export default function OnboardingPage() {
           onClick={handleSignOut}
         >
           <LogOut className="w-4 h-4" />
-          <span className="hidden sm:inline">Sign Out</span>
+          <span className="hidden sm:inline">{t('signOut')}</span>
         </Button>
       </div>
 
@@ -40,10 +56,10 @@ export default function OnboardingPage() {
               <span className="text-3xl">⛪</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
-              Welcome to Koinonia
+              {t('main.title')}
             </h1>
             <p className="text-muted-foreground text-lg max-w-md mx-auto">
-              Let&apos;s get you set up. Are you starting a new church or joining an existing one?
+              {t('main.description')}
             </p>
           </div>
 
@@ -60,20 +76,15 @@ export default function OnboardingPage() {
 
                   {/* Title & Description */}
                   <div className="space-y-2">
-                    <h2 className="text-xl font-semibold">Create a New Church</h2>
+                    <h2 className="text-xl font-semibold">{t('main.createChurch.title')}</h2>
                     <p className="text-muted-foreground text-sm">
-                      Set up your church organization and invite others
+                      {t('main.createChurch.description')}
                     </p>
                   </div>
 
                   {/* Features */}
                   <ul className="space-y-3">
-                    {[
-                      'Full administrative access',
-                      'Manage ministries and events',
-                      'Invite volunteers and leaders',
-                      'Get a unique join code for members',
-                    ].map((feature, i) => (
+                    {createChurchFeatures.map((feature, i) => (
                       <li key={i} className="flex items-start gap-3 text-sm">
                         <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mt-0.5">
                           <Check className="w-3 h-3 text-green-600 dark:text-green-400" />
@@ -86,7 +97,7 @@ export default function OnboardingPage() {
                   {/* Button */}
                   <Button asChild className="w-full h-12 !rounded-full !bg-brand hover:!bg-brand/90 text-white group/btn" size="lg">
                     <Link href="/onboarding/create-church" className="gap-2">
-                      Create Church
+                      {t('main.createChurch.button')}
                       <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                     </Link>
                   </Button>
@@ -105,20 +116,15 @@ export default function OnboardingPage() {
 
                   {/* Title & Description */}
                   <div className="space-y-2">
-                    <h2 className="text-xl font-semibold">Join Existing Church</h2>
+                    <h2 className="text-xl font-semibold">{t('main.joinChurch.title')}</h2>
                     <p className="text-muted-foreground text-sm">
-                      Connect with your church and start volunteering
+                      {t('main.joinChurch.description')}
                     </p>
                   </div>
 
                   {/* Features */}
                   <ul className="space-y-3">
-                    {[
-                      'Sign up for events and services',
-                      'Manage your availability',
-                      'Connect with your ministry teams',
-                      'Receive notifications and updates',
-                    ].map((feature, i) => (
+                    {joinChurchFeatures.map((feature, i) => (
                       <li key={i} className="flex items-start gap-3 text-sm">
                         <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mt-0.5">
                           <Check className="w-3 h-3 text-green-600 dark:text-green-400" />
@@ -131,7 +137,7 @@ export default function OnboardingPage() {
                   {/* Button */}
                   <Button asChild className="w-full h-12 !rounded-full !border-2 !border-black dark:!border-white bg-transparent hover:bg-muted text-foreground group/btn" variant="outline" size="lg">
                     <Link href="/onboarding/join-church" className="gap-2">
-                      Join Church
+                      {t('main.joinChurch.button')}
                       <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                     </Link>
                   </Button>
@@ -142,7 +148,7 @@ export default function OnboardingPage() {
 
           {/* Footer text */}
           <p className="text-center text-sm text-muted-foreground">
-            Need help? Contact us at{' '}
+            {t('needHelp')}{' '}
             <a href="mailto:support@koinonia.app" className="text-brand hover:underline">
               support@koinonia.app
             </a>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
   Tooltip,
@@ -31,6 +32,7 @@ export function EventsViewModeToggle({
   compact = false,
   mobileOnly = false,
 }: EventsViewModeToggleProps) {
+  const t = useTranslations('events.viewModes')
   const showCalendar = !mobileOnly
   const showMatrix = !mobileOnly && canManageContent
 
@@ -47,14 +49,14 @@ export function EventsViewModeToggle({
             <span>
               <ToggleGroupItem
                 value="list"
-                aria-label="List view"
+                aria-label={t('list')}
                 className={`!rounded-full ${compact ? 'h-8 w-8' : ''} ${viewMode === 'list' ? '!bg-brand !text-brand-foreground' : ''}`}
               >
                 <List className={compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
               </ToggleGroupItem>
             </span>
           </TooltipTrigger>
-          <TooltipContent>List</TooltipContent>
+          <TooltipContent>{t('list')}</TooltipContent>
         </Tooltip>
         {showCalendar && (
           <Tooltip>
@@ -62,14 +64,14 @@ export function EventsViewModeToggle({
               <span>
                 <ToggleGroupItem
                   value="calendar"
-                  aria-label="Calendar view"
+                  aria-label={t('calendar')}
                   className={`!rounded-full ${compact ? 'h-8 w-8' : ''} ${viewMode === 'calendar' ? '!bg-brand !text-brand-foreground' : ''}`}
                 >
                   <CalendarDays className={compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
                 </ToggleGroupItem>
               </span>
             </TooltipTrigger>
-            <TooltipContent>Calendar</TooltipContent>
+            <TooltipContent>{t('calendar')}</TooltipContent>
           </Tooltip>
         )}
         {showMatrix && (
@@ -78,14 +80,14 @@ export function EventsViewModeToggle({
               <span>
                 <ToggleGroupItem
                   value="matrix"
-                  aria-label="Scheduling matrix"
+                  aria-label={t('matrix')}
                   className={`!rounded-full ${compact ? 'h-8 w-8' : ''} ${viewMode === 'matrix' ? '!bg-brand !text-brand-foreground' : ''}`}
                 >
                   <Grid3X3 className={compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
                 </ToggleGroupItem>
               </span>
             </TooltipTrigger>
-            <TooltipContent>Scheduling Matrix</TooltipContent>
+            <TooltipContent>{t('matrix')}</TooltipContent>
           </Tooltip>
         )}
         {canManageContent && (
@@ -94,14 +96,14 @@ export function EventsViewModeToggle({
               <span>
                 <ToggleGroupItem
                   value="templates"
-                  aria-label="Templates"
+                  aria-label={t('templates')}
                   className={`!rounded-full ${compact ? 'h-8 w-8' : ''} ${viewMode === 'templates' ? '!bg-brand !text-brand-foreground' : ''}`}
                 >
                   <FileText className={compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
                 </ToggleGroupItem>
               </span>
             </TooltipTrigger>
-            <TooltipContent>Templates</TooltipContent>
+            <TooltipContent>{t('templates')}</TooltipContent>
           </Tooltip>
         )}
       </ToggleGroup>

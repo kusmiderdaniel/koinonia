@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo, memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -23,6 +24,7 @@ export const ArtistPicker = memo(function ArtistPicker({
   onChange,
   onArtistCreated,
 }: ArtistPickerProps) {
+  const t = useTranslations('songs')
   const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState('')
 
@@ -72,7 +74,7 @@ export const ArtistPicker = memo(function ArtistPicker({
           className="w-full justify-between !border !border-black dark:!border-zinc-700"
         >
           <span className={value ? 'text-foreground' : 'text-muted-foreground'}>
-            {value || 'Select or add artist...'}
+            {value || t('artistPicker.placeholder')}
           </span>
           <div className="flex items-center gap-1">
             {value && (
@@ -104,7 +106,7 @@ export const ArtistPicker = memo(function ArtistPicker({
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search or add new artist..."
+              placeholder={t('artistPicker.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => {
@@ -145,11 +147,11 @@ export const ArtistPicker = memo(function ArtistPicker({
             </div>
           ) : search.trim() ? (
             <div className="p-3 text-sm text-muted-foreground text-center">
-              No artists found
+              {t('artistPicker.noArtistsFound')}
             </div>
           ) : (
             <div className="p-3 text-sm text-muted-foreground text-center">
-              No artists yet
+              {t('artistPicker.noArtistsYet')}
             </div>
           )}
         </div>
@@ -163,7 +165,7 @@ export const ArtistPicker = memo(function ArtistPicker({
               className="w-full text-left px-3 py-2 text-sm rounded-md transition-colors flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-zinc-800 text-brand"
             >
               <Plus className="w-4 h-4" />
-              Add "{search.trim()}"
+              {t('artistPicker.addArtist', { artist: search.trim() })}
             </button>
           </div>
         )}

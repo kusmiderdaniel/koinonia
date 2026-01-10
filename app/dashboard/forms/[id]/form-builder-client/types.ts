@@ -23,3 +23,10 @@ export const statusConfig: Record<string, FormStatusConfig> = {
   published: { label: 'Published', variant: 'default' },
   closed: { label: 'Closed', variant: 'outline' },
 }
+
+// Variant-only export for use with translations
+export const statusVariants = {
+  draft: 'secondary' as const,
+  published: 'default' as const,
+  closed: 'outline' as const,
+}

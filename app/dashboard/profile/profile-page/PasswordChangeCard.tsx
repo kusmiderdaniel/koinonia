@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -52,11 +53,12 @@ export function PasswordChangeCard({
   onSubmit,
   onCancel,
 }: PasswordChangeCardProps) {
+  const t = useTranslations('profile.password')
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Password</CardTitle>
-        <CardDescription>Change your account password</CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         {passwordError && (
@@ -78,7 +80,7 @@ export function PasswordChangeCard({
               variant="outline"
               onClick={() => onShowPasswordFormChange(true)}
             >
-              Change Password
+              {t('changeButton')}
             </Button>
           </div>
         ) : (
@@ -87,7 +89,7 @@ export function PasswordChangeCard({
             className="space-y-4 p-4 border border-border rounded-lg"
           >
             <div className="space-y-2">
-              <Label htmlFor="currentPassword">Current Password</Label>
+              <Label htmlFor="currentPassword">{t('currentPassword')}</Label>
               <div className="relative">
                 <Input
                   id="currentPassword"
@@ -112,7 +114,7 @@ export function PasswordChangeCard({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="newPassword">New Password</Label>
+              <Label htmlFor="newPassword">{t('newPassword')}</Label>
               <div className="relative">
                 <Input
                   id="newPassword"
@@ -138,7 +140,7 @@ export function PasswordChangeCard({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -155,7 +157,7 @@ export function PasswordChangeCard({
                 disabled={isChangingPassword}
                 className="!bg-brand hover:!bg-brand/90 !text-brand-foreground"
               >
-                {isChangingPassword ? 'Changing...' : 'Update Password'}
+                {isChangingPassword ? t('changing') : t('updateButton')}
               </Button>
               <Button
                 type="button"
@@ -164,7 +166,7 @@ export function PasswordChangeCard({
                 disabled={isChangingPassword}
                 className="!border !border-black dark:!border-white"
               >
-                Cancel
+                {t('cancel')}
               </Button>
             </div>
           </form>

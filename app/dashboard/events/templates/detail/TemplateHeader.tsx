@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -37,6 +38,7 @@ export const TemplateHeader = memo(function TemplateHeader({
   onDuplicate,
   onCreateEvent,
 }: TemplateHeaderProps) {
+  const t = useTranslations('events.templatesTab')
   const isMobile = useIsMobile()
 
   // Mobile: Compact header
@@ -68,16 +70,16 @@ export const TemplateHeader = memo(function TemplateHeader({
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={onEdit}>
                     <Pencil className="w-4 h-4 mr-2" />
-                    Edit
+                    {t('editTitle')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={onDuplicate} disabled={isDuplicating}>
                     <Copy className="w-4 h-4 mr-2" />
-                    {isDuplicating ? 'Duplicating...' : 'Duplicate'}
+                    {isDuplicating ? t('duplicatingTemplate') : t('duplicateTitle')}
                   </DropdownMenuItem>
                   {canDelete && (
                     <DropdownMenuItem onClick={onDelete} className="text-red-600">
                       <Trash2 className="w-4 h-4 mr-2" />
-                      Delete
+                      {t('deleteTitle')}
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
@@ -133,7 +135,7 @@ export const TemplateHeader = memo(function TemplateHeader({
             onClick={onCreateEvent}
           >
             <CalendarPlus className="w-4 h-4 mr-2" />
-            Create Event
+            {t('createEvent')}
           </Button>
           {canManage && (
             <DropdownMenu>
@@ -145,16 +147,16 @@ export const TemplateHeader = memo(function TemplateHeader({
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={onEdit}>
                   <Pencil className="w-4 h-4 mr-2" />
-                  Edit Template
+                  {t('editTemplate')}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={onDuplicate} disabled={isDuplicating}>
                   <Copy className="w-4 h-4 mr-2" />
-                  {isDuplicating ? 'Duplicating...' : 'Duplicate Template'}
+                  {isDuplicating ? t('duplicatingTemplate') : t('duplicateTemplate')}
                 </DropdownMenuItem>
                 {canDelete && (
                   <DropdownMenuItem onClick={onDelete} className="text-red-600">
                     <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Template
+                    {t('deleteTemplate')}
                   </DropdownMenuItem>
                 )}
               </DropdownMenuContent>

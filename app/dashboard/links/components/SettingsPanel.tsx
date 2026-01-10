@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -27,21 +28,17 @@ interface SettingsPanelProps {
   setLinksPageEnabled: (enabled: boolean) => void
 }
 
-const CARD_STYLES: { value: CardStyle; label: string }[] = [
-  { value: 'filled', label: 'Filled' },
-  { value: 'outline', label: 'Outline' },
-  { value: 'shadow', label: 'Shadow' },
-]
-
-const BORDER_RADII: { value: BorderRadius; label: string }[] = [
-  { value: 'rounded-none', label: 'Square' },
-  { value: 'rounded-md', label: 'Small' },
-  { value: 'rounded-lg', label: 'Medium' },
-  { value: 'rounded-xl', label: 'Large' },
-  { value: 'rounded-full', label: 'Pill' },
+const CARD_STYLE_VALUES: CardStyle[] = ['filled', 'outline', 'shadow']
+const BORDER_RADIUS_VALUES: { value: BorderRadius; key: string }[] = [
+  { value: 'rounded-none', key: 'square' },
+  { value: 'rounded-md', key: 'small' },
+  { value: 'rounded-lg', key: 'medium' },
+  { value: 'rounded-xl', key: 'large' },
+  { value: 'rounded-full', key: 'pill' },
 ]
 
 export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLinksPageEnabled }: SettingsPanelProps) {
+  const t = useTranslations('links')
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
   const [isTogglingPage, setIsTogglingPage] = useState(false)
   const [useGradient, setUseGradient] = useState(
@@ -138,7 +135,7 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
         setTimeout(() => setSaveStatus('idle'), 2000)
       }
     } catch {
-      toast.error('Failed to save settings')
+      toast.error(t('toast.settingsSaveFailed'))
       setSaveStatus('idle')
     }
   }, [
@@ -195,18 +192,18 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="font-semibold">Settings</h3>
+        <h3 className="font-semibold">{t('settings.title')}</h3>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           {saveStatus === 'saving' && (
             <>
               <Loader2 className="h-3 w-3 animate-spin" />
-              <span>Saving...</span>
+              <span>{t('settings.saving')}</span>
             </>
           )}
           {saveStatus === 'saved' && (
             <>
               <Check className="h-3 w-3 text-green-500" />
-              <span className="text-green-600">Saved</span>
+              <span className="text-green-600">{t('settings.saved')}</span>
             </>
           )}
         </div>
@@ -214,33 +211,33 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
 
       {/* Basic Info */}
       <section className="space-y-3">
-        <h4 className="text-sm font-medium text-muted-foreground">Basic Info</h4>
+        <h4 className="text-sm font-medium text-muted-foreground">{t('settings.basicInfo.title')}</h4>
 
         <div className="space-y-1.5">
-          <Label htmlFor="title" className="text-xs">Page Title</Label>
+          <Label htmlFor="title" className="text-xs">{t('settings.basicInfo.pageTitle')}</Label>
           <Input
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Your church name or custom title"
+            placeholder={t('settings.basicInfo.pageTitlePlaceholder')}
             className="h-8 text-sm"
           />
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="bio" className="text-xs">Bio / Description</Label>
+          <Label htmlFor="bio" className="text-xs">{t('settings.basicInfo.bio')}</Label>
           <Textarea
             id="bio"
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            placeholder="A short description for your link page"
+            placeholder={t('settings.basicInfo.bioPlaceholder')}
             rows={2}
             className="text-sm"
           />
         </div>
 
         <div className="flex items-center justify-between">
-          <Label className="text-xs">Show Church Name</Label>
+          <Label className="text-xs">{t('settings.basicInfo.showChurchName')}</Label>
           <Switch
             checked={showChurchName}
             onCheckedChange={setShowChurchName}
@@ -250,10 +247,10 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
 
       {/* Background */}
       <section className="space-y-3">
-        <h4 className="text-sm font-medium text-muted-foreground">Background</h4>
+        <h4 className="text-sm font-medium text-muted-foreground">{t('settings.background.title')}</h4>
 
         <div className="flex items-center justify-between">
-          <Label className="text-xs">Use Gradient</Label>
+          <Label className="text-xs">{t('settings.background.useGradient')}</Label>
           <Switch
             checked={useGradient}
             onCheckedChange={setUseGradient}
@@ -263,7 +260,7 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
         {useGradient ? (
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs">Start</Label>
+              <Label className="text-xs">{t('settings.background.start')}</Label>
               <ColorPicker
                 value={gradientStart}
                 onChange={setGradientStart}
@@ -271,7 +268,7 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">End</Label>
+              <Label className="text-xs">{t('settings.background.end')}</Label>
               <ColorPicker
                 value={gradientEnd}
                 onChange={setGradientEnd}
@@ -281,7 +278,7 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
           </div>
         ) : (
           <div className="space-y-1.5">
-            <Label className="text-xs">Color</Label>
+            <Label className="text-xs">{t('settings.background.color')}</Label>
             <ColorPicker
               value={backgroundColor}
               onChange={setBackgroundColor}
@@ -293,29 +290,29 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
 
       {/* Card Style */}
       <section className="space-y-3">
-        <h4 className="text-sm font-medium text-muted-foreground">Card Style</h4>
+        <h4 className="text-sm font-medium text-muted-foreground">{t('settings.cardStyle.title')}</h4>
 
         <div className="space-y-1.5">
-          <Label className="text-xs">Style</Label>
+          <Label className="text-xs">{t('settings.cardStyle.style')}</Label>
           <div className="flex flex-wrap gap-1.5">
-            {CARD_STYLES.map(style => (
+            {CARD_STYLE_VALUES.map(style => (
               <Button
-                key={style.value}
-                variant={cardStyle === style.value ? 'default' : 'outline'}
+                key={style}
+                variant={cardStyle === style ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setCardStyle(style.value)}
-                className={`h-7 text-xs ${cardStyle === style.value ? '!bg-brand !text-brand-foreground' : '!border !border-black dark:!border-white'}`}
+                onClick={() => setCardStyle(style)}
+                className={`h-7 text-xs ${cardStyle === style ? '!bg-brand !text-brand-foreground' : '!border !border-black dark:!border-white'}`}
               >
-                {style.label}
+                {t(`settings.cardStyle.styles.${style}`)}
               </Button>
             ))}
           </div>
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs">Corner Radius</Label>
+          <Label className="text-xs">{t('settings.cardStyle.cornerRadius')}</Label>
           <div className="flex flex-wrap gap-1.5">
-            {BORDER_RADII.map(radius => (
+            {BORDER_RADIUS_VALUES.map(radius => (
               <Button
                 key={radius.value}
                 variant={borderRadius === radius.value ? 'default' : 'outline'}
@@ -323,7 +320,7 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
                 onClick={() => setBorderRadius(radius.value)}
                 className={`h-7 text-xs ${borderRadius === radius.value ? '!bg-brand !text-brand-foreground' : '!border !border-black dark:!border-white'}`}
               >
-                {radius.label}
+                {t(`settings.cardStyle.radii.${radius.key}`)}
               </Button>
             ))}
           </div>
@@ -332,7 +329,7 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
 
       {/* Social Links */}
       <section className="space-y-3">
-        <h4 className="text-sm font-medium text-muted-foreground">Social Links</h4>
+        <h4 className="text-sm font-medium text-muted-foreground">{t('settings.socialLinks.title')}</h4>
         <SocialLinksEditor
           links={socialLinks}
           onChange={setSocialLinks}
@@ -341,13 +338,13 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
 
       {/* Status */}
       <section className="space-y-3 pb-8">
-        <h4 className="text-sm font-medium text-muted-foreground">Status</h4>
+        <h4 className="text-sm font-medium text-muted-foreground">{t('settings.pageStatus.title')}</h4>
 
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
-            <Label className="text-xs">Links Page Enabled</Label>
+            <Label className="text-xs">{t('settings.pageStatus.enabled')}</Label>
             <p className="text-xs text-muted-foreground">
-              When disabled, visitors see a 404
+              {t('settings.pageStatus.disabledDescription')}
             </p>
           </div>
           <Switch
@@ -360,7 +357,7 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
                 toast.error(result.error)
               } else {
                 setLinksPageEnabled(checked)
-                toast.success(checked ? 'Links page enabled' : 'Links page disabled')
+                toast.success(checked ? t('toast.pageEnabled') : t('toast.pageDisabled'))
               }
               setIsTogglingPage(false)
             }}

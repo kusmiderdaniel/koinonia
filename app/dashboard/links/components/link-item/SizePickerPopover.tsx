@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
@@ -13,7 +14,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import { CARD_SIZE_LABELS, type CardSize } from '../../types'
+import { type CardSize } from '../../types'
 import { SIZE_ICONS } from './constants'
 
 interface SizePickerPopoverProps {
@@ -24,6 +25,8 @@ interface SizePickerPopoverProps {
   showTooltip?: boolean
 }
 
+const CARD_SIZES: CardSize[] = ['small', 'medium', 'large']
+
 export function SizePickerPopover({
   open,
   onOpenChange,
@@ -31,13 +34,14 @@ export function SizePickerPopover({
   onSizeChange,
   showTooltip = false,
 }: SizePickerPopoverProps) {
+  const t = useTranslations('links')
   const SizeIcon = SIZE_ICONS[currentSize]
 
   const trigger = (
     <PopoverTrigger asChild>
       <Button variant="ghost" size="sm" className="h-8 px-2 gap-1.5">
         <SizeIcon className="h-4 w-4" />
-        <span className="text-xs">Size</span>
+        <span className="text-xs">{t('linkItem.size.button')}</span>
       </Button>
     </PopoverTrigger>
   )
@@ -47,7 +51,7 @@ export function SizePickerPopover({
       {showTooltip ? (
         <Tooltip>
           <TooltipTrigger asChild>{trigger}</TooltipTrigger>
-          <TooltipContent>Card size</TooltipContent>
+          <TooltipContent>{t('linkItem.size.tooltip')}</TooltipContent>
         </Tooltip>
       ) : (
         trigger
@@ -57,9 +61,9 @@ export function SizePickerPopover({
         align="start"
       >
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Card Size</Label>
+          <Label className="text-sm font-medium">{t('linkItem.size.label')}</Label>
           <div className="grid grid-cols-3 gap-2">
-            {(Object.keys(CARD_SIZE_LABELS) as CardSize[]).map((size) => {
+            {CARD_SIZES.map((size) => {
               const Icon = SIZE_ICONS[size]
               return (
                 <Button
@@ -74,7 +78,7 @@ export function SizePickerPopover({
                   onClick={() => onSizeChange(size)}
                 >
                   <Icon className="h-4 w-4 mr-1" />
-                  {CARD_SIZE_LABELS[size].label}
+                  {t(`cardSize.${size}.label`)}
                 </Button>
               )
             })}

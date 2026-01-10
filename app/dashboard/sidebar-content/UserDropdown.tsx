@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,6 +33,7 @@ export function UserDropdown({
   onNavigate,
   onSignOut,
 }: UserDropdownProps) {
+  const t = useTranslations('dashboard.userMenu')
   const initials = `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase()
 
   const triggerButton = (
@@ -82,13 +84,13 @@ export function UserDropdown({
           <DropdownMenuItem asChild>
             <ProgressLink href="/dashboard/profile" onClick={onNavigate}>
               <User />
-              Profile
+              {t('profile')}
             </ProgressLink>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <ProgressLink href="/dashboard/availability" onClick={onNavigate}>
               <CalendarOff />
-              Unavailability
+              {t('unavailability')}
             </ProgressLink>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
@@ -97,13 +99,13 @@ export function UserDropdown({
               onClick={onNavigate}
             >
               <CalendarSync />
-              Calendar Integration
+              {t('calendarIntegration')}
             </ProgressLink>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive" onClick={onSignOut}>
             <LogOut />
-            Sign out
+            {t('signOut')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

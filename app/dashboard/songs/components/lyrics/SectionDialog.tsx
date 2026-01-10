@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Dialog,
   DialogContent,
@@ -22,7 +23,6 @@ import {
 import { createSongSection, updateSongSection } from '../../actions/song-sections'
 import {
   SECTION_TYPES,
-  SECTION_TYPE_LABELS,
   type SongSection,
   type SectionType,
 } from '../../types'
@@ -42,6 +42,7 @@ export function SectionDialog({
   section,
   onSuccess,
 }: SectionDialogProps) {
+  const t = useTranslations('songs')
   const isEditing = !!section
 
   const [sectionType, setSectionType] = useState<SectionType>('VERSE')
@@ -76,7 +77,7 @@ export function SectionDialog({
     e.preventDefault()
 
     if (!lyrics.trim()) {
-      setError('Lyrics are required')
+      setError(t('sectionDialog.lyricsRequired'))
       return
     }
 
@@ -109,7 +110,7 @@ export function SectionDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? 'Edit Section' : 'Add Section'}
+            {isEditing ? t('sectionDialog.editTitle') : t('sectionDialog.addTitle')}
           </DialogTitle>
         </DialogHeader>
 
@@ -117,7 +118,7 @@ export function SectionDialog({
           <div className="grid grid-cols-2 gap-4">
             {/* Section Type */}
             <div className="space-y-2">
-              <Label htmlFor="sectionType">Type</Label>
+              <Label htmlFor="sectionType">{t('sectionDialog.typeLabel')}</Label>
               <Select
                 value={sectionType}
                 onValueChange={(value) => setSectionType(value as SectionType)}
@@ -128,7 +129,7 @@ export function SectionDialog({
                 <SelectContent className="border border-black dark:border-white">
                   {SECTION_TYPES.map((type) => (
                     <SelectItem key={type} value={type}>
-                      {SECTION_TYPE_LABELS[type]}
+                      {t(`sectionTypes.${type}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -138,7 +139,7 @@ export function SectionDialog({
             {/* Section Number (conditional) */}
             {showNumberInput && (
               <div className="space-y-2">
-                <Label htmlFor="sectionNumber">Number</Label>
+                <Label htmlFor="sectionNumber">{t('sectionDialog.numberLabel')}</Label>
                 <Input
                   id="sectionNumber"
                   type="number"
@@ -153,12 +154,12 @@ export function SectionDialog({
           {/* Custom Label (optional) */}
           <div className="space-y-2">
             <Label htmlFor="label">
-              Custom Label{' '}
-              <span className="text-muted-foreground font-normal">(optional)</span>
+              {t('sectionDialog.customLabel')}{' '}
+              <span className="text-muted-foreground font-normal">{t('sectionDialog.optional')}</span>
             </Label>
             <Input
               id="label"
-              placeholder={`e.g., "${SECTION_TYPE_LABELS[sectionType]} 1" or custom name`}
+              placeholder={t('sectionDialog.customLabelPlaceholder', { type: t(`sectionTypes.${sectionType}`) })}
               value={label}
               onChange={(e) => setLabel(e.target.value)}
             />
@@ -166,10 +167,10 @@ export function SectionDialog({
 
           {/* Lyrics */}
           <div className="space-y-2">
-            <Label htmlFor="lyrics">Lyrics</Label>
+            <Label htmlFor="lyrics">{t('sectionDialog.lyricsLabel')}</Label>
             <Textarea
               id="lyrics"
-              placeholder="Enter lyrics for this section..."
+              placeholder={t('sectionDialog.lyricsPlaceholder')}
               value={lyrics}
               onChange={(e) => setLyrics(e.target.value)}
               className="min-h-[200px] font-mono text-sm"
@@ -187,7 +188,7 @@ export function SectionDialog({
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('actions.cancel')}
             </Button>
             <Button
               type="submit"
@@ -197,11 +198,11 @@ export function SectionDialog({
             >
               {isSubmitting
                 ? isEditing
-                  ? 'Saving...'
-                  : 'Adding...'
+                  ? t('sectionDialog.saving')
+                  : t('sectionDialog.adding')
                 : isEditing
-                  ? 'Save'
-                  : 'Add'}
+                  ? t('sectionDialog.save')
+                  : t('sectionDialog.addButton')}
             </Button>
           </DialogFooter>
         </form>

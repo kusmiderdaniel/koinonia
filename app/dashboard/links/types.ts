@@ -46,6 +46,12 @@ export interface LinkWithStats extends LinkTreeLinkRow {
   clicks_this_month?: number
 }
 
+// Daily click data for chart
+export interface DailyClickData {
+  date: string
+  [linkId: string]: number | string // date is string, link clicks are numbers
+}
+
 // Analytics summary
 export interface AnalyticsSummary {
   total_clicks: number
@@ -53,6 +59,7 @@ export interface AnalyticsSummary {
   clicks_this_week: number
   clicks_this_month: number
   links_stats: LinkWithStats[]
+  daily_clicks: DailyClickData[]
 }
 
 // Form types for creating/editing

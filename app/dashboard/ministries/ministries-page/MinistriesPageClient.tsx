@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
-import { Button } from '@/components/ui/button'
+import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Plus, Users } from 'lucide-react'
+import { Users } from 'lucide-react'
 import { MobileBackHeader } from '@/components/MobileBackHeader'
 import { EmptyState } from '@/components/EmptyState'
 import { useIsMobile } from '@/lib/hooks'
@@ -15,6 +15,7 @@ import { MinistriesDialogs } from './MinistriesDialogs'
 import type { MinistriesPageClientProps } from './types'
 
 export function MinistriesPageClient({ initialData }: MinistriesPageClientProps) {
+  const t = useTranslations('ministries')
   const isMobile = useIsMobile()
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -106,23 +107,11 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
   return (
     <div className="flex h-[calc(100vh-3.5rem)] md:h-screen overflow-hidden">
       <div className="flex-1 flex flex-col p-4 md:p-6 overflow-hidden">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 shrink-0">
-          <div>
-            <h1 className="text-2xl font-bold">Ministries</h1>
-            <p className="text-muted-foreground">
-              Manage your church's ministry teams
-            </p>
-          </div>
-          {canManage && (
-            <Button
-              variant="ghost"
-              className="rounded-full !border !border-black dark:!border-white"
-              onClick={dialogs.openCreateDialog}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              New Ministry
-            </Button>
-          )}
+        <div className="mb-4 shrink-0">
+          <h1 className="text-2xl font-bold">{t('title')}</h1>
+          <p className="text-muted-foreground">
+            {t('subtitle')}
+          </p>
         </div>
 
         {error && (
@@ -140,6 +129,8 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
             filteredMinistries={filteredMinistries}
             selectedMinistryId={selectedMinistryId}
             onSelectMinistry={(ministry) => list.setSelectedMinistryId(ministry.id)}
+            onAddClick={dialogs.openCreateDialog}
+            canManage={canManage}
             className="w-full md:w-80 md:flex-shrink-0 h-full"
           />
 
@@ -168,8 +159,8 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
                 <Card className="h-full flex items-center justify-center border border-black dark:border-zinc-700">
                   <EmptyState
                     icon={Users}
-                    title="Select a ministry"
-                    description="Choose a ministry to view details"
+                    title={t('selectMinistry')}
+                    description={t('selectMinistryDescription')}
                     size="sm"
                   />
                 </Card>

@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,7 +20,7 @@ import { LocationPicker } from '../LocationPicker'
 import { ResponsiblePersonPicker } from '../ResponsiblePersonPicker'
 import { CampusPicker } from '@/components/CampusPicker'
 import { InviteUsersPicker } from './InviteUsersPicker'
-import { EVENT_TYPES, VISIBILITY_LEVELS } from './constants'
+import { EVENT_TYPE_VALUES, VISIBILITY_VALUES } from './constants'
 import type { EventFormFieldsProps } from './types'
 
 export const EventFormFields = memo(function EventFormFields({
@@ -51,6 +52,7 @@ export const EventFormFields = memo(function EventFormFields({
   timeFormat = '24h',
   error,
 }: EventFormFieldsProps) {
+  const t = useTranslations('events')
   const isMobile = useIsMobile()
 
   return (
@@ -60,19 +62,19 @@ export const EventFormFields = memo(function EventFormFields({
       )}
 
       <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
-        <Label htmlFor="title" className={isMobile ? 'text-sm' : ''}>Event Title *</Label>
+        <Label htmlFor="title" className={isMobile ? 'text-sm' : ''}>{t('form.titleRequired')}</Label>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="e.g., Sunday Morning Service"
+          placeholder={t('form.titlePlaceholder')}
           required
         />
       </div>
 
       <div className={`grid grid-cols-2 ${isMobile ? 'gap-3' : 'gap-4'}`}>
         <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
-          <Label htmlFor="eventType" className={isMobile ? 'text-sm' : ''}>Event Type *</Label>
+          <Label htmlFor="eventType" className={isMobile ? 'text-sm' : ''}>{t('form.eventTypeRequired')}</Label>
           <Select value={eventType} onValueChange={setEventType}>
             <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
               <SelectValue />
@@ -81,13 +83,13 @@ export const EventFormFields = memo(function EventFormFields({
               align="start"
               className="bg-white dark:bg-zinc-950 border border-input"
             >
-              {EVENT_TYPES.map((type) => (
+              {EVENT_TYPE_VALUES.map((type) => (
                 <SelectItem
-                  key={type.value}
-                  value={type.value}
+                  key={type}
+                  value={type}
                   className="cursor-pointer [&>span.absolute]:hidden hover:!bg-gray-50 dark:hover:!bg-zinc-800/50 data-[state=checked]:!bg-gray-100 dark:data-[state=checked]:!bg-zinc-800 data-[state=checked]:font-medium"
                 >
-                  {type.label}
+                  {t(`types.${type}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -95,36 +97,36 @@ export const EventFormFields = memo(function EventFormFields({
         </div>
 
         <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
-          <Label htmlFor="visibility" className={isMobile ? 'text-sm' : ''}>Visibility</Label>
+          <Label htmlFor="visibility" className={isMobile ? 'text-sm' : ''}>{t('form.visibilityLabel')}</Label>
           <Select value={visibility} onValueChange={setVisibility}>
             <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white [&_[data-description]]:hidden">
               <div className="flex items-center gap-2">
                 {visibility === 'hidden' ? (
-                  <Lock className="w-4 h-4 text-muted-foreground" />
+                  <Lock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 ) : (
-                  <Eye className="w-4 h-4 text-muted-foreground" />
+                  <Eye className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                 )}
-                <SelectValue />
+                <span className="truncate">{t(`visibility.${visibility}Short`)}</span>
               </div>
             </SelectTrigger>
             <SelectContent
               align="start"
               className="bg-white dark:bg-zinc-950 border border-input"
             >
-              {VISIBILITY_LEVELS.map((v) => (
+              {VISIBILITY_VALUES.map((v) => (
                 <SelectItem
-                  key={v.value}
-                  value={v.value}
-                  textValue={v.label}
+                  key={v}
+                  value={v}
+                  textValue={t(`visibility.${v}`)}
                   className="py-2 cursor-pointer [&>span.absolute]:hidden hover:!bg-gray-50 dark:hover:!bg-zinc-800/50 data-[state=checked]:!bg-gray-100 dark:data-[state=checked]:!bg-zinc-800 data-[state=checked]:font-medium"
                 >
                   <div className="flex flex-col">
-                    <span>{v.label}</span>
+                    <span>{t(`visibility.${v}`)}</span>
                     <span
                       data-description
                       className="text-xs text-muted-foreground font-normal"
                     >
-                      {v.description}
+                      {t(`visibility.${v}Description`)}
                     </span>
                   </div>
                 </SelectItem>
@@ -136,7 +138,7 @@ export const EventFormFields = memo(function EventFormFields({
 
       {/* Campus Selection */}
       <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
-        <Label className={isMobile ? 'text-sm' : ''}>Campus</Label>
+        <Label className={isMobile ? 'text-sm' : ''}>{t('form.campusLabel')}</Label>
         {campusesLoading ? (
           <div className="flex items-center gap-2 h-10 px-3 border border-gray-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-950">
             <Building2 className="w-4 h-4 text-muted-foreground" />
@@ -148,7 +150,7 @@ export const EventFormFields = memo(function EventFormFields({
             selectedCampusIds={selectedCampusIds}
             onChange={onCampusChange}
             multiple={true}
-            placeholder="Select campus(es)..."
+            placeholder={t('form.campusPlaceholder')}
           />
         ) : null}
       </div>
@@ -162,7 +164,7 @@ export const EventFormFields = memo(function EventFormFields({
       )}
 
       <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
-        <Label className={isMobile ? 'text-sm' : ''}>Location</Label>
+        <Label className={isMobile ? 'text-sm' : ''}>{t('form.locationLabel')}</Label>
         {selectedLocation ? (
           <div className="flex items-center gap-2 p-3 border border-black dark:border-white rounded-lg bg-muted/50">
             <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
@@ -192,7 +194,7 @@ export const EventFormFields = memo(function EventFormFields({
             onClick={() => setLocationPickerOpen(true)}
           >
             <MapPin className="w-4 h-4 mr-2" />
-            Choose location...
+            {t('form.chooseLocation')}
           </Button>
         )}
       </div>
@@ -206,7 +208,7 @@ export const EventFormFields = memo(function EventFormFields({
       />
 
       <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
-        <Label className={isMobile ? 'text-sm' : ''}>Responsible Person</Label>
+        <Label className={isMobile ? 'text-sm' : ''}>{t('form.responsiblePersonLabel')}</Label>
         {selectedResponsiblePerson ? (
           <div className="flex items-center gap-2 p-3 border border-black dark:border-white rounded-lg bg-muted/50">
             <User className="w-4 h-4 text-muted-foreground flex-shrink-0" />
@@ -238,7 +240,7 @@ export const EventFormFields = memo(function EventFormFields({
             onClick={() => setResponsiblePersonPickerOpen(true)}
           >
             <User className="w-4 h-4 mr-2" />
-            Choose responsible person...
+            {t('form.chooseResponsiblePerson')}
           </Button>
         )}
       </div>
@@ -252,24 +254,24 @@ export const EventFormFields = memo(function EventFormFields({
 
       <div className={`grid grid-cols-1 sm:grid-cols-2 ${isMobile ? 'gap-3' : 'gap-4'}`}>
         <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
-          <Label htmlFor="startTime" className={isMobile ? 'text-sm' : ''}>Start Time *</Label>
+          <Label htmlFor="startTime" className={isMobile ? 'text-sm' : ''}>{t('form.startTimeRequired')}</Label>
           <DateTimePicker
             id="startTime"
             value={startTime}
             onChange={onStartTimeChange}
-            placeholder="Select start time"
+            placeholder={t('form.startTimePlaceholder')}
             label="Start Time"
             timeFormat={timeFormat}
           />
         </div>
 
         <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
-          <Label htmlFor="endTime" className={isMobile ? 'text-sm' : ''}>End Time *</Label>
+          <Label htmlFor="endTime" className={isMobile ? 'text-sm' : ''}>{t('form.endTimeRequired')}</Label>
           <DateTimePicker
             id="endTime"
             value={endTime}
             onChange={setEndTime}
-            placeholder="Select end time"
+            placeholder={t('form.endTimePlaceholder')}
             label="End Time"
             timeFormat={timeFormat}
           />

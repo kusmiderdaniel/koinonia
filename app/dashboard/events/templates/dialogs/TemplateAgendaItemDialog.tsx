@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { useDebouncedValue } from '@/lib/hooks'
 import {
   Dialog,
@@ -49,6 +50,7 @@ export function TemplateAgendaItemDialog({
   const [editDurationMinutes, setEditDurationMinutes] = useState('5')
   const [editDurationSeconds, setEditDurationSeconds] = useState('00')
 
+  const t = useTranslations('events.agendaPicker')
   const isSongPlaceholder = item?.is_song_placeholder || false
   const isEditing = !!item?.id
 
@@ -191,10 +193,11 @@ export function TemplateAgendaItemDialog({
     setIsAdding(true)
     setError(null)
 
-    // For song placeholders, find or keep the Worship ministry
+    // For song placeholders, find or keep the system ministry (Worship)
+    // Use is_system flag instead of name since ministry names can be changed
     let ministryIdToUse = editMinistryId || null
     if (isSongPlaceholder) {
-      const worshipMinistry = ministries.find(m => m.name === 'Worship')
+      const worshipMinistry = ministries.find(m => m.is_system === true)
       ministryIdToUse = worshipMinistry?.id || item.ministry_id || null
     }
 
@@ -219,8 +222,9 @@ export function TemplateAgendaItemDialog({
     setIsAdding(true)
     setError(null)
 
-    // Find the Worship ministry for song placeholders
-    const worshipMinistry = ministries.find(m => m.name === 'Worship')
+    // Find the system ministry (Worship) for song placeholders
+    // Use is_system flag instead of name since ministry names can be changed
+    const worshipMinistry = ministries.find(m => m.is_system === true)
 
     const result = await addTemplateAgendaItem(templateId, {
       title: 'Song',
@@ -284,12 +288,12 @@ export function TemplateAgendaItemDialog({
       >
         <DialogHeader>
           <DialogTitle>
-            {isCreatingNew ? 'Create New Agenda Item' : 'Add Agenda Item'}
+            {isCreatingNew ? t('createTitle') : t('addTitle')}
           </DialogTitle>
           <DialogDescription>
             {isCreatingNew
-              ? 'Create a new reusable agenda item for your church.'
-              : 'Select an existing agenda item or search to create a new one.'}
+              ? t('createDescription')
+              : t('addDescription')}
           </DialogDescription>
         </DialogHeader>
 

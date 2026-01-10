@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,7 @@ export function SongPicker({
   onSuccess,
   replaceAgendaItemId,
 }: SongPickerProps) {
+  const t = useTranslations('events.songPicker')
   const [songs, setSongs] = useState<Song[]>([])
   const [allTags, setAllTags] = useState<Tag[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -139,12 +141,12 @@ export function SongPicker({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Music className="w-5 h-5" />
-            Add Song to Agenda
+            {t('title')}
           </DialogTitle>
           <DialogDescription>
             {replaceAgendaItemId
-              ? 'Select a song to replace this placeholder.'
-              : 'Select a song from your library or create a new one.'}
+              ? t('replaceDescription')
+              : t('description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -188,8 +190,8 @@ export function SongPicker({
         }}
         onSuccess={() => setIsCreatingNew(false)}
         customAction={handleCreateAndAdd}
-        title="Add New Song"
-        submitText="Create & Add"
+        title={t('addNewTitle')}
+        submitText={t('createAndAdd')}
       />
     </Dialog>
   )

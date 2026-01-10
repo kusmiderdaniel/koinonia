@@ -1,0 +1,118 @@
+{
+  "title": "Pulpit",
+  "welcome": "Witaj ponownie, {name}!",
+  "navigation": {
+    "home": "Strona główna",
+    "dashboard": "Pulpit",
+    "events": "Wydarzenia",
+    "ministries": "Służby",
+    "people": "Osoby",
+    "songs": "Pieśni",
+    "tasks": "Zadania",
+    "forms": "Formularze",
+    "links": "Linki",
+    "settings": "Ustawienia",
+    "profile": "Profil",
+    "inbox": "Skrzynka"
+  },
+  "header": {
+    "search": "Szukaj...",
+    "notifications": "Powiadomienia",
+    "noNotifications": "Brak nowych powiadomień",
+    "pending": "oczekujące",
+    "tasks": "zadania",
+    "thisWeek": "w tym tygodniu"
+  },
+  "sidebar": {
+    "collapse": "Zwiń",
+    "expand": "Rozwiń panel boczny",
+    "navigationMenu": "Menu nawigacji"
+  },
+  "userMenu": {
+    "profile": "Profil",
+    "unavailability": "Niedostępność",
+    "calendarIntegration": "Integracja kalendarza",
+    "signOut": "Wyloguj się"
+  },
+  "needsAttention": {
+    "title": "Wymaga Twojej uwagi",
+    "allCaughtUp": "Wszystko załatwione",
+    "noPendingItems": "Brak oczekujących elementów",
+    "allCaughtUpDescription": "Wszystko załatwione! Sprawdź swój tydzień poniżej.",
+    "decline": "Odrzuć",
+    "accept": "Akceptuj",
+    "viewMore": "Zobacz {count} więcej elementów"
+  },
+  "yourWeek": {
+    "title": "Twój tydzień",
+    "nothingScheduled": "Nic nie zaplanowano",
+    "emptyDescription": "Twoje nadchodzące przydziały i zadania pojawią się tutaj.",
+    "itemsThisWeek": "{count} elementów w tym tygodniu",
+    "tapToExpand": "Stuknij, aby rozwinąć",
+    "today": "Dzisiaj",
+    "tomorrow": "Jutro"
+  },
+  "quickAccess": {
+    "title": "Szybki dostęp",
+    "upcomingEvents": "Nadchodzące wydarzenia",
+    "noUpcomingEvents": "Brak nadchodzących wydarzeń",
+    "moreEvents": "+{count} więcej wydarzeń",
+    "myUnavailability": "Moja niedostępność",
+    "loading": "Ładowanie...",
+    "noUpcomingUnavailable": "Brak nadchodzących dat niedostępności",
+    "more": "+{count} więcej",
+    "addUnavailability": "Dodaj niedostępność",
+    "unavailabilityDeleted": "Niedostępność usunięta",
+    "failedToDelete": "Nie udało się usunąć"
+  },
+  "quickLinks": {
+    "title": "Szybkie linki"
+  },
+  "birthdays": {
+    "title": "Nadchodzące urodziny",
+    "showLess": "Pokaż mniej",
+    "showMore": "Pokaż {count} więcej"
+  },
+  "calendar": {
+    "title": "Kalendarz kościoła",
+    "today": "Dzisiaj",
+    "more": "+{count} więcej",
+    "noEventsOnDay": "Brak wydarzeń w tym dniu",
+    "months": {
+      "january": "Styczeń",
+      "february": "Luty",
+      "march": "Marzec",
+      "april": "Kwiecień",
+      "may": "Maj",
+      "june": "Czerwiec",
+      "july": "Lipiec",
+      "august": "Sierpień",
+      "september": "Wrzesień",
+      "october": "Październik",
+      "november": "Listopad",
+      "december": "Grudzień"
+    },
+    "daysShort": {
+      "sun": "Ndz",
+      "mon": "Pon",
+      "tue": "Wt",
+      "wed": "Śr",
+      "thu": "Czw",
+      "fri": "Pt",
+      "sat": "Sob"
+    },
+    "eventTypes": {
+      "service": "Nabożeństwo",
+      "rehearsal": "Próba",
+      "meeting": "Spotkanie",
+      "special_event": "Wydarzenie specjalne",
+      "other": "Inne"
+    }
+  },
+  "toasts": {
+    "invitationAccepted": "Zaproszenie zaakceptowane!",
+    "invitationDeclined": "Zaproszenie odrzucone",
+    "taskCompleted": "Zadanie ukończone!",
+    "somethingWentWrong": "Coś poszło nie tak"
+  }
+}

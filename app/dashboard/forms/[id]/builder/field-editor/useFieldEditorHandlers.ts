@@ -75,7 +75,7 @@ export function useFieldEditorHandlers() {
     (index: number) => {
       if (!selectedFieldId || !selectedField?.options) return
 
-      const newOptions = selectedField.options.filter((_, i) => i !== index)
+      const newOptions = selectedField.options.filter((_: unknown, i: number) => i !== index)
       updateField(selectedFieldId, { options: newOptions })
     },
     [selectedFieldId, selectedField, updateField]

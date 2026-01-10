@@ -12,6 +12,7 @@ import {
   DEFAULT_NOTIFICATION_PREFERENCES,
 } from '@/types/notification-preferences'
 import { parseNotificationPreferences } from '@/lib/notifications/preferences'
+import { isValidLocale, type Locale } from '@/lib/i18n/config'
 
 const profileSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -31,7 +32,7 @@ export async function getProfile() {
 
   const { data: profileData, error } = await adminClient
     .from('profiles')
-    .select('first_name, last_name, email, phone, avatar_url, date_of_birth, sex, role, notification_preferences')
+    .select('first_name, last_name, email, phone, avatar_url, date_of_birth, sex, role, notification_preferences, language')
     .eq('id', profile.id)
     .single()
 
@@ -273,5 +274,30 @@ export async function updateNotificationPreferences(
   }
 
   revalidatePath('/dashboard/profile')
+  return { success: true }
+}
+
+export async function updateLanguagePreference(language: string) {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  // Validate language code
+  if (!isValidLocale(language)) {
+    return { error: 'Invalid language code' }
+  }
+
+  const { error } = await adminClient
+    .from('profiles')
+    .update({ language })
+    .eq('id', profile.id)
+
+  if (error) {
+    console.error('Error updating language preference:', error)
+    return { error: 'Failed to update language preference' }
+  }
+
+  revalidatePath('/dashboard')
   return { success: true }
 }

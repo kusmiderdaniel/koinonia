@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -29,29 +30,28 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
   setError,
   setSuccess,
 }: TransferOwnershipTabProps) {
+  const t = useTranslations('settings.transfer')
   return (
     <Card className="w-full md:min-w-[28rem] border-orange-200">
       <CardHeader className="p-4 md:p-6">
-        <CardTitle className="text-orange-700 text-lg md:text-xl">Transfer Ownership</CardTitle>
+        <CardTitle className="text-orange-700 text-lg md:text-xl">{t('title')}</CardTitle>
         <CardDescription className="text-sm">
-          Transfer ownership of this church to an admin. This action cannot be undone. You will
-          become an admin after transferring ownership.
+          {t('description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="p-4 md:p-6 pt-0 md:pt-0 space-y-4">
         {ownershipTransfer.adminMembers.length === 0 ? (
           <Alert>
             <AlertDescription>
-              No admins available to transfer ownership to. Promote a member to admin first from the
-              People page.
+              {t('noAdmins')}
             </AlertDescription>
           </Alert>
         ) : (
           <>
             <div className="space-y-2">
-              <Label>Select New Owner</Label>
+              <Label>{t('selectNewOwner')}</Label>
               <p className="text-xs text-muted-foreground mb-3">
-                Only admins can become the new owner. Click to select.
+                {t('selectHint')}
               </p>
               <div className="space-y-2">
                 {ownershipTransfer.adminMembers.map((member) => {
@@ -91,25 +91,22 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
                   className="!rounded-full border-orange-500 text-orange-700 hover:bg-orange-50 w-full sm:w-auto"
                   disabled={!ownershipTransfer.selectedNewOwner || ownershipTransfer.isTransferring}
                 >
-                  Transfer Ownership
+                  {t('transferButton')}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent className="max-w-[90vw] md:max-w-lg">
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Transfer Church Ownership?</AlertDialogTitle>
+                  <AlertDialogTitle>{t('dialog.title')}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    You are about to transfer ownership to{' '}
-                    <strong>
-                      {ownershipTransfer.selectedMember?.first_name}{' '}
-                      {ownershipTransfer.selectedMember?.last_name}
-                    </strong>
-                    . This action cannot be undone. You will become an admin and lose owner
-                    privileges.
+                    {t.rich('dialog.description', {
+                      name: `${ownershipTransfer.selectedMember?.first_name ?? ''} ${ownershipTransfer.selectedMember?.last_name ?? ''}`.trim(),
+                      strong: (chunks) => <strong>{chunks}</strong>
+                    })}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
                   <AlertDialogCancel disabled={ownershipTransfer.isTransferring} className="rounded-full border-black dark:border-white bg-white dark:bg-zinc-950 px-4 py-2">
-                    Cancel
+                    {t('dialog.cancel')}
                   </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={() =>
@@ -119,8 +116,8 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
                     className="!rounded-full !bg-orange-600 hover:!bg-orange-700 !text-white !px-4 !py-2 disabled:!opacity-50"
                   >
                     {ownershipTransfer.isTransferring
-                      ? 'Transferring...'
-                      : 'Yes, Transfer Ownership'}
+                      ? t('dialog.transferring')
+                      : t('dialog.confirm')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

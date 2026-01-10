@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, memo, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Table, TableBody } from '@/components/ui/table'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { useIsMobile } from '@/lib/hooks'
@@ -26,6 +27,7 @@ export const MembersTable = memo(function MembersTable({
   savedViews,
   canManageViews,
 }: MembersTableProps) {
+  const t = useTranslations('people')
   const isMobile = useIsMobile()
   const [filterState, setFilterState] = useState<FilterState>(createEmptyFilterState)
   const [sortState, setSortState] = useState<SortState>(createEmptySortState)
@@ -92,7 +94,7 @@ export const MembersTable = memo(function MembersTable({
         </div>
         {(activeFilterCount > 0 || activeSortCount > 0) && (
           <p className="text-sm text-muted-foreground">
-            Showing {filteredAndSortedMembers.length} of {members.length} member{members.length !== 1 ? 's' : ''}
+            {t('showingMembers', { filtered: filteredAndSortedMembers.length, total: members.length })}
           </p>
         )}
       </div>
@@ -166,9 +168,9 @@ export const MembersTable = memo(function MembersTable({
       <ConfirmDialog
         open={!!viewsManager.viewToDelete}
         onOpenChange={(open) => !open && viewsManager.setViewToDelete(null)}
-        title="Delete View"
-        description={`Are you sure you want to delete the view "${viewsManager.viewToDelete?.name}"? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={t('views.deleteTitle')}
+        description={t('views.deleteConfirmation', { name: viewsManager.viewToDelete?.name ?? '' })}
+        confirmLabel={t('actions.delete')}
         destructive
         onConfirm={viewsManager.handleDeleteViewConfirm}
         isLoading={viewsManager.isDeletingView}

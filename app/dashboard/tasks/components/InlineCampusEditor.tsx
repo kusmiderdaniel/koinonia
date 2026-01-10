@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { InlineEntityEditor } from '@/components/editors'
 import type { TaskCampus } from '../types'
 
@@ -18,13 +19,15 @@ export function InlineCampusEditor({
   onUpdate,
   disabled = false,
 }: InlineCampusEditorProps) {
+  const t = useTranslations('tasks')
+
   return (
     <InlineEntityEditor
       value={campusId}
       entity={campus}
       options={campuses}
       onUpdate={onUpdate}
-      emptyLabel="No campus"
+      emptyLabel={t('inlineEditor.noCampus')}
       disabled={disabled}
     />
   )

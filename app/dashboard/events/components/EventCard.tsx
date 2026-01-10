@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Copy, Pencil, Trash2 } from 'lucide-react'
 import { EventTypeBadge } from '@/components/EventTypeBadge'
@@ -29,15 +30,17 @@ export const EventCard = memo(function EventCard({
   onEdit,
   onDelete,
 }: EventCardProps) {
+  const t = useTranslations('events')
+  const locale = useLocale()
   const startDate = new Date(event.start_time)
-  const dateStr = startDate.toLocaleDateString('en-US', {
+  const dateStr = startDate.toLocaleDateString(locale, {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
   })
   const timeStr = event.is_all_day
-    ? 'All day'
-    : startDate.toLocaleTimeString('en-US', getTimeLocaleOptions(timeFormat))
+    ? t('allDay')
+    : startDate.toLocaleTimeString(locale, getTimeLocaleOptions(timeFormat))
 
   return (
     <div
@@ -64,7 +67,7 @@ export const EventCard = memo(function EventCard({
         </p>
         {event.totalPositions > 0 && (
           <p className="text-xs text-muted-foreground">
-            {event.filledPositions}/{event.totalPositions} volunteers
+            {event.filledPositions}/{event.totalPositions} {t('volunteers')}
           </p>
         )}
       </button>
@@ -78,7 +81,7 @@ export const EventCard = memo(function EventCard({
               e.stopPropagation()
               onDuplicate?.(event)
             }}
-            title="Duplicate"
+            title={t('duplicate')}
           >
             <Copy className="w-3.5 h-3.5" />
           </Button>
@@ -90,7 +93,7 @@ export const EventCard = memo(function EventCard({
               e.stopPropagation()
               onEdit?.(event)
             }}
-            title="Edit"
+            title={t('edit')}
           >
             <Pencil className="w-3.5 h-3.5" />
           </Button>
@@ -102,7 +105,7 @@ export const EventCard = memo(function EventCard({
               e.stopPropagation()
               onDelete?.(event)
             }}
-            title="Delete"
+            title={t('delete')}
           >
             <Trash2 className="w-3.5 h-3.5" />
           </Button>

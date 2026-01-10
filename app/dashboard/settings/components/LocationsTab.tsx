@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -39,6 +40,7 @@ export const LocationsTab = memo(function LocationsTab({
   setError,
   setSuccess,
 }: LocationsTabProps) {
+  const t = useTranslations('settings.locations')
   const defaultCampus = campuses.find(c => c.is_default)
 
   return (
@@ -47,14 +49,14 @@ export const LocationsTab = memo(function LocationsTab({
         <CardHeader className="p-4 md:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-6">
             <div>
-              <CardTitle className="text-lg md:text-xl">Locations</CardTitle>
+              <CardTitle className="text-lg md:text-xl">{t('title')}</CardTitle>
               <CardDescription className="text-sm">
-                Manage your church's venues and rooms
+                {t('description')}
               </CardDescription>
             </div>
             <Button onClick={() => locationManager.openLocationDialog(undefined, defaultCampus?.id)} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
-              Add Location
+              {t('addLocation')}
             </Button>
           </div>
         </CardHeader>
@@ -62,8 +64,8 @@ export const LocationsTab = memo(function LocationsTab({
           {locations.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <MapPin className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>No locations yet</p>
-              <p className="text-sm">Add your first location to use in events</p>
+              <p>{t('empty.title')}</p>
+              <p className="text-sm">{t('empty.description')}</p>
             </div>
           ) : (
             <div className="space-y-1.5 md:space-y-2">
@@ -119,56 +121,56 @@ export const LocationsTab = memo(function LocationsTab({
         <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-[90vw] md:max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {locationManager.editingLocation ? 'Edit Location' : 'Add Location'}
+              {locationManager.editingLocation ? t('dialog.editTitle') : t('dialog.addTitle')}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {locationManager.editingLocation
-                ? 'Update the location details below.'
-                : 'Add a new location for your events.'}
+                ? t('dialog.editDescription')
+                : t('dialog.addDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="locationName">Location Name *</Label>
+              <Label htmlFor="locationName">{t('dialog.nameLabel')}</Label>
               <Input
                 id="locationName"
                 value={locationManager.locationName}
                 onChange={(e) => locationManager.setLocationName(e.target.value)}
-                placeholder="e.g., Main Sanctuary"
+                placeholder={t('dialog.namePlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="locationAddress">Address</Label>
+              <Label htmlFor="locationAddress">{t('dialog.addressLabel')}</Label>
               <Input
                 id="locationAddress"
                 value={locationManager.locationAddress}
                 onChange={(e) => locationManager.setLocationAddress(e.target.value)}
-                placeholder="e.g., 123 Church Street"
+                placeholder={t('dialog.addressPlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="locationNotes">Notes</Label>
+              <Label htmlFor="locationNotes">{t('dialog.notesLabel')}</Label>
               <Input
                 id="locationNotes"
                 value={locationManager.locationNotes}
                 onChange={(e) => locationManager.setLocationNotes(e.target.value)}
-                placeholder="e.g., Enter through side door"
+                placeholder={t('dialog.notesPlaceholder')}
               />
             </div>
             {campuses.length > 0 && (
               <div className="space-y-2">
-                <Label>Campus</Label>
+                <Label>{t('dialog.campusLabel')}</Label>
                 <SingleCampusPicker
                   campuses={campuses}
                   selectedCampusId={locationManager.locationCampusId}
                   onChange={locationManager.setLocationCampusId}
-                  placeholder="All campuses"
+                  placeholder={t('dialog.campusPlaceholder')}
                 />
               </div>
             )}
           </div>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-            <AlertDialogCancel disabled={locationManager.isSavingLocation} className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={locationManager.isSavingLocation} className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">{t('dialog.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() =>
                 locationManager.handleSaveLocation(locations, setLocations, setError, setSuccess)
@@ -177,10 +179,10 @@ export const LocationsTab = memo(function LocationsTab({
               className="rounded-full !border !border-brand !bg-brand hover:!bg-brand/90 !text-white px-4 py-2 disabled:!opacity-50"
             >
               {locationManager.isSavingLocation
-                ? 'Saving...'
+                ? t('dialog.saving')
                 : locationManager.editingLocation
-                  ? 'Save Changes'
-                  : 'Add Location'}
+                  ? t('dialog.saveChanges')
+                  : t('dialog.addButton')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -193,21 +195,20 @@ export const LocationsTab = memo(function LocationsTab({
       >
         <AlertDialogContent className="max-w-[90vw] md:max-w-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Location?</AlertDialogTitle>
+            <AlertDialogTitle>{t('deleteDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete &quot;{locationManager.locationToDelete?.name}&quot;?
-              This action cannot be undone.
+              {t('deleteDialog.description', { name: locationManager.locationToDelete?.name ?? '' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-            <AlertDialogCancel className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">{t('deleteDialog.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() =>
                 locationManager.handleDeleteLocation(locations, setLocations, setError, setSuccess)
               }
               className="!rounded-full !bg-red-600 hover:!bg-red-700 !text-white !px-4 !py-2"
             >
-              Delete
+              {t('deleteDialog.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

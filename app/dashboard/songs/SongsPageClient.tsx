@@ -2,8 +2,8 @@
 
 import { useEffect, useCallback } from 'react'
 import dynamic from 'next/dynamic'
-import { Button } from '@/components/ui/button'
-import { Music, Plus } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { Music } from 'lucide-react'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { ListDetailLayout } from '@/components/layouts'
 import { SongsListView, SongDetailPanel } from './components'
@@ -23,6 +23,8 @@ interface SongsPageClientProps {
 }
 
 export function SongsPageClient({ initialData }: SongsPageClientProps) {
+  const t = useTranslations('songs')
+
   // Use custom hooks for state management - pass initial data
   const list = useSongList(initialData)
   const detail = useSongDetail()
@@ -103,19 +105,11 @@ export function SongsPageClient({ initialData }: SongsPageClientProps) {
 
   // Header component
   const headerContent = (
-    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div>
-        <h1 className="text-2xl font-bold">Songs</h1>
-        <p className="text-muted-foreground">
-          Manage your song library
-        </p>
-      </div>
-      {canManage && (
-        <Button variant="ghost" className="rounded-full !border !border-black dark:!border-white" onClick={dialogs.openCreateDialog}>
-          <Plus className="w-4 h-4 mr-2" />
-          New Song
-        </Button>
-      )}
+    <div>
+      <h1 className="text-2xl font-bold">{t('title')}</h1>
+      <p className="text-muted-foreground">
+        {t('subtitle')}
+      </p>
     </div>
   )
 
@@ -131,9 +125,9 @@ export function SongsPageClient({ initialData }: SongsPageClientProps) {
       <ConfirmDialog
         open={dialogs.deleteDialogOpen}
         onOpenChange={(open) => !open && dialogs.closeDeleteDialog()}
-        title="Delete Song?"
-        description={<>Are you sure you want to delete <strong>{dialogs.deletingSong?.title}</strong>? This will also delete all attachments. This action cannot be undone.</>}
-        confirmLabel="Delete"
+        title={t('deleteDialog.title')}
+        description={<>{t('deleteDialog.description', { title: dialogs.deletingSong?.title ?? '' })}</>}
+        confirmLabel={t('deleteDialog.confirm')}
         destructive
         isLoading={dialogs.isDeleting}
         onConfirm={handleDeleteSong}
@@ -156,6 +150,8 @@ export function SongsPageClient({ initialData }: SongsPageClientProps) {
           onClearFilters={list.clearFilters}
           selectedSongId={selectedSongId}
           onSelectSong={handleSelectSong}
+          onAddClick={dialogs.openCreateDialog}
+          canManage={canManage}
           className="h-full"
         />
       }
@@ -174,11 +170,11 @@ export function SongsPageClient({ initialData }: SongsPageClientProps) {
         />
       }
       hasSelection={!!selectedSongId && !!selectedSong}
-      selectionTitle={selectedSong?.title || 'Song Details'}
+      selectionTitle={selectedSong?.title || t('songDetails')}
       onClearSelection={handleClearSelection}
       emptyIcon={Music}
-      emptyTitle="Select a song"
-      emptyDescription="Choose a song from the list to view details"
+      emptyTitle={t('selectSong')}
+      emptyDescription={t('selectSongDescription')}
       dialogs={dialogsContent}
     />
   )

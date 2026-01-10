@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslations } from 'next-intl'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -29,6 +30,7 @@ function slugify(text: string): string {
 
 export default function CreateChurchPage() {
   const router = useRouter()
+  const t = useTranslations('onboarding')
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [subdomainStatus, setSubdomainStatus] = useState<'idle' | 'checking' | 'available' | 'unavailable'>('idle')
@@ -82,9 +84,9 @@ export default function CreateChurchPage() {
       setSubdomainError(null)
     } else {
       setSubdomainStatus('unavailable')
-      setSubdomainError(result.error || 'This subdomain is not available')
+      setSubdomainError(result.error || t('createChurch.basicInfo.subdomainUnavailable'))
     }
-  }, [])
+  }, [t])
 
   // Check availability when subdomain changes (debounced)
   useEffect(() => {
@@ -122,7 +124,7 @@ export default function CreateChurchPage() {
       }
     } catch (err) {
       console.error('Form submission error:', err)
-      setError('An unexpected error occurred')
+      setError(t('createChurch.error'))
       setIsLoading(false)
     }
   }
@@ -144,7 +146,7 @@ export default function CreateChurchPage() {
           onClick={handleSignOut}
         >
           <LogOut className="w-4 h-4" />
-          <span className="hidden sm:inline">Sign Out</span>
+          <span className="hidden sm:inline">{t('signOut')}</span>
         </Button>
       </div>
 
@@ -157,10 +159,10 @@ export default function CreateChurchPage() {
               <Building2 className="w-8 h-8 text-brand" />
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
-              Create Your Church
+              {t('createChurch.title')}
             </h1>
             <p className="text-muted-foreground text-lg max-w-md mx-auto">
-              Set up your church organization and start inviting your team
+              {t('createChurch.description')}
             </p>
           </div>
 
@@ -180,14 +182,14 @@ export default function CreateChurchPage() {
                     <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center">
                       <Building2 className="w-4 h-4 text-brand" />
                     </div>
-                    <h3 className="font-semibold">Basic Information</h3>
+                    <h3 className="font-semibold">{t('createChurch.basicInfo.title')}</h3>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="name">Church Name *</Label>
+                    <Label htmlFor="name">{t('createChurch.basicInfo.churchName')} *</Label>
                     <Input
                       id="name"
-                      placeholder="First Baptist Church"
+                      placeholder={t('createChurch.basicInfo.churchNamePlaceholder')}
                       className="h-11"
                       {...register('name')}
                       disabled={isLoading}
@@ -198,12 +200,12 @@ export default function CreateChurchPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="subdomain">Your Church URL *</Label>
+                    <Label htmlFor="subdomain">{t('createChurch.basicInfo.churchUrl')} *</Label>
                     <div className="flex items-center gap-0">
                       <div className="relative flex-1">
                         <Input
                           id="subdomain"
-                          placeholder="your-church"
+                          placeholder={t('createChurch.basicInfo.churchUrlPlaceholder')}
                           {...register('subdomain', {
                             onChange: () => setHasManuallyEditedSubdomain(true)
                           })}
@@ -233,7 +235,7 @@ export default function CreateChurchPage() {
                       <p className="text-sm text-red-500">{subdomainError}</p>
                     )}
                     {subdomainStatus === 'available' && (
-                      <p className="text-sm text-green-600">This subdomain is available!</p>
+                      <p className="text-sm text-green-600">{t('createChurch.basicInfo.subdomainAvailable')}</p>
                     )}
                   </div>
                 </div>
@@ -244,16 +246,16 @@ export default function CreateChurchPage() {
                     <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
                       <Mail className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     </div>
-                    <h3 className="font-semibold">Contact Information</h3>
+                    <h3 className="font-semibold">{t('createChurch.contact.title')}</h3>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="email">Church Email *</Label>
+                      <Label htmlFor="email">{t('createChurch.contact.email')} *</Label>
                       <Input
                         id="email"
                         type="email"
-                        placeholder="info@yourchurch.org"
+                        placeholder={t('createChurch.contact.emailPlaceholder')}
                         className="h-11"
                         {...register('email')}
                         disabled={isLoading}
@@ -265,11 +267,11 @@ export default function CreateChurchPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Church Phone</Label>
+                      <Label htmlFor="phone">{t('createChurch.contact.phone')}</Label>
                       <Input
                         id="phone"
                         type="tel"
-                        placeholder="(555) 123-4567"
+                        placeholder={t('createChurch.contact.phonePlaceholder')}
                         className="h-11"
                         {...register('phone')}
                         disabled={isLoading}
@@ -284,14 +286,14 @@ export default function CreateChurchPage() {
                     <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
                       <MapPin className="w-4 h-4 text-green-600 dark:text-green-400" />
                     </div>
-                    <h3 className="font-semibold">Location <span className="font-normal text-muted-foreground text-sm">(Optional)</span></h3>
+                    <h3 className="font-semibold">{t('createChurch.location.title')} <span className="font-normal text-muted-foreground text-sm">{t('createChurch.location.optional')}</span></h3>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="address">Address</Label>
+                    <Label htmlFor="address">{t('createChurch.location.address')}</Label>
                     <Input
                       id="address"
-                      placeholder="123 Main Street"
+                      placeholder={t('createChurch.location.addressPlaceholder')}
                       className="h-11"
                       {...register('address')}
                       disabled={isLoading}
@@ -300,10 +302,10 @@ export default function CreateChurchPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="city">City</Label>
+                      <Label htmlFor="city">{t('createChurch.location.city')}</Label>
                       <Input
                         id="city"
-                        placeholder="New York"
+                        placeholder={t('createChurch.location.cityPlaceholder')}
                         className="h-11"
                         {...register('city')}
                         disabled={isLoading}
@@ -311,10 +313,10 @@ export default function CreateChurchPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="zipCode">ZIP Code</Label>
+                      <Label htmlFor="zipCode">{t('createChurch.location.zipCode')}</Label>
                       <Input
                         id="zipCode"
-                        placeholder="10001"
+                        placeholder={t('createChurch.location.zipCodePlaceholder')}
                         className="h-11"
                         {...register('zipCode')}
                         disabled={isLoading}
@@ -322,7 +324,7 @@ export default function CreateChurchPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="country">Country</Label>
+                      <Label htmlFor="country">{t('createChurch.location.country')}</Label>
                       <Input
                         id="country"
                         className="h-11"
@@ -344,7 +346,7 @@ export default function CreateChurchPage() {
                   >
                     <Link href="/onboarding">
                       <ArrowLeft className="w-5 h-5" />
-                      Back
+                      {t('createChurch.back')}
                     </Link>
                   </Button>
                   <Button
@@ -356,10 +358,10 @@ export default function CreateChurchPage() {
                     {isLoading ? (
                       <>
                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                        Creating...
+                        {t('createChurch.submitting')}
                       </>
                     ) : (
-                      'Create Church'
+                      t('createChurch.submit')
                     )}
                   </Button>
                 </div>
@@ -369,7 +371,7 @@ export default function CreateChurchPage() {
 
           {/* Footer */}
           <p className="text-center text-sm text-muted-foreground">
-            Need help? Contact us at{' '}
+            {t('needHelp')}{' '}
             <a href="mailto:support@koinonia.app" className="text-brand hover:underline">
               support@koinonia.app
             </a>

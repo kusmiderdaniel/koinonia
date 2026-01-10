@@ -37,6 +37,7 @@ export async function getMinistries() {
       id,
       name,
       color,
+      is_system,
       ministry_roles (
         id,
         name

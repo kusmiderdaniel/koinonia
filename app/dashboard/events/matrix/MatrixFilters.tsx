@@ -1,25 +1,19 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
 } from '@/components/ui/dropdown-menu'
 import { ChevronDown } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import type { MatrixMinistry, MatrixCampus } from './types'
 
-const EVENT_TYPES = [
-  { value: 'service', label: 'Service' },
-  { value: 'rehearsal', label: 'Rehearsal' },
-  { value: 'meeting', label: 'Meeting' },
-  { value: 'special_event', label: 'Special Event' },
-  { value: 'other', label: 'Other' },
-]
+const EVENT_TYPE_VALUES = ['service', 'rehearsal', 'meeting', 'special_event', 'other'] as const
 
 interface MatrixFiltersProps {
   campuses: MatrixCampus[]
@@ -42,6 +36,7 @@ export function MatrixFilters({
   onMinistriesChange,
   onEventTypeChange,
 }: MatrixFiltersProps) {
+  const t = useTranslations('events')
   const [ministryDropdownOpen, setMinistryDropdownOpen] = useState(false)
 
   const handleMinistryToggle = (ministryId: string, checked: boolean) => {
@@ -53,44 +48,50 @@ export function MatrixFilters({
   }
 
   const selectedMinistriesLabel = selectedMinistryIds.length === 0
-    ? 'All Ministries'
+    ? t('matrix.allMinistries')
     : selectedMinistryIds.length === 1
-      ? ministries.find((m) => m.id === selectedMinistryIds[0])?.name || '1 ministry'
-      : `${selectedMinistryIds.length} ministries`
+      ? ministries.find((m) => m.id === selectedMinistryIds[0])?.name || t('matrix.oneMinistry')
+      : t('matrix.ministriesCount', { count: selectedMinistryIds.length })
 
   return (
     <div className="flex flex-wrap items-end gap-3 bg-white dark:bg-zinc-950">
       {/* Campus Filter */}
       {campuses.length > 0 && (
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-muted-foreground">Campus</label>
+          <label className="text-xs text-muted-foreground">{t('form.campusLabel')}</label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-[160px] justify-between !border-black dark:!border-white">
-                {selectedCampusId
-                  ? campuses.find((c) => c.id === selectedCampusId)?.name || 'All Campuses'
-                  : 'All Campuses'}
-                <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
+              <Button variant="outline" className="min-w-[140px] max-w-[200px] justify-between !border-black dark:!border-white">
+                <span className="truncate">
+                  {selectedCampusId
+                    ? campuses.find((c) => c.id === selectedCampusId)?.name || t('matrix.allCampuses')
+                    : t('matrix.allCampuses')}
+                </span>
+                <ChevronDown className="ml-2 h-4 w-4 opacity-50 shrink-0" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[160px]" align="start">
-              <DropdownMenuRadioGroup
-                value={selectedCampusId || 'all'}
-                onValueChange={(value) => onCampusChange(value === 'all' ? null : value)}
+            <DropdownMenuContent className="w-[200px]" align="start">
+              <DropdownMenuItem
+                className={cn(!selectedCampusId && 'bg-zinc-200 dark:bg-zinc-700')}
+                onClick={() => onCampusChange(null)}
               >
-                <DropdownMenuRadioItem value="all">All Campuses</DropdownMenuRadioItem>
-                {campuses.map((campus) => (
-                  <DropdownMenuRadioItem key={campus.id} value={campus.id}>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-2 h-2 rounded-full"
-                        style={{ backgroundColor: campus.color }}
-                      />
-                      {campus.name}
-                    </div>
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
+                {t('matrix.allCampuses')}
+              </DropdownMenuItem>
+              {campuses.map((campus) => (
+                <DropdownMenuItem
+                  key={campus.id}
+                  className={cn(selectedCampusId === campus.id && 'bg-zinc-200 dark:bg-zinc-700')}
+                  onClick={() => onCampusChange(campus.id)}
+                >
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: campus.color }}
+                    />
+                    {campus.name}
+                  </div>
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -98,7 +99,7 @@ export function MatrixFilters({
 
       {/* Ministry Filter (Multi-select) */}
       <div className="flex flex-col gap-1">
-        <label className="text-xs text-muted-foreground">Ministry</label>
+        <label className="text-xs text-muted-foreground">{t('matrix.ministryLabel')}</label>
         <DropdownMenu open={ministryDropdownOpen} onOpenChange={setMinistryDropdownOpen}>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="w-[180px] justify-between !border-black dark:!border-white">
@@ -107,11 +108,18 @@ export function MatrixFilters({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[200px]" align="start">
+            <DropdownMenuItem
+              className={cn(selectedMinistryIds.length === 0 && 'bg-zinc-200 dark:bg-zinc-700')}
+              onClick={() => onMinistriesChange([])}
+              onSelect={(e) => e.preventDefault()}
+            >
+              {t('matrix.allMinistries')}
+            </DropdownMenuItem>
             {ministries.map((ministry) => (
-              <DropdownMenuCheckboxItem
+              <DropdownMenuItem
                 key={ministry.id}
-                checked={selectedMinistryIds.includes(ministry.id)}
-                onCheckedChange={(checked) => handleMinistryToggle(ministry.id, checked)}
+                className={cn(selectedMinistryIds.includes(ministry.id) && 'bg-zinc-200 dark:bg-zinc-700')}
+                onClick={() => handleMinistryToggle(ministry.id, !selectedMinistryIds.includes(ministry.id))}
                 onSelect={(e) => e.preventDefault()}
               >
                 <div className="flex items-center gap-2">
@@ -121,11 +129,11 @@ export function MatrixFilters({
                   />
                   {ministry.name}
                 </div>
-              </DropdownMenuCheckboxItem>
+              </DropdownMenuItem>
             ))}
             {ministries.length === 0 && (
               <div className="px-2 py-1.5 text-sm text-muted-foreground">
-                No ministries found
+                {t('matrix.noMinistries')}
               </div>
             )}
           </DropdownMenuContent>
@@ -134,28 +142,32 @@ export function MatrixFilters({
 
       {/* Event Type Filter */}
       <div className="flex flex-col gap-1">
-        <label className="text-xs text-muted-foreground">Event Type</label>
+        <label className="text-xs text-muted-foreground">{t('fields.type')}</label>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="w-[160px] justify-between !border-black dark:!border-white">
               {selectedEventType
-                ? EVENT_TYPES.find((t) => t.value === selectedEventType)?.label || 'All Types'
-                : 'All Types'}
+                ? t(`types.${selectedEventType}`)
+                : t('matrix.allTypes')}
               <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[160px]" align="start">
-            <DropdownMenuRadioGroup
-              value={selectedEventType || 'all'}
-              onValueChange={(value) => onEventTypeChange(value === 'all' ? null : value)}
+            <DropdownMenuItem
+              className={cn(!selectedEventType && 'bg-zinc-200 dark:bg-zinc-700')}
+              onClick={() => onEventTypeChange(null)}
             >
-              <DropdownMenuRadioItem value="all">All Types</DropdownMenuRadioItem>
-              {EVENT_TYPES.map((type) => (
-                <DropdownMenuRadioItem key={type.value} value={type.value}>
-                  {type.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
+              {t('matrix.allTypes')}
+            </DropdownMenuItem>
+            {EVENT_TYPE_VALUES.map((type) => (
+              <DropdownMenuItem
+                key={type}
+                className={cn(selectedEventType === type && 'bg-zinc-200 dark:bg-zinc-700')}
+                onClick={() => onEventTypeChange(type)}
+              >
+                {t(`types.${type}`)}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -172,7 +184,7 @@ export function MatrixFilters({
             onEventTypeChange(null)
           }}
         >
-          Clear filters
+          {t('matrix.clearFilters')}
         </Button>
       )}
     </div>

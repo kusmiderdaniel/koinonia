@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -38,34 +39,36 @@ export function RoleDialog({
   onSave,
   onCancel,
 }: RoleDialogProps) {
+  const t = useTranslations('ministries')
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
         <DialogHeader>
-          <DialogTitle>{editingRole ? 'Edit Role' : 'Add Role'}</DialogTitle>
+          <DialogTitle>{editingRole ? t('roles.editRole') : t('roles.addRole')}</DialogTitle>
           <DialogDescription>
             {editingRole
-              ? 'Update the role details.'
-              : 'Create a new role for this ministry.'}
+              ? t('roles.editDescription')
+              : t('roles.createDescription')}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="roleName">Role Name *</Label>
+            <Label htmlFor="roleName">{t('roles.roleNameRequired')}</Label>
             <Input
               id="roleName"
               value={roleName}
               onChange={(e) => onRoleNameChange(e.target.value)}
-              placeholder="e.g., Worship Leader"
+              placeholder={t('roles.roleNamePlaceholder')}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="roleDescription">Description</Label>
+            <Label htmlFor="roleDescription">{t('roles.roleDescription')}</Label>
             <Input
               id="roleDescription"
               value={roleDescription}
               onChange={(e) => onRoleDescriptionChange(e.target.value)}
-              placeholder="Optional description"
+              placeholder={t('roles.roleDescriptionPlaceholder')}
             />
           </div>
         </div>
@@ -76,7 +79,7 @@ export function RoleDialog({
             disabled={isSaving}
             className="!border !border-black dark:!border-white"
           >
-            Cancel
+            {t('actions.cancel')}
           </Button>
           <Button
             variant="outline-pill"
@@ -84,7 +87,7 @@ export function RoleDialog({
             disabled={isSaving || !roleName.trim()}
             className="!bg-brand hover:!bg-brand/90 !text-white !border-0"
           >
-            {isSaving ? 'Saving...' : editingRole ? 'Save Changes' : 'Add Role'}
+            {isSaving ? t('actions.saving') : editingRole ? t('actions.saveChanges') : t('roles.addRole')}
           </Button>
         </DialogFooter>
       </DialogContent>

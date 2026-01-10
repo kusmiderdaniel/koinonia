@@ -1,0 +1,20 @@
+{
+  "required": "{field} is required",
+  "email": "Please enter a valid email address",
+  "minLength": "{field} must be at least {min} characters",
+  "maxLength": "{field} must be at most {max} characters",
+  "password": {
+    "min": "Password must be at least {min} characters",
+    "uppercase": "Password must contain at least one uppercase letter",
+    "lowercase": "Password must contain at least one lowercase letter",
+    "number": "Password must contain at least one number",
+    "special": "Password must contain at least one special character",
+    "mismatch": "Passwords don't match"
+  },
+  "phone": "Please enter a valid phone number",
+  "url": "Please enter a valid URL",
+  "date": "Please enter a valid date",
+  "number": "Please enter a valid number",
+  "positiveNumber": "Please enter a positive number",
+  "integer": "Please enter a whole number"
+}

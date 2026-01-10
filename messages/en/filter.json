@@ -1,0 +1,9 @@
+{
+  "title": "Filter",
+  "ruleCount": "{count} filter",
+  "emptyState": "No filters applied. Add a filter rule to narrow down your data.",
+  "addRule": "Add filter",
+  "addGroup": "Add group",
+  "deleteFilter": "Clear all",
+  "where": "Where"
+}

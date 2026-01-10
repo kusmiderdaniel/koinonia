@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   DndContext,
   DragOverlay,
@@ -31,6 +32,7 @@ import type { FieldType } from '@/lib/validations/forms'
 import type { BuilderField } from '../../types'
 
 export function FormBuilder() {
+  const t = useTranslations('forms')
   const [mounted, setMounted] = useState(false)
   const isMobile = useIsMobile()
   const { fields, selectedFieldId, addField, reorderFields, selectField } = useFormBuilder()
@@ -68,10 +70,12 @@ export function FormBuilder() {
       // Check if dragging from palette (new field)
       if (typeof active.id === 'string' && active.id.startsWith('palette-')) {
         const fieldType = active.id.replace('palette-', '') as FieldType
+        // Get the translated default label from drag data
+        const defaultLabel = (active.data.current as { defaultLabel?: string })?.defaultLabel
         // Find the index to insert at
         const overIndex = fields.findIndex((f) => f.id === over.id)
         const insertIndex = overIndex >= 0 ? overIndex : fields.length
-        addField(fieldType, insertIndex)
+        addField(fieldType, defaultLabel, insertIndex)
         return
       }
 
@@ -84,8 +88,8 @@ export function FormBuilder() {
   )
 
   const handleAddField = useCallback(
-    (type: FieldType) => {
-      addField(type)
+    (type: FieldType, defaultLabel: string) => {
+      addField(type, defaultLabel)
       if (isMobile) {
         setIsPaletteOpen(false)
       }
@@ -128,8 +132,8 @@ export function FormBuilder() {
             {fields.length === 0 ? (
               <EmptyState
                 icon={FileText}
-                title="Start building your form"
-                description="Tap the + button to add fields to your form."
+                title={t('builder.empty.title')}
+                description={t('builder.empty.descriptionMobile')}
                 size="sm"
               />
             ) : (
@@ -156,7 +160,7 @@ export function FormBuilder() {
               onClick={() => setIsPaletteOpen(true)}
             >
               <Plus className="h-4 w-4 mr-2" />
-              Add Field
+              {t('builder.addField')}
             </Button>
           </div>
         </div>
@@ -165,7 +169,7 @@ export function FormBuilder() {
         <Sheet open={isPaletteOpen} onOpenChange={setIsPaletteOpen}>
           <SheetContent side="bottom" className="h-[70vh] bg-white dark:bg-zinc-950">
             <SheetHeader>
-              <SheetTitle>Add Field</SheetTitle>
+              <SheetTitle>{t('builder.addField')}</SheetTitle>
             </SheetHeader>
             <div className="overflow-y-auto mt-4">
               <FieldPalette onAddField={handleAddField} />
@@ -177,7 +181,7 @@ export function FormBuilder() {
         <Sheet open={!!selectedFieldId} onOpenChange={(open) => !open && selectField(null)}>
           <SheetContent side="bottom" className="h-[70vh] bg-white dark:bg-zinc-950 px-0">
             <SheetHeader className="sr-only">
-              <SheetTitle>Edit Field</SheetTitle>
+              <SheetTitle>{t('builder.editField')}</SheetTitle>
             </SheetHeader>
             <div className="overflow-y-auto h-full">
               <FieldEditor />
@@ -208,8 +212,8 @@ export function FormBuilder() {
             {fields.length === 0 ? (
               <EmptyState
                 icon={FileText}
-                title="Start building your form"
-                description="Drag fields from the left panel or click to add them to your form."
+                title={t('builder.empty.title')}
+                description={t('builder.empty.descriptionDesktop')}
               />
             ) : (
               <SortableContext

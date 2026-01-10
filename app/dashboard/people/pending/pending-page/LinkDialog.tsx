@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -37,21 +38,22 @@ export function LinkDialog({
   onMemberSearchChange,
   onConfirm,
 }: LinkDialogProps) {
+  const t = useTranslations('people')
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Link to Existing Member</DialogTitle>
+          <DialogTitle>{t('linkDialog.title')}</DialogTitle>
           <DialogDescription>
-            Link {registration?.first_name} {registration?.last_name}&apos;s
-            account to an existing offline member record.
+            {t('linkDialog.description', { name: `${registration?.first_name} ${registration?.last_name}` })}
           </DialogDescription>
         </DialogHeader>
         <div className="py-4 space-y-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search members..."
+              placeholder={t('linkDialog.searchPlaceholder')}
               value={memberSearch}
               onChange={(e) => onMemberSearchChange(e.target.value)}
               className="pl-9 !border !border-gray-300"
@@ -61,8 +63,8 @@ export function LinkDialog({
             {filteredOfflineMembers.length === 0 ? (
               <div className="p-4 text-center text-sm text-muted-foreground">
                 {memberSearch
-                  ? 'No members match your search'
-                  : 'No offline members available'}
+                  ? t('linkDialog.noMatchingMembers')
+                  : t('linkDialog.noOfflineMembers')}
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
@@ -97,14 +99,14 @@ export function LinkDialog({
             className="!border !border-black dark:!border-white"
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            {t('actions.cancel')}
           </Button>
           <Button
             onClick={onConfirm}
             disabled={!selectedProfileId}
             className="!bg-brand hover:!bg-brand/90 !text-white !border !border-brand"
           >
-            Link Account
+            {t('linkDialog.confirmButton')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import {
   Dialog,
   DialogContent,
@@ -18,6 +19,7 @@ export function AgendaItemPicker({
   eventId,
   onSuccess,
 }: AgendaItemPickerProps) {
+  const t = useTranslations('events.agendaPicker')
   const state = useAgendaItemPickerState({
     open,
     eventId,
@@ -32,12 +34,12 @@ export function AgendaItemPicker({
       >
         <DialogHeader>
           <DialogTitle>
-            {state.isCreatingNew ? 'Create New Agenda Item' : 'Add Agenda Item'}
+            {state.isCreatingNew ? t('createTitle') : t('addTitle')}
           </DialogTitle>
           <DialogDescription>
             {state.isCreatingNew
-              ? 'Create a new reusable agenda item for your church.'
-              : 'Select an existing agenda item or search to create a new one.'}
+              ? t('createDescription')
+              : t('addDescription')}
           </DialogDescription>
         </DialogHeader>
 

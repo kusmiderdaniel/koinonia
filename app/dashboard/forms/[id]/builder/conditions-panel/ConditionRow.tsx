@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
@@ -42,6 +43,7 @@ export const ConditionRow = memo(function ConditionRow({
   onDelete,
   weekStartsOn,
 }: ConditionRowProps) {
+  const t = useTranslations('forms')
   const isMobile = useIsMobile()
   const needsValue =
     condition.operator !== 'is_empty' && condition.operator !== 'is_not_empty'
@@ -81,7 +83,7 @@ export const ConditionRow = memo(function ConditionRow({
       {isMobile ? (
         <div className="grid grid-cols-2 gap-2">
           <div className={spacingClassName}>
-            <Label className={labelClassName}>Action</Label>
+            <Label className={labelClassName}>{t('conditions.action')}</Label>
             <Select
               value={condition.action}
               onValueChange={(value) =>
@@ -94,14 +96,14 @@ export const ConditionRow = memo(function ConditionRow({
               <SelectContent position="popper" sideOffset={4} align="start" className={selectContentClassName}>
                 {ACTIONS.map((action) => (
                   <SelectItem key={action.value} value={action.value}>
-                    {action.label}
+                    {t(`conditions.${action.value}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div className={spacingClassName}>
-            <Label className={labelClassName}>When</Label>
+            <Label className={labelClassName}>{t('conditions.when')}</Label>
             <Select
               value={condition.source_field_id}
               onValueChange={(value) =>
@@ -109,7 +111,7 @@ export const ConditionRow = memo(function ConditionRow({
               }
             >
               <SelectTrigger className={triggerClassName}>
-                <SelectValue placeholder="Field" />
+                <SelectValue placeholder={t('conditions.fieldMobile')} />
               </SelectTrigger>
               <SelectContent position="popper" sideOffset={4} align="start" className={selectContentClassName}>
                 {fields.map((field) => (
@@ -125,7 +127,7 @@ export const ConditionRow = memo(function ConditionRow({
         <>
           {/* Action */}
           <div className={spacingClassName}>
-            <Label className={labelClassName}>Action</Label>
+            <Label className={labelClassName}>{t('conditions.action')}</Label>
             <Select
               value={condition.action}
               onValueChange={(value) =>
@@ -138,7 +140,7 @@ export const ConditionRow = memo(function ConditionRow({
               <SelectContent position="popper" sideOffset={4} align="start" className={selectContentClassName}>
                 {ACTIONS.map((action) => (
                   <SelectItem key={action.value} value={action.value}>
-                    {action.label}
+                    {t(`conditions.${action.value}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -147,7 +149,7 @@ export const ConditionRow = memo(function ConditionRow({
 
           {/* When field */}
           <div className={spacingClassName}>
-            <Label className={labelClassName}>When</Label>
+            <Label className={labelClassName}>{t('conditions.when')}</Label>
             <Select
               value={condition.source_field_id}
               onValueChange={(value) =>
@@ -155,7 +157,7 @@ export const ConditionRow = memo(function ConditionRow({
               }
             >
               <SelectTrigger className={triggerClassName}>
-                <SelectValue placeholder="Select a field" />
+                <SelectValue placeholder={t('conditions.fieldDesktop')} />
               </SelectTrigger>
               <SelectContent position="popper" sideOffset={4} align="start" className={selectContentClassName}>
                 {fields.map((field) => (
@@ -173,7 +175,7 @@ export const ConditionRow = memo(function ConditionRow({
       {isMobile && needsValue && !needsMultiValue ? (
         <div className="grid grid-cols-2 gap-2">
           <div className={spacingClassName}>
-            <Label className={labelClassName}>Condition</Label>
+            <Label className={labelClassName}>{t('conditions.condition')}</Label>
             <Select
               value={condition.operator}
               onValueChange={(value) =>
@@ -195,14 +197,14 @@ export const ConditionRow = memo(function ConditionRow({
               <SelectContent position="popper" sideOffset={4} align="start" className={selectContentClassName}>
                 {operators.map((op) => (
                   <SelectItem key={op.value} value={op.value}>
-                    {op.label}
+                    {t(`operators.${op.value}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div className={spacingClassName}>
-            <Label className={labelClassName}>Value</Label>
+            <Label className={labelClassName}>{t('conditions.value')}</Label>
             <ValueInput
               conditionId={condition.id}
               value={condition.value}
@@ -220,7 +222,7 @@ export const ConditionRow = memo(function ConditionRow({
         <>
           {/* Operator */}
           <div className={spacingClassName}>
-            <Label className={labelClassName}>Condition</Label>
+            <Label className={labelClassName}>{t('conditions.condition')}</Label>
             <Select
               value={condition.operator}
               onValueChange={(value) =>
@@ -242,7 +244,7 @@ export const ConditionRow = memo(function ConditionRow({
               <SelectContent position="popper" sideOffset={4} align="start" className={selectContentClassName}>
                 {operators.map((op) => (
                   <SelectItem key={op.value} value={op.value}>
-                    {op.label}
+                    {t(`operators.${op.value}`)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -252,7 +254,7 @@ export const ConditionRow = memo(function ConditionRow({
           {/* Value - only for multi-value or desktop */}
           {needsValue && (
             <div className={spacingClassName}>
-              <Label className={labelClassName}>Value</Label>
+              <Label className={labelClassName}>{t('conditions.value')}</Label>
               <ValueInput
                 conditionId={condition.id}
                 value={condition.value}
@@ -277,7 +279,7 @@ export const ConditionRow = memo(function ConditionRow({
         className={`w-full !border-red-500 text-red-600 hover:bg-red-50 dark:hover:bg-red-950 ${isMobile ? 'h-7 text-xs' : ''}`}
       >
         <Trash2 className={isMobile ? 'h-3 w-3 mr-1' : 'h-3.5 w-3.5 mr-1'} />
-        {isMobile ? 'Remove' : 'Remove condition'}
+        {isMobile ? t('conditions.removeMobile') : t('conditions.removeDesktop')}
       </Button>
     </div>
   )

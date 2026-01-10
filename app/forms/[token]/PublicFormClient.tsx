@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2 } from 'lucide-react'
@@ -33,6 +34,7 @@ export function PublicFormClient({
   weekStartsOn = 0,
 }: PublicFormClientProps) {
   const router = useRouter()
+  const t = useTranslations('forms')
   const isMobile = useIsMobile()
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -66,7 +68,7 @@ export function PublicFormClient({
       e.preventDefault()
 
       if (!validateForm()) {
-        toast.error('Please fill in all required fields')
+        toast.error(t('toast.fillRequired'))
         return
       }
 
@@ -94,21 +96,21 @@ export function PublicFormClient({
 
         if (!response.ok) {
           const data = await response.json()
-          throw new Error(data.error || 'Failed to submit form')
+          throw new Error(data.error || t('toast.submitFailed'))
         }
 
-        toast.success('Form submitted successfully!')
+        toast.success(t('toast.submitted'))
         router.push(`/forms/${token}/success`)
       } catch (error) {
         console.error('Submission error:', error)
         toast.error(
-          error instanceof Error ? error.message : 'Failed to submit form'
+          error instanceof Error ? error.message : t('toast.submitFailed')
         )
       } finally {
         setIsSubmitting(false)
       }
     },
-    [token, visibleFields, values, email, validateForm, router]
+    [token, visibleFields, values, email, validateForm, router, t]
   )
 
   return (
@@ -140,11 +142,10 @@ export function PublicFormClient({
             {/* Optional email for anonymous submissions */}
             <div className="pt-6 mt-6 border-t space-y-2">
               <Label htmlFor="respondent-email" className="text-base font-medium">
-                Your email (optional)
+                {t('public.emailOptional')}
               </Label>
               <p className="text-sm text-muted-foreground">
-                Provide your email if you&apos;d like to receive updates about
-                this submission
+                {t('public.emailDescription')}
               </p>
               <div className={isMobile ? '' : 'w-1/2'}>
                 <Input
@@ -169,17 +170,17 @@ export function PublicFormClient({
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Submitting...
+                  {t('public.submitting')}
                 </>
               ) : (
-                'Submit'
+                t('public.submit')
               )}
             </button>
           </div>
         </form>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Powered by Koinonia
+          {t('public.poweredBy')}
         </p>
       </div>
     </div>

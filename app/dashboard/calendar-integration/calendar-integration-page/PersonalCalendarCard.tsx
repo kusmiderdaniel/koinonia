@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Copy, Check, RefreshCw, ExternalLink, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -32,16 +33,16 @@ export function PersonalCalendarCard({
   onCopy,
   onRegenerate,
 }: PersonalCalendarCardProps) {
+  const t = useTranslations('calendar-integration')
+
   return (
     <div>
       <div className="flex items-center gap-2 mb-2">
         <Calendar className="h-5 w-5" />
-        <h2 className="text-lg font-semibold">My Calendar</h2>
+        <h2 className="text-lg font-semibold">{t('personal.title')}</h2>
       </div>
       <p className="text-sm text-muted-foreground mb-4">
-        Events where you have assignments (invited or accepted) and hidden
-        events you&apos;re invited to. Your role in each event is shown in the
-        description.
+        {t('personal.description')}
       </p>
 
       {calendarUrl && (
@@ -56,7 +57,7 @@ export function PersonalCalendarCard({
               variant="outline"
               size="icon"
               onClick={onCopy}
-              title="Copy URL"
+              title={t('personal.copyUrl')}
               className="!border !border-black dark:!border-white"
             >
               {copied ? (
@@ -74,7 +75,7 @@ export function PersonalCalendarCard({
               className="gap-2 !border !border-black dark:!border-white"
             >
               <ExternalLink className="h-4 w-4" />
-              Add to Calendar
+              {t('personal.addToCalendar')}
             </Button>
 
             <AlertDialog>
@@ -87,26 +88,23 @@ export function PersonalCalendarCard({
                   <RefreshCw
                     className={`h-4 w-4 ${isRegenerating ? 'animate-spin' : ''}`}
                   />
-                  Regenerate Link
+                  {t('personal.regenerateLink')}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Regenerate Calendar Link?</AlertDialogTitle>
+                  <AlertDialogTitle>{t('regenerate.title')}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will invalidate your current calendar subscription
-                    link. Any calendar apps using the old link will stop
-                    receiving updates. You&apos;ll need to re-subscribe with
-                    the new link.
+                    {t('regenerate.description')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel className="!border !border-black dark:!border-white">Cancel</AlertDialogCancel>
+                  <AlertDialogCancel className="!border !border-black dark:!border-white">{t('regenerate.cancel')}</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={onRegenerate}
                     className="!bg-brand hover:!bg-brand/90 !text-brand-foreground"
                   >
-                    Regenerate
+                    {t('regenerate.confirm')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -114,8 +112,7 @@ export function PersonalCalendarCard({
           </div>
 
           <p className="text-xs text-muted-foreground">
-            Keep this link private. Anyone with this link can see your
-            assigned events.
+            {t('personal.privateWarning')}
           </p>
         </div>
       )}

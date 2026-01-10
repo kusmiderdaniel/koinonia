@@ -1,6 +1,7 @@
 'use client'
 
 import { memo, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ListOrdered, Users, CheckSquare } from 'lucide-react'
@@ -55,6 +56,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
   weekStartsOn = 0,
   initialTasks,
 }: EventDetailPanelProps) {
+  const t = useTranslations('events')
   const isMobile = useIsMobile()
 
   // Track volunteers assigned to multiple positions
@@ -121,21 +123,21 @@ export const EventDetailPanel = memo(function EventDetailPanel({
               className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
               <ListOrdered className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
-              Agenda
+              {t('agenda.title')}
             </TabsTrigger>
             <TabsTrigger
               value="positions"
               className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
               <Users className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
-              Positions
+              {t('positions.title')}
             </TabsTrigger>
             <TabsTrigger
               value="tasks"
               className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
               <CheckSquare className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
-              Tasks
+              {t('tasks.title')}
             </TabsTrigger>
           </TabsList>
         </div>

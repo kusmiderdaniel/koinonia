@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
@@ -33,6 +34,7 @@ export function IconPickerPopover({
   showTooltip = false,
   triggerClassName,
 }: IconPickerPopoverProps) {
+  const t = useTranslations('links')
   const CurrentIconComponent = currentIcon ? ICON_MAP[currentIcon] || DefaultIcon : DefaultIcon
 
   const trigger = (
@@ -47,7 +49,7 @@ export function IconPickerPopover({
         )}
       >
         <CurrentIconComponent className="h-4 w-4" />
-        <span className="text-xs">Icon</span>
+        <span className="text-xs">{t('linkItem.icon.button')}</span>
       </Button>
     </PopoverTrigger>
   )
@@ -57,7 +59,7 @@ export function IconPickerPopover({
       {showTooltip ? (
         <Tooltip>
           <TooltipTrigger asChild>{trigger}</TooltipTrigger>
-          <TooltipContent>Choose icon</TooltipContent>
+          <TooltipContent>{t('linkItem.icon.tooltip')}</TooltipContent>
         </Tooltip>
       ) : (
         trigger
@@ -68,7 +70,7 @@ export function IconPickerPopover({
       >
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium">Icon</Label>
+            <Label className="text-sm font-medium">{t('linkItem.icon.label')}</Label>
             {currentIcon && (
               <Button
                 variant="ghost"
@@ -76,7 +78,7 @@ export function IconPickerPopover({
                 onClick={() => onIconChange(null)}
                 className="h-6 px-2 text-xs"
               >
-                Remove
+                {t('linkItem.icon.remove')}
               </Button>
             )}
           </div>

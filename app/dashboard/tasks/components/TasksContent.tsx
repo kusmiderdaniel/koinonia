@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -129,14 +130,15 @@ export function TasksContent({
 }
 
 function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
+  const t = useTranslations('tasks')
   const isMobile = useIsMobile()
 
   return (
     <div className={`flex flex-col items-center justify-center px-4 text-center ${isMobile ? 'py-8' : 'py-16'}`}>
-      <div className={`text-muted-foreground ${isMobile ? 'text-sm mb-3' : 'mb-4'}`}>No tasks found</div>
+      <div className={`text-muted-foreground ${isMobile ? 'text-sm mb-3' : 'mb-4'}`}>{t('noTasksFound')}</div>
       <Button onClick={onCreateTask} variant="outline" size={isMobile ? 'sm' : 'default'}>
         <Plus className={isMobile ? 'h-3.5 w-3.5 mr-1' : 'h-4 w-4 mr-2'} />
-        Create your first task
+        {t('createFirstTask')}
       </Button>
     </div>
   )

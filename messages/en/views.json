@@ -1,0 +1,28 @@
+{
+  "title": "Views",
+  "all": "All",
+  "noSavedViews": "No saved views yet",
+  "saveCurrentView": "Save current view",
+  "save": "Save",
+  "edit": "Edit",
+  "setAsDefault": "Set as default",
+  "delete": "Delete",
+  "dialog": {
+    "saveTitle": "Save View",
+    "editTitle": "Edit View",
+    "saveDescription": "Save your current filters and sorting as a reusable view.",
+    "editDescription": "Update this saved view's settings.",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g., My Tasks, Upcoming Events",
+    "nameRequired": "Please enter a name for this view",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Optional description...",
+    "setAsDefault": "Set as default",
+    "defaultHint": "This view will load automatically when you open this page",
+    "saving": "Saving...",
+    "saveView": "Save View",
+    "saveChanges": "Save Changes",
+    "viewSaved": "View saved successfully",
+    "viewUpdated": "View updated successfully"
+  }
+}

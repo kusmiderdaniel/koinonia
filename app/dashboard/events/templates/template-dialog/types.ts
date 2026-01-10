@@ -55,30 +55,14 @@ export interface TemplateFormData {
   visibility: string
 }
 
-export const EVENT_TYPES = [
-  { value: 'service', label: 'Service' },
-  { value: 'rehearsal', label: 'Rehearsal' },
-  { value: 'meeting', label: 'Meeting' },
-  { value: 'special_event', label: 'Special Event' },
-  { value: 'other', label: 'Other' },
-] as const
+// Event type values - labels are in translation files
+export const EVENT_TYPE_VALUES = ['service', 'rehearsal', 'meeting', 'special_event', 'other'] as const
 
-export const VISIBILITY_LEVELS = [
-  { value: 'members', label: 'All Members', description: 'Visible to all church members' },
-  { value: 'volunteers', label: 'Volunteers+', description: 'Visible to volunteers, leaders, and admins' },
-  { value: 'leaders', label: 'Leaders+', description: 'Visible to leaders and admins only' },
-  { value: 'hidden', label: 'Private', description: 'Only visible to invited users' },
-] as const
+// Visibility level values - labels are in translation files
+export const VISIBILITY_VALUES = ['members', 'volunteers', 'leaders', 'hidden'] as const
 
-export const DURATION_OPTIONS = [
-  { value: 30, label: '30 minutes' },
-  { value: 60, label: '1 hour' },
-  { value: 90, label: '1.5 hours' },
-  { value: 120, label: '2 hours' },
-  { value: 150, label: '2.5 hours' },
-  { value: 180, label: '3 hours' },
-  { value: 240, label: '4 hours' },
-] as const
+// Duration values in minutes - labels are in translation files
+export const DURATION_VALUES = [30, 60, 90, 120, 150, 180, 240] as const
 
 export function parseTime(timeString: string): string {
   return timeString.substring(0, 5)

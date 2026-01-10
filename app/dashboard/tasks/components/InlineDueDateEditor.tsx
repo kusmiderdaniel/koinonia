@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { format, parseISO, isToday, isPast, isValid } from 'date-fns'
 import { Calendar as CalendarIcon, X } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
@@ -25,6 +26,7 @@ export function InlineDueDateEditor({
   disabled = false,
   weekStartsOn = 0,
 }: InlineDueDateEditorProps) {
+  const t = useTranslations('tasks')
   const [open, setOpen] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
 
@@ -81,13 +83,13 @@ export function InlineDueDateEditor({
                   role="button"
                   onClick={handleClear}
                   className="opacity-0 group-hover:opacity-100 hover:text-red-600 ml-1 shrink-0 cursor-pointer"
-                  title="Clear due date"
+                  title={t('inlineEditor.clearDueDate')}
                 >
                   <X className="h-3 w-3" />
                 </span>
               </>
             ) : (
-              <span className="text-muted-foreground">No date</span>
+              <span className="text-muted-foreground">{t('inlineEditor.noDate')}</span>
             )}
           </span>
         </button>
@@ -125,7 +127,7 @@ export function InlineDueDateEditor({
               onClick={() => handleSelect(undefined)}
             >
               <X className="h-4 w-4 mr-2" />
-              Clear date
+              {t('inlineEditor.clearDate')}
             </Button>
           </div>
         )}

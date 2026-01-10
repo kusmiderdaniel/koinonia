@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { updateTaskStatus, updateTask, deleteTask } from '../actions'
 import type { Task, TaskMinistry, TaskCampus, TaskStatus, TaskPriority, Person } from '../types'
@@ -26,6 +27,7 @@ export function useTaskPageHandlers({
   events,
 }: UseTaskPageHandlersOptions) {
   const router = useRouter()
+  const t = useTranslations('tasks')
 
   // Dialog state
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -68,11 +70,11 @@ export function useTaskPageHandlers({
       toast.error(result.error)
     } else {
       setTasks((prev) =>
-        prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t))
+        prev.map((task) => (task.id === taskId ? { ...task, status: newStatus } : task))
       )
-      toast.success(newStatus === 'completed' ? 'Task completed!' : 'Status updated')
+      toast.success(newStatus === 'completed' ? t('toast.taskCompleted') : t('toast.statusUpdated'))
     }
-  }, [setTasks])
+  }, [setTasks, t])
 
   // Priority change handler
   const handlePriorityChange = useCallback(
@@ -82,12 +84,12 @@ export function useTaskPageHandlers({
         toast.error(result.error)
       } else {
         setTasks((prev) =>
-          prev.map((t) => (t.id === taskId ? { ...t, priority: newPriority } : t))
+          prev.map((task) => (task.id === taskId ? { ...task, priority: newPriority } : task))
         )
-        toast.success('Priority updated')
+        toast.success(t('toast.priorityUpdated'))
       }
     },
-    [setTasks]
+    [setTasks, t]
   )
 
   // Assignee change handler
@@ -99,14 +101,14 @@ export function useTaskPageHandlers({
       } else {
         const assignee = assigneeId ? members.find((m) => m.id === assigneeId) : null
         setTasks((prev) =>
-          prev.map((t) =>
-            t.id === taskId ? { ...t, assigned_to: assigneeId, assignee: assignee || null } : t
+          prev.map((task) =>
+            task.id === taskId ? { ...task, assigned_to: assigneeId, assignee: assignee || null } : task
           )
         )
-        toast.success(assigneeId ? 'Assignee updated' : 'Assignee removed')
+        toast.success(assigneeId ? t('toast.assigneeUpdated') : t('toast.assigneeRemoved'))
       }
     },
-    [members, setTasks]
+    [members, setTasks, t]
   )
 
   // Due date change handler
@@ -117,14 +119,14 @@ export function useTaskPageHandlers({
         toast.error(result.error)
       } else {
         setTasks((prev) =>
-          prev.map((t) =>
-            t.id === taskId ? { ...t, due_date: dueDate?.toISOString() || null } : t
+          prev.map((task) =>
+            task.id === taskId ? { ...task, due_date: dueDate?.toISOString() || null } : task
           )
         )
-        toast.success(dueDate ? 'Due date updated' : 'Due date removed')
+        toast.success(dueDate ? t('toast.dueDateUpdated') : t('toast.dueDateRemoved'))
       }
     },
-    [setTasks]
+    [setTasks, t]
   )
 
   // Event change handler
@@ -136,20 +138,20 @@ export function useTaskPageHandlers({
       } else {
         const event = eventId ? events.find((e) => e.id === eventId) : null
         setTasks((prev) =>
-          prev.map((t) =>
-            t.id === taskId
+          prev.map((task) =>
+            task.id === taskId
               ? {
-                  ...t,
+                  ...task,
                   event_id: eventId,
                   event: event ? { ...event, end_time: event.start_time } : null,
                 }
-              : t
+              : task
           )
         )
-        toast.success(eventId ? 'Event linked' : 'Event removed')
+        toast.success(eventId ? t('toast.eventLinked') : t('toast.eventRemoved'))
       }
     },
-    [events, setTasks]
+    [events, setTasks, t]
   )
 
   // Ministry change handler
@@ -161,14 +163,14 @@ export function useTaskPageHandlers({
       } else {
         const ministry = ministryId ? ministries.find((m) => m.id === ministryId) : null
         setTasks((prev) =>
-          prev.map((t) =>
-            t.id === taskId ? { ...t, ministry_id: ministryId, ministry: ministry || null } : t
+          prev.map((task) =>
+            task.id === taskId ? { ...task, ministry_id: ministryId, ministry: ministry || null } : task
           )
         )
-        toast.success(ministryId ? 'Ministry updated' : 'Ministry removed')
+        toast.success(ministryId ? t('toast.ministryUpdated') : t('toast.ministryRemoved'))
       }
     },
-    [ministries, setTasks]
+    [ministries, setTasks, t]
   )
 
   // Campus change handler
@@ -180,14 +182,14 @@ export function useTaskPageHandlers({
       } else {
         const campus = campusId ? campuses.find((c) => c.id === campusId) : null
         setTasks((prev) =>
-          prev.map((t) =>
-            t.id === taskId ? { ...t, campus_id: campusId, campus: campus || null } : t
+          prev.map((task) =>
+            task.id === taskId ? { ...task, campus_id: campusId, campus: campus || null } : task
           )
         )
-        toast.success(campusId ? 'Campus updated' : 'Campus removed')
+        toast.success(campusId ? t('toast.campusUpdated') : t('toast.campusRemoved'))
       }
     },
-    [campuses, setTasks]
+    [campuses, setTasks, t]
   )
 
   // Description change handler
@@ -198,12 +200,12 @@ export function useTaskPageHandlers({
         toast.error(result.error)
       } else {
         setTasks((prev) =>
-          prev.map((t) => (t.id === taskId ? { ...t, description } : t))
+          prev.map((task) => (task.id === taskId ? { ...task, description } : task))
         )
-        toast.success(description ? 'Description updated' : 'Description removed')
+        toast.success(description ? t('toast.descriptionUpdated') : t('toast.descriptionRemoved'))
       }
     },
-    [setTasks]
+    [setTasks, t]
   )
 
   // Delete handlers
@@ -222,16 +224,16 @@ export function useTaskPageHandlers({
     if (result.error) {
       toast.error(result.error)
     } else {
-      setTasks((prev) => prev.filter((t) => t.id !== taskToDelete.id))
+      setTasks((prev) => prev.filter((task) => task.id !== taskToDelete.id))
       if (selectedTaskId === taskToDelete.id) {
         setSelectedTaskId(null)
       }
-      toast.success('Task deleted')
+      toast.success(t('toast.taskDeleted'))
     }
 
     setDeleteConfirmOpen(false)
     setTaskToDelete(null)
-  }, [taskToDelete, selectedTaskId, setTasks, setSelectedTaskId])
+  }, [taskToDelete, selectedTaskId, setTasks, setSelectedTaskId, t])
 
   // Selection handlers
   const handleSelectTask = useCallback(
