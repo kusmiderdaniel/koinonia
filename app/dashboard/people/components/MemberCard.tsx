@@ -24,6 +24,13 @@ import {
   calculateAge,
 } from './member-table-types'
 
+interface AvailableCampus {
+  id: string
+  name: string
+  color: string
+  is_default: boolean
+}
+
 interface MemberCardProps {
   member: Member
   currentUserId: string
@@ -35,10 +42,13 @@ interface MemberCardProps {
   isUpdatingActive: boolean
   isUpdatingDeparture: boolean
   isUpdatingBaptism: boolean
+  isUpdatingCampuses: boolean
+  allCampuses: AvailableCampus[]
   onRoleChange: (memberId: string, newRole: AssignableRole) => void
   onActiveChange: (memberId: string, active: boolean) => void
   onDepartureChange: (memberId: string, date: string | null, reason: string | null) => void
   onBaptismChange: (memberId: string, baptism: boolean, date: string | null) => void
+  onCampusesChange: (memberId: string, campusIds: string[]) => void
 }
 
 export const MemberCard = memo(function MemberCard({
@@ -50,6 +60,25 @@ export const MemberCard = memo(function MemberCard({
   isUpdatingActive,
   onRoleChange,
   onActiveChange,
+  // Unused but received from parent
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  canEditDeparture: _canEditDeparture,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  canEditFields: _canEditFields,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isUpdatingDeparture: _isUpdatingDeparture,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isUpdatingBaptism: _isUpdatingBaptism,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isUpdatingCampuses: _isUpdatingCampuses,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  allCampuses: _allCampuses,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onDepartureChange: _onDepartureChange,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onBaptismChange: _onBaptismChange,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onCampusesChange: _onCampusesChange,
 }: MemberCardProps) {
   const t = useTranslations('people')
   const [expanded, setExpanded] = useState(false)

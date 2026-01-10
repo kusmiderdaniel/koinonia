@@ -1,6 +1,9 @@
 'use client'
 
-import { Input } from '@/components/ui/input'
+import * as React from 'react'
+import { format, parse, isValid } from 'date-fns'
+import { cn } from '@/lib/utils'
+import { Calendar } from '@/components/ui/calendar'
 import {
   Popover,
   PopoverContent,
@@ -14,6 +17,7 @@ interface InlineDateEditorProps {
   disabled?: boolean
   canEdit: boolean
   placeholder?: string
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
 }
 
 export function InlineDateEditor({
@@ -22,7 +26,27 @@ export function InlineDateEditor({
   disabled = false,
   canEdit,
   placeholder = '—',
+  weekStartsOn = 0,
 }: InlineDateEditorProps) {
+  const [open, setOpen] = React.useState(false)
+
+  // Parse string value to Date for the calendar
+  const selectedDate = React.useMemo(() => {
+    if (!value) return undefined
+    const date = parse(value, 'yyyy-MM-dd', new Date())
+    return isValid(date) ? date : undefined
+  }, [value])
+
+  // Handle date selection
+  const handleSelect = (date: Date | undefined) => {
+    if (date) {
+      onChange(format(date, 'yyyy-MM-dd'))
+    } else {
+      onChange(null)
+    }
+    setOpen(false)
+  }
+
   if (!canEdit) {
     return (
       <span className="px-2 py-1 inline-block">
@@ -31,37 +55,36 @@ export function InlineDateEditor({
     )
   }
 
-  if (value) {
-    return (
-      <input
-        type="date"
-        value={value}
-        onChange={(e) => onChange(e.target.value || null)}
-        onClick={(e) => (e.target as HTMLInputElement).showPicker()}
-        onKeyDown={(e) => e.preventDefault()}
-        disabled={disabled}
-        className="w-[130px] h-8 text-sm border-0 bg-transparent hover:bg-muted focus:bg-muted cursor-pointer rounded-md px-2"
-      />
-    )
-  }
-
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className="text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted px-2 py-1 rounded cursor-pointer">
-          {placeholder}
+        <button
+          disabled={disabled}
+          className={cn(
+            'h-8 px-2 text-sm text-left rounded-md hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 min-w-[100px]',
+            !selectedDate && 'text-muted-foreground/50',
+            disabled && 'opacity-50 cursor-not-allowed'
+          )}
+        >
+          {selectedDate ? formatDate(value!) : placeholder}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-3 bg-white dark:bg-zinc-950 border shadow-lg">
-        <Input
-          type="date"
-          onChange={(e) => {
-            if (e.target.value) {
-              onChange(e.target.value)
-            }
+      <PopoverContent
+        className="w-auto p-0 bg-white dark:bg-zinc-950 border border-black dark:border-white shadow-lg"
+        align="start"
+      >
+        <Calendar
+          mode="single"
+          selected={selectedDate}
+          onSelect={handleSelect}
+          defaultMonth={selectedDate || new Date()}
+          fromYear={1920}
+          toYear={new Date().getFullYear() + 5}
+          captionLayout="dropdown"
+          weekStartsOn={weekStartsOn}
+          classNames={{
+            caption_label: 'hidden',
           }}
-          disabled={disabled}
-          className="w-[150px]"
         />
       </PopoverContent>
     </Popover>

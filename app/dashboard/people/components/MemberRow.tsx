@@ -2,6 +2,7 @@
 
 import { useState, memo } from 'react'
 import { useTranslations } from 'next-intl'
+import { Check } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { TableCell, TableRow } from '@/components/ui/table'
 import {
@@ -18,6 +19,7 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { CampusBadge, CampusBadges } from '@/components/CampusBadge'
+import { cn } from '@/lib/utils'
 import { InlineDateEditor } from './InlineDateEditor'
 import {
   type Member,
@@ -31,6 +33,13 @@ import {
   calculateAge,
 } from './member-table-types'
 
+interface AvailableCampus {
+  id: string
+  name: string
+  color: string
+  is_default: boolean
+}
+
 interface MemberRowProps {
   member: Member
   currentUserId: string
@@ -42,10 +51,13 @@ interface MemberRowProps {
   isUpdatingActive: boolean
   isUpdatingDeparture: boolean
   isUpdatingBaptism: boolean
+  isUpdatingCampuses: boolean
+  allCampuses: AvailableCampus[]
   onRoleChange: (memberId: string, newRole: AssignableRole) => void
   onActiveChange: (memberId: string, active: boolean) => void
   onDepartureChange: (memberId: string, date: string | null, reason: string | null) => void
   onBaptismChange: (memberId: string, baptism: boolean, date: string | null) => void
+  onCampusesChange: (memberId: string, campusIds: string[]) => void
 }
 
 export const MemberRow = memo(function MemberRow({
@@ -59,13 +71,36 @@ export const MemberRow = memo(function MemberRow({
   isUpdatingActive,
   isUpdatingDeparture,
   isUpdatingBaptism,
+  isUpdatingCampuses,
+  allCampuses,
   onRoleChange,
   onActiveChange,
   onDepartureChange,
   onBaptismChange,
+  onCampusesChange,
 }: MemberRowProps) {
   const t = useTranslations('people')
   const [departurePopoverOpen, setDeparturePopoverOpen] = useState(false)
+  const [campusPopoverOpen, setCampusPopoverOpen] = useState(false)
+
+  // Get current campus IDs
+  const currentCampusIds = member.campuses.map(c => c.id)
+
+  // Handle toggling a campus
+  const handleCampusToggle = (campusId: string) => {
+    const isSelected = currentCampusIds.includes(campusId)
+    let newCampusIds: string[]
+
+    if (isSelected) {
+      // Remove the campus
+      newCampusIds = currentCampusIds.filter(id => id !== campusId)
+    } else {
+      // Add the campus
+      newCampusIds = [...currentCampusIds, campusId]
+    }
+
+    onCampusesChange(member.id, newCampusIds)
+  }
 
   return (
     <TableRow className={!member.active ? 'opacity-50' : ''}>
@@ -135,14 +170,73 @@ export const MemberRow = memo(function MemberRow({
 
       {/* Campus */}
       <TableCell>
-        {member.campuses && member.campuses.length > 0 ? (
-          <CampusBadges
-            campuses={member.campuses}
-            size="sm"
-            maxVisible={2}
-          />
+        {canEditFields ? (
+          <Popover open={campusPopoverOpen} onOpenChange={setCampusPopoverOpen}>
+            <PopoverTrigger asChild>
+              <button
+                className={cn(
+                  'flex items-center gap-1 px-1 py-0.5 rounded hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 min-w-[60px]',
+                  isUpdatingCampuses && 'opacity-50 pointer-events-none'
+                )}
+                disabled={isUpdatingCampuses}
+              >
+                {member.campuses && member.campuses.length > 0 ? (
+                  <CampusBadges
+                    campuses={member.campuses}
+                    size="sm"
+                    maxVisible={2}
+                  />
+                ) : (
+                  <span className="text-muted-foreground/50 text-sm">—</span>
+                )}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-2 bg-white dark:bg-zinc-950 border border-black dark:border-white shadow-lg" align="start">
+              <div className="space-y-1">
+                {allCampuses.map((campus) => {
+                  const isSelected = currentCampusIds.includes(campus.id)
+                  return (
+                    <button
+                      key={campus.id}
+                      onClick={() => handleCampusToggle(campus.id)}
+                      disabled={isUpdatingCampuses}
+                      className={cn(
+                        'flex items-center gap-2 w-full px-2 py-1.5 rounded-md text-sm hover:bg-muted transition-colors',
+                        isUpdatingCampuses && 'opacity-50 cursor-not-allowed'
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          'h-4 w-4 rounded border flex items-center justify-center',
+                          isSelected ? 'bg-primary border-primary' : 'border-muted-foreground'
+                        )}
+                      >
+                        {isSelected && <Check className="h-3 w-3 text-primary-foreground" />}
+                      </div>
+                      <CampusBadge
+                        name={campus.name}
+                        color={campus.color}
+                        size="sm"
+                      />
+                    </button>
+                  )
+                })}
+                {allCampuses.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-2">No campuses available</p>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
         ) : (
-          <span className="text-muted-foreground text-sm">—</span>
+          member.campuses && member.campuses.length > 0 ? (
+            <CampusBadges
+              campuses={member.campuses}
+              size="sm"
+              maxVisible={2}
+            />
+          ) : (
+            <span className="text-muted-foreground text-sm">—</span>
+          )
         )}
       </TableCell>
 

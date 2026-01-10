@@ -9,12 +9,20 @@ import {
 export type { Member, AssignableRole }
 export type { FilterState, SortState, SavedView }
 
+export interface AvailableCampus {
+  id: string
+  name: string
+  color: string
+  is_default: boolean
+}
+
 export interface MembersTableProps {
   members: Member[]
   currentUserId: string
   currentUserRole: string
   savedViews: SavedView[]
   canManageViews: boolean
+  allCampuses: AvailableCampus[]
 }
 
 export interface MemberUpdateState {
@@ -22,6 +30,7 @@ export interface MemberUpdateState {
   updatingActiveId: string | null
   updatingDepartureId: string | null
   updatingBaptismId: string | null
+  updatingCampusesId: string | null
 }
 
 export interface MemberRowProps {
@@ -35,8 +44,11 @@ export interface MemberRowProps {
   isUpdatingActive: boolean
   isUpdatingDeparture: boolean
   isUpdatingBaptism: boolean
+  isUpdatingCampuses: boolean
+  allCampuses: AvailableCampus[]
   onRoleChange: (memberId: string, newRole: AssignableRole) => Promise<void>
   onActiveChange: (memberId: string, active: boolean) => Promise<void>
   onDepartureChange: (memberId: string, dateOfDeparture: string | null, reasonForDeparture: string | null) => Promise<void>
   onBaptismChange: (memberId: string, baptism: boolean, baptismDate: string | null) => Promise<void>
+  onCampusesChange: (memberId: string, campusIds: string[]) => Promise<void>
 }

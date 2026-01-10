@@ -26,6 +26,7 @@ export const MembersTable = memo(function MembersTable({
   currentUserRole,
   savedViews,
   canManageViews,
+  allCampuses,
 }: MembersTableProps) {
   const t = useTranslations('people')
   const isMobile = useIsMobile()
@@ -38,10 +39,12 @@ export const MembersTable = memo(function MembersTable({
     updatingActiveId,
     updatingDepartureId,
     updatingBaptismId,
+    updatingCampusesId,
     handleRoleChange,
     handleActiveChange,
     handleDepartureChange,
     handleBaptismChange,
+    handleCampusesChange,
   } = useMembersTableState()
 
   // Saved views management
@@ -115,10 +118,13 @@ export const MembersTable = memo(function MembersTable({
               isUpdatingActive={updatingActiveId === member.id}
               isUpdatingDeparture={updatingDepartureId === member.id}
               isUpdatingBaptism={updatingBaptismId === member.id}
+              isUpdatingCampuses={updatingCampusesId === member.id}
+              allCampuses={allCampuses}
               onRoleChange={handleRoleChange}
               onActiveChange={handleActiveChange}
               onDepartureChange={handleDepartureChange}
               onBaptismChange={handleBaptismChange}
+              onCampusesChange={handleCampusesChange}
             />
           ))}
         </div>
@@ -142,10 +148,13 @@ export const MembersTable = memo(function MembersTable({
                     isUpdatingActive={updatingActiveId === member.id}
                     isUpdatingDeparture={updatingDepartureId === member.id}
                     isUpdatingBaptism={updatingBaptismId === member.id}
+                    isUpdatingCampuses={updatingCampusesId === member.id}
+                    allCampuses={allCampuses}
                     onRoleChange={handleRoleChange}
                     onActiveChange={handleActiveChange}
                     onDepartureChange={handleDepartureChange}
                     onBaptismChange={handleBaptismChange}
+                    onCampusesChange={handleCampusesChange}
                   />
                 ))}
               </TableBody>

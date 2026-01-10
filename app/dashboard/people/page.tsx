@@ -49,8 +49,8 @@ export default async function PeoplePage() {
     leaderCampusIds = await getUserCampusIds(profile.id, adminClient)
   }
 
-  // Parallel fetch: members + pending count + church data + saved views
-  const [membersResult, pendingResult, churchResult, savedViewsResult] = await Promise.all([
+  // Parallel fetch: members + pending count + church data + saved views + all campuses
+  const [membersResult, pendingResult, churchResult, savedViewsResult, allCampusesResult] = await Promise.all([
     // Always fetch members
     adminClient
       .from('profiles')
@@ -91,12 +91,26 @@ export default async function PeoplePage() {
       .eq('view_type', 'people')
       .order('is_default', { ascending: false })
       .order('name'),
+    // Fetch all campuses for the church
+    adminClient
+      .from('campuses')
+      .select('id, name, color, is_default')
+      .eq('church_id', profile.church_id)
+      .eq('is_active', true)
+      .order('is_default', { ascending: false })
+      .order('name'),
   ])
 
   const { data: membersData, error: membersError } = membersResult
   const pendingCount = pendingResult.count || 0
   const joinCode = churchResult.data?.join_code || ''
   const firstDayOfWeek = (churchResult.data?.first_day_of_week ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
+  const allCampuses = (allCampusesResult.data || []).map(c => ({
+    id: c.id,
+    name: c.name,
+    color: c.color,
+    is_default: c.is_default,
+  }))
 
   if (membersError) {
     console.error('Error fetching members:', membersError)
@@ -246,6 +260,7 @@ export default async function PeoplePage() {
               currentUserRole={profile.role}
               savedViews={(savedViewsResult.data || []) as SavedView[]}
               canManageViews={userIsAdmin || userIsLeader}
+              allCampuses={allCampuses}
             />
           ) : (
             <p className="text-center text-muted-foreground py-8">
