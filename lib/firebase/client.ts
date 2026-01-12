@@ -1,7 +1,10 @@
 'use client'
 
-import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app'
-import { getMessaging, getToken, onMessage, isSupported, Messaging } from 'firebase/messaging'
+// Firebase is loaded lazily to reduce initial bundle size (~200KB saved)
+// Imports are done dynamically when push notification features are actually used
+
+import type { FirebaseApp } from 'firebase/app'
+import type { Messaging } from 'firebase/messaging'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -13,23 +16,36 @@ const firebaseConfig = {
 }
 
 let firebaseApp: FirebaseApp | null = null
+let firebaseModulesLoaded = false
+
+/**
+ * Lazily load Firebase modules
+ */
+async function loadFirebaseModules() {
+  if (firebaseModulesLoaded) return
+
+  // Dynamic import of Firebase modules
+  const [{ initializeApp, getApps, getApp }] = await Promise.all([
+    import('firebase/app'),
+  ])
+
+  // Check if all required config values are present
+  if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+    console.warn('[Firebase] Missing configuration, push notifications disabled')
+    return
+  }
+
+  firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp()
+  firebaseModulesLoaded = true
+}
 
 /**
  * Get Firebase app instance (singleton)
  */
-export function getFirebaseApp(): FirebaseApp | null {
+export async function getFirebaseApp(): Promise<FirebaseApp | null> {
   if (typeof window === 'undefined') return null
 
-  if (!firebaseApp) {
-    // Check if all required config values are present
-    if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
-      console.warn('[Firebase] Missing configuration, push notifications disabled')
-      return null
-    }
-
-    firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp()
-  }
-
+  await loadFirebaseModules()
   return firebaseApp
 }
 
@@ -39,13 +55,15 @@ export function getFirebaseApp(): FirebaseApp | null {
 export async function getMessagingInstance(): Promise<Messaging | null> {
   if (typeof window === 'undefined') return null
 
+  const { isSupported, getMessaging } = await import('firebase/messaging')
+
   const supported = await isSupported()
   if (!supported) {
     console.warn('[Firebase] Messaging not supported in this browser')
     return null
   }
 
-  const app = getFirebaseApp()
+  const app = await getFirebaseApp()
   if (!app) return null
 
   return getMessaging(app)
@@ -76,7 +94,8 @@ export async function requestFCMToken(): Promise<string | null> {
       config: firebaseConfig,
     })
 
-    // Get FCM token
+    // Get FCM token - dynamic import
+    const { getToken } = await import('firebase/messaging')
     const token = await getToken(messaging, {
       vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
       serviceWorkerRegistration: registration,
@@ -100,8 +119,9 @@ export function onForegroundMessage(callback: (payload: {
 
   let unsubscribe: (() => void) | null = null
 
-  getMessagingInstance().then((messaging) => {
+  getMessagingInstance().then(async (messaging) => {
     if (messaging) {
+      const { onMessage } = await import('firebase/messaging')
       unsubscribe = onMessage(messaging, callback)
     }
   })
@@ -118,6 +138,8 @@ export function onForegroundMessage(callback: (payload: {
  */
 export async function isPushSupported(): Promise<boolean> {
   if (typeof window === 'undefined') return false
+
+  const { isSupported } = await import('firebase/messaging')
 
   return (
     'Notification' in window &&
