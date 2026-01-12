@@ -51,6 +51,7 @@
     "name": "Imię i nazwisko",
     "email": "Email",
     "emailTooltip": "Nie można zmienić",
+    "phone": "Telefon",
     "role": "Rola",
     "campus": "Lokalizacja",
     "ministryRoles": "Role w służbach",

@@ -51,6 +51,7 @@
     "name": "Name",
     "email": "Email",
     "emailTooltip": "Cannot be changed",
+    "phone": "Phone",
     "role": "Role",
     "campus": "Campus",
     "ministryRoles": "Ministry Roles",

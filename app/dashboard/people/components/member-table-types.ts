@@ -42,6 +42,7 @@ export interface Member {
   first_name: string
   last_name: string
   email: string | null
+  phone: string | null
   role: string
   active: boolean
   date_of_birth: string | null

@@ -54,7 +54,7 @@ export default async function PeoplePage() {
     // Always fetch members
     adminClient
       .from('profiles')
-      .select('id, first_name, last_name, email, role, active, date_of_birth, sex, date_of_departure, reason_for_departure, baptism, baptism_date, member_type, created_at')
+      .select('id, first_name, last_name, email, phone, role, active, date_of_birth, sex, date_of_departure, reason_for_departure, baptism, baptism_date, member_type, created_at')
       .eq('church_id', profile.church_id)
       .order('created_at', { ascending: false }),
     // Fetch pending count for admins and leaders (leaders filtered by campus below)

@@ -94,6 +94,8 @@ export const MemberRow = memo(function MemberRow({
   const t = useTranslations('people')
   const [departurePopoverOpen, setDeparturePopoverOpen] = useState(false)
   const [campusPopoverOpen, setCampusPopoverOpen] = useState(false)
+  const [phonePopoverOpen, setPhonePopoverOpen] = useState(false)
+  const [phoneValue, setPhoneValue] = useState(member.phone || '')
 
   // Can edit profile fields only for offline members
   const canEditOfflineProfile = canEditFields && member.member_type === 'offline'
@@ -146,6 +148,62 @@ export const MemberRow = memo(function MemberRow({
 
       {/* Email */}
       <TableCell>{member.email || '—'}</TableCell>
+
+      {/* Phone */}
+      <TableCell className="text-muted-foreground">
+        {canEditOfflineProfile ? (
+          <Popover open={phonePopoverOpen} onOpenChange={(open) => {
+            setPhonePopoverOpen(open)
+            if (open) setPhoneValue(member.phone || '')
+          }}>
+            <PopoverTrigger asChild>
+              <button
+                disabled={isUpdatingProfile}
+                className={cn(
+                  'h-8 px-2 text-sm text-left rounded-md hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 min-w-[80px]',
+                  !member.phone && 'text-muted-foreground/50',
+                  isUpdatingProfile && 'opacity-50 cursor-not-allowed'
+                )}
+              >
+                {member.phone || '—'}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 bg-white dark:bg-zinc-950 border border-black dark:border-white shadow-lg" align="start">
+              <div className="space-y-2">
+                <Input
+                  type="tel"
+                  value={phoneValue}
+                  onChange={(e) => setPhoneValue(e.target.value)}
+                  placeholder={t('offlineMember.phonePlaceholder')}
+                  className="!border !border-black dark:!border-white"
+                />
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="!border !border-black dark:!border-white"
+                    onClick={() => setPhonePopoverOpen(false)}
+                  >
+                    {t('actions.cancel')}
+                  </Button>
+                  <Button
+                    size="sm"
+                    disabled={isUpdatingProfile}
+                    onClick={() => {
+                      onProfileChange(member.id, { phone: phoneValue || null })
+                      setPhonePopoverOpen(false)
+                    }}
+                  >
+                    {isUpdatingProfile ? t('actions.saving') : t('actions.save')}
+                  </Button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        ) : (
+          member.phone || '—'
+        )}
+      </TableCell>
 
       {/* Role */}
       <TableCell>

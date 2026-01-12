@@ -40,6 +40,7 @@ export function MembersTableHeader() {
         <TableHead>
           <HeaderWithTooltip label={t('tableHeader.email')} tooltip={t('tableHeader.emailTooltip')} />
         </TableHead>
+        <TableHead>{t('tableHeader.phone')}</TableHead>
         <TableHead>{t('tableHeader.role')}</TableHead>
         <TableHead>{t('tableHeader.campus')}</TableHead>
         <TableHead>{t('tableHeader.ministryRoles')}</TableHead>
