@@ -12,37 +12,27 @@ import {
 } from '@/components/ui/popover'
 import { Plus, Trash2, GripVertical, Palette } from 'lucide-react'
 import { optionColors } from '@/lib/validations/forms'
-import type { SelectOption, SelectOptionI18n } from '@/lib/validations/forms'
-import type { Locale } from '@/lib/i18n/config'
+import { useFieldEditorContext } from './FieldEditorContext'
 
-interface FieldEditorOptionsProps {
-  options: SelectOption[] | undefined
-  onAddOption: () => void
-  onUpdateOption: (index: number, label: string) => void
-  onDeleteOption: (index: number) => void
-  onUpdateOptionColor: (index: number, color: string | null) => void
-  // Multilingual props
-  isMultilingual?: boolean
-  activeLocale?: Locale
-  optionsI18n?: SelectOptionI18n[] | null
-  onUpdateOptionI18n?: (index: number, locale: Locale, label: string) => void
-}
-
-export function FieldEditorOptions({
-  options,
-  onAddOption,
-  onUpdateOption,
-  onDeleteOption,
-  onUpdateOptionColor,
-  isMultilingual = false,
-  activeLocale = 'en',
-  optionsI18n,
-  onUpdateOptionI18n,
-}: FieldEditorOptionsProps) {
+export function FieldEditorOptions() {
   const t = useTranslations('forms')
-  const [openColorPickerIndex, setOpenColorPickerIndex] = useState<
-    number | null
-  >(null)
+  const {
+    selectedField,
+    isMultilingual,
+    activeLocale,
+    handleAddOption,
+    handleUpdateOption,
+    handleDeleteOption,
+    handleUpdateOptionColor,
+    handleUpdateOptionI18n,
+  } = useFieldEditorContext()
+
+  const [openColorPickerIndex, setOpenColorPickerIndex] = useState<number | null>(null)
+
+  if (!selectedField) return null
+
+  const options = selectedField.options
+  const optionsI18n = selectedField.options_i18n
 
   // Get the label value for a specific option and locale
   const getOptionLabel = (index: number): string => {
@@ -56,10 +46,10 @@ export function FieldEditorOptions({
 
   // Handle option label change
   const handleOptionLabelChange = (index: number, value: string) => {
-    if (isMultilingual && onUpdateOptionI18n) {
-      onUpdateOptionI18n(index, activeLocale, value)
+    if (isMultilingual) {
+      handleUpdateOptionI18n(index, activeLocale, value)
     } else {
-      onUpdateOption(index, value)
+      handleUpdateOption(index, value)
     }
   }
 
@@ -104,7 +94,7 @@ export function FieldEditorOptions({
                     <button
                       type="button"
                       onClick={() => {
-                        onUpdateOptionColor(index, null)
+                        handleUpdateOptionColor(index, null)
                         setOpenColorPickerIndex(null)
                       }}
                       className={`h-6 w-6 rounded-full border-2 flex items-center justify-center ${
@@ -120,7 +110,7 @@ export function FieldEditorOptions({
                         key={color.name}
                         type="button"
                         onClick={() => {
-                          onUpdateOptionColor(index, color.name)
+                          handleUpdateOptionColor(index, color.name)
                           setOpenColorPickerIndex(null)
                         }}
                         className={`h-6 w-6 rounded-full border-2 flex items-center justify-center ${
@@ -146,7 +136,7 @@ export function FieldEditorOptions({
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 shrink-0 text-muted-foreground hover:text-red-600"
-                onClick={() => onDeleteOption(index)}
+                onClick={() => handleDeleteOption(index)}
                 disabled={options?.length === 1}
               >
                 <Trash2 className="h-4 w-4" />
@@ -158,7 +148,7 @@ export function FieldEditorOptions({
       <Button
         variant="outline"
         size="sm"
-        onClick={onAddOption}
+        onClick={handleAddOption}
         className="w-full !border !border-black dark:!border-white"
       >
         <Plus className="h-4 w-4 mr-2" />

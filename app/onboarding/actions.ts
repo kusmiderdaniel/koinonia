@@ -10,6 +10,7 @@ import {
   type CompleteProfileInput,
 } from '@/lib/validations/onboarding'
 import { notifyLeadersOfPendingMember } from '@/lib/notifications/pending-member'
+import { isReservedSubdomain } from '@/lib/constants/subdomains'
 
 // Helper function to generate a URL-safe slug from a string
 function slugify(text: string): string {
@@ -49,9 +50,8 @@ export async function checkSubdomainAvailability(subdomain: string): Promise<{ a
     return { available: false, error: 'Invalid format' }
   }
 
-  // Reserved subdomains that shouldn't be used
-  const reserved = ['www', 'api', 'app', 'admin', 'dashboard', 'mail', 'email', 'help', 'support', 'blog', 'dev', 'staging', 'test']
-  if (reserved.includes(subdomain)) {
+  // Check if subdomain is reserved
+  if (isReservedSubdomain(subdomain)) {
     return { available: false, error: 'This subdomain is reserved' }
   }
 

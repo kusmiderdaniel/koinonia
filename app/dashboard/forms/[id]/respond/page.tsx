@@ -1,6 +1,7 @@
 import { redirect, notFound } from 'next/navigation'
 import { getLocale } from 'next-intl/server'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { getRelationProperty } from '@/lib/utils/relations'
 import { InternalFormClient } from './InternalFormClient'
 import { type Locale } from '@/lib/i18n/config'
 
@@ -101,7 +102,7 @@ export default async function RespondPage({ params }: RespondPageProps) {
   }
 
   // Get first day of week from church preferences
-  const firstDayOfWeek = ((profile.churches as { first_day_of_week?: number } | null)?.first_day_of_week ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
+  const firstDayOfWeek = getRelationProperty(profile.churches, 'first_day_of_week', 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
 
   // Get user's language preference (profile setting > app locale)
   const appLocale = await getLocale() as Locale

@@ -11,28 +11,15 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { NUMBER_FORMAT_VALUES } from './types'
-import type { NumberFormat } from '@/lib/validations/forms'
+import { useFieldEditorContext } from './FieldEditorContext'
 
-interface NumberSettings {
-  format?: NumberFormat
-  min?: number | null
-  max?: number | null
-  decimals?: number
-}
-
-interface FieldEditorNumberSettingsProps {
-  settings: NumberSettings | undefined
-  onSettingChange: (
-    key: 'format' | 'min' | 'max' | 'decimals',
-    value: string | number | null
-  ) => void
-}
-
-export function FieldEditorNumberSettings({
-  settings,
-  onSettingChange,
-}: FieldEditorNumberSettingsProps) {
+export function FieldEditorNumberSettings() {
   const t = useTranslations('forms.numberSettings')
+  const { selectedField, handleNumberSettingChange } = useFieldEditorContext()
+
+  if (!selectedField) return null
+
+  const settings = selectedField.settings?.number
 
   return (
     <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
@@ -45,7 +32,7 @@ export function FieldEditorNumberSettings({
         </Label>
         <Select
           value={settings?.format || 'number'}
-          onValueChange={(value) => onSettingChange('format', value)}
+          onValueChange={(value) => handleNumberSettingChange('format', value)}
         >
           <SelectTrigger id="number-format" className="h-8 text-sm">
             <SelectValue />
@@ -76,7 +63,7 @@ export function FieldEditorNumberSettings({
             type="number"
             value={settings?.min ?? ''}
             onChange={(e) =>
-              onSettingChange(
+              handleNumberSettingChange(
                 'min',
                 e.target.value ? Number(e.target.value) : null
               )
@@ -94,7 +81,7 @@ export function FieldEditorNumberSettings({
             type="number"
             value={settings?.max ?? ''}
             onChange={(e) =>
-              onSettingChange(
+              handleNumberSettingChange(
                 'max',
                 e.target.value ? Number(e.target.value) : null
               )
@@ -120,7 +107,7 @@ export function FieldEditorNumberSettings({
           max={10}
           value={settings?.decimals ?? 0}
           onChange={(e) =>
-            onSettingChange('decimals', Number(e.target.value) || 0)
+            handleNumberSettingChange('decimals', Number(e.target.value) || 0)
           }
           className="h-8 text-sm"
         />

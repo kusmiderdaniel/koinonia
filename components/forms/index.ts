@@ -7,7 +7,12 @@ export type {
   FormErrors,
   FieldOption,
   FieldSettings,
-  NumberSettings,
+  FieldType,
+  SelectOption,
+  SelectOptionI18n,
+  TranslatedString,
+  ConditionOperator,
+  ConditionAction,
 } from './types'
 
 // Components

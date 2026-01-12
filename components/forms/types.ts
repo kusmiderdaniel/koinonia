@@ -1,42 +1,42 @@
 // Shared form types used by PublicFormClient and InternalFormClient
+// Re-exports core types from lib/validations/forms for convenience
 
+import type {
+  ConditionOperator,
+  ConditionAction,
+  FieldType,
+  SelectOption,
+  SelectOptionI18n,
+  TranslatedString,
+  FieldSettings,
+} from '@/lib/validations/forms'
+
+// Re-export for convenience
+export type {
+  ConditionOperator,
+  ConditionAction,
+  FieldType,
+  SelectOption,
+  SelectOptionI18n,
+  TranslatedString,
+  FieldSettings,
+}
+
+// Simple form data for rendering
 export interface FormData {
   id?: string
   title: string
   description: string | null
 }
 
-export interface NumberSettings {
-  format?: 'number' | 'currency' | 'percentage'
-  min?: number | null
-  max?: number | null
-  decimals?: number
-}
+// Alias for backward compatibility
+export type FieldOption = SelectOption
+export type FieldOptionI18n = SelectOptionI18n
 
-export interface FieldSettings {
-  number?: NumberSettings
-}
-
-export interface FieldOption {
-  value: string
-  label: string
-  color?: string | null
-}
-
-export interface TranslatedString {
-  en: string
-  pl?: string
-}
-
-export interface FieldOptionI18n {
-  value: string
-  label: TranslatedString
-  color?: string | null
-}
-
+// Form field for rendering (display components)
 export interface FormField {
   id: string
-  type: string
+  type: FieldType
   label: string
   label_i18n?: TranslatedString | null
   description: string | null
@@ -44,20 +44,22 @@ export interface FormField {
   placeholder: string | null
   placeholder_i18n?: TranslatedString | null
   required: boolean
-  options: FieldOption[] | null
-  options_i18n?: FieldOptionI18n[] | null
+  options: SelectOption[] | null
+  options_i18n?: SelectOptionI18n[] | null
   settings: FieldSettings | null
   sort_order: number
 }
 
+// Form condition for conditional logic
 export interface FormCondition {
   id: string
   target_field_id: string
   source_field_id: string
-  operator: string
+  operator: ConditionOperator
   value: string | null
-  action: string
+  action: ConditionAction
 }
 
+// Form state types
 export type FormValues = Record<string, unknown>
 export type FormErrors = Record<string, string>

@@ -1,6 +1,7 @@
 import { redirect, notFound } from 'next/navigation'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { hasPageAccess } from '@/lib/permissions'
+import { getRelationProperty } from '@/lib/utils/relations'
 import { FormBuilderClient } from './form-builder-client'
 import type { Form, FormField, FormCondition } from '../types'
 
@@ -33,7 +34,7 @@ export default async function FormPage({ params }: FormPageProps) {
     redirect('/onboarding')
   }
 
-  const firstDayOfWeek = ((profile.churches as { first_day_of_week?: number } | null)?.first_day_of_week ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
+  const firstDayOfWeek = getRelationProperty(profile.churches, 'first_day_of_week', 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
 
   // Check page access - only leaders+ can access forms
   if (!hasPageAccess(profile.role, 'forms')) {

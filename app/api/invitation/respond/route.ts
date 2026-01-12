@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
-import { notifyMinistryLeaderOfResponse } from '@/app/dashboard/events/actions/invitations'
+import { notifyMinistryLeaderOfResponse } from '@/app/dashboard/events/actions/invitation-notifications'
 import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
 
 // Helper to create redirect URL

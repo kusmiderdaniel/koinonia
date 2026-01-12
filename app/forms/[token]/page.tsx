@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { createServiceRoleClient } from '@/lib/supabase/server'
+import { getRelationProperty } from '@/lib/utils/relations'
 import { PublicFormClient } from './PublicFormClient'
 
 // Force dynamic rendering to always fetch fresh data
@@ -52,7 +53,7 @@ export default async function PublicFormPage({ params }: PublicFormPageProps) {
     .eq('form_id', form.id)
 
   // Get first day of week from church preferences
-  const firstDayOfWeek = ((form.churches as { first_day_of_week?: number } | null)?.first_day_of_week ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
+  const firstDayOfWeek = getRelationProperty(form.churches, 'first_day_of_week', 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
 
   return (
     <PublicFormClient

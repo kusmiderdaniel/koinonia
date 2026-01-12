@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Calendar as CalendarIcon, CalendarOff, ChevronRight, Plus, Pencil, Trash2, Cake, Gift } from 'lucide-react'
 import { format } from 'date-fns'
 import { getDateTimeFormatPattern, toDateString, parseDateString, formatDateRange } from '@/lib/utils/format'
+import { getTodayString } from '@/lib/utils/date'
 import { getBirthdayDisplay } from '@/lib/utils/birthday-helpers'
 import { cn } from '@/lib/utils'
 import type { DashboardEvent, Birthday } from '@/app/dashboard/actions'
@@ -28,8 +29,7 @@ interface QuickAccessSectionProps {
 
 // Check if date is upcoming
 const isUpcoming = (endDate: string): boolean => {
-  const today = new Date().toISOString().split('T')[0]
-  return endDate >= today
+  return endDate >= getTodayString()
 }
 
 // Get initials from name

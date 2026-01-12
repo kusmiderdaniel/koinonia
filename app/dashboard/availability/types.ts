@@ -1,5 +1,7 @@
 'use client'
 
+import { getTodayString } from '@/lib/utils/date'
+
 export interface Unavailability {
   id: string
   start_date: string
@@ -48,6 +50,5 @@ export const formatDateShort = (date: Date): string => {
 }
 
 export const isUpcoming = (endDate: string): boolean => {
-  const today = new Date().toISOString().split('T')[0]
-  return endDate >= today
+  return endDate >= getTodayString()
 }

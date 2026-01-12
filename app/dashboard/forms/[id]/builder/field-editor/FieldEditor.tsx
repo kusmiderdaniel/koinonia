@@ -8,39 +8,38 @@ import { Switch } from '@/components/ui/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Plus } from 'lucide-react'
 import { ConditionsPanel, useConditionActions } from '../ConditionsPanel'
-import { useFieldEditorHandlers } from './useFieldEditorHandlers'
+import { FieldEditorProvider, useFieldEditorContext } from './FieldEditorContext'
 import { FieldEditorBasicFields } from './FieldEditorBasicFields'
 import { FieldEditorNumberSettings } from './FieldEditorNumberSettings'
 import { FieldEditorOptions } from './FieldEditorOptions'
 import { LanguageTabs } from '@/components/forms'
 import { useIsMobile } from '@/lib/hooks'
-import { useFormBuilder } from '../../../hooks/useFormBuilder'
-import type { Locale } from '@/lib/i18n/config'
 
-export const FieldEditor = memo(function FieldEditor() {
+// Inner component that uses the context
+function FieldEditorContent() {
   const t = useTranslations('forms')
-  const handlers = useFieldEditorHandlers()
-  const { handleAddCondition, canAddCondition } = useConditionActions()
-  const { form } = useFormBuilder()
   const isMobile = useIsMobile()
-  const [activeTab, setActiveTab] = useState('settings')
-  const [activeLocale, setActiveLocale] = useState<Locale>('en')
-  const isMultilingual = form?.is_multilingual ?? false
+  const { handleAddCondition, canAddCondition } = useConditionActions()
+  const {
+    selectedField,
+    isMultilingual,
+    activeLocale,
+    setActiveLocale,
+    showOptions,
+    handleRequiredChange,
+    handleClose,
+  } = useFieldEditorContext()
 
-  if (!handlers.selectedField) {
+  // Local state for tab selection
+  const [activeTab, setActiveTab] = useState('settings')
+
+  if (!selectedField) {
     return (
       <div className="p-4 text-center text-muted-foreground">
         <p className="text-sm">{t('fieldEditor.selectField')}</p>
       </div>
     )
   }
-
-  const showOptions =
-    handlers.selectedField.type === 'single_select' ||
-    handlers.selectedField.type === 'multi_select'
-  const showPlaceholder = ['text', 'textarea', 'number', 'email'].includes(
-    handlers.selectedField.type
-  )
 
   return (
     <div className={isMobile ? 'p-3' : 'p-4'}>
@@ -64,7 +63,7 @@ export const FieldEditor = memo(function FieldEditor() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={handlers.handleClose}
+              onClick={handleClose}
               className="text-xs"
             >
               {t('fieldEditor.done')}
@@ -78,49 +77,21 @@ export const FieldEditor = memo(function FieldEditor() {
             <LanguageTabs
               activeLocale={activeLocale}
               onLocaleChange={setActiveLocale}
-              missingLocales={!handlers.selectedField.label_i18n?.pl ? ['pl'] : []}
+              missingLocales={!selectedField.label_i18n?.pl ? ['pl'] : []}
             />
           )}
 
-          <FieldEditorBasicFields
-            label={handlers.selectedField.label}
-            description={handlers.selectedField.description}
-            placeholder={handlers.selectedField.placeholder}
-            showPlaceholder={showPlaceholder}
-            onLabelChange={handlers.handleLabelChange}
-            onDescriptionChange={handlers.handleDescriptionChange}
-            onPlaceholderChange={handlers.handlePlaceholderChange}
-            isMultilingual={isMultilingual}
-            activeLocale={activeLocale}
-            labelI18n={handlers.selectedField.label_i18n}
-            descriptionI18n={handlers.selectedField.description_i18n}
-            placeholderI18n={handlers.selectedField.placeholder_i18n}
-            onLabelI18nChange={handlers.handleLabelI18nChange}
-            onDescriptionI18nChange={handlers.handleDescriptionI18nChange}
-            onPlaceholderI18nChange={handlers.handlePlaceholderI18nChange}
-          />
+          {/* Basic fields - now uses context internally */}
+          <FieldEditorBasicFields />
 
-          {/* Number settings */}
-          {handlers.selectedField.type === 'number' && (
-            <FieldEditorNumberSettings
-              settings={handlers.selectedField.settings?.number}
-              onSettingChange={handlers.handleNumberSettingChange}
-            />
+          {/* Number settings - now uses context internally */}
+          {selectedField.type === 'number' && (
+            <FieldEditorNumberSettings />
           )}
 
-          {/* Options for select fields */}
+          {/* Options for select fields - now uses context internally */}
           {showOptions && (
-            <FieldEditorOptions
-              options={handlers.selectedField.options ?? undefined}
-              onAddOption={handlers.handleAddOption}
-              onUpdateOption={handlers.handleUpdateOption}
-              onDeleteOption={handlers.handleDeleteOption}
-              onUpdateOptionColor={handlers.handleUpdateOptionColor}
-              isMultilingual={isMultilingual}
-              activeLocale={activeLocale}
-              optionsI18n={handlers.selectedField.options_i18n}
-              onUpdateOptionI18n={handlers.handleUpdateOptionI18n}
-            />
+            <FieldEditorOptions />
           )}
 
           {/* Required toggle */}
@@ -135,8 +106,8 @@ export const FieldEditor = memo(function FieldEditor() {
             </div>
             <Switch
               id="required"
-              checked={handlers.selectedField.required ?? false}
-              onCheckedChange={handlers.handleRequiredChange}
+              checked={selectedField.required ?? false}
+              onCheckedChange={handleRequiredChange}
             />
           </div>
         </TabsContent>
@@ -162,5 +133,14 @@ export const FieldEditor = memo(function FieldEditor() {
         </TabsContent>
       </Tabs>
     </div>
+  )
+}
+
+// Main component that provides the context
+export const FieldEditor = memo(function FieldEditor() {
+  return (
+    <FieldEditorProvider>
+      <FieldEditorContent />
+    </FieldEditorProvider>
   )
 })
