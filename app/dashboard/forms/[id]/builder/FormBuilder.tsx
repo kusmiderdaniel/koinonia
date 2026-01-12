@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState, useEffect } from 'react'
+import { useCallback, useState, useEffect, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import {
   DndContext,
@@ -25,19 +25,30 @@ import { useFormBuilder } from '../../hooks/useFormBuilder'
 import { FieldPalette } from './FieldPalette'
 import { SortableField } from './SortableField'
 import { FieldEditor } from './FieldEditor'
+import { LanguageTabs } from '@/components/forms'
 import { EmptyState } from '@/components/EmptyState'
 import { useIsMobile } from '@/lib/hooks'
 import { FileText, Plus } from 'lucide-react'
+import { resolveFormFields } from '@/lib/i18n/form-helpers'
 import type { FieldType } from '@/lib/validations/forms'
 import type { BuilderField } from '../../types'
+import type { Locale } from '@/lib/i18n/config'
 
 export function FormBuilder() {
   const t = useTranslations('forms')
   const [mounted, setMounted] = useState(false)
   const isMobile = useIsMobile()
-  const { fields, selectedFieldId, addField, reorderFields, selectField } = useFormBuilder()
+  const { form, fields, selectedFieldId, addField, reorderFields, selectField } = useFormBuilder()
   const [activeId, setActiveId] = useState<string | null>(null)
   const [isPaletteOpen, setIsPaletteOpen] = useState(false)
+  const [previewLocale, setPreviewLocale] = useState<Locale>('en')
+  const isMultilingual = form?.is_multilingual ?? false
+
+  // Resolve fields to the preview locale for display
+  const resolvedFields = useMemo(() => {
+    if (!isMultilingual) return fields
+    return resolveFormFields(fields, previewLocale) as BuilderField[]
+  }, [fields, isMultilingual, previewLocale])
 
   // Prevent hydration mismatch by waiting for client mount
   useEffect(() => {
@@ -127,6 +138,18 @@ export function FormBuilder() {
     return (
       <>
         <div className="flex flex-col h-full">
+          {/* Language selector for multilingual forms - Mobile */}
+          {isMultilingual && fields.length > 0 && (
+            <div className="shrink-0 px-3 pt-3 pb-2 bg-muted/10 flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">{t('builder.previewLanguage')}</span>
+              <LanguageTabs
+                activeLocale={previewLocale}
+                onLocaleChange={setPreviewLocale}
+                shortLabels
+              />
+            </div>
+          )}
+
           {/* Mobile Canvas */}
           <div className="flex-1 overflow-y-auto p-3 bg-muted/10">
             {fields.length === 0 ? (
@@ -142,6 +165,7 @@ export function FormBuilder() {
                   <SortableField
                     key={field.id}
                     field={field}
+                    resolvedField={resolvedFields[index]}
                     isSelected={selectedFieldId === field.id}
                     onClick={() => selectField(field.id)}
                     index={index}
@@ -209,6 +233,18 @@ export function FormBuilder() {
         {/* Canvas */}
         <div className="flex-1 overflow-y-auto p-6 bg-muted/10">
           <div className="max-w-2xl mx-auto">
+            {/* Language selector for multilingual forms */}
+            {isMultilingual && fields.length > 0 && (
+              <div className="mb-4 flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">{t('builder.previewLanguage')}</span>
+                <LanguageTabs
+                  activeLocale={previewLocale}
+                  onLocaleChange={setPreviewLocale}
+                  shortLabels
+                />
+              </div>
+            )}
+
             {fields.length === 0 ? (
               <EmptyState
                 icon={FileText}
@@ -221,10 +257,11 @@ export function FormBuilder() {
                 strategy={verticalListSortingStrategy}
               >
                 <div className="space-y-3">
-                  {fields.map((field) => (
+                  {fields.map((field, index) => (
                     <SortableField
                       key={field.id}
                       field={field}
+                      resolvedField={resolvedFields[index]}
                       isSelected={selectedFieldId === field.id}
                       onClick={() => selectField(field.id)}
                     />

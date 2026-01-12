@@ -2,6 +2,9 @@ import { notFound } from 'next/navigation'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { PublicFormClient } from './PublicFormClient'
 
+// Force dynamic rendering to always fetch fresh data
+export const dynamic = 'force-dynamic'
+
 interface PublicFormPageProps {
   params: Promise<{ token: string }>
 }
@@ -13,7 +16,7 @@ export default async function PublicFormPage({ params }: PublicFormPageProps) {
   // Get form by public token (include church for first_day_of_week)
   const { data: form } = await adminClient
     .from('forms')
-    .select('id, title, description, status, access_type, churches(first_day_of_week)')
+    .select('id, title, title_i18n, description, description_i18n, status, access_type, is_multilingual, churches(first_day_of_week)')
     .eq('public_token', token)
     .eq('access_type', 'public')
     .single()
@@ -35,10 +38,10 @@ export default async function PublicFormPage({ params }: PublicFormPageProps) {
     )
   }
 
-  // Get fields
+  // Get fields (include i18n columns for multilingual forms)
   const { data: fields } = await adminClient
     .from('form_fields')
-    .select('id, type, label, description, placeholder, required, options, settings, sort_order')
+    .select('id, type, label, label_i18n, description, description_i18n, placeholder, placeholder_i18n, required, options, options_i18n, settings, sort_order')
     .eq('form_id', form.id)
     .order('sort_order')
 
@@ -57,7 +60,10 @@ export default async function PublicFormPage({ params }: PublicFormPageProps) {
       form={{
         id: form.id,
         title: form.title,
+        title_i18n: form.title_i18n,
         description: form.description,
+        description_i18n: form.description_i18n,
+        is_multilingual: form.is_multilingual,
       }}
       fields={fields || []}
       conditions={conditions || []}

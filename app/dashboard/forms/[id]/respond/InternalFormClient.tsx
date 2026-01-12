@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
@@ -21,6 +21,9 @@ import {
   type FormCondition,
 } from '@/components/forms'
 import { submitInternalForm } from '../../actions/submissions'
+import { resolveFormFields, resolveFormTitleDescription } from '@/lib/i18n/form-helpers'
+import { defaultLocale, type Locale } from '@/lib/i18n/config'
+import type { TranslatedString } from '@/lib/validations/forms'
 
 interface Respondent {
   id: string
@@ -30,13 +33,18 @@ interface Respondent {
 
 interface InternalFormClientProps {
   formId: string
-  form: FormData
+  form: FormData & {
+    is_multilingual?: boolean
+    title_i18n?: TranslatedString | null
+    description_i18n?: TranslatedString | null
+  }
   fields: FormField[]
   conditions: FormCondition[]
   respondent: Respondent
   hasExistingSubmission: boolean
   isAnonymous?: boolean
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  userLocale?: Locale
 }
 
 export function InternalFormClient({
@@ -48,10 +56,23 @@ export function InternalFormClient({
   hasExistingSubmission,
   isAnonymous = false,
   weekStartsOn = 0,
+  userLocale = defaultLocale,
 }: InternalFormClientProps) {
   const t = useTranslations('forms')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+
+  // Resolve fields to the user's locale
+  const resolvedFields = useMemo(() => {
+    if (!form.is_multilingual) return fields
+    return resolveFormFields(fields, userLocale)
+  }, [fields, form.is_multilingual, userLocale])
+
+  // Resolve form title and description to the user's locale
+  const resolvedForm = useMemo(() => {
+    if (!form.is_multilingual) return { title: form.title, description: form.description }
+    return resolveFormTitleDescription(form, userLocale)
+  }, [form, userLocale])
 
   // Form state management
   const {
@@ -62,9 +83,9 @@ export function InternalFormClient({
     handleMultiSelectChange,
   } = useFormState()
 
-  // Conditional logic
+  // Conditional logic - use resolved fields for display
   const { visibleFields } = useFormConditions({
-    fields,
+    fields: resolvedFields,
     conditions,
     values,
   })
@@ -184,9 +205,9 @@ export function InternalFormClient({
         >
           {/* Header */}
           <div className="p-6 md:p-8 border-b bg-gradient-to-br from-brand/5 to-transparent">
-            <h1 className="text-2xl md:text-3xl font-bold">{form.title}</h1>
-            {form.description && (
-              <p className="mt-2 text-muted-foreground">{form.description}</p>
+            <h1 className="text-2xl md:text-3xl font-bold">{resolvedForm.title}</h1>
+            {resolvedForm.description && (
+              <p className="mt-2 text-muted-foreground">{resolvedForm.description}</p>
             )}
           </div>
 

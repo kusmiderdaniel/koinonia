@@ -1,5 +1,5 @@
 import type { Database } from '@/types/supabase'
-import type { FieldType, FormStatus, FormAccessType, ConditionOperator, ConditionAction, SelectOption, FieldSettings } from '@/lib/validations/forms'
+import type { FieldType, FormStatus, FormAccessType, ConditionOperator, ConditionAction, SelectOption, SelectOptionI18n, TranslatedString, FieldSettings } from '@/lib/validations/forms'
 
 // Base types from database
 export type DbForm = Database['public']['Tables']['forms']['Row']
@@ -8,15 +8,21 @@ export type DbFormCondition = Database['public']['Tables']['form_conditions']['R
 export type DbFormSubmission = Database['public']['Tables']['form_submissions']['Row']
 
 // Form with typed enums
-export interface Form extends Omit<DbForm, 'status' | 'access_type'> {
+export interface Form extends Omit<DbForm, 'status' | 'access_type' | 'title_i18n' | 'description_i18n'> {
   status: FormStatus
   access_type: FormAccessType
+  title_i18n: TranslatedString | null
+  description_i18n: TranslatedString | null
 }
 
 // Form field with typed enums
-export interface FormField extends Omit<DbFormField, 'type' | 'options' | 'settings'> {
+export interface FormField extends Omit<DbFormField, 'type' | 'options' | 'options_i18n' | 'label_i18n' | 'description_i18n' | 'placeholder_i18n' | 'settings'> {
   type: FieldType
   options: SelectOption[] | null
+  options_i18n: SelectOptionI18n[] | null
+  label_i18n: TranslatedString | null
+  description_i18n: TranslatedString | null
+  placeholder_i18n: TranslatedString | null
   settings: FieldSettings | null
 }
 

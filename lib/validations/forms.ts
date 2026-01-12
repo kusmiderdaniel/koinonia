@@ -1,5 +1,29 @@
 import { z } from 'zod'
 
+// ============================================================================
+// MULTILINGUAL SUPPORT SCHEMAS
+// ============================================================================
+
+// Translated string schema - object with locale keys
+// EN is always required as fallback, PL is optional
+export const translatedStringSchema = z.object({
+  en: z.string().min(1),
+  pl: z.string().optional(),
+})
+export type TranslatedString = z.infer<typeof translatedStringSchema>
+
+// Select option with translations (for multilingual forms)
+export const selectOptionI18nSchema = z.object({
+  value: z.string().min(1),
+  label: translatedStringSchema,
+  color: z.string().optional().nullable(),
+})
+export type SelectOptionI18n = z.infer<typeof selectOptionI18nSchema>
+
+// ============================================================================
+// FIELD TYPES
+// ============================================================================
+
 // Field types
 export const fieldTypeSchema = z.enum([
   'text',
@@ -84,12 +108,21 @@ export const fieldSettingsSchema = z.object({
 })
 export type FieldSettings = z.infer<typeof fieldSettingsSchema>
 
+// Translated string schema that allows empty strings (for form title/description editing)
+export const translatedStringOptionalSchema = z.object({
+  en: z.string(),
+  pl: z.string().optional(),
+})
+
 // Form schema (for creating/updating forms)
 export const formSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be 200 characters or less'),
+  titleI18n: translatedStringOptionalSchema.optional().nullable(),
   description: z.string().max(2000, 'Description must be 2000 characters or less').optional().nullable(),
+  descriptionI18n: translatedStringOptionalSchema.optional().nullable(),
   accessType: formAccessTypeSchema.default('internal'),
   allowMultipleSubmissions: z.boolean().optional(),
+  isMultilingual: z.boolean().optional(),
 })
 export type FormInput = z.infer<typeof formSchema>
 
@@ -98,10 +131,14 @@ export const formFieldSchema = z.object({
   id: z.string().uuid().optional(),
   type: fieldTypeSchema,
   label: z.string().min(1, 'Label is required').max(200, 'Label must be 200 characters or less'),
+  labelI18n: translatedStringSchema.optional().nullable(),
   description: z.string().max(500, 'Description must be 500 characters or less').optional().nullable(),
+  descriptionI18n: translatedStringSchema.optional().nullable(),
   placeholder: z.string().max(200, 'Placeholder must be 200 characters or less').optional().nullable(),
+  placeholderI18n: translatedStringSchema.optional().nullable(),
   required: z.boolean().default(false),
   options: z.array(selectOptionSchema).optional().nullable(),
+  optionsI18n: z.array(selectOptionI18nSchema).optional().nullable(),
   settings: fieldSettingsSchema.optional().nullable(),
   sortOrder: z.number().int().min(0),
 })

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { getOptionColorClasses } from '../utils'
@@ -12,6 +13,13 @@ export function MultiSelectField({
   error,
   onMultiSelectChange,
 }: MultiSelectFieldProps) {
+  const [mounted, setMounted] = useState(false)
+
+  // Prevent hydration mismatch from Radix UI ID generation
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   return (
     <FieldWrapper field={field} error={error}>
       <div className="space-y-2">
@@ -21,13 +29,17 @@ export function MultiSelectField({
           const optionColor = getOptionColorClasses(option.color)
           return (
             <div key={option.value} className="flex items-center space-x-2">
-              <Checkbox
-                id={`${field.id}-${option.value}`}
-                checked={isChecked}
-                onCheckedChange={(checked) =>
-                  onMultiSelectChange(field.id, option.value, checked === true)
-                }
-              />
+              {mounted ? (
+                <Checkbox
+                  id={`${field.id}-${option.value}`}
+                  checked={isChecked}
+                  onCheckedChange={(checked) =>
+                    onMultiSelectChange(field.id, option.value, checked === true)
+                  }
+                />
+              ) : (
+                <div className="h-4 w-4 shrink-0 rounded-sm border border-primary" />
+              )}
               <Label
                 htmlFor={`${field.id}-${option.value}`}
                 className={`px-2 py-0.5 rounded-full text-sm font-medium cursor-pointer ${optionColor.bg} ${optionColor.text}`}

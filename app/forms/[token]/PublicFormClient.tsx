@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/input'
@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { useIsMobile } from '@/lib/hooks'
 import {
   FormFields,
+  LanguageSelector,
   useFormConditions,
   useFormState,
   useFormValidation,
@@ -17,10 +18,38 @@ import {
   type FormField,
   type FormCondition,
 } from '@/components/forms'
+import { resolveFormFields, resolveFormTitleDescription } from '@/lib/i18n/form-helpers'
+import type { TranslatedString } from '@/lib/validations/forms'
+import { defaultLocale, type Locale } from '@/lib/i18n/config'
+
+// Translations for public form UI elements (used when form language differs from app locale)
+const publicFormTranslations: Record<Locale, {
+  emailOptional: string
+  emailDescription: string
+  submit: string
+  submitting: string
+}> = {
+  en: {
+    emailOptional: 'Your email (optional)',
+    emailDescription: "Provide your email if you'd like to receive updates about this submission",
+    submit: 'Submit',
+    submitting: 'Submitting...',
+  },
+  pl: {
+    emailOptional: 'Twój email (opcjonalnie)',
+    emailDescription: 'Podaj swój email, jeśli chcesz otrzymywać aktualizacje dotyczące tego zgłoszenia',
+    submit: 'Prześlij',
+    submitting: 'Przesyłanie...',
+  },
+}
 
 interface PublicFormClientProps {
   token: string
-  form: FormData
+  form: FormData & {
+    is_multilingual?: boolean
+    title_i18n?: TranslatedString | null
+    description_i18n?: TranslatedString | null
+  }
   fields: FormField[]
   conditions: FormCondition[]
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
@@ -38,6 +67,36 @@ export function PublicFormClient({
   const isMobile = useIsMobile()
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [selectedLocale, setSelectedLocale] = useState<Locale>(defaultLocale)
+
+  // Read from localStorage after mount (to avoid hydration mismatch)
+  useEffect(() => {
+    const stored = localStorage.getItem('formLanguage') as Locale
+    if (stored && (stored === 'en' || stored === 'pl')) {
+      setSelectedLocale(stored)
+    }
+  }, [])
+
+  // Resolve fields to the selected locale
+  const resolvedFields = useMemo(() => {
+    if (!form.is_multilingual) return fields
+    return resolveFormFields(fields, selectedLocale)
+  }, [fields, form.is_multilingual, selectedLocale])
+
+  // Resolve form title and description to the selected locale
+  const resolvedForm = useMemo(() => {
+    if (!form.is_multilingual) return { title: form.title, description: form.description }
+    return resolveFormTitleDescription(form, selectedLocale)
+  }, [form, selectedLocale])
+
+  // Get UI translations for the selected locale (for multilingual forms)
+  const formT = form.is_multilingual ? publicFormTranslations[selectedLocale] : null
+
+  // Handle locale change and persist to localStorage
+  const handleLocaleChange = useCallback((locale: Locale) => {
+    setSelectedLocale(locale)
+    localStorage.setItem('formLanguage', locale)
+  }, [])
 
   // Form state management
   const {
@@ -48,9 +107,9 @@ export function PublicFormClient({
     handleMultiSelectChange,
   } = useFormState()
 
-  // Conditional logic
+  // Conditional logic - use resolved fields for display, original for ID references
   const { visibleFields } = useFormConditions({
-    fields,
+    fields: resolvedFields,
     conditions,
     values,
   })
@@ -122,10 +181,20 @@ export function PublicFormClient({
         >
           {/* Header */}
           <div className="p-6 md:p-8 border-b bg-gradient-to-br from-brand/5 to-transparent">
-            <h1 className="text-2xl md:text-3xl font-bold">{form.title}</h1>
-            {form.description && (
-              <p className="mt-2 text-muted-foreground">{form.description}</p>
-            )}
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <h1 className="text-2xl md:text-3xl font-bold">{resolvedForm.title}</h1>
+                {resolvedForm.description && (
+                  <p className="mt-2 text-muted-foreground">{resolvedForm.description}</p>
+                )}
+              </div>
+              {form.is_multilingual && (
+                <LanguageSelector
+                  currentLocale={selectedLocale}
+                  onLocaleChange={handleLocaleChange}
+                />
+              )}
+            </div>
           </div>
 
           {/* Fields */}
@@ -133,10 +202,10 @@ export function PublicFormClient({
             {/* Optional email for anonymous submissions */}
             <div className="pb-6 mb-6 border-b space-y-2">
               <Label htmlFor="respondent-email" className="text-base font-medium">
-                {t('public.emailOptional')}
+                {formT?.emailOptional || t('public.emailOptional')}
               </Label>
               <p className="text-sm text-muted-foreground">
-                {t('public.emailDescription')}
+                {formT?.emailDescription || t('public.emailDescription')}
               </p>
               <div className={isMobile ? '' : 'w-1/2'}>
                 <Input
@@ -170,10 +239,10 @@ export function PublicFormClient({
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('public.submitting')}
+                  {formT?.submitting || t('public.submitting')}
                 </>
               ) : (
-                t('public.submit')
+                formT?.submit || t('public.submit')
               )}
             </button>
           </div>

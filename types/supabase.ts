@@ -965,11 +965,15 @@ export type Database = {
         Row: {
           created_at: string | null
           description: string | null
+          description_i18n: Json | null
           form_id: string
           id: string
           label: string
+          label_i18n: Json | null
           options: Json | null
+          options_i18n: Json | null
           placeholder: string | null
+          placeholder_i18n: Json | null
           required: boolean | null
           settings: Json | null
           sort_order: number
@@ -979,11 +983,15 @@ export type Database = {
         Insert: {
           created_at?: string | null
           description?: string | null
+          description_i18n?: Json | null
           form_id: string
           id?: string
           label: string
+          label_i18n?: Json | null
           options?: Json | null
+          options_i18n?: Json | null
           placeholder?: string | null
+          placeholder_i18n?: Json | null
           required?: boolean | null
           settings?: Json | null
           sort_order?: number
@@ -993,11 +1001,15 @@ export type Database = {
         Update: {
           created_at?: string | null
           description?: string | null
+          description_i18n?: Json | null
           form_id?: string
           id?: string
           label?: string
+          label_i18n?: Json | null
           options?: Json | null
+          options_i18n?: Json | null
           placeholder?: string | null
+          placeholder_i18n?: Json | null
           required?: boolean | null
           settings?: Json | null
           sort_order?: number
@@ -1071,12 +1083,15 @@ export type Database = {
           created_at: string | null
           created_by: string | null
           description: string | null
+          description_i18n: Json | null
           id: string
+          is_multilingual: boolean
           public_token: string | null
           published_at: string | null
           settings: Json | null
           status: string
           title: string
+          title_i18n: Json | null
           updated_at: string | null
         }
         Insert: {
@@ -1087,12 +1102,15 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           description?: string | null
+          description_i18n?: Json | null
           id?: string
+          is_multilingual?: boolean
           public_token?: string | null
           published_at?: string | null
           settings?: Json | null
           status?: string
           title: string
+          title_i18n?: Json | null
           updated_at?: string | null
         }
         Update: {
@@ -1103,12 +1121,15 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           description?: string | null
+          description_i18n?: Json | null
           id?: string
+          is_multilingual?: boolean
           public_token?: string | null
           published_at?: string | null
           settings?: Json | null
           status?: string
           title?: string
+          title_i18n?: Json | null
           updated_at?: string | null
         }
         Relationships: [

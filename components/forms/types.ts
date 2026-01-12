@@ -23,14 +23,29 @@ export interface FieldOption {
   color?: string | null
 }
 
+export interface TranslatedString {
+  en: string
+  pl?: string
+}
+
+export interface FieldOptionI18n {
+  value: string
+  label: TranslatedString
+  color?: string | null
+}
+
 export interface FormField {
   id: string
   type: string
   label: string
+  label_i18n?: TranslatedString | null
   description: string | null
+  description_i18n?: TranslatedString | null
   placeholder: string | null
+  placeholder_i18n?: TranslatedString | null
   required: boolean
   options: FieldOption[] | null
+  options_i18n?: FieldOptionI18n[] | null
   settings: FieldSettings | null
   sort_order: number
 }

@@ -63,18 +63,24 @@ export function useFormBuilderClientState({ initialData }: FormBuilderClientProp
     setIsSaving(true)
 
     try {
-      // Save form title/description/access_type/allow_multiple_submissions if changed
+      // Save form title/description/access_type/allow_multiple_submissions/is_multilingual if changed
       if (
         form.title !== initialData.form.title ||
         form.description !== initialData.form.description ||
+        JSON.stringify(form.title_i18n) !== JSON.stringify(initialData.form.title_i18n) ||
+        JSON.stringify(form.description_i18n) !== JSON.stringify(initialData.form.description_i18n) ||
         form.access_type !== initialData.form.access_type ||
-        form.allow_multiple_submissions !== initialData.form.allow_multiple_submissions
+        form.allow_multiple_submissions !== initialData.form.allow_multiple_submissions ||
+        form.is_multilingual !== initialData.form.is_multilingual
       ) {
         const formResult = await updateForm(form.id, {
           title: form.title,
+          titleI18n: form.title_i18n,
           description: form.description,
+          descriptionI18n: form.description_i18n,
           accessType: form.access_type,
           allowMultipleSubmissions: form.allow_multiple_submissions,
+          isMultilingual: form.is_multilingual,
         })
         if (formResult.error) {
           toast.error(formResult.error)
@@ -88,10 +94,14 @@ export function useFormBuilderClientState({ initialData }: FormBuilderClientProp
         id: f.isNew ? undefined : f.id,
         type: f.type,
         label: f.label,
+        labelI18n: f.label_i18n || undefined,
         description: f.description || undefined,
+        descriptionI18n: f.description_i18n || undefined,
         placeholder: f.placeholder || undefined,
+        placeholderI18n: f.placeholder_i18n || undefined,
         required: f.required ?? false,
         options: f.options || undefined,
+        optionsI18n: f.options_i18n || undefined,
         settings: f.settings || undefined,
         sortOrder: f.sort_order,
         isNew: f.isNew,

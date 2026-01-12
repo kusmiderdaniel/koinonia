@@ -1,14 +1,18 @@
 import { create } from 'zustand'
 import type { Form, BuilderField, BuilderCondition, FormBuilderState, INITIAL_BUILDER_STATE } from '../types'
-import type { FieldType, FormAccessType } from '@/lib/validations/forms'
+import type { FieldType, FormAccessType, TranslatedString } from '@/lib/validations/forms'
+import type { Locale } from '@/lib/i18n/config'
 
 interface FormBuilderActions {
   // Form actions
   setForm: (form: Form | null) => void
   updateFormTitle: (title: string) => void
   updateFormDescription: (description: string | null) => void
+  updateFormTitleI18n: (locale: Locale, title: string) => void
+  updateFormDescriptionI18n: (locale: Locale, description: string) => void
   updateFormAccessType: (accessType: FormAccessType) => void
   updateFormAllowMultipleSubmissions: (allow: boolean) => void
+  updateFormIsMultilingual: (isMultilingual: boolean) => void
 
   // Field actions
   setFields: (fields: BuilderField[]) => void
@@ -77,6 +81,32 @@ export const useFormBuilder = create<FormBuilderStore>((set, get) => ({
       isDirty: true,
     })),
 
+  updateFormTitleI18n: (locale, title) =>
+    set((state) => {
+      if (!state.form) return state
+      const currentI18n = state.form.title_i18n || { en: state.form.title }
+      const newI18n: TranslatedString = { ...currentI18n, [locale]: title }
+      // Also update the base title if editing English
+      const newTitle = locale === 'en' ? title : state.form.title
+      return {
+        form: { ...state.form, title: newTitle, title_i18n: newI18n },
+        isDirty: true,
+      }
+    }),
+
+  updateFormDescriptionI18n: (locale, description) =>
+    set((state) => {
+      if (!state.form) return state
+      const currentI18n = state.form.description_i18n || { en: state.form.description || '' }
+      const newI18n: TranslatedString = { ...currentI18n, [locale]: description }
+      // Also update the base description if editing English
+      const newDescription = locale === 'en' ? (description || null) : state.form.description
+      return {
+        form: { ...state.form, description: newDescription, description_i18n: newI18n },
+        isDirty: true,
+      }
+    }),
+
   updateFormAccessType: (access_type) =>
     set((state) => ({
       form: state.form ? { ...state.form, access_type } : null,
@@ -86,6 +116,12 @@ export const useFormBuilder = create<FormBuilderStore>((set, get) => ({
   updateFormAllowMultipleSubmissions: (allow_multiple_submissions) =>
     set((state) => ({
       form: state.form ? { ...state.form, allow_multiple_submissions } : null,
+      isDirty: true,
+    })),
+
+  updateFormIsMultilingual: (is_multilingual) =>
+    set((state) => ({
+      form: state.form ? { ...state.form, is_multilingual } : null,
       isDirty: true,
     })),
 
@@ -101,10 +137,14 @@ export const useFormBuilder = create<FormBuilderStore>((set, get) => ({
       id,
       type,
       label: label || FALLBACK_LABELS[type] || 'Question',
+      label_i18n: null,
       description: null,
+      description_i18n: null,
       placeholder: null,
+      placeholder_i18n: null,
       required: false,
       options: type === 'single_select' || type === 'multi_select' ? [{ value: 'option1', label: 'Option 1' }] : null,
+      options_i18n: null,
       settings: type === 'number' ? { number: { format: 'number', decimals: 0 } } : null,
       sort_order: insertIndex,
       isNew: true,

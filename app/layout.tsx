@@ -48,7 +48,7 @@ export default async function RootLayout({
             <NavigationProgress />
           </Suspense>
           <QueryProvider>{children}</QueryProvider>
-          <Toaster position="top-right" richColors />
+          <Toaster position="top-right" richColors duration={2000} />
         </NextIntlClientProvider>
       </body>
     </html>

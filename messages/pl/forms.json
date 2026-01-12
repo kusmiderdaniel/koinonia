@@ -118,6 +118,7 @@
     },
     "preview": "Podgląd",
     "previewTitle": "Podgląd formularza",
+    "previewLanguage": "Podgląd języka",
     "empty": {
       "title": "Zacznij budować formularz",
       "descriptionMobile": "Dotknij przycisk +, aby dodać pola do formularza.",
@@ -311,6 +312,8 @@
     "accessType": "Kto może odpowiadać?",
     "allowMultipleSubmissions": "Zezwól na wielokrotne wypełnianie",
     "allowMultipleSubmissionsDescription": "Po włączeniu użytkownicy mogą wypełnić ten formularz więcej niż raz.",
+    "multilingualForm": "Formularz wielojęzyczny",
+    "multilingualFormDescription": "Włącz tłumaczenia etykiet pól, opisów i opcji w wielu językach.",
     "formStatus": "Aktualny status",
     "statusHelp": {
       "draft": "Formularz nie jest jeszcze opublikowany. Tylko Ty możesz go zobaczyć.",

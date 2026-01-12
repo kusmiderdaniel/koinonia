@@ -118,6 +118,7 @@
     },
     "preview": "Preview",
     "previewTitle": "Form Preview",
+    "previewLanguage": "Preview language",
     "empty": {
       "title": "Start building your form",
       "descriptionMobile": "Tap the + button to add fields to your form.",
@@ -311,6 +312,8 @@
     "accessType": "Who can respond?",
     "allowMultipleSubmissions": "Allow multiple submissions",
     "allowMultipleSubmissionsDescription": "When enabled, users can submit this form more than once.",
+    "multilingualForm": "Multilingual form",
+    "multilingualFormDescription": "Enable translations for field labels, descriptions, and options in multiple languages.",
     "formStatus": "Current Status",
     "statusHelp": {
       "draft": "Form is not yet published. Only you can see it.",

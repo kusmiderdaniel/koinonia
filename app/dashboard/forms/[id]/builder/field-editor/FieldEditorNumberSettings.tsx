@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -9,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { NUMBER_FORMATS } from './types'
+import { NUMBER_FORMAT_VALUES } from './types'
 import type { NumberFormat } from '@/lib/validations/forms'
 
 interface NumberSettings {
@@ -31,14 +32,16 @@ export function FieldEditorNumberSettings({
   settings,
   onSettingChange,
 }: FieldEditorNumberSettingsProps) {
+  const t = useTranslations('forms.numberSettings')
+
   return (
     <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
-      <Label className="text-sm font-medium">Number Settings</Label>
+      <Label className="text-sm font-medium">{t('title')}</Label>
 
       {/* Format */}
       <div className="space-y-1.5">
         <Label htmlFor="number-format" className="text-xs text-muted-foreground">
-          Format
+          {t('format')}
         </Label>
         <Select
           value={settings?.format || 'number'}
@@ -53,9 +56,9 @@ export function FieldEditorNumberSettings({
             align="start"
             className="!border !border-black dark:!border-white"
           >
-            {NUMBER_FORMATS.map((format) => (
-              <SelectItem key={format.value} value={format.value}>
-                {format.label}
+            {NUMBER_FORMAT_VALUES.map((format) => (
+              <SelectItem key={format} value={format}>
+                {t(`formats.${format}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -66,7 +69,7 @@ export function FieldEditorNumberSettings({
       <div className="grid grid-cols-2 gap-2">
         <div className="space-y-1.5">
           <Label htmlFor="number-min" className="text-xs text-muted-foreground">
-            Min
+            {t('min')}
           </Label>
           <Input
             id="number-min"
@@ -78,13 +81,13 @@ export function FieldEditorNumberSettings({
                 e.target.value ? Number(e.target.value) : null
               )
             }
-            placeholder="No min"
+            placeholder={t('noMin')}
             className="h-8 text-sm"
           />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="number-max" className="text-xs text-muted-foreground">
-            Max
+            {t('max')}
           </Label>
           <Input
             id="number-max"
@@ -96,7 +99,7 @@ export function FieldEditorNumberSettings({
                 e.target.value ? Number(e.target.value) : null
               )
             }
-            placeholder="No max"
+            placeholder={t('noMax')}
             className="h-8 text-sm"
           />
         </div>
@@ -108,7 +111,7 @@ export function FieldEditorNumberSettings({
           htmlFor="number-decimals"
           className="text-xs text-muted-foreground"
         >
-          Decimal Places
+          {t('decimalPlaces')}
         </Label>
         <Input
           id="number-decimals"

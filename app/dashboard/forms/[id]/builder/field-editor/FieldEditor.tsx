@@ -12,14 +12,20 @@ import { useFieldEditorHandlers } from './useFieldEditorHandlers'
 import { FieldEditorBasicFields } from './FieldEditorBasicFields'
 import { FieldEditorNumberSettings } from './FieldEditorNumberSettings'
 import { FieldEditorOptions } from './FieldEditorOptions'
+import { LanguageTabs } from '@/components/forms'
 import { useIsMobile } from '@/lib/hooks'
+import { useFormBuilder } from '../../../hooks/useFormBuilder'
+import type { Locale } from '@/lib/i18n/config'
 
 export const FieldEditor = memo(function FieldEditor() {
   const t = useTranslations('forms')
   const handlers = useFieldEditorHandlers()
   const { handleAddCondition, canAddCondition } = useConditionActions()
+  const { form } = useFormBuilder()
   const isMobile = useIsMobile()
   const [activeTab, setActiveTab] = useState('settings')
+  const [activeLocale, setActiveLocale] = useState<Locale>('en')
+  const isMultilingual = form?.is_multilingual ?? false
 
   if (!handlers.selectedField) {
     return (
@@ -67,6 +73,15 @@ export const FieldEditor = memo(function FieldEditor() {
         </div>
 
         <TabsContent value="settings" className={`mt-0 ${isMobile ? 'space-y-3' : 'space-y-4'}`}>
+          {/* Single language picker for the entire field */}
+          {isMultilingual && (
+            <LanguageTabs
+              activeLocale={activeLocale}
+              onLocaleChange={setActiveLocale}
+              missingLocales={!handlers.selectedField.label_i18n?.pl ? ['pl'] : []}
+            />
+          )}
+
           <FieldEditorBasicFields
             label={handlers.selectedField.label}
             description={handlers.selectedField.description}
@@ -75,6 +90,14 @@ export const FieldEditor = memo(function FieldEditor() {
             onLabelChange={handlers.handleLabelChange}
             onDescriptionChange={handlers.handleDescriptionChange}
             onPlaceholderChange={handlers.handlePlaceholderChange}
+            isMultilingual={isMultilingual}
+            activeLocale={activeLocale}
+            labelI18n={handlers.selectedField.label_i18n}
+            descriptionI18n={handlers.selectedField.description_i18n}
+            placeholderI18n={handlers.selectedField.placeholder_i18n}
+            onLabelI18nChange={handlers.handleLabelI18nChange}
+            onDescriptionI18nChange={handlers.handleDescriptionI18nChange}
+            onPlaceholderI18nChange={handlers.handlePlaceholderI18nChange}
           />
 
           {/* Number settings */}
@@ -93,6 +116,10 @@ export const FieldEditor = memo(function FieldEditor() {
               onUpdateOption={handlers.handleUpdateOption}
               onDeleteOption={handlers.handleDeleteOption}
               onUpdateOptionColor={handlers.handleUpdateOptionColor}
+              isMultilingual={isMultilingual}
+              activeLocale={activeLocale}
+              optionsI18n={handlers.selectedField.options_i18n}
+              onUpdateOptionI18n={handlers.handleUpdateOptionI18n}
             />
           )}
 

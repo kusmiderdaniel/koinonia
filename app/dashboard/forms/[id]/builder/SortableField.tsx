@@ -27,6 +27,7 @@ import type { LucideIcon } from 'lucide-react'
 
 interface SortableFieldProps {
   field: BuilderField
+  resolvedField?: BuilderField // Field with resolved translations for display
   isSelected: boolean
   onClick: () => void
   index?: number
@@ -46,6 +47,7 @@ const FIELD_ICONS: Record<FieldType, LucideIcon> = {
 
 export const SortableField = memo(function SortableField({
   field,
+  resolvedField,
   isSelected,
   onClick,
   index = 0,
@@ -54,6 +56,9 @@ export const SortableField = memo(function SortableField({
   const t = useTranslations('forms')
   const { fields, deleteField, duplicateField, reorderFields } = useFormBuilder()
   const isMobile = useIsMobile()
+
+  // Use resolved field for display, fall back to original field
+  const displayField = resolvedField || field
   const {
     attributes,
     listeners,
@@ -175,37 +180,37 @@ export const SortableField = memo(function SortableField({
       <div className={isMobile ? 'pl-7 pr-6' : 'pl-6 pr-8'}>
         <div className="flex items-center gap-1.5">
           <Icon className="h-4 w-4 text-muted-foreground shrink-0" />
-          <span className="text-sm font-medium">{field.label || t(`fieldTypes.${field.type}`)}</span>
+          <span className="text-sm font-medium">{displayField.label || t(`fieldTypes.${field.type}`)}</span>
           {field.required && (
             <span className="text-brand font-bold">*</span>
           )}
         </div>
 
         {/* Description */}
-        {field.description && (
-          <p className="text-xs text-muted-foreground mt-1 pl-[22px]">{field.description}</p>
+        {displayField.description && (
+          <p className="text-xs text-muted-foreground mt-1 pl-[22px]">{displayField.description}</p>
         )}
 
         {/* Field Preview */}
         <div className="mt-2">
           {field.type === 'text' && (
             <div className="h-9 rounded-md border bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
-              {field.placeholder || t('fieldPlaceholders.text')}
+              {displayField.placeholder || t('fieldPlaceholders.text')}
             </div>
           )}
           {field.type === 'textarea' && (
             <div className="h-20 rounded-md border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
-              {field.placeholder || t('fieldPlaceholders.textarea')}
+              {displayField.placeholder || t('fieldPlaceholders.textarea')}
             </div>
           )}
           {field.type === 'number' && (
             <div className="h-9 rounded-md border bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
-              {field.placeholder || t('fieldPlaceholders.number')}
+              {displayField.placeholder || t('fieldPlaceholders.number')}
             </div>
           )}
           {field.type === 'email' && (
             <div className="h-9 rounded-md border bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
-              {field.placeholder || t('fieldPlaceholders.email')}
+              {displayField.placeholder || t('fieldPlaceholders.email')}
             </div>
           )}
           {field.type === 'date' && (
@@ -220,17 +225,17 @@ export const SortableField = memo(function SortableField({
               <ChevronDown className="h-4 w-4" />
             </div>
           )}
-          {field.type === 'multi_select' && field.options && (
+          {field.type === 'multi_select' && displayField.options && (
             <div className="space-y-2">
-              {field.options.slice(0, 3).map((opt: { value: string; label: string }) => (
+              {displayField.options.slice(0, 3).map((opt: { value: string; label: string }) => (
                 <div key={opt.value} className="flex items-center gap-2 text-sm">
                   <div className="h-4 w-4 rounded border bg-muted/50" />
                   <span>{opt.label}</span>
                 </div>
               ))}
-              {field.options.length > 3 && (
+              {displayField.options.length > 3 && (
                 <p className="text-xs text-muted-foreground">
-                  {t('fieldEditor.moreOptions', { count: field.options.length - 3 })}
+                  {t('fieldEditor.moreOptions', { count: displayField.options.length - 3 })}
                 </p>
               )}
             </div>

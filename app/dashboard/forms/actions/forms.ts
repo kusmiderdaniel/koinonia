@@ -141,6 +141,7 @@ export async function createForm(data: FormInput) {
       description: validated.data.description || null,
       access_type: validated.data.accessType,
       allow_multiple_submissions: validated.data.allowMultipleSubmissions ?? false,
+      is_multilingual: validated.data.isMultilingual ?? false,
       created_by: profile.id,
       status: 'draft',
     })
@@ -175,8 +176,11 @@ export async function updateForm(id: string, data: Partial<FormInput>) {
   const updateData: Record<string, unknown> = {}
   if (data.title !== undefined) updateData.title = data.title
   if (data.description !== undefined) updateData.description = data.description || null
+  if (data.titleI18n !== undefined) updateData.title_i18n = data.titleI18n
+  if (data.descriptionI18n !== undefined) updateData.description_i18n = data.descriptionI18n
   if (data.accessType !== undefined) updateData.access_type = data.accessType
   if (data.allowMultipleSubmissions !== undefined) updateData.allow_multiple_submissions = data.allowMultipleSubmissions
+  if (data.isMultilingual !== undefined) updateData.is_multilingual = data.isMultilingual
 
   // Generate public_token if changing to public and doesn't have one
   if (data.accessType === 'public' && !currentForm.public_token) {
@@ -369,8 +373,12 @@ export async function duplicateForm(id: string) {
     .insert({
       church_id: profile.church_id,
       title: `${originalForm.title} (Copy)`,
+      title_i18n: originalForm.title_i18n,
       description: originalForm.description,
+      description_i18n: originalForm.description_i18n,
       access_type: originalForm.access_type,
+      allow_multiple_submissions: originalForm.allow_multiple_submissions,
+      is_multilingual: originalForm.is_multilingual,
       settings: originalForm.settings,
       created_by: profile.id,
       status: 'draft',
@@ -402,10 +410,15 @@ export async function duplicateForm(id: string) {
           form_id: newForm.id,
           type: field.type,
           label: field.label,
+          label_i18n: field.label_i18n,
           description: field.description,
+          description_i18n: field.description_i18n,
           placeholder: field.placeholder,
+          placeholder_i18n: field.placeholder_i18n,
           required: field.required,
           options: field.options,
+          options_i18n: field.options_i18n,
+          settings: field.settings,
           sort_order: field.sort_order,
         })
         .select()

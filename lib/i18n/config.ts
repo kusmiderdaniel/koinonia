@@ -21,6 +21,11 @@ export const localeNames: Record<Locale, string> = {
   pl: 'Polski',
 }
 
+export const localeShortNames: Record<Locale, string> = {
+  en: 'EN',
+  pl: 'PL',
+}
+
 export function isValidLocale(locale: string): locale is Locale {
   return locales.includes(locale as Locale)
 }

@@ -63,10 +63,15 @@ export async function createFormField(formId: string, data: Omit<FormFieldInput,
       form_id: formId,
       type: validated.data.type,
       label: validated.data.label,
+      label_i18n: validated.data.labelI18n || null,
       description: validated.data.description || null,
+      description_i18n: validated.data.descriptionI18n || null,
       placeholder: validated.data.placeholder || null,
+      placeholder_i18n: validated.data.placeholderI18n || null,
       required: validated.data.required,
       options: validated.data.options || null,
+      options_i18n: validated.data.optionsI18n || null,
+      settings: validated.data.settings || null,
       sort_order: validated.data.sortOrder,
     })
     .select()
@@ -111,10 +116,15 @@ export async function updateFormField(fieldId: string, data: Partial<FormFieldIn
   const updateData: Record<string, unknown> = {}
   if (data.type !== undefined) updateData.type = data.type
   if (data.label !== undefined) updateData.label = data.label
+  if (data.labelI18n !== undefined) updateData.label_i18n = data.labelI18n || null
   if (data.description !== undefined) updateData.description = data.description || null
+  if (data.descriptionI18n !== undefined) updateData.description_i18n = data.descriptionI18n || null
   if (data.placeholder !== undefined) updateData.placeholder = data.placeholder || null
+  if (data.placeholderI18n !== undefined) updateData.placeholder_i18n = data.placeholderI18n || null
   if (data.required !== undefined) updateData.required = data.required
   if (data.options !== undefined) updateData.options = data.options || null
+  if (data.optionsI18n !== undefined) updateData.options_i18n = data.optionsI18n || null
+  if (data.settings !== undefined) updateData.settings = data.settings || null
   if (data.sortOrder !== undefined) updateData.sort_order = data.sortOrder
 
   const { error } = await adminClient
@@ -256,10 +266,14 @@ export async function bulkSaveFormFields(
       form_id: formId,
       type: field.type,
       label: field.label,
+      label_i18n: field.labelI18n || null,
       description: field.description || null,
+      description_i18n: field.descriptionI18n || null,
       placeholder: field.placeholder || null,
+      placeholder_i18n: field.placeholderI18n || null,
       required: field.required,
       options: field.options || null,
+      options_i18n: field.optionsI18n || null,
       settings: field.settings || null,
       sort_order: field.sortOrder,
     }))
@@ -273,10 +287,14 @@ export async function bulkSaveFormFields(
       .update({
         type: field.type,
         label: field.label,
+        label_i18n: field.labelI18n || null,
         description: field.description || null,
+        description_i18n: field.descriptionI18n || null,
         placeholder: field.placeholder || null,
+        placeholder_i18n: field.placeholderI18n || null,
         required: field.required,
         options: field.options || null,
+        options_i18n: field.optionsI18n || null,
         settings: field.settings || null,
         sort_order: field.sortOrder,
       })

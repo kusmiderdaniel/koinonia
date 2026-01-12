@@ -12,6 +12,8 @@ export type {
 
 // Components
 export { FormFieldRenderer, FormFields } from './FormFieldRenderer'
+export { LanguageTabs } from './LanguageTabs'
+export { LanguageSelector } from './LanguageSelector'
 
 // Hooks
 export { useFormConditions } from './hooks/useFormConditions'

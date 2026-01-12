@@ -1,18 +1,22 @@
 'use client'
 
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Switch } from '@/components/ui/switch'
-import { Globe, Lock, EyeOff } from 'lucide-react'
+import { Globe, Lock, EyeOff, Languages } from 'lucide-react'
 import { useFormBuilder } from '../../hooks/useFormBuilder'
+import { LanguageTabs } from '@/components/forms'
 import type { FormAccessType } from '@/lib/validations/forms'
+import type { Locale } from '@/lib/i18n/config'
 
 export function FormSettings() {
   const t = useTranslations('forms')
-  const { form, updateFormTitle, updateFormDescription, updateFormAccessType, updateFormAllowMultipleSubmissions } = useFormBuilder()
+  const { form, updateFormTitle, updateFormDescription, updateFormTitleI18n, updateFormDescriptionI18n, updateFormAccessType, updateFormAllowMultipleSubmissions, updateFormIsMultilingual } = useFormBuilder()
+  const [activeLocale, setActiveLocale] = useState<Locale>('en')
 
   if (!form) return null
 
@@ -46,30 +50,72 @@ export function FormSettings() {
         </p>
       </div>
 
-      {/* Form Title */}
-      <div className="space-y-2">
-        <Label htmlFor="form-title">{t('settings.formTitle')}</Label>
-        <Input
-          id="form-title"
-          value={form.title}
-          onChange={(e) => updateFormTitle(e.target.value)}
-          placeholder={t('createDialog.titlePlaceholder')}
-        />
-      </div>
+      {/* Form Title & Description */}
+      <div className="space-y-4">
+        {/* Language selector for multilingual forms */}
+        {form.is_multilingual && (
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">{t('builder.previewLanguage')}</span>
+            <LanguageTabs
+              activeLocale={activeLocale}
+              onLocaleChange={setActiveLocale}
+              shortLabels
+            />
+          </div>
+        )}
 
-      {/* Form Description */}
-      <div className="space-y-2">
-        <Label htmlFor="form-description">{t('settings.formDescription')}</Label>
-        <Textarea
-          id="form-description"
-          value={form.description || ''}
-          onChange={(e) => updateFormDescription(e.target.value || null)}
-          placeholder={t('createDialog.descriptionPlaceholder')}
-          rows={4}
-        />
-        <p className="text-xs text-muted-foreground">
-          {t('settings.descriptionHelp')}
-        </p>
+        {/* Form Title */}
+        <div className="space-y-2">
+          <Label htmlFor="form-title">{t('settings.formTitle')}</Label>
+          {form.is_multilingual ? (
+            <Input
+              id="form-title"
+              value={
+                activeLocale === 'en'
+                  ? form.title_i18n?.en || form.title
+                  : form.title_i18n?.[activeLocale] || ''
+              }
+              onChange={(e) => updateFormTitleI18n(activeLocale, e.target.value)}
+              placeholder={activeLocale !== 'en' ? form.title : t('createDialog.titlePlaceholder')}
+            />
+          ) : (
+            <Input
+              id="form-title"
+              value={form.title}
+              onChange={(e) => updateFormTitle(e.target.value)}
+              placeholder={t('createDialog.titlePlaceholder')}
+            />
+          )}
+        </div>
+
+        {/* Form Description */}
+        <div className="space-y-2">
+          <Label htmlFor="form-description">{t('settings.formDescription')}</Label>
+          {form.is_multilingual ? (
+            <Textarea
+              id="form-description"
+              value={
+                activeLocale === 'en'
+                  ? form.description_i18n?.en || form.description || ''
+                  : form.description_i18n?.[activeLocale] || ''
+              }
+              onChange={(e) => updateFormDescriptionI18n(activeLocale, e.target.value)}
+              placeholder={activeLocale !== 'en' ? (form.description || '') : t('createDialog.descriptionPlaceholder')}
+              rows={4}
+            />
+          ) : (
+            <Textarea
+              id="form-description"
+              value={form.description || ''}
+              onChange={(e) => updateFormDescription(e.target.value || null)}
+              placeholder={t('createDialog.descriptionPlaceholder')}
+              rows={4}
+            />
+          )}
+          <p className="text-xs text-muted-foreground">
+            {t('settings.descriptionHelp')}
+          </p>
+        </div>
       </div>
 
       {/* Access Type */}
@@ -130,6 +176,26 @@ export function FormSettings() {
           </div>
         </div>
       )}
+
+      {/* Multilingual Form */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <Languages className="h-4 w-4 text-muted-foreground" />
+              <Label htmlFor="is-multilingual">{t('settings.multilingualForm')}</Label>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {t('settings.multilingualFormDescription')}
+            </p>
+          </div>
+          <Switch
+            id="is-multilingual"
+            checked={form.is_multilingual}
+            onCheckedChange={updateFormIsMultilingual}
+          />
+        </div>
+      </div>
 
       {/* Status Info */}
       <div className="pt-4 border-t">

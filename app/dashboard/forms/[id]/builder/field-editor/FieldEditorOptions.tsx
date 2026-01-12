@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,7 +12,8 @@ import {
 } from '@/components/ui/popover'
 import { Plus, Trash2, GripVertical, Palette } from 'lucide-react'
 import { optionColors } from '@/lib/validations/forms'
-import type { SelectOption } from '@/lib/validations/forms'
+import type { SelectOption, SelectOptionI18n } from '@/lib/validations/forms'
+import type { Locale } from '@/lib/i18n/config'
 
 interface FieldEditorOptionsProps {
   options: SelectOption[] | undefined
@@ -19,6 +21,11 @@ interface FieldEditorOptionsProps {
   onUpdateOption: (index: number, label: string) => void
   onDeleteOption: (index: number) => void
   onUpdateOptionColor: (index: number, color: string | null) => void
+  // Multilingual props
+  isMultilingual?: boolean
+  activeLocale?: Locale
+  optionsI18n?: SelectOptionI18n[] | null
+  onUpdateOptionI18n?: (index: number, locale: Locale, label: string) => void
 }
 
 export function FieldEditorOptions({
@@ -27,14 +34,39 @@ export function FieldEditorOptions({
   onUpdateOption,
   onDeleteOption,
   onUpdateOptionColor,
+  isMultilingual = false,
+  activeLocale = 'en',
+  optionsI18n,
+  onUpdateOptionI18n,
 }: FieldEditorOptionsProps) {
+  const t = useTranslations('forms')
   const [openColorPickerIndex, setOpenColorPickerIndex] = useState<
     number | null
   >(null)
 
+  // Get the label value for a specific option and locale
+  const getOptionLabel = (index: number): string => {
+    if (!isMultilingual || !options) return options?.[index]?.label || ''
+
+    if (activeLocale === 'en') {
+      return optionsI18n?.[index]?.label?.en || options[index]?.label || ''
+    }
+    return optionsI18n?.[index]?.label?.[activeLocale] || ''
+  }
+
+  // Handle option label change
+  const handleOptionLabelChange = (index: number, value: string) => {
+    if (isMultilingual && onUpdateOptionI18n) {
+      onUpdateOptionI18n(index, activeLocale, value)
+    } else {
+      onUpdateOption(index, value)
+    }
+  }
+
   return (
     <div className="space-y-3">
-      <Label>Options</Label>
+      <Label>{t('fieldEditor.options')}</Label>
+
       <div className="space-y-2">
         {options?.map((option, index) => {
           const selectedColor = optionColors.find(
@@ -104,10 +136,11 @@ export function FieldEditorOptions({
                 </PopoverContent>
               </Popover>
               <Input
-                value={option.label}
-                onChange={(e) => onUpdateOption(index, e.target.value)}
+                value={getOptionLabel(index)}
+                onChange={(e) => handleOptionLabelChange(index, e.target.value)}
                 onFocus={(e) => e.target.select()}
                 className="flex-1"
+                placeholder={isMultilingual && activeLocale !== 'en' ? options[index]?.label : undefined}
               />
               <Button
                 variant="ghost"
@@ -129,7 +162,7 @@ export function FieldEditorOptions({
         className="w-full !border !border-black dark:!border-white"
       >
         <Plus className="h-4 w-4 mr-2" />
-        Add Option
+        {t('fieldEditor.addOption')}
       </Button>
     </div>
   )
