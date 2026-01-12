@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { LinkCard } from './LinkCard'
 import { SocialIcons } from './SocialIcons'
 import type { LinkVisibility } from '@/app/dashboard/links/types'
@@ -92,11 +93,13 @@ export function LinkTreeClient({ church, settings, links, userRole }: LinkTreeCl
         {/* Avatar */}
         {avatarUrl && (
           <div className="flex justify-center mb-4">
-            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white shadow-lg">
-              <img
+            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white shadow-lg relative">
+              <Image
                 src={avatarUrl}
                 alt={church.name}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="96px"
               />
             </div>
           </div>

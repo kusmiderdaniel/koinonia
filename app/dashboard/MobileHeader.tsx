@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Menu } from 'lucide-react'
 import { useMobileNav, useMobileHeaderContent } from '@/lib/hooks'
@@ -21,10 +22,12 @@ export function MobileHeader({ churchName, churchLogoUrl }: MobileHeaderProps) {
           <Menu className="w-5 h-5" />
         </Button>
         {churchLogoUrl ? (
-          <img
+          <Image
             src={churchLogoUrl}
             alt={`${churchName} logo`}
-            className="w-8 h-8 rounded-md object-contain flex-shrink-0"
+            width={32}
+            height={32}
+            className="rounded-md object-contain flex-shrink-0"
           />
         ) : (
           <div className="w-8 h-8 rounded-md bg-brand text-brand-foreground flex items-center justify-center font-bold text-sm flex-shrink-0">

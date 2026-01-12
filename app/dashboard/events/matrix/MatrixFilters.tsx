@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
@@ -39,19 +39,21 @@ export function MatrixFilters({
   const t = useTranslations('events')
   const [ministryDropdownOpen, setMinistryDropdownOpen] = useState(false)
 
-  const handleMinistryToggle = (ministryId: string, checked: boolean) => {
+  const handleMinistryToggle = useCallback((ministryId: string, checked: boolean) => {
     if (checked) {
       onMinistriesChange([...selectedMinistryIds, ministryId])
     } else {
       onMinistriesChange(selectedMinistryIds.filter((id) => id !== ministryId))
     }
-  }
+  }, [selectedMinistryIds, onMinistriesChange])
 
-  const selectedMinistriesLabel = selectedMinistryIds.length === 0
-    ? t('matrix.allMinistries')
-    : selectedMinistryIds.length === 1
-      ? ministries.find((m) => m.id === selectedMinistryIds[0])?.name || t('matrix.oneMinistry')
-      : t('matrix.ministriesCount', { count: selectedMinistryIds.length })
+  const selectedMinistriesLabel = useMemo(() => {
+    if (selectedMinistryIds.length === 0) return t('matrix.allMinistries')
+    if (selectedMinistryIds.length === 1) {
+      return ministries.find((m) => m.id === selectedMinistryIds[0])?.name || t('matrix.oneMinistry')
+    }
+    return t('matrix.ministriesCount', { count: selectedMinistryIds.length })
+  }, [selectedMinistryIds, ministries, t])
 
   return (
     <div className="flex flex-wrap items-end gap-3 bg-white dark:bg-zinc-950">

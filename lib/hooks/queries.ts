@@ -26,8 +26,22 @@ export const queryKeys = {
   matrixCampuses: ['matrix-campuses'] as const,
   matrixData: ['matrix-data'] as const,
 
-  // Members
+  // Members/People
   churchMembers: ['churchMembers'] as const,
+  people: ['people'] as const,
+  person: (id: string) => ['people', id] as const,
+
+  // Dashboard
+  dashboard: ['dashboard'] as const,
+  dashboardAssignments: ['dashboard', 'assignments'] as const,
+  dashboardTasks: ['dashboard', 'tasks'] as const,
+  dashboardCalendar: (month: number, year: number) => ['dashboard', 'calendar', month, year] as const,
+  dashboardBirthdays: ['dashboard', 'birthdays'] as const,
+  dashboardHolidays: (month: number, year: number) => ['dashboard', 'holidays', month, year] as const,
+
+  // Inbox/Notifications
+  notifications: ['notifications'] as const,
+  notificationsUnread: ['notifications', 'unread'] as const,
 
   // Availability
   availability: ['availability'] as const,
@@ -39,6 +53,19 @@ export const queryKeys = {
   // Templates
   templates: ['templates'] as const,
   template: (id: string) => ['templates', id] as const,
+
+  // Forms
+  forms: ['forms'] as const,
+  form: (id: string) => ['forms', id] as const,
+  formSubmissions: (formId: string) => ['forms', formId, 'submissions'] as const,
+
+  // Tasks
+  tasks: ['tasks'] as const,
+  task: (id: string) => ['tasks', id] as const,
+
+  // Links
+  links: ['links'] as const,
+  linkSettings: ['links', 'settings'] as const,
 }
 
 // ============================================
@@ -239,6 +266,30 @@ export function useCacheInvalidation() {
     // Invalidate templates
     invalidateTemplates: () =>
       queryClient.invalidateQueries({ queryKey: queryKeys.templates }),
+
+    // Invalidate dashboard
+    invalidateDashboard: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard }),
+
+    // Invalidate notifications
+    invalidateNotifications: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.notifications }),
+
+    // Invalidate people
+    invalidatePeople: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.people }),
+
+    // Invalidate forms
+    invalidateForms: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.forms }),
+
+    // Invalidate tasks
+    invalidateTasks: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.tasks }),
+
+    // Invalidate links
+    invalidateLinks: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.links }),
 
     // Invalidate all queries (use sparingly)
     invalidateAll: () => queryClient.invalidateQueries(),

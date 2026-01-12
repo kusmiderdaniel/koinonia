@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { Instagram, Facebook, Youtube, Twitter, Globe, Mail, Music } from 'lucide-react'
@@ -76,11 +77,13 @@ export const LivePreview = memo(function LivePreview({
         <div className="flex flex-col items-center">
           {/* Avatar */}
           {(settings?.avatar_url || churchLogo) && (
-            <div className="w-12 h-12 rounded-full bg-muted border-2 border-white shadow mb-3 overflow-hidden">
-              <img
+            <div className="w-12 h-12 rounded-full bg-muted border-2 border-white shadow mb-3 overflow-hidden relative">
+              <Image
                 src={settings?.avatar_url || churchLogo!}
                 alt=""
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="48px"
               />
             </div>
           )}
@@ -144,10 +147,12 @@ export const LivePreview = memo(function LivePreview({
                       sizeStyles.height
                     )}
                   >
-                    <img
+                    <Image
                       src={link.image_url!}
                       alt=""
-                      className="absolute inset-0 w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="300px"
                     />
                     <div className="absolute inset-0 bg-black/40" />
                     <div className={cn(

@@ -1,6 +1,7 @@
 'use client'
 
 import { memo, useState } from 'react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Users, Shield, Crown } from 'lucide-react'
@@ -116,10 +117,12 @@ export const LinkCard = memo(function LinkCard({
         style={{ boxShadow: getGlowShadow() }}
       >
         {/* Background image */}
-        <img
+        <Image
           src={imageUrl}
           alt=""
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          className="object-cover"
+          sizes="(max-width: 640px) 100vw, 400px"
         />
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-black/40" />

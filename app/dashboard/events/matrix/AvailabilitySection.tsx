@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import {
   Tooltip,
@@ -30,6 +31,10 @@ export function AvailabilitySection({
   const t = useTranslations('events.matrix')
   const hasContent = unavailability.length > 0 || multiAssignments.length > 0
 
+  // Memoize sliced arrays to prevent unnecessary re-renders
+  const displayedUnavailability = useMemo(() => unavailability.slice(0, 4), [unavailability])
+  const displayedMultiAssignments = useMemo(() => multiAssignments.slice(0, 4), [multiAssignments])
+
   if (!hasContent) {
     return (
       <div className="min-h-[60px] p-2 text-xs text-muted-foreground text-center">
@@ -44,7 +49,7 @@ export function AvailabilitySection({
         {/* Unavailable people (red) */}
         {unavailability.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {unavailability.slice(0, 4).map((person) => (
+            {displayedUnavailability.map((person) => (
               <Tooltip key={person.profileId}>
                 <TooltipTrigger asChild>
                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 cursor-default">
@@ -70,7 +75,7 @@ export function AvailabilitySection({
         {/* Multi-assigned people (amber) */}
         {multiAssignments.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {multiAssignments.slice(0, 4).map((person) => (
+            {displayedMultiAssignments.map((person) => (
               <Tooltip key={person.profileId}>
                 <TooltipTrigger asChild>
                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 cursor-default">

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import {
   Tooltip,
@@ -38,10 +39,12 @@ export function ChurchLogo({
             <TooltipTrigger asChild>
               <div className="flex items-center justify-center">
                 {churchLogoUrl ? (
-                  <img
+                  <Image
                     src={churchLogoUrl}
                     alt={`${churchName} logo`}
-                    className="w-9 h-9 rounded-md object-contain"
+                    width={36}
+                    height={36}
+                    className="rounded-md object-contain"
                   />
                 ) : (
                   <div className="w-9 h-9 rounded-md bg-brand text-brand-foreground flex items-center justify-center font-bold text-lg">
@@ -55,10 +58,12 @@ export function ChurchLogo({
         ) : (
           <div className="flex items-center gap-3 min-w-0 flex-1">
             {churchLogoUrl ? (
-              <img
+              <Image
                 src={churchLogoUrl}
                 alt={`${churchName} logo`}
-                className="w-8 h-8 rounded-md object-contain flex-shrink-0"
+                width={32}
+                height={32}
+                className="rounded-md object-contain flex-shrink-0"
               />
             ) : (
               <div className="w-8 h-8 rounded-md bg-brand text-brand-foreground flex items-center justify-center font-bold text-sm flex-shrink-0">
