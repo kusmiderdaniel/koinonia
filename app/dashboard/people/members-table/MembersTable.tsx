@@ -9,7 +9,7 @@ import { PeopleFilterBuilder } from '../filter-builder'
 import { FilterState, createEmptyFilterState, countActiveFilters } from '../filter-types'
 import { applyFilters } from '../filter-logic'
 import { PeopleSortBuilder } from '../sort-builder'
-import { SortState, createEmptySortState, countActiveSorts } from '../sort-types'
+import { SortState, createDefaultPeopleSortState, countActiveSorts } from '../sort-types'
 import { applySorts } from '../sort-logic'
 import { MemberRow, MemberCard } from '../components'
 import { ViewSelector, SaveViewDialog } from '@/components/saved-views'
@@ -31,7 +31,7 @@ export const MembersTable = memo(function MembersTable({
   const t = useTranslations('people')
   const isMobile = useIsMobile()
   const [filterState, setFilterState] = useState<FilterState>(createEmptyFilterState)
-  const [sortState, setSortState] = useState<SortState>(createEmptySortState)
+  const [sortState, setSortState] = useState<SortState>(createDefaultPeopleSortState)
 
   // Member update handlers
   const {

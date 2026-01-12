@@ -3,7 +3,7 @@
   "ruleCount": "{count} filtr",
   "emptyState": "Brak filtrow. Dodaj regule filtrowania, aby zawezic dane.",
   "addRule": "Dodaj filtr",
-  "addGroup": "Dodaj grupe",
+  "addGroup": "Dodaj grupę",
   "deleteFilter": "Wyczysc wszystko",
   "where": "Gdzie"
 }

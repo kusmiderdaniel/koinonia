@@ -8,12 +8,14 @@ export {
   type SortFieldDefinition,
   createEmptySortState,
   countActiveSorts,
+  generateSortId,
 } from '@/lib/filters/sort-types'
 
 import {
   type SortState,
   type SortFieldDefinition,
   createSortRule as createGenericSortRule,
+  generateSortId,
 } from '@/lib/filters/sort-types'
 
 // People-specific sort fields
@@ -37,4 +39,15 @@ export const SORT_FIELDS = PEOPLE_SORT_FIELDS
 // Wrapper for createSortRule that uses people fields
 export function createSortRule(existingSorts: SortState) {
   return createGenericSortRule(existingSorts, PEOPLE_SORT_FIELDS)
+}
+
+// Create default sort state for people (sorted by name ascending)
+export function createDefaultPeopleSortState(): SortState {
+  return [
+    {
+      id: generateSortId(),
+      field: 'name',
+      direction: 'asc',
+    },
+  ]
 }
