@@ -6,9 +6,12 @@ import {
   formatDuration,
   formatDurationMinutes,
   formatTime,
+  formatTimeFromDate,
   formatSecondsToMinutes,
   formatRunningTime,
   formatDurationInputs,
+  formatEventDateTime,
+  formatEventCardDate,
   toDateString,
   parseDateString,
   formatDateRange,
@@ -102,6 +105,26 @@ describe('format utilities', () => {
     })
   })
 
+  describe('formatTimeFromDate', () => {
+    it('should format Date in 12h format', () => {
+      const date = new Date(2025, 11, 25, 14, 30, 0)
+      const result = formatTimeFromDate(date, '12h')
+      expect(result).toMatch(/2:30.*PM/)
+    })
+
+    it('should format Date in 24h format', () => {
+      const date = new Date(2025, 11, 25, 14, 30, 0)
+      const result = formatTimeFromDate(date, '24h')
+      expect(result).toMatch(/14:30/)
+    })
+
+    it('should default to 24h format', () => {
+      const date = new Date(2025, 11, 25, 9, 15, 0)
+      const result = formatTimeFromDate(date)
+      expect(result).toMatch(/9:15|09:15/)
+    })
+  })
+
   describe('formatSecondsToMinutes', () => {
     it('should format seconds to MM:SS', () => {
       expect(formatSecondsToMinutes(90)).toBe('1:30')
@@ -129,6 +152,74 @@ describe('format utilities', () => {
       expect(formatDurationInputs(90)).toEqual({ minutes: '1', seconds: '30' })
       expect(formatDurationInputs(0)).toEqual({ minutes: '0', seconds: '00' })
       expect(formatDurationInputs(65)).toEqual({ minutes: '1', seconds: '05' })
+    })
+  })
+
+  describe('formatEventDateTime', () => {
+    it('should format all-day events', () => {
+      const result = formatEventDateTime(
+        '2025-12-25T00:00:00',
+        '2025-12-25T23:59:59',
+        true
+      )
+      expect(result.date).toBe('25/12/2025')
+      expect(result.time).toBe('All day')
+    })
+
+    it('should format timed events in 24h format', () => {
+      const result = formatEventDateTime(
+        '2025-12-25T14:30:00',
+        '2025-12-25T16:00:00',
+        false,
+        '24h'
+      )
+      expect(result.date).toBe('25/12/2025')
+      expect(result.time).toMatch(/14:30.*16:00/)
+    })
+
+    it('should format timed events in 12h format', () => {
+      const result = formatEventDateTime(
+        '2025-12-25T14:30:00',
+        '2025-12-25T16:00:00',
+        false,
+        '12h'
+      )
+      expect(result.date).toBe('25/12/2025')
+      expect(result.time).toMatch(/2:30.*PM.*4:00.*PM/)
+    })
+
+    it('should default to 24h format', () => {
+      const result = formatEventDateTime(
+        '2025-12-25T09:00:00',
+        '2025-12-25T10:30:00',
+        false
+      )
+      expect(result.time).toMatch(/9:00.*10:30|09:00.*10:30/)
+    })
+  })
+
+  describe('formatEventCardDate', () => {
+    it('should format all-day events', () => {
+      const result = formatEventCardDate('2025-12-25T00:00:00', true)
+      expect(result.date).toMatch(/Thu.*Dec.*25/)
+      expect(result.time).toBe('All day')
+    })
+
+    it('should format timed events in 24h format', () => {
+      const result = formatEventCardDate('2025-12-25T14:30:00', false, '24h')
+      expect(result.date).toMatch(/Thu.*Dec.*25/)
+      expect(result.time).toMatch(/14:30/)
+    })
+
+    it('should format timed events in 12h format', () => {
+      const result = formatEventCardDate('2025-12-25T14:30:00', false, '12h')
+      expect(result.date).toMatch(/Thu.*Dec.*25/)
+      expect(result.time).toMatch(/2:30.*PM/)
+    })
+
+    it('should default to 24h format', () => {
+      const result = formatEventCardDate('2025-12-25T09:15:00', false)
+      expect(result.time).toMatch(/9:15|09:15/)
     })
   })
 
