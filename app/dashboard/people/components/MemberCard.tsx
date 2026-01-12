@@ -217,7 +217,7 @@ export const MemberCard = memo(function MemberCard({
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div>
               <span className="text-muted-foreground">{t('card.gender')}:</span>
-              <span className="ml-1.5 capitalize">{member.sex || '—'}</span>
+              <span className="ml-1.5">{member.sex ? t(`sex.${member.sex}`) : '—'}</span>
             </div>
             <div>
               <span className="text-muted-foreground">{t('card.age')}:</span>

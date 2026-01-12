@@ -348,7 +348,7 @@ export const MemberRow = memo(function MemberRow({
       </TableCell>
 
       {/* Gender */}
-      <TableCell className="text-muted-foreground capitalize">
+      <TableCell className="text-muted-foreground">
         {canEditOfflineProfile ? (
           <Select
             value={member.sex || ''}
@@ -367,7 +367,7 @@ export const MemberRow = memo(function MemberRow({
             </SelectContent>
           </Select>
         ) : (
-          member.sex || '—'
+          member.sex ? t(`sex.${member.sex}`) : '—'
         )}
       </TableCell>
 
