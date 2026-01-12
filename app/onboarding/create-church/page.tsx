@@ -190,11 +190,11 @@ export default function CreateChurchPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="subdomain">{t('createChurch.basicInfo.churchUrl')} *</Label>
-                    <div className="flex items-center gap-0">
+                    <div className="flex items-stretch">
+                      <span className="text-sm text-muted-foreground bg-muted px-3 flex items-center border border-r-0 rounded-l-md whitespace-nowrap">
+                        koinonia.app/
+                      </span>
                       <div className="relative flex-1">
-                        <span className="text-sm text-muted-foreground bg-muted px-3 h-11 flex items-center border rounded-l-md border-r-0">
-                          koinonia.app/
-                        </span>
                         <Input
                           id="subdomain"
                           placeholder={t('createChurch.basicInfo.churchUrlPlaceholder')}
