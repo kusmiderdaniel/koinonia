@@ -15,6 +15,13 @@ export default defineConfig({
     environmentMatchGlobs: [
       ['**/*.test.tsx', 'jsdom'],
     ],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'text-summary'],
+      reportsDirectory: './coverage',
+      include: ['lib/**/*.ts'],
+      exclude: ['lib/**/*.d.ts', 'lib/supabase/**', 'lib/hooks/**', 'lib/email/**'],
+    },
   },
   resolve: {
     alias: {
