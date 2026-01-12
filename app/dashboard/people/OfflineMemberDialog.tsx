@@ -177,10 +177,10 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
                   value={formData.sex}
                   onValueChange={(value) => setFormData({ ...formData, sex: value })}
                 >
-                  <SelectTrigger id="sex" className="w-full">
+                  <SelectTrigger id="sex" className="w-full !border !border-black dark:!border-white">
                     <SelectValue placeholder={t('offlineMember.selectPlaceholder')} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="border border-black dark:border-white">
                     <SelectItem value="male">{t('sex.male')}</SelectItem>
                     <SelectItem value="female">{t('sex.female')}</SelectItem>
                   </SelectContent>

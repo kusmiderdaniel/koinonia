@@ -16,7 +16,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { CampusBadge, CampusBadges } from '@/components/CampusBadge'
 import { cn } from '@/lib/utils'
@@ -52,12 +60,14 @@ interface MemberRowProps {
   isUpdatingDeparture: boolean
   isUpdatingBaptism: boolean
   isUpdatingCampuses: boolean
+  isUpdatingProfile: boolean
   allCampuses: AvailableCampus[]
   onRoleChange: (memberId: string, newRole: AssignableRole) => void
   onActiveChange: (memberId: string, active: boolean) => void
   onDepartureChange: (memberId: string, date: string | null, reason: string | null) => void
   onBaptismChange: (memberId: string, baptism: boolean, date: string | null) => void
   onCampusesChange: (memberId: string, campusIds: string[]) => void
+  onProfileChange: (memberId: string, data: { sex?: string | null; dateOfBirth?: string | null; phone?: string | null }) => void
 }
 
 export const MemberRow = memo(function MemberRow({
@@ -72,16 +82,21 @@ export const MemberRow = memo(function MemberRow({
   isUpdatingDeparture,
   isUpdatingBaptism,
   isUpdatingCampuses,
+  isUpdatingProfile,
   allCampuses,
   onRoleChange,
   onActiveChange,
   onDepartureChange,
   onBaptismChange,
   onCampusesChange,
+  onProfileChange,
 }: MemberRowProps) {
   const t = useTranslations('people')
   const [departurePopoverOpen, setDeparturePopoverOpen] = useState(false)
   const [campusPopoverOpen, setCampusPopoverOpen] = useState(false)
+
+  // Can edit profile fields only for offline members
+  const canEditOfflineProfile = canEditFields && member.member_type === 'offline'
 
   // Get current campus IDs
   const currentCampusIds = member.campuses.map(c => c.id)
@@ -276,12 +291,40 @@ export const MemberRow = memo(function MemberRow({
 
       {/* Gender */}
       <TableCell className="text-muted-foreground capitalize">
-        {member.sex || '—'}
+        {canEditOfflineProfile ? (
+          <Select
+            value={member.sex || ''}
+            onValueChange={(value) => onProfileChange(member.id, { sex: value || null })}
+            disabled={isUpdatingProfile}
+          >
+            <SelectTrigger className={cn(
+              'w-24 h-8 text-xs !border !border-black dark:!border-white',
+              isUpdatingProfile && 'opacity-50'
+            )}>
+              <SelectValue placeholder="—" />
+            </SelectTrigger>
+            <SelectContent className="border border-black dark:border-white">
+              <SelectItem value="male">{t('sex.male')}</SelectItem>
+              <SelectItem value="female">{t('sex.female')}</SelectItem>
+            </SelectContent>
+          </Select>
+        ) : (
+          member.sex || '—'
+        )}
       </TableCell>
 
       {/* Date of Birth */}
       <TableCell className="text-muted-foreground">
-        {formatDateOfBirth(member.date_of_birth)}
+        {canEditOfflineProfile ? (
+          <InlineDateEditor
+            value={member.date_of_birth}
+            onChange={(date) => onProfileChange(member.id, { dateOfBirth: date })}
+            disabled={isUpdatingProfile}
+            canEdit={true}
+          />
+        ) : (
+          formatDateOfBirth(member.date_of_birth)
+        )}
       </TableCell>
 
       {/* Age */}

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { updateMemberRole, updateMemberActive, updateMemberDeparture, updateMemberBaptism, updateMemberCampuses } from '../actions'
+import { updateMemberRole, updateMemberActive, updateMemberDeparture, updateMemberBaptism, updateMemberCampuses, updateMemberProfile } from '../actions'
 import type { AssignableRole } from './types'
 
 export function useMembersTableState() {
@@ -8,6 +8,7 @@ export function useMembersTableState() {
   const [updatingDepartureId, setUpdatingDepartureId] = useState<string | null>(null)
   const [updatingBaptismId, setUpdatingBaptismId] = useState<string | null>(null)
   const [updatingCampusesId, setUpdatingCampusesId] = useState<string | null>(null)
+  const [updatingProfileId, setUpdatingProfileId] = useState<string | null>(null)
 
   const handleRoleChange = useCallback(async (memberId: string, newRole: AssignableRole) => {
     setUpdatingId(memberId)
@@ -80,6 +81,21 @@ export function useMembersTableState() {
     }
   }, [])
 
+  const handleProfileChange = useCallback(async (
+    memberId: string,
+    data: { sex?: string | null; dateOfBirth?: string | null; phone?: string | null }
+  ) => {
+    setUpdatingProfileId(memberId)
+    try {
+      const result = await updateMemberProfile(memberId, data)
+      if (result.error) {
+        console.error(result.error)
+      }
+    } finally {
+      setUpdatingProfileId(null)
+    }
+  }, [])
+
   return {
     // Update states
     updatingId,
@@ -87,6 +103,7 @@ export function useMembersTableState() {
     updatingDepartureId,
     updatingBaptismId,
     updatingCampusesId,
+    updatingProfileId,
 
     // Handlers
     handleRoleChange,
@@ -94,5 +111,6 @@ export function useMembersTableState() {
     handleDepartureChange,
     handleBaptismChange,
     handleCampusesChange,
+    handleProfileChange,
   }
 }

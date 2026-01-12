@@ -40,11 +40,13 @@ export const MembersTable = memo(function MembersTable({
     updatingDepartureId,
     updatingBaptismId,
     updatingCampusesId,
+    updatingProfileId,
     handleRoleChange,
     handleActiveChange,
     handleDepartureChange,
     handleBaptismChange,
     handleCampusesChange,
+    handleProfileChange,
   } = useMembersTableState()
 
   // Saved views management
@@ -119,12 +121,14 @@ export const MembersTable = memo(function MembersTable({
               isUpdatingDeparture={updatingDepartureId === member.id}
               isUpdatingBaptism={updatingBaptismId === member.id}
               isUpdatingCampuses={updatingCampusesId === member.id}
+              isUpdatingProfile={updatingProfileId === member.id}
               allCampuses={allCampuses}
               onRoleChange={handleRoleChange}
               onActiveChange={handleActiveChange}
               onDepartureChange={handleDepartureChange}
               onBaptismChange={handleBaptismChange}
               onCampusesChange={handleCampusesChange}
+              onProfileChange={handleProfileChange}
             />
           ))}
         </div>
@@ -149,12 +153,14 @@ export const MembersTable = memo(function MembersTable({
                     isUpdatingDeparture={updatingDepartureId === member.id}
                     isUpdatingBaptism={updatingBaptismId === member.id}
                     isUpdatingCampuses={updatingCampusesId === member.id}
+                    isUpdatingProfile={updatingProfileId === member.id}
                     allCampuses={allCampuses}
                     onRoleChange={handleRoleChange}
                     onActiveChange={handleActiveChange}
                     onDepartureChange={handleDepartureChange}
                     onBaptismChange={handleBaptismChange}
                     onCampusesChange={handleCampusesChange}
+                    onProfileChange={handleProfileChange}
                   />
                 ))}
               </TableBody>

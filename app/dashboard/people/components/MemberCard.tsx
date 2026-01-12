@@ -43,12 +43,14 @@ interface MemberCardProps {
   isUpdatingDeparture: boolean
   isUpdatingBaptism: boolean
   isUpdatingCampuses: boolean
+  isUpdatingProfile: boolean
   allCampuses: AvailableCampus[]
   onRoleChange: (memberId: string, newRole: AssignableRole) => void
   onActiveChange: (memberId: string, active: boolean) => void
   onDepartureChange: (memberId: string, date: string | null, reason: string | null) => void
   onBaptismChange: (memberId: string, baptism: boolean, date: string | null) => void
   onCampusesChange: (memberId: string, campusIds: string[]) => void
+  onProfileChange: (memberId: string, data: { sex?: string | null; dateOfBirth?: string | null; phone?: string | null }) => void
 }
 
 export const MemberCard = memo(function MemberCard({
@@ -72,6 +74,8 @@ export const MemberCard = memo(function MemberCard({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isUpdatingCampuses: _isUpdatingCampuses,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isUpdatingProfile: _isUpdatingProfile,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   allCampuses: _allCampuses,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onDepartureChange: _onDepartureChange,
@@ -79,6 +83,8 @@ export const MemberCard = memo(function MemberCard({
   onBaptismChange: _onBaptismChange,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onCampusesChange: _onCampusesChange,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onProfileChange: _onProfileChange,
 }: MemberCardProps) {
   const t = useTranslations('people')
   const [expanded, setExpanded] = useState(false)
