@@ -2,6 +2,7 @@
   "title": "Songs",
   "subtitle": "Manage your song library",
   "newSong": "New Song",
+  "addSong": "Add Song",
   "selectSong": "Select a song",
   "selectSongDescription": "Choose a song from the list to view details",
   "songDetails": "Song Details",

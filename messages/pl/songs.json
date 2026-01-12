@@ -1,16 +1,17 @@
 {
-  "title": "Pieśni",
-  "subtitle": "Zarządzaj biblioteką pieśni",
-  "newSong": "Nowa pieśń",
-  "selectSong": "Wybierz pieśń",
-  "selectSongDescription": "Wybierz pieśń z listy, aby zobaczyć szczegóły",
-  "songDetails": "Szczegóły pieśni",
+  "title": "Piosenki",
+  "subtitle": "Zarządzaj biblioteką piosenek",
+  "newSong": "Nowa piosenka",
+  "addSong": "Dodaj piosenkę",
+  "selectSong": "Wybierz piosenkę",
+  "selectSongDescription": "Wybierz piosenkę z listy, aby zobaczyć szczegóły",
+  "songDetails": "Szczegóły piosenki",
 
   "search": {
-    "placeholder": "Szukaj pieśni...",
-    "noSongsYet": "Brak pieśni",
-    "noSongsYetDescription": "Dodaj pierwszą pieśń, aby rozpocząć",
-    "noSongsFound": "Nie znaleziono pieśni",
+    "placeholder": "Szukaj piosenki...",
+    "noSongsYet": "Brak piosenki",
+    "noSongsYetDescription": "Dodaj pierwszą piosenkę, aby rozpocząć",
+    "noSongsFound": "Nie znaleziono piosenki",
     "noSongsFoundDescription": "Spróbuj innego wyszukiwania lub filtra",
     "clear": "Wyczyść"
   },
@@ -32,21 +33,21 @@
   },
 
   "dialog": {
-    "addTitle": "Dodaj pieśń",
-    "editTitle": "Edytuj pieśń",
+    "addTitle": "Dodaj piosenkę",
+    "editTitle": "Edytuj piosenkę",
     "titleLabel": "Tytuł *",
-    "titlePlaceholder": "Tytuł pieśni",
+    "titlePlaceholder": "Tytuł piosenki",
     "artistLabel": "Wykonawca",
     "defaultKeyLabel": "Domyślna tonacja",
     "durationLabel": "Czas trwania",
     "tagsLabel": "Tagi",
     "saving": "Zapisywanie...",
     "saveChanges": "Zapisz zmiany",
-    "addSong": "Dodaj pieśń"
+    "addSong": "Dodaj piosenka"
   },
 
   "deleteDialog": {
-    "title": "Usunąć pieśń?",
+    "title": "Usunąć piosenkę?",
     "description": "Czy na pewno chcesz usunąć {title}? Spowoduje to również usunięcie wszystkich załączników. Tej operacji nie można cofnąć.",
     "confirm": "Usuń"
   },
@@ -57,8 +58,8 @@
     "import": "Importuj",
     "add": "Dodaj",
     "noLyricsYet": "Brak tekstu",
-    "noLyricsYetManage": "Dodaj sekcje pieśni, aby przechowywać tekst",
-    "noLyricsYetView": "Do tej pieśni nie dodano jeszcze tekstu",
+    "noLyricsYetManage": "Dodaj sekcje piosenki, aby przechowywać tekst",
+    "noLyricsYetView": "Do tej piosenki nie dodano jeszcze tekstu",
     "importLyrics": "Importuj tekst",
     "addSection": "Dodaj sekcję"
   },
@@ -110,10 +111,10 @@
     "nameLabel": "Nazwa",
     "namePlaceholder": "np. Krótka wersja, Nabożeństwo niedzielne",
     "durationLabel": "Czas trwania",
-    "durationHint": "(opcjonalnie - zastępuje domyślny czas pieśni)",
+    "durationHint": "(opcjonalnie - zastępuje domyślny czas piosenki)",
     "sectionsLabel": "Sekcje",
     "sectionsHint": "(kliknij, aby dodać)",
-    "noSectionsAvailable": "Brak dostępnych sekcji. Najpierw dodaj sekcje do pieśni.",
+    "noSectionsAvailable": "Brak dostępnych sekcji. Najpierw dodaj sekcje do piosenki.",
     "orderLabel": "Kolejność aranżacji",
     "orderHint": "(przeciągnij, aby zmienić kolejność)",
     "emptyOrder": "Kliknij sekcje powyżej, aby zbudować aranżację",
