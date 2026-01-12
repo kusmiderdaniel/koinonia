@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -17,11 +17,20 @@ interface InvitePopoverProps {
 export function InvitePopover({ joinCode }: InvitePopoverProps) {
   const t = useTranslations('people')
   const [copied, setCopied] = useState(false)
+  const copiedTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current)
+    }
+  }, [])
 
   const copyJoinCode = async () => {
     await navigator.clipboard.writeText(joinCode)
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current)
+    copiedTimeoutRef.current = setTimeout(() => setCopied(false), 2000)
   }
 
   return (

@@ -39,7 +39,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
   // Fetch church settings
   const { data: church } = await adminClient
     .from('churches')
-    .select('*')
+    .select('id, name, subdomain, join_code, timezone, time_format, first_day_of_week, default_event_visibility, links_page_enabled, logo_url, address, city, state, zip_code, country, phone, email, website, created_at, updated_at')
     .eq('id', profile.church_id)
     .single()
 
@@ -73,7 +73,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
   // Fetch campuses
   const { data: campuses } = await adminClient
     .from('campuses')
-    .select('*')
+    .select('id, church_id, name, description, address, city, state, zip_code, country, color, is_default, is_active, created_at, updated_at')
     .eq('church_id', profile.church_id)
     .eq('is_active', true)
     .order('is_default', { ascending: false })

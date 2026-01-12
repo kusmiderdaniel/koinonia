@@ -18,7 +18,7 @@ export async function getChurchSettings() {
   // Get church details
   const { data: church, error: churchError } = await adminClient
     .from('churches')
-    .select('*')
+    .select('id, name, subdomain, join_code, timezone, time_format, first_day_of_week, default_event_visibility, links_page_enabled, logo_url, address, city, state, zip_code, country, phone, email, website, created_at, updated_at')
     .eq('id', profile.church_id)
     .single()
 

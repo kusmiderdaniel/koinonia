@@ -166,7 +166,7 @@ export async function replaceSongPlaceholder(
   const [songResult, worshipMinistryResult, arrangementResult] = await Promise.all([
     adminClient
       .from('songs')
-      .select('*')
+      .select('id, church_id, title, artist, default_key, duration_seconds, created_by, created_at, updated_at')
       .eq('id', songId)
       .eq('church_id', profile.church_id)
       .single(),

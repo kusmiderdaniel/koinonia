@@ -1,39 +1,38 @@
-// This file re-exports all dashboard actions for backward compatibility
-// The actual implementations are in focused modules under ./actions/
-// Note: Individual modules have 'use server' directives
+// Re-export all dashboard actions from focused modules
+// This maintains backward compatibility for existing imports
 
 export {
   getMyAssignments,
   type DashboardAssignment,
-} from './actions/assignments'
+} from './assignments'
 
 export {
   getUpcomingEvents,
   type DashboardEvent,
-} from './actions/events'
+} from './events'
 
 export {
   getMyTasks,
   type DashboardTask,
-} from './actions/tasks'
+} from './tasks'
 
 export {
   getUnavailabilityCount,
-} from './actions/availability'
+} from './availability'
 
 export {
   getCalendarEventsForMember,
   type CalendarEvent,
-} from './actions/calendar'
+} from './calendar'
 
 export {
   getUpcomingBirthdays,
   getCalendarBirthdays,
   type Birthday,
   type CalendarBirthday,
-} from './actions/birthdays'
+} from './birthdays'
 
 export {
   getChurchHolidays,
   type ChurchHoliday,
-} from './actions/holidays'
+} from './holidays'

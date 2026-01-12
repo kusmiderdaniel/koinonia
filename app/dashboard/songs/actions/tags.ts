@@ -17,7 +17,7 @@ export async function getTags() {
 
   const { data: tags, error } = await adminClient
     .from('song_tags')
-    .select('*')
+    .select('id, church_id, name, color, created_at')
     .eq('church_id', profile.church_id)
     .order('name', { ascending: true })
 

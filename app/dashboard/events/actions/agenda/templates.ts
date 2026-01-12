@@ -15,7 +15,7 @@ export async function getAgendaTemplates() {
 
   const { data: templates, error } = await adminClient
     .from('agenda_item_templates')
-    .select('*')
+    .select('id, church_id, title, default_duration_minutes, created_at, updated_at')
     .eq('church_id', profile.church_id)
     .order('title')
 
@@ -71,7 +71,7 @@ export async function addAgendaItemFromTemplate(
 
   const { data: template } = await adminClient
     .from('agenda_item_templates')
-    .select('*')
+    .select('id, church_id, title, default_duration_minutes, created_at, updated_at')
     .eq('id', templateId)
     .single()
 

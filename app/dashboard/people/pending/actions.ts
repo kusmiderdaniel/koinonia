@@ -77,7 +77,7 @@ export async function approveRegistration(registrationId: string, campusId?: str
   // Get the pending registration
   const { data: registration, error: fetchError } = await adminClient
     .from('pending_registrations')
-    .select('*')
+    .select('id, church_id, user_id, first_name, last_name, email, phone, date_of_birth, sex, campus_id, status, rejection_reason, linked_profile_id, reviewed_by, reviewed_at, created_at, updated_at')
     .eq('id', registrationId)
     .eq('church_id', profile.church_id)
     .single()
@@ -187,7 +187,7 @@ export async function rejectRegistration(registrationId: string, reason?: string
   // Get the pending registration
   const { data: registration, error: fetchError } = await adminClient
     .from('pending_registrations')
-    .select('*')
+    .select('id, church_id, user_id, first_name, last_name, email, phone, date_of_birth, sex, campus_id, status, rejection_reason, linked_profile_id, reviewed_by, reviewed_at, created_at, updated_at')
     .eq('id', registrationId)
     .eq('church_id', profile.church_id)
     .single()
@@ -242,7 +242,7 @@ export async function linkRegistrationToProfile(registrationId: string, profileI
   // Get the pending registration
   const { data: registration, error: fetchError } = await adminClient
     .from('pending_registrations')
-    .select('*')
+    .select('id, church_id, user_id, first_name, last_name, email, phone, date_of_birth, sex, campus_id, status, rejection_reason, linked_profile_id, reviewed_by, reviewed_at, created_at, updated_at')
     .eq('id', registrationId)
     .eq('church_id', currentProfile.church_id)
     .single()
@@ -258,7 +258,7 @@ export async function linkRegistrationToProfile(registrationId: string, profileI
   // Get the target profile (must be offline member in same church)
   const { data: targetProfile, error: profileFetchError } = await adminClient
     .from('profiles')
-    .select('*')
+    .select('id, user_id, church_id, first_name, last_name, email, phone, date_of_birth, sex, role, active, member_type, date_of_departure, reason_for_departure, baptism, baptism_date, created_at')
     .eq('id', profileId)
     .eq('church_id', currentProfile.church_id)
     .single()

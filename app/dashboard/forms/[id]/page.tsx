@@ -65,14 +65,14 @@ export default async function FormPage({ params }: FormPageProps) {
   // Get fields
   const { data: fields } = await adminClient
     .from('form_fields')
-    .select('*')
+    .select('id, form_id, type, label, label_i18n, description, description_i18n, placeholder, placeholder_i18n, required, options, options_i18n, settings, sort_order, created_at, updated_at')
     .eq('form_id', id)
     .order('sort_order')
 
   // Get conditions
   const { data: conditions } = await adminClient
     .from('form_conditions')
-    .select('*')
+    .select('id, form_id, target_field_id, source_field_id, operator, value, action, created_at')
     .eq('form_id', id)
 
   // Get submission count

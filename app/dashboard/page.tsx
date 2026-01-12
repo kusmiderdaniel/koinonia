@@ -67,12 +67,12 @@ export default async function DashboardPage() {
       const [settingsResult, linksResult] = await Promise.all([
         adminClient
           .from('link_tree_settings')
-          .select('*')
+          .select('id, church_id, title, bio, avatar_url, background_color, background_gradient_start, background_gradient_end, card_style, card_border_radius, show_church_name, social_links, meta_title, meta_description, is_active, created_at, updated_at')
           .eq('church_id', profile.church_id)
           .single(),
         adminClient
           .from('link_tree_links')
-          .select('*')
+          .select('id, church_id, title, url, description, icon, image_url, card_size, card_color, text_color, hover_effect, hide_label, label_bold, label_italic, label_underline, visibility, start_date, end_date, sort_order, is_active, created_by, created_at, updated_at')
           .eq('church_id', profile.church_id)
           .eq('is_active', true)
           .order('sort_order', { ascending: true }),
@@ -145,12 +145,12 @@ export default async function DashboardPage() {
     const [settingsResult, linksResult] = await Promise.all([
       adminClient
         .from('link_tree_settings')
-        .select('*')
+        .select('id, church_id, title, bio, avatar_url, background_color, background_gradient_start, background_gradient_end, card_style, card_border_radius, show_church_name, social_links, meta_title, meta_description, is_active, created_at, updated_at')
         .eq('church_id', profile.church_id)
         .single(),
       adminClient
         .from('link_tree_links')
-        .select('*')
+        .select('id, church_id, title, url, description, icon, image_url, card_size, card_color, text_color, hover_effect, hide_label, label_bold, label_italic, label_underline, visibility, start_date, end_date, sort_order, is_active, created_by, created_at, updated_at')
         .eq('church_id', profile.church_id)
         .eq('is_active', true)
         .order('sort_order', { ascending: true }),

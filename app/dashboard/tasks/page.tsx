@@ -105,7 +105,7 @@ export default async function TasksPage() {
       .limit(50),
     adminClient
       .from('saved_views')
-      .select('*')
+      .select('id, church_id, view_type, name, description, filter_state, sort_state, group_by, is_default, created_by, created_at, updated_at')
       .eq('church_id', profile.church_id)
       .eq('view_type', 'tasks')
       .order('is_default', { ascending: false })

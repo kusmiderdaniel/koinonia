@@ -45,7 +45,15 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
     !!(settings?.background_gradient_start && settings?.background_gradient_end)
   )
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const statusTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const isInitialMount = useRef(true)
+
+  // Cleanup status timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current)
+    }
+  }, [])
 
   // Form state
   const [title, setTitle] = useState(settings?.title || '')
@@ -132,7 +140,8 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
         setSettings(result.settings)
         setSaveStatus('saved')
         // Reset to idle after showing saved status
-        setTimeout(() => setSaveStatus('idle'), 2000)
+        if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current)
+        statusTimeoutRef.current = setTimeout(() => setSaveStatus('idle'), 2000)
       }
     } catch {
       toast.error(t('toast.settingsSaveFailed'))

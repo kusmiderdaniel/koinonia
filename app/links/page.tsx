@@ -60,7 +60,7 @@ export default async function PublicLinksPage() {
   // Get link tree settings
   const { data: settings } = await adminClient
     .from('link_tree_settings')
-    .select('*')
+    .select('id, church_id, title, bio, avatar_url, background_color, background_gradient_start, background_gradient_end, card_style, card_border_radius, show_church_name, social_links, meta_title, meta_description, is_active, created_at, updated_at')
     .eq('church_id', church.id)
     .single()
 
@@ -73,7 +73,7 @@ export default async function PublicLinksPage() {
   const now = new Date().toISOString()
   const { data: allLinks } = await adminClient
     .from('link_tree_links')
-    .select('*')
+    .select('id, church_id, title, url, description, icon, image_url, card_size, card_color, text_color, hover_effect, hide_label, label_bold, label_italic, label_underline, visibility, start_date, end_date, sort_order, is_active, created_by, created_at, updated_at')
     .eq('church_id', church.id)
     .eq('is_active', true)
     .or(`start_date.is.null,start_date.lte.${now}`)

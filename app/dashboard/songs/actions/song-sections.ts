@@ -32,7 +32,7 @@ export async function getSongSections(songId: string) {
   // Get all sections for the song
   const { data: sections, error } = await adminClient
     .from('song_sections')
-    .select('*')
+    .select('id, song_id, section_type, label, lyrics, section_number, sort_order, created_at, updated_at')
     .eq('song_id', songId)
     .order('sort_order', { ascending: true })
 

@@ -60,7 +60,7 @@ export async function getMinistryRoles(ministryId: string) {
 
   const { data: roles, error } = await adminClient
     .from('ministry_roles')
-    .select('*')
+    .select('id, ministry_id, name, description, sort_order, created_at, updated_at')
     .eq('ministry_id', ministryId)
     .order('sort_order')
     .order('name')

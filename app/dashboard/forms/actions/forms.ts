@@ -91,14 +91,14 @@ export async function getForm(id: string) {
   // Get fields
   const { data: fields } = await adminClient
     .from('form_fields')
-    .select('*')
+    .select('id, form_id, type, label, label_i18n, description, description_i18n, placeholder, placeholder_i18n, required, options, options_i18n, settings, sort_order, created_at, updated_at')
     .eq('form_id', id)
     .order('sort_order')
 
   // Get conditions
   const { data: conditions } = await adminClient
     .from('form_conditions')
-    .select('*')
+    .select('id, form_id, target_field_id, source_field_id, operator, value, action, created_at')
     .eq('form_id', id)
 
   // Get submission count
@@ -358,7 +358,7 @@ export async function duplicateForm(id: string) {
   // Get original form with fields and conditions
   const { data: originalForm } = await adminClient
     .from('forms')
-    .select('*')
+    .select('id, church_id, title, title_i18n, description, description_i18n, status, access_type, allow_multiple_submissions, is_multilingual, public_token, published_at, closed_at, settings, created_by, created_at, updated_at')
     .eq('id', id)
     .eq('church_id', profile.church_id)
     .single()
@@ -394,7 +394,7 @@ export async function duplicateForm(id: string) {
   // Get original fields
   const { data: originalFields } = await adminClient
     .from('form_fields')
-    .select('*')
+    .select('id, form_id, type, label, label_i18n, description, description_i18n, placeholder, placeholder_i18n, required, options, options_i18n, settings, sort_order, created_at, updated_at')
     .eq('form_id', id)
     .order('sort_order')
 
@@ -432,7 +432,7 @@ export async function duplicateForm(id: string) {
     // Get and duplicate conditions
     const { data: originalConditions } = await adminClient
       .from('form_conditions')
-      .select('*')
+      .select('id, form_id, target_field_id, source_field_id, operator, value, action, created_at')
       .eq('form_id', id)
 
     if (originalConditions && originalConditions.length > 0) {

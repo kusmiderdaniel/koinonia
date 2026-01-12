@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useState, useEffect, useCallback } from 'react'
+import { memo, useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
@@ -72,6 +72,16 @@ export const FormDetailPanel = memo(function FormDetailPanel({
   const [isPublishing, setIsPublishing] = useState(false)
   const [copied, setCopied] = useState(false)
 
+  // Ref for timeout cleanup
+  const copiedTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current)
+    }
+  }, [])
+
   // Fetch full form details with fields
   useEffect(() => {
     let cancelled = false
@@ -113,7 +123,8 @@ export const FormDetailPanel = memo(function FormDetailPanel({
     await navigator.clipboard.writeText(url)
     setCopied(true)
     toast.success(t('toast.linkCopied'))
-    setTimeout(() => setCopied(false), 2000)
+    if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current)
+    copiedTimeoutRef.current = setTimeout(() => setCopied(false), 2000)
   }, [form, t])
 
   const handlePublish = useCallback(async () => {

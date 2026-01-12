@@ -31,7 +31,7 @@ export async function getSavedViews(viewType: ViewType): Promise<{
 
   const { data, error } = await adminClient
     .from('saved_views')
-    .select('*')
+    .select('id, church_id, view_type, name, description, filter_state, sort_state, group_by, is_default, created_by, created_at, updated_at')
     .eq('church_id', profile.church_id)
     .eq('view_type', viewType)
     .order('is_default', { ascending: false })

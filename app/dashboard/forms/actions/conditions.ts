@@ -23,7 +23,7 @@ export async function getFormConditions(formId: string) {
 
   const { data: conditions, error } = await adminClient
     .from('form_conditions')
-    .select('*')
+    .select('id, form_id, target_field_id, source_field_id, operator, value, action, created_at')
     .eq('form_id', formId)
 
   if (error) {

@@ -23,7 +23,7 @@ export async function getFormFields(formId: string) {
 
   const { data: fields, error } = await adminClient
     .from('form_fields')
-    .select('*')
+    .select('id, form_id, type, label, label_i18n, description, description_i18n, placeholder, placeholder_i18n, required, options, options_i18n, settings, sort_order, created_at, updated_at')
     .eq('form_id', formId)
     .order('sort_order')
 

@@ -35,7 +35,7 @@ export async function getCampuses() {
   // Get active campuses for this church
   const { data: campuses, error } = await adminClient
     .from('campuses')
-    .select('*')
+    .select('id, church_id, name, description, address, city, state, zip_code, country, color, is_default, is_active, created_at, updated_at')
     .eq('church_id', profile.church_id)
     .eq('is_active', true)
     .order('is_default', { ascending: false })

@@ -3,9 +3,14 @@
 import { memo } from 'react'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
-import * as LucideIcons from 'lucide-react'
 import { Instagram, Facebook, Youtube, Twitter, Globe, Mail, Music } from 'lucide-react'
-import type { LinkTreeSettingsRow, LinkTreeLinkRow, CardSize, SocialLink } from '../types'
+import {
+  getContrastColor,
+  getIconComponent,
+  CARD_SIZE_STYLES_PREVIEW,
+  type CardSize,
+} from '@/lib/utils/link-utils'
+import type { LinkTreeSettingsRow, LinkTreeLinkRow, SocialLink } from '../types'
 
 // Map platform names to icons for social links
 const PLATFORM_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -24,31 +29,6 @@ interface LivePreviewProps {
   links: LinkTreeLinkRow[]
   churchName?: string
   churchLogo?: string | null
-}
-
-// Calculate contrasting text color based on background
-function getContrastColor(hexColor: string): string {
-  const hex = hexColor.replace('#', '')
-  const r = parseInt(hex.substring(0, 2), 16)
-  const g = parseInt(hex.substring(2, 4), 16)
-  const b = parseInt(hex.substring(4, 6), 16)
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-  return luminance > 0.5 ? '#1f2937' : '#ffffff'
-}
-
-// Get icon component from string name
-function getIconComponent(iconName: string | null): React.ComponentType<{ className?: string }> | null {
-  if (!iconName) return null
-  // @ts-expect-error - Dynamic icon lookup
-  const IconComponent = LucideIcons[iconName]
-  return IconComponent || null
-}
-
-// Card size styles (scaled down from public LinkCard)
-const CARD_SIZE_STYLES: Record<CardSize, { padding: string; text: string; icon: string; height: string }> = {
-  small: { padding: 'px-2.5 py-2', text: 'text-xs', icon: 'w-3 h-3', height: 'h-10' },
-  medium: { padding: 'px-3 py-2.5', text: 'text-sm', icon: 'w-4 h-4', height: 'h-12' },
-  large: { padding: 'px-4 py-3', text: 'text-base', icon: 'w-5 h-5', height: 'h-16' },
 }
 
 export const LivePreview = memo(function LivePreview({
@@ -151,7 +131,7 @@ export const LivePreview = memo(function LivePreview({
                 }
               }
 
-              const sizeStyles = CARD_SIZE_STYLES[size]
+              const sizeStyles = CARD_SIZE_STYLES_PREVIEW[size]
 
               // Image card
               if (hasImage) {

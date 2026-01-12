@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import {
   getOrCreateCalendarToken,
   regenerateCalendarToken,
@@ -17,6 +17,18 @@ export function useCalendarIntegrationState() {
   const [error, setError] = useState<string | null>(null)
   const [copiedPersonal, setCopiedPersonal] = useState(false)
   const [copiedCampusId, setCopiedCampusId] = useState<string | null>(null)
+
+  // Refs for timeout cleanup
+  const copiedPersonalTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const copiedCampusTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (copiedPersonalTimeoutRef.current) clearTimeout(copiedPersonalTimeoutRef.current)
+      if (copiedCampusTimeoutRef.current) clearTimeout(copiedCampusTimeoutRef.current)
+    }
+  }, [])
 
   const baseUrl = useMemo(() => {
     if (typeof window !== 'undefined') {
@@ -91,15 +103,21 @@ export function useCalendarIntegrationState() {
 
   const copyToClipboard = useCallback(
     async (text: string, type: 'personal' | string) => {
-      try {
-        await navigator.clipboard.writeText(text)
+      const updateCopiedState = () => {
         if (type === 'personal') {
           setCopiedPersonal(true)
-          setTimeout(() => setCopiedPersonal(false), 2000)
+          if (copiedPersonalTimeoutRef.current) clearTimeout(copiedPersonalTimeoutRef.current)
+          copiedPersonalTimeoutRef.current = setTimeout(() => setCopiedPersonal(false), 2000)
         } else {
           setCopiedCampusId(type)
-          setTimeout(() => setCopiedCampusId(null), 2000)
+          if (copiedCampusTimeoutRef.current) clearTimeout(copiedCampusTimeoutRef.current)
+          copiedCampusTimeoutRef.current = setTimeout(() => setCopiedCampusId(null), 2000)
         }
+      }
+
+      try {
+        await navigator.clipboard.writeText(text)
+        updateCopiedState()
       } catch {
         // Fallback for older browsers
         const textArea = document.createElement('textarea')
@@ -108,13 +126,7 @@ export function useCalendarIntegrationState() {
         textArea.select()
         document.execCommand('copy')
         document.body.removeChild(textArea)
-        if (type === 'personal') {
-          setCopiedPersonal(true)
-          setTimeout(() => setCopiedPersonal(false), 2000)
-        } else {
-          setCopiedCampusId(type)
-          setTimeout(() => setCopiedCampusId(null), 2000)
-        }
+        updateCopiedState()
       }
     },
     []

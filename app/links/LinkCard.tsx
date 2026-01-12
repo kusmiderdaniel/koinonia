@@ -3,11 +3,14 @@
 import { memo, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
-import { Lock, Users, Shield, Crown } from 'lucide-react'
-import * as LucideIcons from 'lucide-react'
+import { Users, Shield, Crown } from 'lucide-react'
+import {
+  getContrastColor,
+  getIconComponent,
+  CARD_SIZE_STYLES,
+  type CardSize,
+} from '@/lib/utils/link-utils'
 import type { LinkVisibility } from '@/app/dashboard/links/types'
-
-type CardSize = 'small' | 'medium' | 'large'
 
 interface LinkCardProps {
   title: string
@@ -28,38 +31,6 @@ interface LinkCardProps {
   labelBold?: boolean
   labelItalic?: boolean
   labelUnderline?: boolean
-}
-
-// Card size styles
-const CARD_SIZE_STYLES: Record<CardSize, { padding: string; text: string; icon: string; height: string }> = {
-  small: { padding: 'p-3', text: 'text-sm', icon: 'w-4 h-4', height: 'h-16' },
-  medium: { padding: 'p-4', text: 'text-base', icon: 'w-5 h-5', height: 'h-20' },
-  large: { padding: 'p-5', text: 'text-lg', icon: 'w-6 h-6', height: 'h-28' },
-}
-
-// Calculate contrasting text color based on background
-function getContrastColor(hexColor: string): string {
-  const hex = hexColor.replace('#', '')
-  const r = parseInt(hex.substring(0, 2), 16)
-  const g = parseInt(hex.substring(2, 4), 16)
-  const b = parseInt(hex.substring(4, 6), 16)
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-  return luminance > 0.5 ? '#1f2937' : '#ffffff'
-}
-
-// Get icon component from string name
-function getIconComponent(iconName: string | null): React.ComponentType<{ className?: string }> | null {
-  if (!iconName) return null
-
-  // Convert kebab-case or snake_case to PascalCase
-  const pascalCase = iconName
-    .split(/[-_]/)
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join('')
-
-  // @ts-expect-error - Dynamic icon lookup
-  const IconComponent = LucideIcons[pascalCase]
-  return IconComponent || null
 }
 
 // Visibility icons

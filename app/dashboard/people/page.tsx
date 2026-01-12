@@ -86,7 +86,7 @@ export default async function PeoplePage() {
     // Fetch saved views for people page
     adminClient
       .from('saved_views')
-      .select('*')
+      .select('id, church_id, view_type, name, description, filter_state, sort_state, group_by, is_default, created_by, created_at, updated_at')
       .eq('church_id', profile.church_id)
       .eq('view_type', 'people')
       .order('is_default', { ascending: false })

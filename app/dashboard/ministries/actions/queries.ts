@@ -69,7 +69,7 @@ export async function getMinistryDetails(ministryId: string) {
   const [rolesResult, membersResult, churchMembersResult, allMinistriesResult] = await Promise.all([
     adminClient
       .from('ministry_roles')
-      .select('*')
+      .select('id, ministry_id, name, description, sort_order, created_at, updated_at')
       .eq('ministry_id', ministryId)
       .order('sort_order')
       .order('name'),

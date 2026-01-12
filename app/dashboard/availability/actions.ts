@@ -47,7 +47,7 @@ export async function getMyUnavailability() {
   // Get user's unavailability entries
   const { data: unavailability, error } = await adminClient
     .from('volunteer_unavailability')
-    .select('*')
+    .select('id, church_id, profile_id, start_date, end_date, reason, created_at, updated_at')
     .eq('profile_id', profile.id)
     .eq('church_id', profile.church_id)
     .order('start_date', { ascending: true })

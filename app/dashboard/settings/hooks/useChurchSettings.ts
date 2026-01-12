@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -103,6 +103,18 @@ export function useChurchSettings(initialData: SettingsInitialData | undefined, 
     }
   )
 
+  // Refs for timeout cleanup
+  const joinCodeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const successTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (joinCodeTimeoutRef.current) clearTimeout(joinCodeTimeoutRef.current)
+      if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current)
+    }
+  }, [])
+
   const form = useForm<ChurchSettingsInput>({
     resolver: zodResolver(churchSettingsSchema),
     defaultValues: initialData ? {
@@ -143,7 +155,8 @@ export function useChurchSettings(initialData: SettingsInitialData | undefined, 
     if (!churchData?.join_code) return
     await navigator.clipboard.writeText(churchData.join_code)
     setJoinCodeCopied(true)
-    setTimeout(() => setJoinCodeCopied(false), 2000)
+    if (joinCodeTimeoutRef.current) clearTimeout(joinCodeTimeoutRef.current)
+    joinCodeTimeoutRef.current = setTimeout(() => setJoinCodeCopied(false), 2000)
   }, [churchData?.join_code])
 
   const handleRegenerateJoinCode = useCallback(async () => {
@@ -157,7 +170,8 @@ export function useChurchSettings(initialData: SettingsInitialData | undefined, 
       } else if (result.success && result.joinCode) {
         setChurchData((prev) => prev ? { ...prev, join_code: result.joinCode! } : null)
         setSuccess(translations.regeneratedSuccess)
-        setTimeout(() => setSuccess(null), 3000)
+        if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current)
+        successTimeoutRef.current = setTimeout(() => setSuccess(null), 3000)
       }
     } catch (err) {
       setError('Failed to regenerate join code')
