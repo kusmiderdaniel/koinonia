@@ -62,6 +62,11 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
       description: t('access.membersOnlyDescription'),
     },
     {
+      value: 'internal_anonymous' as FormAccessType,
+      title: t('access.membersAnonymous'),
+      description: t('access.membersAnonymousDescription'),
+    },
+    {
       value: 'public' as FormAccessType,
       title: t('access.anyone'),
       description: t('access.anyoneDescription'),

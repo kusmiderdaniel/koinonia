@@ -130,17 +130,8 @@ export function PublicFormClient({
 
           {/* Fields */}
           <div className="p-6 md:p-8">
-            <FormFields
-              fields={visibleFields}
-              values={values}
-              errors={errors}
-              onValueChange={handleValueChange}
-              onMultiSelectChange={handleMultiSelectChange}
-              weekStartsOn={weekStartsOn}
-            />
-
             {/* Optional email for anonymous submissions */}
-            <div className="pt-6 mt-6 border-t space-y-2">
+            <div className="pb-6 mb-6 border-b space-y-2">
               <Label htmlFor="respondent-email" className="text-base font-medium">
                 {t('public.emailOptional')}
               </Label>
@@ -157,6 +148,15 @@ export function PublicFormClient({
                 />
               </div>
             </div>
+
+            <FormFields
+              fields={visibleFields}
+              values={values}
+              errors={errors}
+              onValueChange={handleValueChange}
+              onMultiSelectChange={handleMultiSelectChange}
+              weekStartsOn={weekStartsOn}
+            />
           </div>
 
           {/* Submit */}

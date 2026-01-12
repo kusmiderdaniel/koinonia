@@ -399,9 +399,9 @@ export interface Birthday {
 }
 
 /**
- * Get upcoming birthdays for the dashboard
+ * Get upcoming birthdays for the dashboard (Quick Access section)
  * - Leaders: See birthdays of members in ministries they lead
- * - Admins/Owners: Also see birthdays of all leaders
+ * - Admins/Owners: See birthdays of members in ministries they lead + all leaders
  */
 export async function getUpcomingBirthdays(): Promise<{ data?: Birthday[]; error?: string }> {
   const auth = await getAuthenticatedUserWithProfile()
@@ -410,83 +410,85 @@ export async function getUpcomingBirthdays(): Promise<{ data?: Birthday[]; error
   const { profile, adminClient } = auth
   const role = profile.role
 
+  // Only leaders, admins, owners can see birthdays
+  if (!['leader', 'admin', 'owner'].includes(role)) {
+    return { data: [] }
+  }
+
   // Import birthday helpers dynamically to keep server action clean
   const { isBirthdayInRange, sortBirthdaysByProximity } = await import('@/lib/utils/birthday-helpers')
 
   const allBirthdays: Birthday[] = []
 
-  // For leaders, admins, owners: Get ministry members' birthdays
-  if (['leader', 'admin', 'owner'].includes(role)) {
-    // Get ministries this user leads (for leaders) or all ministries (for admins/owners)
-    let ministriesQuery = adminClient
-      .from('ministries')
-      .select('id, name, color')
-      .eq('church_id', profile.church_id)
+  // Get ministries this user leads (same for all roles - only ministries they lead)
+  const { data: ministries } = await adminClient
+    .from('ministries')
+    .select('id, name, color')
+    .eq('church_id', profile.church_id)
+    .eq('is_active', true)
+    .eq('leader_id', profile.id)
+
+  if (ministries && ministries.length > 0) {
+    const ministryIds = ministries.map((m) => m.id)
+    const ministryMap = new Map(ministries.map((m) => [m.id, m]))
+
+    // Get members of these ministries with birthdays
+    const { data: members } = await adminClient
+      .from('ministry_members')
+      .select(`
+        ministry_id,
+        profile:profiles (
+          id,
+          first_name,
+          last_name,
+          avatar_url,
+          date_of_birth
+        )
+      `)
+      .in('ministry_id', ministryIds)
       .eq('is_active', true)
 
-    // Leaders only see ministries they lead
-    if (role === 'leader') {
-      ministriesQuery = ministriesQuery.eq('leader_id', profile.id)
-    }
+    if (members) {
+      for (const member of members) {
+        const p = Array.isArray(member.profile) ? member.profile[0] : member.profile
+        if (!p || !p.date_of_birth) continue
 
-    const { data: ministries } = await ministriesQuery
+        // Skip the user's own birthday - they probably remember that one
+        if (p.id === profile.id) continue
 
-    if (ministries && ministries.length > 0) {
-      const ministryIds = ministries.map((m) => m.id)
-      const ministryMap = new Map(ministries.map((m) => [m.id, m]))
-
-      // Get members of these ministries with birthdays
-      const { data: members } = await adminClient
-        .from('ministry_members')
-        .select(`
-          ministry_id,
-          profile:profiles (
-            id,
-            first_name,
-            last_name,
-            avatar_url,
-            date_of_birth
-          )
-        `)
-        .in('ministry_id', ministryIds)
-        .eq('is_active', true)
-
-      if (members) {
-        for (const member of members) {
-          const p = Array.isArray(member.profile) ? member.profile[0] : member.profile
-          if (!p || !p.date_of_birth) continue
-
-          // Check if birthday is in range (-7 to +14 days)
-          if (isBirthdayInRange(p.date_of_birth, -7, 14)) {
-            const ministry = ministryMap.get(member.ministry_id)
-            allBirthdays.push({
-              id: p.id,
-              firstName: p.first_name,
-              lastName: p.last_name,
-              avatarUrl: p.avatar_url,
-              dateOfBirth: p.date_of_birth,
-              ministryName: ministry?.name || null,
-              ministryColor: ministry?.color || null,
-            })
-          }
+        // Check if birthday is in range (-7 to +14 days)
+        if (isBirthdayInRange(p.date_of_birth, -7, 14)) {
+          const ministry = ministryMap.get(member.ministry_id)
+          allBirthdays.push({
+            id: p.id,
+            firstName: p.first_name,
+            lastName: p.last_name,
+            avatarUrl: p.avatar_url,
+            dateOfBirth: p.date_of_birth,
+            ministryName: ministry?.name || null,
+            ministryColor: ministry?.color || null,
+          })
         }
       }
     }
   }
 
-  // For admins/owners: Also include all leaders
+  // For admins/owners: Also include all leaders' birthdays
   if (['admin', 'owner'].includes(role)) {
     const { data: leaders } = await adminClient
       .from('profiles')
       .select('id, first_name, last_name, avatar_url, date_of_birth')
       .eq('church_id', profile.church_id)
       .eq('role', 'leader')
-      .eq('is_active', true)
+      .eq('active', true)
       .not('date_of_birth', 'is', null)
 
     if (leaders) {
       for (const leader of leaders) {
         if (!leader.date_of_birth) continue
+
+        // Skip the user's own birthday
+        if (leader.id === profile.id) continue
 
         // Check if birthday is in range (-7 to +14 days)
         if (isBirthdayInRange(leader.date_of_birth, -7, 14)) {
@@ -511,4 +513,148 @@ export async function getUpcomingBirthdays(): Promise<{ data?: Birthday[]; error
   const sorted = sortBirthdaysByProximity(allBirthdays)
 
   return { data: sorted }
+}
+
+// ============================================
+// Church Holidays for Calendar
+// ============================================
+
+export interface ChurchHoliday {
+  id: string
+  name: string
+  description: string | null
+  date: string // ISO date string (YYYY-MM-DD)
+  color: string
+  isDefault: boolean
+}
+
+/**
+ * Get church holidays for a specific month
+ * Returns both recurring annual holidays and one-time holidays
+ */
+export async function getChurchHolidays(
+  month: number,
+  year: number
+): Promise<{ data?: ChurchHoliday[]; error?: string }> {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  // Calculate month boundaries for one-time holidays
+  const monthStart = new Date(year, month, 1)
+  const monthEnd = new Date(year, month + 1, 0) // Last day of month
+
+  // Fetch recurring holidays for this month (by month number)
+  const { data: recurringHolidays, error: recurringError } = await adminClient
+    .from('church_holidays')
+    .select('id, name, description, month, day, color, is_default')
+    .eq('church_id', profile.church_id)
+    .eq('month', month + 1) // JavaScript months are 0-indexed, DB is 1-indexed
+    .is('specific_date', null)
+
+  if (recurringError) {
+    console.error('Error fetching recurring holidays:', recurringError)
+    return { error: 'Failed to fetch holidays' }
+  }
+
+  // Fetch one-time holidays for this month
+  const { data: oneTimeHolidays, error: oneTimeError } = await adminClient
+    .from('church_holidays')
+    .select('id, name, description, specific_date, color, is_default')
+    .eq('church_id', profile.church_id)
+    .gte('specific_date', monthStart.toISOString().split('T')[0])
+    .lte('specific_date', monthEnd.toISOString().split('T')[0])
+
+  if (oneTimeError) {
+    console.error('Error fetching one-time holidays:', oneTimeError)
+    return { error: 'Failed to fetch holidays' }
+  }
+
+  // Transform recurring holidays to include the full date for the current year
+  const holidays: ChurchHoliday[] = [
+    ...(recurringHolidays || []).map((h) => ({
+      id: h.id,
+      name: h.name,
+      description: h.description,
+      date: `${year}-${String(h.month).padStart(2, '0')}-${String(h.day).padStart(2, '0')}`,
+      color: h.color || '#f59e0b',
+      isDefault: h.is_default || false,
+    })),
+    ...(oneTimeHolidays || []).map((h) => ({
+      id: h.id,
+      name: h.name,
+      description: h.description,
+      date: h.specific_date!,
+      color: h.color || '#f59e0b',
+      isDefault: h.is_default || false,
+    })),
+  ]
+
+  return { data: holidays }
+}
+
+// ============================================
+// Calendar Birthdays (for leaders and above)
+// ============================================
+
+export interface CalendarBirthday {
+  id: string
+  firstName: string
+  lastName: string
+  avatarUrl: string | null
+  date: string // ISO date string for this year (YYYY-MM-DD)
+}
+
+/**
+ * Get birthdays for a specific month (for calendar display)
+ * Leaders, admins, and owners can see ALL church members' birthdays on the calendar
+ */
+export async function getCalendarBirthdays(
+  month: number,
+  year: number
+): Promise<{ data?: CalendarBirthday[]; error?: string }> {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+  const role = profile.role
+
+  // Only leaders and above can see birthdays on the calendar
+  if (!['leader', 'admin', 'owner'].includes(role)) {
+    return { data: [] }
+  }
+
+  // Get ALL active church members with birthdays in this month
+  const { data: members, error } = await adminClient
+    .from('profiles')
+    .select('id, first_name, last_name, avatar_url, date_of_birth')
+    .eq('church_id', profile.church_id)
+    .eq('active', true)
+    .not('date_of_birth', 'is', null)
+
+  if (error) {
+    console.error('Error fetching calendar birthdays:', error)
+    return { error: 'Failed to fetch birthdays' }
+  }
+
+  const birthdays: CalendarBirthday[] = []
+
+  for (const member of members || []) {
+    if (!member.date_of_birth) continue
+
+    // Check if birthday is in this month
+    const dob = new Date(member.date_of_birth)
+    if (dob.getMonth() === month) {
+      birthdays.push({
+        id: member.id,
+        firstName: member.first_name,
+        lastName: member.last_name,
+        avatarUrl: member.avatar_url,
+        date: `${year}-${String(month + 1).padStart(2, '0')}-${String(dob.getDate()).padStart(2, '0')}`,
+      })
+    }
+  }
+
+  return { data: birthdays }
 }

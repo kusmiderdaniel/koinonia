@@ -221,6 +221,56 @@ export type Database = {
           },
         ]
       }
+      church_holidays: {
+        Row: {
+          church_id: string
+          color: string | null
+          created_at: string | null
+          day: number | null
+          description: string | null
+          id: string
+          is_default: boolean | null
+          month: number | null
+          name: string
+          specific_date: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          church_id: string
+          color?: string | null
+          created_at?: string | null
+          day?: number | null
+          description?: string | null
+          id?: string
+          is_default?: boolean | null
+          month?: number | null
+          name: string
+          specific_date?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          church_id?: string
+          color?: string | null
+          created_at?: string | null
+          day?: number | null
+          description?: string | null
+          id?: string
+          is_default?: boolean | null
+          month?: number | null
+          name?: string
+          specific_date?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_holidays_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       churches: {
         Row: {
           address: string | null
@@ -1015,6 +1065,7 @@ export type Database = {
       forms: {
         Row: {
           access_type: string
+          allow_multiple_submissions: boolean
           church_id: string
           closed_at: string | null
           created_at: string | null
@@ -1030,6 +1081,7 @@ export type Database = {
         }
         Insert: {
           access_type?: string
+          allow_multiple_submissions?: boolean
           church_id: string
           closed_at?: string | null
           created_at?: string | null
@@ -1045,6 +1097,7 @@ export type Database = {
         }
         Update: {
           access_type?: string
+          allow_multiple_submissions?: boolean
           church_id?: string
           closed_at?: string | null
           created_at?: string | null

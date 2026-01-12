@@ -37,8 +37,11 @@
   "access": {
     "public": "Publiczny",
     "internal": "Wewnętrzny",
+    "anonymous": "Anonimowy",
     "membersOnly": "Tylko członkowie kościoła",
-    "membersOnlyDescription": "Tylko zalogowani członkowie mogą odpowiadać",
+    "membersOnlyDescription": "Tylko zalogowani członkowie mogą odpowiadać. Odpowiedzi są powiązane z ich profilem.",
+    "membersAnonymous": "Tylko członkowie (Anonimowo)",
+    "membersAnonymousDescription": "Tylko zalogowani członkowie mogą odpowiadać, ale ich tożsamość nie jest zapisywana.",
     "anyone": "Każdy (Publiczny)",
     "anyoneDescription": "Każdy z linkiem może odpowiadać"
   },
@@ -146,7 +149,8 @@
 
   "internal": {
     "backToDashboard": "Powrót do panelu",
-    "alreadySubmitted": "Już przesłałeś odpowiedź do tego formularza. Ponowne przesłanie utworzy nową odpowiedź.",
+    "alreadySubmittedTitle": "Już wypełniono",
+    "alreadySubmittedDescription": "Już przesłałeś odpowiedź do tego formularza. Ten formularz pozwala tylko na jedną odpowiedź na osobę.",
     "respondingAs": "Odpowiadasz jako {name}",
     "submit": "Prześlij",
     "submitting": "Przesyłanie...",
@@ -305,6 +309,8 @@
     "formDescription": "Opis",
     "descriptionHelp": "Ten opis będzie wyświetlany respondentom na górze formularza.",
     "accessType": "Kto może odpowiadać?",
+    "allowMultipleSubmissions": "Zezwól na wielokrotne wypełnianie",
+    "allowMultipleSubmissionsDescription": "Po włączeniu użytkownicy mogą wypełnić ten formularz więcej niż raz.",
     "formStatus": "Aktualny status",
     "statusHelp": {
       "draft": "Formularz nie jest jeszcze opublikowany. Tylko Ty możesz go zobaczyć.",

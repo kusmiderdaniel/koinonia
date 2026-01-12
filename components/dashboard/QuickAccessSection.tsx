@@ -5,10 +5,13 @@ import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Calendar as CalendarIcon, CalendarOff, ChevronRight, Plus, Pencil, Trash2 } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Calendar as CalendarIcon, CalendarOff, ChevronRight, Plus, Pencil, Trash2, Cake, Gift } from 'lucide-react'
 import { format } from 'date-fns'
 import { getDateTimeFormatPattern, toDateString, parseDateString, formatDateRange } from '@/lib/utils/format'
-import type { DashboardEvent } from '@/app/dashboard/actions'
+import { getBirthdayDisplay } from '@/lib/utils/birthday-helpers'
+import { cn } from '@/lib/utils'
+import type { DashboardEvent, Birthday } from '@/app/dashboard/actions'
 import { getMyUnavailability, deleteUnavailability } from '@/app/dashboard/availability/actions'
 import { toast } from 'sonner'
 import { AddUnavailabilityDialog } from './quick-access/AddUnavailabilityDialog'
@@ -17,6 +20,7 @@ import type { UnavailabilityItem } from './quick-access/types'
 
 interface QuickAccessSectionProps {
   events: DashboardEvent[]
+  birthdays?: Birthday[]
   unavailabilityCount?: number
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
   timeFormat?: '12h' | '24h'
@@ -28,7 +32,12 @@ const isUpcoming = (endDate: string): boolean => {
   return endDate >= today
 }
 
-export function QuickAccessSection({ events, unavailabilityCount = 0, weekStartsOn = 1, timeFormat = '24h' }: QuickAccessSectionProps) {
+// Get initials from name
+function getInitials(firstName: string, lastName: string): string {
+  return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
+}
+
+export function QuickAccessSection({ events, birthdays = [], unavailabilityCount = 0, weekStartsOn = 1, timeFormat = '24h' }: QuickAccessSectionProps) {
   const router = useRouter()
   const t = useTranslations('dashboard')
 
@@ -105,11 +114,14 @@ export function QuickAccessSection({ events, unavailabilityCount = 0, weekStarts
     loadUnavailability()
   }, [loadUnavailability])
 
+  const showBirthdays = birthdays.length > 0
+  const gridCols = showBirthdays ? 'md:grid-cols-3' : 'md:grid-cols-2'
+
   return (
     <section className="mb-6">
       <h2 className="text-base md:text-lg font-semibold mb-3">{t('quickAccess.title')}</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className={cn('grid grid-cols-1 gap-4', gridCols)}>
         {/* Upcoming Events Card */}
         <Card
           className="cursor-pointer hover:bg-muted/50 transition-colors border border-border"
@@ -151,6 +163,70 @@ export function QuickAccessSection({ events, unavailabilityCount = 0, weekStarts
             )}
           </CardContent>
         </Card>
+
+        {/* Upcoming Birthdays Card */}
+        {showBirthdays && (
+          <Card className="border border-border">
+            <CardHeader className="pb-2 p-4">
+              <CardTitle className="text-sm font-medium flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <Cake className="h-4 w-4 text-muted-foreground" />
+                  {t('birthdays.title')}
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0 p-4">
+              <div className="space-y-2">
+                {birthdays.slice(0, 3).map((birthday) => {
+                  const { monthDay, daysUntil, label } = getBirthdayDisplay(birthday.dateOfBirth)
+                  const isToday = daysUntil === 0
+                  const isSoon = daysUntil > 0 && daysUntil <= 3
+
+                  return (
+                    <div
+                      key={birthday.id}
+                      className={cn(
+                        'flex items-center gap-2 p-2 rounded-md border',
+                        isToday && 'bg-brand/10 border-brand',
+                        isSoon && !isToday && 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800'
+                      )}
+                    >
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={birthday.avatarUrl || undefined} />
+                        <AvatarFallback className="text-xs">
+                          {getInitials(birthday.firstName, birthday.lastName)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1">
+                          <p className="text-sm font-medium truncate">
+                            {birthday.firstName} {birthday.lastName}
+                          </p>
+                          {isToday && <Gift className="h-3 w-3 text-brand animate-bounce" />}
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <span>{monthDay}</span>
+                          <span>·</span>
+                          <span className={cn(
+                            isToday && 'text-brand font-medium',
+                            isSoon && !isToday && 'text-amber-600 dark:text-amber-400 font-medium'
+                          )}>
+                            {label}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+                {birthdays.length > 3 && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {t('birthdays.showMore', { count: birthdays.length - 3 })}
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Unavailability Card */}
         <Card

@@ -8,6 +8,7 @@ interface FormBuilderActions {
   updateFormTitle: (title: string) => void
   updateFormDescription: (description: string | null) => void
   updateFormAccessType: (accessType: FormAccessType) => void
+  updateFormAllowMultipleSubmissions: (allow: boolean) => void
 
   // Field actions
   setFields: (fields: BuilderField[]) => void
@@ -79,6 +80,12 @@ export const useFormBuilder = create<FormBuilderStore>((set, get) => ({
   updateFormAccessType: (access_type) =>
     set((state) => ({
       form: state.form ? { ...state.form, access_type } : null,
+      isDirty: true,
+    })),
+
+  updateFormAllowMultipleSubmissions: (allow_multiple_submissions) =>
+    set((state) => ({
+      form: state.form ? { ...state.form, allow_multiple_submissions } : null,
       isDirty: true,
     })),
 

@@ -6,6 +6,8 @@ import {
   getUnavailabilityCount,
   getCalendarEventsForMember,
   getUpcomingBirthdays,
+  getChurchHolidays,
+  getCalendarBirthdays,
 } from './actions'
 import { DashboardClient } from '@/components/dashboard/DashboardClient'
 import { MemberDashboard } from '@/components/dashboard/MemberDashboard'
@@ -49,9 +51,12 @@ export default async function DashboardPage() {
   // Check if user should see birthdays (leaders, admins, owners)
   const showBirthdays = ['leader', 'admin', 'owner'].includes(role)
 
-  // For members: Fetch calendar events and optionally links
+  // For members: Fetch calendar events, holidays, and optionally links
   if (isMemberOnly) {
-    const calendarResult = await getCalendarEventsForMember(currentMonth, currentYear)
+    const [calendarResult, holidaysResult] = await Promise.all([
+      getCalendarEventsForMember(currentMonth, currentYear),
+      getChurchHolidays(currentMonth, currentYear),
+    ])
 
     // Check if links page is enabled for this church
     const linksPageEnabled = profile.church?.links_page_enabled ?? false
@@ -121,6 +126,7 @@ export default async function DashboardPage() {
       <MemberDashboard
         firstName={profile.first_name}
         initialEvents={calendarResult.data || []}
+        initialHolidays={holidaysResult.data || []}
         initialMonth={currentMonth}
         initialYear={currentYear}
         firstDayOfWeek={firstDayOfWeek}
@@ -198,6 +204,8 @@ export default async function DashboardPage() {
     membersResult,
     calendarResult,
     birthdaysResult,
+    holidaysResult,
+    calendarBirthdaysResult,
   ] = await Promise.all([
     getMyAssignments(),
     getUpcomingEvents(),
@@ -259,8 +267,12 @@ export default async function DashboardPage() {
       .order('first_name'),
     // Calendar events for all roles
     getCalendarEventsForMember(currentMonth, currentYear),
-    // Birthdays for leaders+
+    // Birthdays for leaders+ (for BirthdaysSection)
     showBirthdays ? getUpcomingBirthdays() : Promise.resolve({ data: [] }),
+    // Church holidays for calendar
+    getChurchHolidays(currentMonth, currentYear),
+    // Calendar birthdays for leaders+ (for calendar display)
+    showBirthdays ? getCalendarBirthdays(currentMonth, currentYear) : Promise.resolve({ data: [] }),
   ])
 
   const assignments = assignmentsResult.data || []
@@ -272,6 +284,8 @@ export default async function DashboardPage() {
   const members = membersResult.data || []
   const calendarEvents = calendarResult.data || []
   const birthdays = birthdaysResult.data || []
+  const churchHolidays = holidaysResult.data || []
+  const calendarBirthdays = calendarBirthdaysResult.data || []
 
   // Calculate stats for header
   const pendingInvitations = assignments.filter(a => a.status === 'invited')
@@ -299,6 +313,9 @@ export default async function DashboardPage() {
   const urgentItems = createUrgentItems(assignments, dashboardTasks, timeFormat)
   const weekItems = createWeekItems(assignments, dashboardTasks, timeFormat)
 
+  // Check if user can create events (admin or owner)
+  const canCreateEvents = ['admin', 'owner'].includes(role)
+
   return (
     <DashboardClient
       role={role}
@@ -318,6 +335,9 @@ export default async function DashboardPage() {
       timeFormat={timeFormat}
       calendarEvents={calendarEvents}
       birthdays={birthdays}
+      churchHolidays={churchHolidays}
+      calendarBirthdays={calendarBirthdays}
+      canCreateEvents={canCreateEvents}
       linksData={linksData}
     />
   )

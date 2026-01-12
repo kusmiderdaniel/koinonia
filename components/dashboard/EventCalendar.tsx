@@ -20,6 +20,8 @@ interface EventCalendarProps {
   firstDayOfWeek?: 0 | 1 | 2 | 3 | 4 | 5 | 6
   timeFormat?: '12h' | '24h'
   onMonthChange?: (month: number, year: number) => void
+  hideTitle?: boolean
+  hideCard?: boolean
 }
 
 const MONTH_KEYS = [
@@ -36,6 +38,8 @@ const EVENT_TYPE_COLORS: Record<string, string> = {
   meeting: 'bg-green-500',
   special_event: 'bg-amber-500',
   other: 'bg-gray-500',
+  holiday: 'bg-amber-400',
+  birthday: 'bg-pink-400',
 }
 
 function getDaysInMonth(year: number, month: number) {
@@ -70,6 +74,8 @@ export function EventCalendar({
   firstDayOfWeek = 1,
   timeFormat = '24h',
   onMonthChange,
+  hideTitle = false,
+  hideCard = false,
 }: EventCalendarProps) {
   const t = useTranslations('dashboard')
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -175,48 +181,42 @@ export function EventCalendar({
 
   const selectedDayEvents = selectedDay ? getEventsForDay(selectedDay) : []
 
-  return (
+  const calendarHeader = (
+    <div className={cn("flex items-center justify-between", hideCard ? "mb-4" : "")}>
+      <h3 className="text-lg font-semibold">
+        {t(`calendar.months.${MONTH_KEYS[currentMonth]}`)} {currentYear}
+      </h3>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="rounded-full h-8 px-3"
+          onClick={goToToday}
+        >
+          {t('calendar.today')}
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full h-8 w-8"
+          onClick={goToPreviousMonth}
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full h-8 w-8"
+          onClick={goToNextMonth}
+        >
+          <ChevronRight className="w-4 h-4" />
+        </Button>
+      </div>
+    </div>
+  )
+
+  const calendarContent = (
     <>
-      <div className="h-full">
-        <h2 className="flex items-center gap-2 text-lg font-semibold mb-4">
-          <Calendar className="h-5 w-5" />
-          {t('calendar.title')}
-        </h2>
-        <Card className="border border-black dark:border-zinc-700">
-          <CardHeader className="pt-5 pb-2">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">
-                {t(`calendar.months.${MONTH_KEYS[currentMonth]}`)} {currentYear}
-              </h3>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full h-8 px-3"
-                  onClick={goToToday}
-                >
-                  {t('calendar.today')}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full h-8 w-8"
-                  onClick={goToPreviousMonth}
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="rounded-full h-8 w-8"
-                  onClick={goToNextMonth}
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="p-2 md:p-4">
           {/* Day headers */}
           <div className="grid grid-cols-7 mb-2">
             {dayLabelKeys.map((dayKey) => {
@@ -339,8 +339,33 @@ export function EventCalendar({
               </div>
             ))}
           </div>
-        </CardContent>
-        </Card>
+    </>
+  )
+
+  return (
+    <>
+      <div className="h-full">
+        {!hideTitle && (
+          <h2 className="flex items-center gap-2 text-lg font-semibold mb-4">
+            <Calendar className="h-5 w-5" />
+            {t('calendar.title')}
+          </h2>
+        )}
+        {hideCard ? (
+          <>
+            {calendarHeader}
+            {calendarContent}
+          </>
+        ) : (
+          <Card className="border border-black dark:border-zinc-700">
+            <CardHeader className="pt-5 pb-2">
+              {calendarHeader}
+            </CardHeader>
+            <CardContent className="p-2 md:p-4">
+              {calendarContent}
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Events Dialog */}

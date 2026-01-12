@@ -4,7 +4,7 @@ import { memo } from 'react'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Copy, Pencil, Trash2, Globe, Lock, FileText } from 'lucide-react'
+import { Copy, Pencil, Trash2, Globe, Lock, EyeOff, FileText } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import type { FormWithRelations } from '../types'
 
@@ -62,6 +62,11 @@ export const FormCard = memo(function FormCard({
               <>
                 <Globe className="h-2.5 w-2.5" />
                 {t('access.public')}
+              </>
+            ) : form.access_type === 'internal_anonymous' ? (
+              <>
+                <EyeOff className="h-2.5 w-2.5" />
+                {t('access.anonymous')}
               </>
             ) : (
               <>

@@ -37,8 +37,11 @@
   "access": {
     "public": "Public",
     "internal": "Internal",
+    "anonymous": "Anonymous",
     "membersOnly": "Church Members Only",
-    "membersOnlyDescription": "Only signed-in members can respond",
+    "membersOnlyDescription": "Only signed-in members can respond. Responses are linked to their profile.",
+    "membersAnonymous": "Members Only (Anonymous)",
+    "membersAnonymousDescription": "Only signed-in members can respond, but their identity is not recorded.",
     "anyone": "Anyone (Public)",
     "anyoneDescription": "Anyone with the link can respond"
   },
@@ -146,7 +149,8 @@
 
   "internal": {
     "backToDashboard": "Back to Dashboard",
-    "alreadySubmitted": "You have already submitted a response to this form. Submitting again will create a new response.",
+    "alreadySubmittedTitle": "Already Submitted",
+    "alreadySubmittedDescription": "You have already submitted a response to this form. This form only allows one submission per person.",
     "respondingAs": "Responding as {name}",
     "submit": "Submit",
     "submitting": "Submitting...",
@@ -305,6 +309,8 @@
     "formDescription": "Description",
     "descriptionHelp": "This description will be shown to respondents at the top of the form.",
     "accessType": "Who can respond?",
+    "allowMultipleSubmissions": "Allow multiple submissions",
+    "allowMultipleSubmissionsDescription": "When enabled, users can submit this form more than once.",
     "formStatus": "Current Status",
     "statusHelp": {
       "draft": "Form is not yet published. Only you can see it.",

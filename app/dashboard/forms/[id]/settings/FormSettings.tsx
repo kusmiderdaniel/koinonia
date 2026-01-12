@@ -5,13 +5,14 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Globe, Lock } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
+import { Globe, Lock, EyeOff } from 'lucide-react'
 import { useFormBuilder } from '../../hooks/useFormBuilder'
 import type { FormAccessType } from '@/lib/validations/forms'
 
 export function FormSettings() {
   const t = useTranslations('forms')
-  const { form, updateFormTitle, updateFormDescription, updateFormAccessType } = useFormBuilder()
+  const { form, updateFormTitle, updateFormDescription, updateFormAccessType, updateFormAllowMultipleSubmissions } = useFormBuilder()
 
   if (!form) return null
 
@@ -21,6 +22,12 @@ export function FormSettings() {
       title: t('access.membersOnly'),
       description: t('access.membersOnlyDescription'),
       icon: Lock,
+    },
+    {
+      value: 'internal_anonymous' as FormAccessType,
+      title: t('access.membersAnonymous'),
+      description: t('access.membersAnonymousDescription'),
+      icon: EyeOff,
     },
     {
       value: 'public' as FormAccessType,
@@ -104,6 +111,25 @@ export function FormSettings() {
           })}
         </RadioGroup>
       </div>
+
+      {/* Multiple Submissions - only for internal (non-anonymous) forms */}
+      {form.access_type === 'internal' && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="allow-multiple">{t('settings.allowMultipleSubmissions')}</Label>
+              <p className="text-sm text-muted-foreground">
+                {t('settings.allowMultipleSubmissionsDescription')}
+              </p>
+            </div>
+            <Switch
+              id="allow-multiple"
+              checked={form.allow_multiple_submissions}
+              onCheckedChange={updateFormAllowMultipleSubmissions}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Status Info */}
       <div className="pt-4 border-t">

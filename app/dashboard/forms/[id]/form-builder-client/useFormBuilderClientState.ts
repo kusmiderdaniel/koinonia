@@ -63,16 +63,18 @@ export function useFormBuilderClientState({ initialData }: FormBuilderClientProp
     setIsSaving(true)
 
     try {
-      // Save form title/description/access_type if changed
+      // Save form title/description/access_type/allow_multiple_submissions if changed
       if (
         form.title !== initialData.form.title ||
         form.description !== initialData.form.description ||
-        form.access_type !== initialData.form.access_type
+        form.access_type !== initialData.form.access_type ||
+        form.allow_multiple_submissions !== initialData.form.allow_multiple_submissions
       ) {
         const formResult = await updateForm(form.id, {
           title: form.title,
           description: form.description,
           accessType: form.access_type,
+          allowMultipleSubmissions: form.allow_multiple_submissions,
         })
         if (formResult.error) {
           toast.error(formResult.error)

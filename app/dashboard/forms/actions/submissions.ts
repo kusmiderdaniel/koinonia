@@ -167,24 +167,38 @@ export async function submitInternalForm(data: { formId: string; responses: Reco
 
   // Verify form is published and internal
   const { data: form, error: ownershipError } = await verifyChurchOwnership<{
-    church_id: string; status: string; access_type: string
-  }>(adminClient, 'forms', validated.data.formId, profile.church_id, 'church_id, status, access_type', 'Form not found')
+    church_id: string; status: string; access_type: string; allow_multiple_submissions: boolean
+  }>(adminClient, 'forms', validated.data.formId, profile.church_id, 'church_id, status, access_type, allow_multiple_submissions', 'Form not found')
   if (ownershipError || !form) return { error: ownershipError || 'Form not found' }
 
   if (form.status !== 'published') {
     return { error: 'This form is not accepting responses' }
   }
 
-  if (form.access_type !== 'internal') {
+  if (form.access_type !== 'internal' && form.access_type !== 'internal_anonymous') {
     return { error: 'This form requires public access' }
   }
 
-  // Create submission
+  // Check for existing submission (only for non-anonymous forms that don't allow multiple)
+  if (form.access_type === 'internal' && !form.allow_multiple_submissions) {
+    const { data: existingSubmission } = await adminClient
+      .from('form_submissions')
+      .select('id')
+      .eq('form_id', validated.data.formId)
+      .eq('respondent_id', profile.id)
+      .single()
+
+    if (existingSubmission) {
+      return { error: 'You have already submitted this form' }
+    }
+  }
+
+  // Create submission - don't store respondent_id for anonymous forms
   const { data: submission, error } = await adminClient
     .from('form_submissions')
     .insert({
       form_id: validated.data.formId,
-      respondent_id: profile.id,
+      respondent_id: form.access_type === 'internal_anonymous' ? null : profile.id,
       responses: validated.data.responses,
     })
     .select()

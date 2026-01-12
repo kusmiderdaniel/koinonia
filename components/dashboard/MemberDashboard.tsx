@@ -1,10 +1,9 @@
 'use client'
 
-import { useState, useCallback } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { EventCalendar } from './EventCalendar'
+import { ChurchCalendarSection } from './ChurchCalendarSection'
 import { MemberLinksPanel } from './MemberLinksPanel'
-import { getCalendarEventsForMember, type CalendarEvent } from '@/app/dashboard/actions'
+import { type CalendarEvent, type ChurchHoliday } from '@/app/dashboard/actions'
 import { Link2 } from 'lucide-react'
 
 export interface MemberLinksData {
@@ -46,6 +45,7 @@ export interface MemberLinksData {
 interface MemberDashboardProps {
   firstName: string
   initialEvents: CalendarEvent[]
+  initialHolidays?: ChurchHoliday[]
   initialMonth: number
   initialYear: number
   firstDayOfWeek: 0 | 1 | 2 | 3 | 4 | 5 | 6
@@ -56,29 +56,13 @@ interface MemberDashboardProps {
 export function MemberDashboard({
   firstName,
   initialEvents,
+  initialHolidays = [],
   initialMonth,
   initialYear,
   firstDayOfWeek,
   timeFormat,
   linksData,
 }: MemberDashboardProps) {
-  const [events, setEvents] = useState<CalendarEvent[]>(initialEvents)
-  const [isLoading, setIsLoading] = useState(false)
-
-  const handleMonthChange = useCallback(async (month: number, year: number) => {
-    setIsLoading(true)
-    try {
-      const result = await getCalendarEventsForMember(month, year)
-      if (result.data) {
-        setEvents(result.data)
-      }
-    } catch (error) {
-      console.error('Failed to fetch events:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
   const hasLinks = linksData && linksData.links.length > 0
 
   return (
@@ -114,25 +98,31 @@ export function MemberDashboard({
           </div>
 
           {/* Calendar - 2/3 on desktop, full width on mobile */}
-          <div className={`w-full lg:w-2/3 ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}>
-            <EventCalendar
-              events={events}
+          <div className="w-full lg:w-2/3">
+            <ChurchCalendarSection
+              initialEvents={initialEvents}
+              initialHolidays={initialHolidays}
+              initialMonth={initialMonth}
+              initialYear={initialYear}
               firstDayOfWeek={firstDayOfWeek}
               timeFormat={timeFormat}
-              onMonthChange={handleMonthChange}
+              role="member"
+              canCreateEvents={false}
             />
           </div>
         </div>
       ) : (
         /* Full-width Calendar when no links */
-        <div className={isLoading ? 'opacity-50 pointer-events-none' : ''}>
-          <EventCalendar
-            events={events}
-            firstDayOfWeek={firstDayOfWeek}
-            timeFormat={timeFormat}
-            onMonthChange={handleMonthChange}
-          />
-        </div>
+        <ChurchCalendarSection
+          initialEvents={initialEvents}
+          initialHolidays={initialHolidays}
+          initialMonth={initialMonth}
+          initialYear={initialYear}
+          firstDayOfWeek={firstDayOfWeek}
+          timeFormat={timeFormat}
+          role="member"
+          canCreateEvents={false}
+        />
       )}
     </div>
   )

@@ -18,7 +18,7 @@ export const formStatusSchema = z.enum(['draft', 'published', 'closed'])
 export type FormStatus = z.infer<typeof formStatusSchema>
 
 // Form access type
-export const formAccessTypeSchema = z.enum(['public', 'internal'])
+export const formAccessTypeSchema = z.enum(['public', 'internal', 'internal_anonymous'])
 export type FormAccessType = z.infer<typeof formAccessTypeSchema>
 
 // Condition operators
@@ -89,6 +89,7 @@ export const formSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be 200 characters or less'),
   description: z.string().max(2000, 'Description must be 2000 characters or less').optional().nullable(),
   accessType: formAccessTypeSchema.default('internal'),
+  allowMultipleSubmissions: z.boolean().optional(),
 })
 export type FormInput = z.infer<typeof formSchema>
 

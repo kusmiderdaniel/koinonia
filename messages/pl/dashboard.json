@@ -78,6 +78,9 @@
     "today": "Dzisiaj",
     "more": "+{count} więcej",
     "noEventsOnDay": "Brak wydarzeń w tym dniu",
+    "emptyMonth": "Brak wydarzeń w tym miesiącu",
+    "createEvent": "Utwórz wydarzenie",
+    "viewCalendar": "Zobacz kalendarz",
     "months": {
       "january": "Styczeń",
       "february": "Luty",
@@ -106,7 +109,9 @@
       "rehearsal": "Próba",
       "meeting": "Spotkanie",
       "special_event": "Wydarzenie specjalne",
-      "other": "Inne"
+      "other": "Inne",
+      "holiday": "Święto",
+      "birthday": "Urodziny"
     }
   },
   "toasts": {

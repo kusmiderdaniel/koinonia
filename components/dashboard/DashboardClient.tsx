@@ -7,15 +7,13 @@ import { DashboardHeader } from './DashboardHeader'
 import { NeedsAttentionSection } from './NeedsAttentionSection'
 import { WeekTimelineSection } from './WeekTimelineSection'
 import { QuickAccessSection } from './QuickAccessSection'
-import { EventCalendar } from './EventCalendar'
-import { BirthdaysSection } from './BirthdaysSection'
+import { ChurchCalendarSection } from './ChurchCalendarSection'
 import { MemberLinksPanel } from './MemberLinksPanel'
 import { Link2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { TaskDetailSheet } from '@/components/tasks/TaskDetailSheet'
-import { getCalendarEventsForMember } from '@/app/dashboard/actions'
 import type { UrgentItem, WeekItem } from '@/lib/utils/dashboard-helpers'
-import type { DashboardEvent, CalendarEvent, Birthday } from '@/app/dashboard/actions'
+import type { DashboardEvent, CalendarEvent, Birthday, ChurchHoliday, CalendarBirthday } from '@/app/dashboard/actions'
 import type { Task, TaskMinistry, TaskCampus, Person } from '@/app/dashboard/tasks/types'
 import type { UserRole } from '@/lib/permissions'
 
@@ -68,6 +66,9 @@ interface DashboardClientProps {
   // New props for role-based features
   calendarEvents?: CalendarEvent[]
   birthdays?: Birthday[]
+  churchHolidays?: ChurchHoliday[]
+  calendarBirthdays?: CalendarBirthday[]
+  canCreateEvents?: boolean
   linksData?: QuickLinksData | null
 }
 
@@ -89,14 +90,20 @@ export function DashboardClient({
   timeFormat,
   calendarEvents = [],
   birthdays = [],
+  churchHolidays = [],
+  calendarBirthdays = [],
+  canCreateEvents = false,
   linksData,
 }: DashboardClientProps) {
   const router = useRouter()
   const t = useTranslations('dashboard')
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [taskSheetOpen, setTaskSheetOpen] = useState(false)
-  const [currentCalendarEvents, setCurrentCalendarEvents] = useState<CalendarEvent[]>(calendarEvents)
-  const [isLoadingCalendar, setIsLoadingCalendar] = useState(false)
+
+  // Get current month/year for calendar
+  const now = new Date()
+  const currentMonth = now.getMonth()
+  const currentYear = now.getFullYear()
 
   // Check if user should see birthdays
   const showBirthdays = ['leader', 'admin', 'owner'].includes(role)
@@ -129,20 +136,6 @@ export function DashboardClient({
     router.refresh()
   }, [router])
 
-  const handleCalendarMonthChange = useCallback(async (month: number, year: number) => {
-    setIsLoadingCalendar(true)
-    try {
-      const result = await getCalendarEventsForMember(month, year)
-      if (result.data) {
-        setCurrentCalendarEvents(result.data)
-      }
-    } catch (error) {
-      console.error('Failed to fetch calendar events:', error)
-    } finally {
-      setIsLoadingCalendar(false)
-    }
-  }, [])
-
   return (
     <div className="p-4 md:p-6">
       {/* Header */}
@@ -169,18 +162,14 @@ export function DashboardClient({
         />
       </div>
 
-      {/* Quick Access - Events and Unavailability */}
+      {/* Quick Access - Events, Birthdays (for leaders+), and Unavailability */}
       <QuickAccessSection
         events={events}
+        birthdays={showBirthdays ? birthdays : undefined}
         unavailabilityCount={unavailabilityCount}
         weekStartsOn={weekStartsOn}
         timeFormat={timeFormat}
       />
-
-      {/* Birthdays Section - for leaders, admins, owners */}
-      {showBirthdays && birthdays.length > 0 && (
-        <BirthdaysSection birthdays={birthdays} />
-      )}
 
       {/* Links and Church Calendar - side by side when links exist */}
       {hasLinks ? (
@@ -212,25 +201,33 @@ export function DashboardClient({
           </div>
 
           {/* Calendar - 2/3 on desktop, full width on mobile */}
-          <div className={`w-full lg:w-2/3 ${isLoadingCalendar ? 'opacity-50 pointer-events-none' : ''}`}>
-            <EventCalendar
-              events={currentCalendarEvents}
+          <div className="w-full lg:w-2/3">
+            <ChurchCalendarSection
+              initialEvents={calendarEvents}
+              initialHolidays={churchHolidays}
+              initialBirthdays={calendarBirthdays}
+              initialMonth={currentMonth}
+              initialYear={currentYear}
               firstDayOfWeek={weekStartsOn}
               timeFormat={timeFormat}
-              onMonthChange={handleCalendarMonthChange}
+              role={role}
+              canCreateEvents={canCreateEvents}
             />
           </div>
         </div>
       ) : (
         /* Full-width Calendar when no links */
-        <div className={`mt-6 ${isLoadingCalendar ? 'opacity-50 pointer-events-none' : ''}`}>
-          <EventCalendar
-            events={currentCalendarEvents}
-            firstDayOfWeek={weekStartsOn}
-            timeFormat={timeFormat}
-            onMonthChange={handleCalendarMonthChange}
-          />
-        </div>
+        <ChurchCalendarSection
+          initialEvents={calendarEvents}
+          initialHolidays={churchHolidays}
+          initialBirthdays={calendarBirthdays}
+          initialMonth={currentMonth}
+          initialYear={currentYear}
+          firstDayOfWeek={weekStartsOn}
+          timeFormat={timeFormat}
+          role={role}
+          canCreateEvents={canCreateEvents}
+        />
       )}
 
       {/* Task Detail Sheet */}

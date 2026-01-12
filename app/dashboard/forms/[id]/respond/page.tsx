@@ -31,10 +31,10 @@ export default async function RespondPage({ params }: RespondPageProps) {
     redirect('/onboarding')
   }
 
-  // Fetch form - must be published and internal, and belong to the user's church
+  // Fetch form - must be published and belong to the user's church
   const { data: form } = await adminClient
     .from('forms')
-    .select('id, title, description, status, access_type')
+    .select('id, title, description, status, access_type, public_token, allow_multiple_submissions')
     .eq('id', id)
     .eq('church_id', profile.church_id)
     .single()
@@ -57,10 +57,17 @@ export default async function RespondPage({ params }: RespondPageProps) {
     )
   }
 
-  if (form.access_type !== 'internal') {
-    // Redirect public forms to their public URL
-    redirect('/dashboard/forms')
+  // Redirect public forms to their public URL so logged-in users can fill them anonymously
+  if (form.access_type === 'public') {
+    if (form.public_token) {
+      redirect(`/forms/${form.public_token}`)
+    } else {
+      // Public form without token - shouldn't happen, redirect to forms list
+      redirect('/dashboard/forms')
+    }
   }
+
+  const isAnonymous = form.access_type === 'internal_anonymous'
 
   // Get fields
   const { data: fields } = await adminClient
@@ -75,13 +82,18 @@ export default async function RespondPage({ params }: RespondPageProps) {
     .select('id, target_field_id, source_field_id, operator, value, action')
     .eq('form_id', form.id)
 
-  // Check if user has already submitted
-  const { data: existingSubmission } = await adminClient
-    .from('form_submissions')
-    .select('id')
-    .eq('form_id', form.id)
-    .eq('respondent_id', profile.id)
-    .single()
+  // Check if user has already submitted (only for non-anonymous forms that don't allow multiple submissions)
+  let existingSubmission = null
+  const allowMultiple = form.allow_multiple_submissions ?? false
+  if (!isAnonymous && !allowMultiple) {
+    const { data } = await adminClient
+      .from('form_submissions')
+      .select('id')
+      .eq('form_id', form.id)
+      .eq('respondent_id', profile.id)
+      .single()
+    existingSubmission = data
+  }
 
   // Get first day of week from church preferences
   const firstDayOfWeek = ((profile.churches as { first_day_of_week?: number } | null)?.first_day_of_week ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
@@ -101,6 +113,7 @@ export default async function RespondPage({ params }: RespondPageProps) {
         email: profile.email,
       }}
       hasExistingSubmission={!!existingSubmission}
+      isAnonymous={isAnonymous}
       weekStartsOn={firstDayOfWeek}
     />
   )

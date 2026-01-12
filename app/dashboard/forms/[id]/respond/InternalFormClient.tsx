@@ -4,7 +4,6 @@ import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   ArrowLeft,
   Loader2,
@@ -36,6 +35,7 @@ interface InternalFormClientProps {
   conditions: FormCondition[]
   respondent: Respondent
   hasExistingSubmission: boolean
+  isAnonymous?: boolean
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
 }
 
@@ -46,6 +46,7 @@ export function InternalFormClient({
   conditions,
   respondent,
   hasExistingSubmission,
+  isAnonymous = false,
   weekStartsOn = 0,
 }: InternalFormClientProps) {
   const t = useTranslations('forms')
@@ -116,6 +117,30 @@ export function InternalFormClient({
     [formId, visibleFields, values, validateForm, t]
   )
 
+  // Already submitted state (for single-response forms)
+  if (hasExistingSubmission) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
+        <div className="max-w-md w-full bg-white dark:bg-zinc-900 rounded-lg shadow-lg p-8 text-center">
+          <div className="flex justify-center mb-4">
+            <div className="h-16 w-16 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+              <AlertTriangle className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+            </div>
+          </div>
+
+          <h1 className="text-2xl font-bold mb-2">{t('internal.alreadySubmittedTitle')}</h1>
+          <p className="text-muted-foreground mb-6">
+            {t('internal.alreadySubmittedDescription')}
+          </p>
+
+          <Button variant="outline" asChild>
+            <Link href="/dashboard">{t('internal.backToDashboard')}</Link>
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
   // Success state
   if (isSubmitted) {
     return (
@@ -153,16 +178,6 @@ export function InternalFormClient({
           </Button>
         </div>
 
-        {/* Warning for existing submission */}
-        {hasExistingSubmission && (
-          <Alert className="mb-4 border-amber-500 bg-amber-50 dark:bg-amber-950/30">
-            <AlertTriangle className="h-4 w-4 text-amber-600" />
-            <AlertDescription className="text-amber-800 dark:text-amber-200">
-              {t('internal.alreadySubmitted')}
-            </AlertDescription>
-          </Alert>
-        )}
-
         <form
           onSubmit={handleSubmit}
           className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg overflow-hidden"
@@ -175,12 +190,14 @@ export function InternalFormClient({
             )}
           </div>
 
-          {/* Respondent info */}
-          <div className="px-6 md:px-8 py-4 bg-muted/30 border-b">
-            <p className="text-sm text-muted-foreground">
-              {t('internal.respondingAs', { name: respondent.name || respondent.email })}
-            </p>
-          </div>
+          {/* Respondent info - hidden for anonymous forms */}
+          {!isAnonymous && (
+            <div className="px-6 md:px-8 py-4 bg-muted/30 border-b">
+              <p className="text-sm text-muted-foreground">
+                {t('internal.respondingAs', { name: respondent.name || respondent.email })}
+              </p>
+            </div>
+          )}
 
           {/* Fields */}
           <div className="p-6 md:p-8">

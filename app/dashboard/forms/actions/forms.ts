@@ -140,6 +140,7 @@ export async function createForm(data: FormInput) {
       title: validated.data.title,
       description: validated.data.description || null,
       access_type: validated.data.accessType,
+      allow_multiple_submissions: validated.data.allowMultipleSubmissions ?? false,
       created_by: profile.id,
       status: 'draft',
     })
@@ -165,16 +166,22 @@ export async function updateForm(id: string, data: Partial<FormInput>) {
   const permError = requireManagePermission(profile.role, 'edit forms')
   if (permError) return { error: permError }
 
-  // Verify form belongs to church
-  const { error: ownershipError } = await verifyChurchOwnership(
-    adminClient, 'forms', id, profile.church_id, 'church_id', 'Form not found'
-  )
-  if (ownershipError) return { error: ownershipError }
+  // Get current form data to check if we need to generate a public token
+  const { data: currentForm, error: ownershipError } = await verifyChurchOwnership<{
+    church_id: string; access_type: string; public_token: string | null
+  }>(adminClient, 'forms', id, profile.church_id, 'church_id, access_type, public_token', 'Form not found')
+  if (ownershipError || !currentForm) return { error: ownershipError || 'Form not found' }
 
   const updateData: Record<string, unknown> = {}
   if (data.title !== undefined) updateData.title = data.title
   if (data.description !== undefined) updateData.description = data.description || null
   if (data.accessType !== undefined) updateData.access_type = data.accessType
+  if (data.allowMultipleSubmissions !== undefined) updateData.allow_multiple_submissions = data.allowMultipleSubmissions
+
+  // Generate public_token if changing to public and doesn't have one
+  if (data.accessType === 'public' && !currentForm.public_token) {
+    updateData.public_token = crypto.randomBytes(32).toString('base64url')
+  }
 
   const { error } = await adminClient
     .from('forms')
