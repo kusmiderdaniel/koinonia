@@ -45,17 +45,17 @@ export function LinksPageClient({
   const [displayUrl, setDisplayUrl] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
-  // Build preview URL on client side only
+  // Build preview URL on client side only (path-based routing)
   useEffect(() => {
     if (churchSubdomain && typeof window !== 'undefined') {
-      // Use NEXT_PUBLIC_SITE_URL or fall back to current host
+      // Use NEXT_PUBLIC_SITE_URL or fall back to current origin
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
-      const url = new URL(baseUrl)
-      // Prepend church subdomain to the hostname
-      const subdomainHost = `${churchSubdomain}.${url.hostname}`
-      const fullUrl = `${url.protocol}//${subdomainHost}${url.port ? ':' + url.port : ''}/links`
+      // Path-based URL: /churchSlug
+      const fullUrl = `${baseUrl}/${churchSubdomain}`
       setPreviewUrl(fullUrl)
-      setDisplayUrl(`${subdomainHost}/links`)
+      // Display URL without protocol for cleaner look
+      const displayHost = baseUrl.replace(/^https?:\/\//, '')
+      setDisplayUrl(`${displayHost}/${churchSubdomain}`)
     }
   }, [churchSubdomain])
 

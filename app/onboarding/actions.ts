@@ -12,17 +12,6 @@ import {
 import { notifyLeadersOfPendingMember } from '@/lib/notifications/pending-member'
 import { isReservedSubdomain } from '@/lib/constants/subdomains'
 
-// Helper function to generate a URL-safe slug from a string
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '') // Remove special characters
-    .replace(/\s+/g, '-')     // Replace spaces with hyphens
-    .replace(/-+/g, '-')      // Replace multiple hyphens with single
-    .substring(0, 20)         // Limit length
-}
-
 // Helper function to generate random alphanumeric string
 function generateRandomCode(length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'

@@ -15,18 +15,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { createClient } from '@/lib/supabase/client'
 import { Check, X, Loader2, Building2, ArrowLeft, LogOut, Globe, MapPin, Mail } from 'lucide-react'
-
-// Helper function to generate a URL-safe slug from a string
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '') // Remove special characters
-    .replace(/\s+/g, '-')     // Replace spaces with hyphens
-    .replace(/-+/g, '-')      // Replace multiple hyphens with single
-    .replace(/^-|-$/g, '')    // Remove leading/trailing hyphens
-    .substring(0, 30)         // Limit length
-}
+import { slugify } from '@/lib/utils/slugify'
 
 export default function CreateChurchPage() {
   const router = useRouter()
@@ -203,6 +192,9 @@ export default function CreateChurchPage() {
                     <Label htmlFor="subdomain">{t('createChurch.basicInfo.churchUrl')} *</Label>
                     <div className="flex items-center gap-0">
                       <div className="relative flex-1">
+                        <span className="text-sm text-muted-foreground bg-muted px-3 h-11 flex items-center border rounded-l-md border-r-0">
+                          koinonia.app/
+                        </span>
                         <Input
                           id="subdomain"
                           placeholder={t('createChurch.basicInfo.churchUrlPlaceholder')}
@@ -210,7 +202,7 @@ export default function CreateChurchPage() {
                             onChange: () => setHasManuallyEditedSubdomain(true)
                           })}
                           disabled={isLoading}
-                          className="h-11 pr-10 rounded-r-none border-r-0"
+                          className="h-11 pr-10 rounded-l-none"
                         />
                         <div className="absolute right-3 top-1/2 -translate-y-1/2">
                           {subdomainStatus === 'checking' && (
@@ -224,9 +216,6 @@ export default function CreateChurchPage() {
                           )}
                         </div>
                       </div>
-                      <span className="text-sm text-muted-foreground bg-muted px-3 h-11 flex items-center border rounded-r-md">
-                        .koinonia.app
-                      </span>
                     </div>
                     {errors.subdomain && (
                       <p className="text-sm text-red-500">{errors.subdomain.message}</p>
