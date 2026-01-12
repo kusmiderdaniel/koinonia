@@ -61,6 +61,7 @@ export function LocationPicker({
   const [newNotes, setNewNotes] = useState('')
   const [isCreating, setIsCreating] = useState(false)
 
+   
   useEffect(() => {
     if (open) {
       setIsLoading(true)

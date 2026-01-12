@@ -41,18 +41,6 @@ export function SongPicker({
   // Arrangement selection mode
   const [selectedSongForArrangement, setSelectedSongForArrangement] = useState<Song | null>(null)
 
-  useEffect(() => {
-    if (open) {
-      loadSongs()
-      loadTags()
-      setSearchQuery('')
-      setFilterTagIds([])
-      setIsCreatingNew(false)
-      setSelectedSongForArrangement(null)
-      setError(null)
-    }
-  }, [open])
-
   const loadSongs = async () => {
     setIsLoading(true)
     const result = await getSongsForAgenda()
@@ -68,6 +56,19 @@ export function SongPicker({
       setAllTags(result.data)
     }
   }
+
+  useEffect(() => {
+    if (open) {
+      loadSongs()
+      loadTags()
+      setSearchQuery('')
+      setFilterTagIds([])
+      setIsCreatingNew(false)
+      setSelectedSongForArrangement(null)
+      setError(null)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
 
   const addSongWithArrangement = useCallback(async (songId: string, arrangementId: string | null) => {
     setIsAdding(true)

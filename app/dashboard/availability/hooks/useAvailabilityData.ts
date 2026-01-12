@@ -64,7 +64,9 @@ export function useAvailabilityData(): UseAvailabilityDataReturn {
   }, [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Load data on mount
     loadUnavailability()
+     
     loadChurchSettings()
   }, [loadUnavailability, loadChurchSettings])
 

@@ -28,6 +28,20 @@ export function useSongDialogState(
 
   const isEditing = !!song
 
+  const loadTags = async () => {
+    const result = await getTags()
+    if (result.data) {
+      setAvailableTags(result.data)
+    }
+  }
+
+  const loadArtists = async () => {
+    const result = await getArtists()
+    if (result.data) {
+      setAvailableArtists(result.data)
+    }
+  }
+
   useEffect(() => {
     if (open) {
       loadTags()
@@ -56,21 +70,8 @@ export function useSongDialogState(
       }
       setError('')
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, song])
-
-  const loadTags = async () => {
-    const result = await getTags()
-    if (result.data) {
-      setAvailableTags(result.data)
-    }
-  }
-
-  const loadArtists = async () => {
-    const result = await getArtists()
-    if (result.data) {
-      setAvailableArtists(result.data)
-    }
-  }
 
   const handleArtistCreated = useCallback((newArtist: string) => {
     if (!availableArtists.includes(newArtist)) {

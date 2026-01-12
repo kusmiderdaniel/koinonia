@@ -118,11 +118,6 @@ export function parseLyrics(text: string): ParsedSection[] {
 
   const sections: ParsedSection[] = []
 
-  // Combined regex pattern for both formats:
-  // - ^\[([^\]]+)\]$ - matches [Section Name]
-  // - ^([A-Z][A-Z\s\d\-]+):$ - matches SECTION NAME:
-  const headerPattern = /^\[([^\]]+)\]$|^([A-Z][A-Z\s\d\-]*\d*):$/gm
-
   // Split by lines and process
   const lines = text.split('\n')
   let currentSection: ParsedSection | null = null

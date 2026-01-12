@@ -5,22 +5,19 @@ import { useForm } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
-import { Loader2 } from 'lucide-react'
-import { signIn, signInWithGoogle } from '../actions'
+import { signIn } from '../actions'
 import { signInSchema, type SignInInput } from '@/lib/validations/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { GoogleIcon } from '@/components/icons/GoogleIcon'
 
 export default function SignInPage() {
   const t = useTranslations('auth.signin')
   const tErrors = useTranslations('auth.errors')
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
   const {
     register,
@@ -44,23 +41,6 @@ export default function SignInPage() {
       setError(tErrors('generic'))
     } finally {
       setIsLoading(false)
-    }
-  }
-
-  const handleGoogleSignIn = async () => {
-    setError(null)
-    setIsGoogleLoading(true)
-
-    try {
-      const result = await signInWithGoogle()
-      if (result?.error) {
-        setError(tErrors(result.error))
-        setIsGoogleLoading(false)
-      }
-      // If successful, user will be redirected
-    } catch {
-      setError(tErrors('generic'))
-      setIsGoogleLoading(false)
     }
   }
 
@@ -119,7 +99,7 @@ export default function SignInPage() {
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-4 border-t-0 bg-transparent px-0 sm:px-6 pt-2">
-            <Button type="submit" className="w-full h-11 !rounded-full !bg-brand hover:!bg-brand/90 text-white" disabled={isLoading || isGoogleLoading}>
+            <Button type="submit" className="w-full h-11 !rounded-full !bg-brand hover:!bg-brand/90 text-white" disabled={isLoading}>
               {isLoading ? t('submitting') : t('submitButton')}
             </Button>
 

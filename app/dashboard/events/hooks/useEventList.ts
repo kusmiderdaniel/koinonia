@@ -172,6 +172,7 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
   }, [events, debouncedSearchQuery])
 
   // Separate into upcoming and past (using timestamp comparison for performance)
+  // eslint-disable-next-line react-hooks/purity -- Date.now() is intentionally called to get current time for comparison
   const { upcomingEvents, pastEvents } = useMemo(() => {
     const nowTimestamp = Date.now()
     const upcoming: typeof filteredEvents = []

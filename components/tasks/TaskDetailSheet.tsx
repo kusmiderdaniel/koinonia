@@ -52,6 +52,7 @@ export function TaskDetailSheet({
   // Reset state when sheet closes
   useEffect(() => {
     if (!open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Intentional reset when sheet closes
       setActiveTab('details')
     }
   }, [open])

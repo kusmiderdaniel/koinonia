@@ -66,7 +66,8 @@ export const LinkCard = memo(function LinkCard({
   // Calculate text color if not provided
   const computedTextColor = textColor || getContrastColor(cardColor)
 
-  // Get icon component
+  // Get icon component (static lookup from lucide-react icons object)
+  // eslint-disable-next-line react-hooks/static-components -- Icon is looked up from static object
   const IconComponent = getIconComponent(icon)
 
   // Get size styles

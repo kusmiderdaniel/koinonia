@@ -46,6 +46,13 @@ export function CreateEventFromTemplateDialog({
   const [error, setError] = useState<string | null>(null)
   const [firstDayOfWeek, setFirstDayOfWeek] = useState<0 | 1>(1) // Default to Monday
 
+  const loadChurchSettings = async () => {
+    const result = await getChurchSettings()
+    if (result.data) {
+      setFirstDayOfWeek(result.data.firstDayOfWeek as 0 | 1)
+    }
+  }
+
   // Load church settings when dialog opens
   useEffect(() => {
     if (open) {
@@ -53,14 +60,8 @@ export function CreateEventFromTemplateDialog({
       setError(null)
       loadChurchSettings()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
-
-  const loadChurchSettings = async () => {
-    const result = await getChurchSettings()
-    if (result.data) {
-      setFirstDayOfWeek(result.data.firstDayOfWeek as 0 | 1)
-    }
-  }
 
   const handleCreate = async () => {
     if (selectedDates.length === 0) return

@@ -63,7 +63,7 @@ export function getBirthdayDisplay(dateOfBirth: string): {
   const monthDay = `${monthNames[birthMonth - 1]} ${birthDay}`
 
   // Calculate days until (considering year boundary)
-  let thisYearBirthday = new Date(today.getFullYear(), birthMonth - 1, birthDay)
+  const thisYearBirthday = new Date(today.getFullYear(), birthMonth - 1, birthDay)
   thisYearBirthday.setHours(0, 0, 0, 0)
 
   // If birthday already passed this year, check next year for "days until"

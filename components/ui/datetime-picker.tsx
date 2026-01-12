@@ -68,6 +68,7 @@ export function DateTimePicker({
   disabled = false,
   className,
   id,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   label,
   timeFormat = '24h',
 }: DateTimePickerProps) {

@@ -119,7 +119,7 @@ export async function addMultiplePositions(eventId: string, positions: PositionT
     .limit(1)
     .single()
 
-  let nextSortOrder = (maxOrderItem?.sort_order ?? -1) + 1
+  const nextSortOrder = (maxOrderItem?.sort_order ?? -1) + 1
 
   const positionsToInsert = positions.map((p, idx) => ({
     event_id: eventId,

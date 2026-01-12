@@ -79,12 +79,11 @@ export function AgendaPrintView({ event, timeFormat = '24h' }: AgendaPrintViewPr
 
   // Calculate running times for each item
   const itemsWithRunningTime = useMemo(() => {
-    let runningTotal = 0
-    return event.agenda_items.map(item => {
-      const startTime = runningTotal
-      runningTotal += item.duration_seconds
-      return { ...item, runningTimeStart: startTime }
-    })
+    return event.agenda_items.reduce<Array<typeof event.agenda_items[0] & { runningTimeStart: number }>>((acc, item, index) => {
+      const startTime = index === 0 ? 0 : acc[index - 1].runningTimeStart + acc[index - 1].duration_seconds
+      acc.push({ ...item, runningTimeStart: startTime })
+      return acc
+    }, [])
   }, [event.agenda_items])
 
   const eventDate = new Date(event.start_time)

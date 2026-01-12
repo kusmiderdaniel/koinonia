@@ -58,14 +58,6 @@ export function TemplatePicker({
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
 
-  useEffect(() => {
-    if (open) {
-      loadTemplates()
-      setSearchQuery('')
-      setSelectedTemplate(null)
-    }
-  }, [open])
-
   const loadTemplates = async () => {
     setIsLoading(true)
     const result = await getEventTemplates()
@@ -74,6 +66,15 @@ export function TemplatePicker({
     }
     setIsLoading(false)
   }
+
+  useEffect(() => {
+    if (open) {
+      loadTemplates()
+      setSearchQuery('')
+      setSelectedTemplate(null)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
 
   const filteredTemplates = useMemo(() => {
     return templates.filter((template) =>

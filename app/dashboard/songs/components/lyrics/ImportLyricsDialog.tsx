@@ -96,7 +96,8 @@ export function ImportLyricsDialog({
     setError(null)
   }
 
-  // Shared preview component
+  // Shared preview content (render function, not a component)
+  // eslint-disable-next-line react-hooks/static-components -- This is a render function, not a stateful component
   const PreviewContent = () => (
     <>
       {parsedSections.length === 0 ? (

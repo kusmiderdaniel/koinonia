@@ -64,14 +64,6 @@ export function TemplatePositionPicker({
   const [isAdding, setIsAdding] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (open) {
-      loadMinistries()
-      setSelectedPositions([])
-      setError(null)
-    }
-  }, [open])
-
   const loadMinistries = async () => {
     setIsLoading(true)
     const result = await getMinistries()
@@ -83,6 +75,15 @@ export function TemplatePositionPicker({
     }
     setIsLoading(false)
   }
+
+  useEffect(() => {
+    if (open) {
+      loadMinistries()
+      setSelectedPositions([])
+      setError(null)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
 
   const toggleMinistryExpanded = (ministryId: string) => {
     setExpandedMinistries(prev => {

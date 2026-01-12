@@ -48,7 +48,8 @@ export const SocialIcons = memo(function SocialIcons({ links }: SocialIconsProps
   const handleClick = (url: string, platform: string) => {
     // Handle email links specially
     if (platform === 'email') {
-      window.location.href = url.startsWith('mailto:') ? url : `mailto:${url}`
+      const emailUrl = url.startsWith('mailto:') ? url : `mailto:${url}`
+      window.open(emailUrl, '_self')
     } else {
       window.open(url, '_blank', 'noopener,noreferrer')
     }

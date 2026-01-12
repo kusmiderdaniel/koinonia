@@ -38,6 +38,7 @@ export function ResponsiblePersonPicker({
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+   
   useEffect(() => {
     if (open) {
       setIsLoading(true)

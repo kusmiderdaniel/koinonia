@@ -2,7 +2,6 @@
 
 import { useCallback } from 'react'
 import { useTranslations } from 'next-intl'
-import { CalendarOff } from 'lucide-react'
 import { useAvailabilityData, useCalendarSelection, useAvailabilityDialogs } from './hooks'
 import { CalendarSection, UnavailabilityList, AddDialog, EditDialog } from './components'
 import { toDateString } from './types'
@@ -74,7 +73,7 @@ export function AvailabilityPageClient() {
     if (!result.error) {
       dialogs.closeEditDialog()
     }
-  }, [data, dialogs])
+  }, [data, dialogs, t])
 
   // Handle delete
   const handleDelete = useCallback(async (id: string) => {

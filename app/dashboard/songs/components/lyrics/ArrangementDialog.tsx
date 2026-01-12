@@ -147,7 +147,8 @@ export function ArrangementDialog({
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   )
 
-  // Generate unique ID for arrangement items
+  // Generate unique ID for arrangement items (called only in event handlers, not during render)
+  // eslint-disable-next-line react-hooks/purity -- Only called in event handlers
   const generateItemId = () => `item-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
 
   // Reset form when dialog opens

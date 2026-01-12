@@ -61,14 +61,6 @@ export function PositionPicker({
   const [isAdding, setIsAdding] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (open) {
-      loadMinistries()
-      setSelectedRoles([])
-      setError(null)
-    }
-  }, [open])
-
   const loadMinistries = async () => {
     setIsLoading(true)
     const result = await getMinistriesWithRoles()
@@ -81,6 +73,15 @@ export function PositionPicker({
     }
     setIsLoading(false)
   }
+
+   
+  useEffect(() => {
+    if (open) {
+      loadMinistries()
+      setSelectedRoles([])
+      setError(null)
+    }
+  }, [open])
 
   const toggleMinistryExpanded = (ministryId: string) => {
     setExpandedMinistries(prev => {

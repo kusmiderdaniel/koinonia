@@ -36,12 +36,6 @@ export function SongLyricsDialog({
   const [arrangementName, setArrangementName] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (open && songId) {
-      loadLyrics()
-    }
-  }, [open, songId, arrangementId])
-
   const loadLyrics = async () => {
     if (!songId) return
 
@@ -60,6 +54,13 @@ export function SongLyricsDialog({
 
     setIsLoading(false)
   }
+
+  useEffect(() => {
+    if (open && songId) {
+      loadLyrics()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, songId, arrangementId])
 
   const getSectionDisplayLabel = (section: SongSection): string => {
     if (section.label) return section.label

@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { CalendarOff, ArrowRight } from 'lucide-react'
-import { toDateString, formatDate } from '../types'
+import { toDateString } from '../types'
 
 export interface AddDialogProps {
   open: boolean

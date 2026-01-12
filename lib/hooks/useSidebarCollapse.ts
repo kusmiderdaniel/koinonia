@@ -29,6 +29,7 @@ export function useSidebarCollapse() {
   const [isHydrated, setIsHydrated] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Hydration guard pattern
     setIsHydrated(true)
   }, [])
 

@@ -63,6 +63,21 @@ export function TemplateAgendaItemDialog({
     if (preloadedPresets) setPresets(preloadedPresets)
   }, [preloadedPresets])
 
+  const loadData = async () => {
+    setIsLoading(true)
+    const [ministriesResult, presetsResult] = await Promise.all([
+      getMinistries(),
+      getAgendaPresets(),
+    ])
+    if (ministriesResult.data) {
+      setMinistries(ministriesResult.data)
+    }
+    if (presetsResult.data) {
+      setPresets(presetsResult.data as Preset[])
+    }
+    setIsLoading(false)
+  }
+
   useEffect(() => {
     if (open) {
       // Only load data if not preloaded
@@ -83,22 +98,8 @@ export function TemplateAgendaItemDialog({
         setEditDurationSeconds(seconds)
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, item, preloadedMinistries, preloadedPresets])
-
-  const loadData = async () => {
-    setIsLoading(true)
-    const [ministriesResult, presetsResult] = await Promise.all([
-      getMinistries(),
-      getAgendaPresets(),
-    ])
-    if (ministriesResult.data) {
-      setMinistries(ministriesResult.data)
-    }
-    if (presetsResult.data) {
-      setPresets(presetsResult.data as Preset[])
-    }
-    setIsLoading(false)
-  }
 
   const filteredPresets = useMemo(() => {
     return presets.filter((p) =>

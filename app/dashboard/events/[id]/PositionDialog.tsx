@@ -74,6 +74,7 @@ export function PositionDialog({
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+   
   useEffect(() => {
     if (open) {
       // Load ministries
@@ -99,7 +100,7 @@ export function PositionDialog({
     }
   }, [open, position])
 
-  // Load roles when ministry changes
+   
   useEffect(() => {
     if (ministryId) {
       getMinistryRoles(ministryId).then((result) => {
@@ -115,7 +116,7 @@ export function PositionDialog({
     }
   }, [ministryId])
 
-  // Auto-fill title from role
+   
   useEffect(() => {
     if (roleId && !position) {
       const selectedRole = roles.find((r) => r.id === roleId)
