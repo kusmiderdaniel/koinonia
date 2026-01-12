@@ -101,6 +101,7 @@ export async function upsertSettings(data: Partial<LinkTreeSettingsInsert>) {
   }
 
   revalidatePath('/dashboard/links')
+  revalidatePath('/dashboard')
   revalidatePath('/links')
 
   return { settings: result.data, error: null }
@@ -159,6 +160,7 @@ export async function createLink(data: Omit<LinkTreeLinkInsert, 'church_id' | 'c
   }
 
   revalidatePath('/dashboard/links')
+  revalidatePath('/dashboard')
   revalidatePath('/links')
 
   return { link: newLink, error: null }
@@ -182,6 +184,7 @@ export async function updateLink(id: string, data: LinkTreeLinkUpdate) {
   }
 
   revalidatePath('/dashboard/links')
+  revalidatePath('/dashboard')
   revalidatePath('/links')
 
   return { link: updatedLink, error: null }
@@ -203,6 +206,7 @@ export async function deleteLink(id: string) {
   }
 
   revalidatePath('/dashboard/links')
+  revalidatePath('/dashboard')
   revalidatePath('/links')
 
   return { success: true, error: null }
@@ -230,6 +234,7 @@ export async function reorderLinks(orderedIds: string[]) {
   }
 
   revalidatePath('/dashboard/links')
+  revalidatePath('/dashboard')
   revalidatePath('/links')
 
   return { success: true, error: null }
@@ -364,6 +369,7 @@ export async function updateLinksPageEnabled(enabled: boolean): Promise<{ succes
   }
 
   revalidatePath('/dashboard/links')
+  revalidatePath('/dashboard')
   revalidatePath('/links')
 
   return { success: true, error: null }

@@ -84,6 +84,7 @@ export const LivePreview = memo(function LivePreview({
                 fill
                 className="object-cover"
                 sizes="48px"
+                unoptimized
               />
             </div>
           )}
@@ -136,6 +137,13 @@ export const LivePreview = memo(function LivePreview({
 
               const sizeStyles = CARD_SIZE_STYLES_PREVIEW[size]
 
+              // Height values for image cards - matched to regular card heights
+              const imageCardHeights: Record<CardSize, string> = {
+                small: '2rem',     // ~32px - matches py-2 + content
+                medium: '2.25rem', // ~36px - matches py-2.5 + content
+                large: '2.75rem',  // ~44px - matches py-3 + content
+              }
+
               // Image card
               if (hasImage) {
                 return (
@@ -143,9 +151,9 @@ export const LivePreview = memo(function LivePreview({
                     key={link.id}
                     className={cn(
                       'w-full relative overflow-hidden',
-                      borderRadius,
-                      sizeStyles.height
+                      borderRadius
                     )}
+                    style={{ height: imageCardHeights[size], minHeight: imageCardHeights[size] }}
                   >
                     <Image
                       src={link.image_url!}
@@ -153,6 +161,7 @@ export const LivePreview = memo(function LivePreview({
                       fill
                       className="object-cover"
                       sizes="300px"
+                      unoptimized
                     />
                     <div className="absolute inset-0 bg-black/40" />
                     <div className={cn(

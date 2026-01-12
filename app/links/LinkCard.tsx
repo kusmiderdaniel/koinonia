@@ -77,6 +77,7 @@ export const LinkCard = memo(function LinkCard({
   const VisibilityIcon = visibility ? VISIBILITY_ICONS[visibility] : null
 
   const [isHovered, setIsHovered] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   // Hover effect classes
   const hoverClasses = cn(
@@ -101,8 +102,15 @@ export const LinkCard = memo(function LinkCard({
     labelUnderline && 'underline',
   )
 
-  // Image card rendering
-  if (imageUrl) {
+  // Height values for image cards - matched to regular card heights (padding + content)
+  const imageCardHeights: Record<CardSize, string> = {
+    small: '2.75rem',   // ~44px - matches p-3 + content
+    medium: '3.25rem',  // ~52px - matches p-4 + content
+    large: '4rem',      // ~64px - matches p-5 + content
+  }
+
+  // Image card rendering (only if image loads successfully)
+  if (imageUrl && !imageError) {
     return (
       <button
         onClick={onClick}
@@ -111,11 +119,14 @@ export const LinkCard = memo(function LinkCard({
         className={cn(
           'w-full relative overflow-hidden transition-all duration-200 cursor-pointer',
           borderRadius,
-          sizeStyles.height,
           hoverClasses,
           isClicking && 'scale-[0.98] opacity-80',
         )}
-        style={{ boxShadow: getGlowShadow() }}
+        style={{
+          boxShadow: getGlowShadow(),
+          height: imageCardHeights[cardSize],
+          minHeight: imageCardHeights[cardSize],
+        }}
       >
         {/* Background image */}
         <Image
@@ -124,6 +135,8 @@ export const LinkCard = memo(function LinkCard({
           fill
           className="object-cover"
           sizes="(max-width: 640px) 100vw, 400px"
+          onError={() => setImageError(true)}
+          unoptimized
         />
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-black/40" />
