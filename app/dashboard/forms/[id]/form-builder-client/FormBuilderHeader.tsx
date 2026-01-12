@@ -260,7 +260,7 @@ export function FormBuilderHeader({
           variant="outline"
           size="sm"
           onClick={onCopyLink}
-          className="gap-2"
+          className="gap-2 !border !border-black dark:!border-white"
         >
           {copiedLink ? <Check className="h-4 w-4" /> : <LinkIcon className="h-4 w-4" />}
           {copiedLink ? t('header.copied') : t('header.share')}
@@ -270,7 +270,7 @@ export function FormBuilderHeader({
           variant="outline"
           size="sm"
           onClick={onPreview}
-          className="gap-2"
+          className="gap-2 !border !border-black dark:!border-white"
         >
           <Eye className="h-4 w-4" />
           {t('header.preview')}
@@ -281,7 +281,7 @@ export function FormBuilderHeader({
           size="sm"
           onClick={onSave}
           disabled={!isDirty || isSaving}
-          className="gap-2"
+          className="gap-2 !border !border-black dark:!border-white"
         >
           <Save className="h-4 w-4" />
           {isSaving ? t('header.saving') : t('header.save')}
