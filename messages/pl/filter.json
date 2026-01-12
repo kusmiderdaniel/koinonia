@@ -1,9 +1,32 @@
 {
   "title": "Filtruj",
   "ruleCount": "{count} filtr",
-  "emptyState": "Brak filtrow. Dodaj regule filtrowania, aby zawezic dane.",
+  "emptyState": "Brak filtrów. Dodaj regułę filtrowania, aby zawęzić dane.",
   "addRule": "Dodaj filtr",
   "addGroup": "Dodaj grupę",
-  "deleteFilter": "Wyczysc wszystko",
-  "where": "Gdzie"
+  "deleteFilter": "Wyczyść wszystko",
+  "where": "Gdzie",
+  "and": "I",
+  "or": "Lub",
+  "operators": {
+    "contains": "Zawiera",
+    "not_contains": "Nie zawiera",
+    "equals": "Równa się",
+    "not_equals": "Nie równa się",
+    "starts_with": "Zaczyna się od",
+    "ends_with": "Kończy się na",
+    "is_empty": "Jest puste",
+    "is_not_empty": "Nie jest puste",
+    "is": "Jest",
+    "is_not": "Nie jest",
+    "is_before": "Jest przed",
+    "is_after": "Jest po",
+    "eq": "=",
+    "neq": "≠",
+    "lt": "<",
+    "gt": ">",
+    "lte": "≤",
+    "gte": "≥"
+  },
+  "valuePlaceholder": "Wartość..."
 }

@@ -159,5 +159,45 @@
     "noMatch": "Brak członków pasujących do wyszukiwania",
     "noOfflineMembers": "Brak dostępnych członków offline",
     "confirmButton": "Połącz konto"
+  },
+  "filterFields": {
+    "name": "Imię i nazwisko",
+    "email": "Email",
+    "role": "Rola",
+    "active": "Aktywny",
+    "sex": "Płeć",
+    "date_of_birth": "Data urodzenia",
+    "age": "Wiek",
+    "baptism": "Ochrzczony",
+    "baptism_date": "Data chrztu",
+    "date_of_departure": "Data odejścia",
+    "created_at": "Dołączył",
+    "ministry_roles": "Role w służbach"
+  },
+  "filterOptions": {
+    "role": {
+      "owner": "Właściciel",
+      "admin": "Administrator",
+      "leader": "Lider",
+      "volunteer": "Wolontariusz",
+      "member": "Członek"
+    },
+    "sex": {
+      "male": "Mężczyzna",
+      "female": "Kobieta"
+    }
+  },
+  "sortFields": {
+    "name": "Imię i nazwisko",
+    "email": "Email",
+    "role": "Rola",
+    "active": "Aktywny",
+    "sex": "Płeć",
+    "date_of_birth": "Data urodzenia",
+    "age": "Wiek",
+    "baptism": "Ochrzczony",
+    "baptism_date": "Data chrztu",
+    "date_of_departure": "Data odejścia",
+    "created_at": "Dołączył"
   }
 }

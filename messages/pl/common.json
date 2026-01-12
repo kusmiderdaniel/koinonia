@@ -72,6 +72,9 @@
     "optional": "(opcjonalne)",
     "required": "(wymagane)"
   },
+  "yes": "Tak",
+  "no": "Nie",
+  "select": "Wybierz...",
   "time": {
     "today": "Dzisiaj",
     "yesterday": "Wczoraj",

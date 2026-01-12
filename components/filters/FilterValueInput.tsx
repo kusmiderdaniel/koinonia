@@ -1,6 +1,7 @@
 'use client'
 
 import { memo } from 'react'
+import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -23,6 +24,9 @@ export const FilterValueInput = memo(function FilterValueInput({
   rule,
   onUpdate,
 }: FilterValueInputProps) {
+  const t = useTranslations('filter')
+  const tCommon = useTranslations('common')
+
   if (!field) return null
 
   switch (field.type) {
@@ -33,7 +37,7 @@ export const FilterValueInput = memo(function FilterValueInput({
             checked={rule.value as boolean}
             onCheckedChange={(checked) => onUpdate({ value: checked as boolean })}
           />
-          <span className="text-xs">{rule.value ? 'Yes' : 'No'}</span>
+          <span className="text-xs">{rule.value ? tCommon('yes') : tCommon('no')}</span>
         </div>
       )
 
@@ -41,7 +45,7 @@ export const FilterValueInput = memo(function FilterValueInput({
       return (
         <Select value={rule.value as string} onValueChange={(v) => onUpdate({ value: v })}>
           <SelectTrigger className="w-[120px] h-8 text-xs">
-            <SelectValue placeholder="Select..." />
+            <SelectValue placeholder={tCommon('select')} />
           </SelectTrigger>
           <SelectContent className="border border-black dark:border-zinc-700">
             {field.options?.map((opt) => (
@@ -73,7 +77,7 @@ export const FilterValueInput = memo(function FilterValueInput({
           type="number"
           value={(rule.value as string) || ''}
           onChange={(e) => onUpdate({ value: e.target.value })}
-          placeholder="Value"
+          placeholder={t('valuePlaceholder')}
           className="w-[100px] h-8 text-xs"
         />
       )
@@ -86,7 +90,7 @@ export const FilterValueInput = memo(function FilterValueInput({
           type="text"
           value={(rule.value as string) || ''}
           onChange={(e) => onUpdate({ value: e.target.value })}
-          placeholder="Value..."
+          placeholder={t('valuePlaceholder')}
           className="flex-1 min-w-[100px] h-8 text-xs"
         />
       )

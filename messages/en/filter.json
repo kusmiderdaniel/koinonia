@@ -5,5 +5,28 @@
   "addRule": "Add filter",
   "addGroup": "Add group",
   "deleteFilter": "Clear all",
-  "where": "Where"
+  "where": "Where",
+  "and": "And",
+  "or": "Or",
+  "operators": {
+    "contains": "Contains",
+    "not_contains": "Does not contain",
+    "equals": "Equals",
+    "not_equals": "Does not equal",
+    "starts_with": "Starts with",
+    "ends_with": "Ends with",
+    "is_empty": "Is empty",
+    "is_not_empty": "Is not empty",
+    "is": "Is",
+    "is_not": "Is not",
+    "is_before": "Is before",
+    "is_after": "Is after",
+    "eq": "=",
+    "neq": "≠",
+    "lt": "<",
+    "gt": ">",
+    "lte": "≤",
+    "gte": "≥"
+  },
+  "valuePlaceholder": "Value..."
 }

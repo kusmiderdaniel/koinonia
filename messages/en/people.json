@@ -159,5 +159,45 @@
     "noMatch": "No members match your search",
     "noOfflineMembers": "No offline members available",
     "confirmButton": "Link Account"
+  },
+  "filterFields": {
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "active": "Active",
+    "sex": "Gender",
+    "date_of_birth": "Date of Birth",
+    "age": "Age",
+    "baptism": "Baptized",
+    "baptism_date": "Baptism Date",
+    "date_of_departure": "Departure Date",
+    "created_at": "Joined",
+    "ministry_roles": "Ministry Roles"
+  },
+  "filterOptions": {
+    "role": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "leader": "Leader",
+      "volunteer": "Volunteer",
+      "member": "Member"
+    },
+    "sex": {
+      "male": "Male",
+      "female": "Female"
+    }
+  },
+  "sortFields": {
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "active": "Active",
+    "sex": "Gender",
+    "date_of_birth": "Date of Birth",
+    "age": "Age",
+    "baptism": "Baptized",
+    "baptism_date": "Baptism Date",
+    "date_of_departure": "Departure Date",
+    "created_at": "Joined"
   }
 }
