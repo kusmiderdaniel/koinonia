@@ -48,9 +48,14 @@ export function LinksPageClient({
   // Build preview URL on client side only
   useEffect(() => {
     if (churchSubdomain && typeof window !== 'undefined') {
-      const url = `${window.location.protocol}//${churchSubdomain}.${window.location.host.replace(/^[^.]+\./, '')}/links`
-      setPreviewUrl(url)
-      setDisplayUrl(`${churchSubdomain}.koinonia.app/links`)
+      // Use NEXT_PUBLIC_SITE_URL or fall back to current host
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
+      const url = new URL(baseUrl)
+      // Prepend church subdomain to the hostname
+      const subdomainHost = `${churchSubdomain}.${url.hostname}`
+      const fullUrl = `${url.protocol}//${subdomainHost}${url.port ? ':' + url.port : ''}/links`
+      setPreviewUrl(fullUrl)
+      setDisplayUrl(`${subdomainHost}/links`)
     }
   }, [churchSubdomain])
 
