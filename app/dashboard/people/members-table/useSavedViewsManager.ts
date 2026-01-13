@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { toast } from 'sonner'
 import { deleteSavedView, setDefaultView, updateSavedView } from '@/lib/actions/saved-views'
 import { createEmptyFilterState } from '../filter-types'
-import { createEmptySortState } from '../sort-types'
+import { createDefaultPeopleSortState } from '../sort-types'
 import type { SavedView, FilterState, SortState } from './types'
 import type { ColumnConfig } from '@/types/saved-views'
 import { DEFAULT_FREEZE_COLUMN_KEY, type PeopleColumnKey } from './columns'
@@ -85,7 +85,7 @@ export function useSavedViewsManager({
       }
     } else {
       setFilterState(createEmptyFilterState())
-      setSortState(createEmptySortState())
+      setSortState(createDefaultPeopleSortState())
       setColumnsConfig(null) // Reset to default column config
       setVisibleColumns(null) // Show all columns when no view selected
       setFreezeColumnKey(DEFAULT_FREEZE_COLUMN_KEY) // Default: freeze Active and Name columns
