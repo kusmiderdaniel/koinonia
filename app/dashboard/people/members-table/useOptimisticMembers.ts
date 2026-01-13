@@ -1,7 +1,9 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
 import { updateMemberRole, updateMemberActive, updateMemberDeparture, updateMemberBaptism, updateMemberCampuses, updateMemberProfile, deleteOfflineMember } from '../actions'
+import { updateCustomFieldValue } from '../custom-fields/actions'
 import type { AssignableRole, Member, AvailableCampus } from './types'
+import type { CustomFieldValueType } from '@/types/custom-fields'
 
 export function useOptimisticMembers(
   serverMembers: Member[],
@@ -34,6 +36,7 @@ export function useOptimisticMembers(
   const [updatingBaptismId, setUpdatingBaptismId] = useState<string | null>(null)
   const [updatingCampusesId, setUpdatingCampusesId] = useState<string | null>(null)
   const [updatingProfileId, setUpdatingProfileId] = useState<string | null>(null)
+  const [updatingCustomFieldKey, setUpdatingCustomFieldKey] = useState<string | null>(null) // "memberId:fieldId"
   const [deletingMember, setDeletingMember] = useState<Member | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
@@ -254,6 +257,52 @@ export function useOptimisticMembers(
     }
   }, [optimisticMembers, updateMemberOptimistically, revertMember])
 
+  const handleCustomFieldChange = useCallback(async (
+    memberId: string,
+    fieldId: string,
+    value: CustomFieldValueType
+  ) => {
+    const member = optimisticMembers.find(m => m.id === memberId)
+    if (!member) return
+
+    const previousValues = { ...member.custom_field_values }
+    const updateKey = `${memberId}:${fieldId}`
+
+    // Optimistic update
+    setOptimisticMembers(prev =>
+      prev.map(m => {
+        if (m.id !== memberId) return m
+        return {
+          ...m,
+          custom_field_values: {
+            ...m.custom_field_values,
+            [fieldId]: value,
+          },
+        }
+      })
+    )
+    setUpdatingCustomFieldKey(updateKey)
+
+    try {
+      const result = await updateCustomFieldValue(memberId, fieldId, value)
+      if (result.error) {
+        toast.error(result.error)
+        // Revert
+        setOptimisticMembers(prev =>
+          prev.map(m => m.id === memberId ? { ...m, custom_field_values: previousValues } : m)
+        )
+      }
+    } catch {
+      toast.error('Failed to update field value')
+      // Revert
+      setOptimisticMembers(prev =>
+        prev.map(m => m.id === memberId ? { ...m, custom_field_values: previousValues } : m)
+      )
+    } finally {
+      setUpdatingCustomFieldKey(null)
+    }
+  }, [optimisticMembers])
+
   const openDeleteDialog = useCallback((member: Member) => {
     setDeletingMember(member)
   }, [])
@@ -302,6 +351,7 @@ export function useOptimisticMembers(
     updatingBaptismId,
     updatingCampusesId,
     updatingProfileId,
+    updatingCustomFieldKey,
 
     // Delete states
     deletingMember,
@@ -314,6 +364,7 @@ export function useOptimisticMembers(
     handleBaptismChange,
     handleCampusesChange,
     handleProfileChange,
+    handleCustomFieldChange,
     openDeleteDialog,
     closeDeleteDialog,
     handleDeleteMember,

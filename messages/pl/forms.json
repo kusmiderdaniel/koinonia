@@ -114,7 +114,8 @@
     "tabs": {
       "build": "Buduj",
       "responses": "Odpowiedzi ({count})",
-      "settings": "Ustawienia"
+      "settings": "Ustawienia",
+      "analytics": "Analityka"
     },
     "preview": "Podgląd",
     "previewTitle": "Podgląd formularza",
@@ -320,5 +321,64 @@
       "published": "Formularz jest aktywny i przyjmuje odpowiedzi.",
       "closed": "Formularz jest zamknięty i nie przyjmuje już odpowiedzi."
     }
+  },
+
+  "analytics": {
+    "views": "Wyświetlenia",
+    "starts": "Rozpoczęcia",
+    "submissions": "Przesłania",
+    "completionRate": "Wskaźnik ukończenia",
+    "activityOverTime": "Aktywność w czasie",
+    "deviceBreakdown": "Podział urządzeń",
+    "responseSummary": "Podsumowanie odpowiedzi",
+    "responses": "Odpowiedzi",
+    "desktop": "Komputer",
+    "mobile": "Telefon",
+    "tablet": "Tablet",
+    "allTime": "Cały czas",
+    "last7Days": "Ostatnie 7 dni",
+    "last30Days": "Ostatnie 30 dni",
+    "last90Days": "Ostatnie 90 dni",
+    "yes": "Tak",
+    "no": "Nie",
+    "min": "Min",
+    "max": "Max",
+    "average": "Śr.",
+    "median": "Mediana",
+    "dateRange": "Zakres dat",
+    "from": "Od",
+    "to": "Do",
+    "textResponses": "odpowiedzi tekstowych",
+    "responsesOverTime": "Odpowiedzi w czasie",
+    "showField": "Pokaż pole",
+    "dateField": "Pole daty",
+    "groupBy": "Grupuj",
+    "perDate": "Dziennie",
+    "perWeek": "Tygodniowo",
+    "perMonth": "Miesięcznie",
+    "perYear": "Rocznie",
+    "aggregation": "Agregacja",
+    "sum": "Suma",
+    "avg": "Średnia",
+    "splitBy": "Podziel wg",
+    "none": "Brak",
+    "noDataForSelection": "Brak danych dla tego wyboru"
+  },
+
+  "fieldPlaceholders": {
+    "pickDate": "Wybierz datę",
+    "selectOption": "Wybierz opcję",
+    "selectOptions": "Wybierz opcje",
+    "enterText": "Wpisz odpowiedź",
+    "enterNumber": "Wpisz liczbę",
+    "enterEmail": "Wpisz email",
+    "text": "Odpowiedź tekstowa",
+    "textarea": "Dłuższa odpowiedź",
+    "number": "Liczba",
+    "email": "email@example.com",
+    "date": "Wybierz datę",
+    "single_select": "Wybierz opcję",
+    "multi_select": "Wybierz opcje",
+    "checkbox": "Tak / Nie"
   }
 }

@@ -340,6 +340,125 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_field_definitions: {
+        Row: {
+          church_id: string
+          created_at: string | null
+          created_by: string | null
+          default_visible: boolean
+          description: string | null
+          display_order: number
+          field_type: string
+          id: string
+          name: string
+          options: Json | null
+          settings: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          church_id: string
+          created_at?: string | null
+          created_by?: string | null
+          default_visible?: boolean
+          description?: string | null
+          display_order?: number
+          field_type: string
+          id?: string
+          name: string
+          options?: Json | null
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          church_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          default_visible?: boolean
+          description?: string | null
+          display_order?: number
+          field_type?: string
+          id?: string
+          name?: string
+          options?: Json | null
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_field_definitions_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_field_definitions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_field_values: {
+        Row: {
+          church_id: string
+          field_id: string
+          id: string
+          profile_id: string
+          updated_at: string | null
+          updated_by: string | null
+          value: Json | null
+        }
+        Insert: {
+          church_id: string
+          field_id: string
+          id?: string
+          profile_id: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value?: Json | null
+        }
+        Update: {
+          church_id?: string
+          field_id?: string
+          id?: string
+          profile_id?: string
+          updated_at?: string | null
+          updated_by?: string | null
+          value?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_field_values_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_field_values_field_id_fkey"
+            columns: ["field_id"]
+            isOneToOne: false
+            referencedRelation: "custom_field_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_field_values_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_field_values_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_agenda_items: {
         Row: {
           arrangement_id: string | null
@@ -902,6 +1021,41 @@ export type Database = {
             columns: ["responsible_person_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      form_analytics_events: {
+        Row: {
+          created_at: string | null
+          device_type: string | null
+          event_type: string
+          form_id: string
+          id: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          device_type?: string | null
+          event_type: string
+          form_id: string
+          id?: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string | null
+          device_type?: string | null
+          event_type?: string
+          form_id?: string
+          id?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_analytics_events_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "forms"
             referencedColumns: ["id"]
           },
         ]
@@ -1968,10 +2122,12 @@ export type Database = {
       saved_views: {
         Row: {
           church_id: string
+          columns_config: Json | null
           created_at: string | null
           created_by: string | null
           description: string | null
           filter_state: Json
+          freeze_column_key: string | null
           group_by: string | null
           id: string
           is_default: boolean
@@ -1983,10 +2139,12 @@ export type Database = {
         }
         Insert: {
           church_id: string
+          columns_config?: Json | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
           filter_state?: Json
+          freeze_column_key?: string | null
           group_by?: string | null
           id?: string
           is_default?: boolean
@@ -1998,10 +2156,12 @@ export type Database = {
         }
         Update: {
           church_id?: string
+          columns_config?: Json | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
           filter_state?: Json
+          freeze_column_key?: string | null
           group_by?: string | null
           id?: string
           is_default?: boolean

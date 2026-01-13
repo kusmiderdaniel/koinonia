@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -33,6 +34,8 @@ export function PreviewFieldRenderer({
   onValueChange,
   onMultiSelectChange,
 }: FieldRendererProps) {
+  const t = useTranslations('forms.fieldPlaceholders')
+
   switch (field.type) {
     case 'text':
       return (
@@ -76,10 +79,10 @@ export function PreviewFieldRenderer({
       )
 
     case 'date':
-      return <DateField field={field} value={value} weekStartsOn={weekStartsOn} onValueChange={onValueChange} />
+      return <DateField field={field} value={value} weekStartsOn={weekStartsOn} onValueChange={onValueChange} pickDateLabel={t('pickDate')} />
 
     case 'single_select':
-      return <SingleSelectField field={field} value={value} onValueChange={onValueChange} />
+      return <SingleSelectField field={field} value={value} onValueChange={onValueChange} selectOptionLabel={t('selectOption')} />
 
     case 'multi_select':
       return <MultiSelectField field={field} value={value} onMultiSelectChange={onMultiSelectChange} />
@@ -193,7 +196,8 @@ function DateField({
   value,
   weekStartsOn,
   onValueChange,
-}: Pick<FieldRendererProps, 'field' | 'value' | 'weekStartsOn' | 'onValueChange'>) {
+  pickDateLabel,
+}: Pick<FieldRendererProps, 'field' | 'value' | 'weekStartsOn' | 'onValueChange'> & { pickDateLabel: string }) {
   const dateValue = value ? new Date(value as string) : undefined
 
   return (
@@ -208,7 +212,7 @@ function DateField({
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {dateValue ? format(dateValue, 'PPP') : 'Pick a date'}
+            {dateValue ? format(dateValue, 'PPP') : pickDateLabel}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto !p-0 !gap-0 !bg-white dark:!bg-zinc-900 border border-border shadow-md" align="start">
@@ -231,7 +235,8 @@ function SingleSelectField({
   field,
   value,
   onValueChange,
-}: Pick<FieldRendererProps, 'field' | 'value' | 'onValueChange'>) {
+  selectOptionLabel,
+}: Pick<FieldRendererProps, 'field' | 'value' | 'onValueChange'> & { selectOptionLabel: string }) {
   const selectedOption = field.options?.find((o: { value: string }) => o.value === value)
   const colorClasses = selectedOption ? getOptionColorClasses(selectedOption.color) : null
 
@@ -247,7 +252,7 @@ function SingleSelectField({
               {selectedOption.label}
             </span>
           ) : (
-            <SelectValue placeholder="Select an option" />
+            <SelectValue placeholder={selectOptionLabel} />
           )}
         </SelectTrigger>
         <SelectContent position="popper" sideOffset={4} className="!border !border-black dark:!border-white">

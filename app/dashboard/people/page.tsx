@@ -8,9 +8,11 @@ import { Badge } from '@/components/ui/badge'
 import { MembersTable } from './members-table'
 import { OfflineMemberDialog } from './OfflineMemberDialog'
 import { InvitePopover } from './invite-popover'
+import { CustomFieldsManager } from './custom-fields/CustomFieldsManager'
 import { getUserCampusIds } from '@/lib/utils/campus'
 import { isAdminOrOwner, isLeader } from '@/lib/permissions'
 import type { SavedView } from '@/types/saved-views'
+import type { CustomFieldDefinition, CustomFieldValuesMap } from '@/types/custom-fields'
 
 export default async function PeoplePage() {
   const t = await getTranslations('people')
@@ -49,8 +51,8 @@ export default async function PeoplePage() {
     leaderCampusIds = await getUserCampusIds(profile.id, adminClient)
   }
 
-  // Parallel fetch: members + pending count + church data + saved views + all campuses
-  const [membersResult, pendingResult, churchResult, savedViewsResult, allCampusesResult] = await Promise.all([
+  // Parallel fetch: members + pending count + church data + saved views + all campuses + custom fields
+  const [membersResult, pendingResult, churchResult, savedViewsResult, allCampusesResult, customFieldsResult, customFieldValuesResult] = await Promise.all([
     // Always fetch members
     adminClient
       .from('profiles')
@@ -99,6 +101,17 @@ export default async function PeoplePage() {
       .eq('is_active', true)
       .order('is_default', { ascending: false })
       .order('name'),
+    // Fetch custom field definitions
+    adminClient
+      .from('custom_field_definitions')
+      .select('*')
+      .eq('church_id', profile.church_id)
+      .order('display_order'),
+    // Fetch all custom field values for this church
+    adminClient
+      .from('custom_field_values')
+      .select('profile_id, field_id, value')
+      .eq('church_id', profile.church_id),
   ])
 
   const { data: membersData, error: membersError } = membersResult
@@ -111,6 +124,22 @@ export default async function PeoplePage() {
     color: c.color,
     is_default: c.is_default,
   }))
+
+  // Process custom field definitions
+  const customFields: CustomFieldDefinition[] = (customFieldsResult.data || []).map(d => ({
+    ...d,
+    options: d.options || [],
+    settings: d.settings || {},
+  }))
+
+  // Build custom field values lookup: Map<profile_id, Map<field_id, value>>
+  const customFieldValuesByMember = new Map<string, CustomFieldValuesMap>()
+  for (const cfv of customFieldValuesResult.data || []) {
+    if (!customFieldValuesByMember.has(cfv.profile_id)) {
+      customFieldValuesByMember.set(cfv.profile_id, {})
+    }
+    customFieldValuesByMember.get(cfv.profile_id)![cfv.field_id] = cfv.value
+  }
 
   if (membersError) {
     console.error('Error fetching members:', membersError)
@@ -210,6 +239,7 @@ export default async function PeoplePage() {
       ...member,
       ministry_members: ministryRoles,
       campuses,
+      custom_field_values: customFieldValuesByMember.get(member.id) || {},
     }
   }) || []
 
@@ -234,18 +264,19 @@ export default async function PeoplePage() {
             </p>
           </div>
           {(userIsAdmin || userIsLeader) && (
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
               {pendingCount > 0 && (
-                <Button variant="outline" asChild className="!border !border-black dark:!border-white">
+                <Button variant="outline" asChild className="justify-center !border !border-black dark:!border-white">
                   <Link href="/dashboard/people/pending" className="flex items-center gap-2">
                     <UserPlus className="h-4 w-4" />
-                    <span className="hidden md:inline">{t('pendingBadge')}</span>
+                    <span>{t('pendingBadge')}</span>
                     <Badge variant="destructive" className="bg-red-500 text-white rounded-full">
                       {pendingCount}
                     </Badge>
                   </Link>
                 </Button>
               )}
+              {userIsAdmin && <CustomFieldsManager initialFields={customFields} />}
               <OfflineMemberDialog weekStartsOn={firstDayOfWeek} />
               {joinCode && <InvitePopover joinCode={joinCode} />}
             </div>
@@ -261,6 +292,7 @@ export default async function PeoplePage() {
               savedViews={(savedViewsResult.data || []) as SavedView[]}
               canManageViews={userIsAdmin || userIsLeader}
               allCampuses={allCampuses}
+              customFields={customFields}
             />
           ) : (
             <p className="text-center text-muted-foreground py-8">

@@ -13,6 +13,7 @@ import {
 import { toast } from 'sonner'
 import {
   FormFields,
+  useFormAnalytics,
   useFormConditions,
   useFormState,
   useFormValidation,
@@ -97,6 +98,28 @@ export function InternalFormClient({
     setErrors,
   })
 
+  // Analytics tracking
+  const { trackStart, trackSubmit } = useFormAnalytics({
+    formId,
+  })
+
+  // Wrap value change to track start
+  const handleValueChangeWithTracking = useCallback(
+    (fieldId: string, value: unknown) => {
+      trackStart()
+      handleValueChange(fieldId, value)
+    },
+    [trackStart, handleValueChange]
+  )
+
+  const handleMultiSelectChangeWithTracking = useCallback(
+    (fieldId: string, optionValue: string, checked: boolean) => {
+      trackStart()
+      handleMultiSelectChange(fieldId, optionValue, checked)
+    },
+    [trackStart, handleMultiSelectChange]
+  )
+
   // Submit handler
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -124,6 +147,7 @@ export function InternalFormClient({
           throw new Error(result.error)
         }
 
+        trackSubmit()
         setIsSubmitted(true)
         toast.success(t('toast.submitted'))
       } catch (error) {
@@ -135,7 +159,7 @@ export function InternalFormClient({
         setIsSubmitting(false)
       }
     },
-    [formId, visibleFields, values, validateForm, t]
+    [formId, visibleFields, values, validateForm, t, trackSubmit]
   )
 
   // Already submitted state (for single-response forms)
@@ -226,8 +250,8 @@ export function InternalFormClient({
               fields={visibleFields}
               values={values}
               errors={errors}
-              onValueChange={handleValueChange}
-              onMultiSelectChange={handleMultiSelectChange}
+              onValueChange={handleValueChangeWithTracking}
+              onMultiSelectChange={handleMultiSelectChangeWithTracking}
               weekStartsOn={weekStartsOn}
             />
           </div>

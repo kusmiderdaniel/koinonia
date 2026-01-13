@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { Copy, Check } from 'lucide-react'
+import { Copy, Check, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Popover,
@@ -36,7 +36,8 @@ export function InvitePopover({ joinCode }: InvitePopoverProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="!border !border-black dark:!border-white">
+        <Button variant="outline" className="gap-2 justify-center !border !border-black dark:!border-white">
+          <Mail className="h-4 w-4" />
           {t('invite.button')}
         </Button>
       </PopoverTrigger>

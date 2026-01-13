@@ -2,6 +2,13 @@
 
 import { useState, memo, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
+import {
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
 import { Table, TableBody } from '@/components/ui/table'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { useIsMobile } from '@/lib/hooks'
@@ -17,10 +24,13 @@ import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { useOptimisticMembers } from './useOptimisticMembers'
 import { useSavedViewsManager } from './useSavedViewsManager'
 import { useMemberPermissions } from './useMemberPermissions'
+import { useColumnConfig } from './useColumnConfig'
 import { MembersTableHeader } from './MembersTableHeader'
 import { ColumnSelector } from './ColumnSelector'
+import { ExportDialog } from './ExportDialog'
 import { type PeopleColumnKey } from './columns'
 import type { MembersTableProps } from './types'
+import type { ColumnConfig } from '@/types/saved-views'
 
 export const MembersTable = memo(function MembersTable({
   members,
@@ -29,12 +39,38 @@ export const MembersTable = memo(function MembersTable({
   savedViews,
   canManageViews,
   allCampuses,
+  customFields,
 }: MembersTableProps) {
   const t = useTranslations('people')
   const isMobile = useIsMobile()
   const [filterState, setFilterState] = useState<FilterState>(createEmptyFilterState)
   const [sortState, setSortState] = useState<SortState>(createDefaultPeopleSortState)
   const [visibleColumns, setVisibleColumns] = useState<PeopleColumnKey[] | null>(null)
+
+  // Get initial columnsConfig from default saved view
+  const defaultView = useMemo(() => savedViews.find((v) => v.is_default), [savedViews])
+
+  // Column configuration hook for ordering, resizing, and visibility
+  const {
+    orderedColumns,
+    columnWidths,
+    columnsConfig,
+    setColumnsConfig,
+    isColumnVisible,
+    resizeColumn,
+    reorderColumns,
+    resetToDefault,
+    hasChanges: hasColumnConfigChanges,
+    // Freeze props
+    freezeColumnKey,
+    setFreezeColumnKey,
+    frozenColumnOffsets,
+  } = useColumnConfig({
+    customFields,
+    initialColumnsConfig: defaultView?.columns_config as ColumnConfig[] | null ?? null,
+    initialVisibleColumns: defaultView?.visible_columns ?? null,
+    initialFreezeColumnKey: defaultView?.freeze_column_key ?? null,
+  })
 
   // Member update handlers with optimistic updates
   const {
@@ -45,6 +81,7 @@ export const MembersTable = memo(function MembersTable({
     updatingBaptismId,
     updatingCampusesId,
     updatingProfileId,
+    updatingCustomFieldKey,
     deletingMember,
     isDeleting,
     handleRoleChange,
@@ -53,6 +90,7 @@ export const MembersTable = memo(function MembersTable({
     handleBaptismChange,
     handleCampusesChange,
     handleProfileChange,
+    handleCustomFieldChange,
     openDeleteDialog,
     closeDeleteDialog,
     handleDeleteMember,
@@ -64,9 +102,14 @@ export const MembersTable = memo(function MembersTable({
     filterState,
     sortState,
     visibleColumns,
+    columnsConfig,
+    freezeColumnKey,
+    hasColumnConfigChanges,
     setFilterState,
     setSortState,
     setVisibleColumns,
+    setColumnsConfig,
+    setFreezeColumnKey,
   })
 
   // Permission checks
@@ -84,6 +127,23 @@ export const MembersTable = memo(function MembersTable({
     return applySorts(filtered, sortState)
   }, [optimisticMembers, filterState, sortState])
 
+  // DnD sensors with distance activation to distinguish clicks from drags
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  )
+
+  // Handle column reorder via drag-and-drop
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (over && active.id !== over.id) {
+      reorderColumns(String(active.id), String(over.id))
+    }
+  }
+
   const activeFilterCount = countActiveFilters(filterState)
   const activeSortCount = countActiveSorts(sortState)
 
@@ -91,12 +151,18 @@ export const MembersTable = memo(function MembersTable({
     <div className="flex-1 flex flex-col space-y-4 min-h-0">
       {/* Filter and Sort toolbar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-        <div className="grid grid-cols-4 sm:flex sm:items-center gap-2 w-full sm:w-auto">
+        <div className="grid grid-cols-5 sm:flex sm:items-center gap-2 w-full sm:w-auto">
           <PeopleSortBuilder sortState={sortState} onChange={setSortState} />
           <PeopleFilterBuilder filterState={filterState} onChange={setFilterState} />
           <ColumnSelector
             visibleColumns={visibleColumns}
             onChange={setVisibleColumns}
+            customFields={customFields}
+            orderedColumns={orderedColumns}
+            onReorderColumns={reorderColumns}
+            onResetToDefault={resetToDefault}
+            freezeColumnKey={freezeColumnKey}
+            onFreezeColumnChange={setFreezeColumnKey}
           />
           <ViewSelector
             viewType="people"
@@ -113,11 +179,17 @@ export const MembersTable = memo(function MembersTable({
             isSavingChanges={viewsManager.isSavingChanges}
           />
         </div>
-        {(activeFilterCount > 0 || activeSortCount > 0) && (
-          <p className="text-sm text-muted-foreground">
-            {t('showingMembers', { filtered: filteredAndSortedMembers.length, total: optimisticMembers.length })}
-          </p>
-        )}
+        <div className="flex items-center gap-4">
+          {(activeFilterCount > 0 || activeSortCount > 0) && (
+            <p className="text-sm text-muted-foreground">
+              {t('showingMembers', { filtered: filteredAndSortedMembers.length, total: optimisticMembers.length })}
+            </p>
+          )}
+          <ExportDialog
+            members={filteredAndSortedMembers}
+            customFields={customFields}
+          />
+        </div>
       </div>
 
       {/* Mobile: Card view */}
@@ -153,9 +225,18 @@ export const MembersTable = memo(function MembersTable({
       ) : (
         /* Desktop: Table view */
         <TooltipProvider>
-          <div className="flex-1 border border-black dark:border-white rounded-lg overflow-auto">
-            <Table>
-              <MembersTableHeader visibleColumns={visibleColumns} />
+          <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+            <div className="flex-1 border border-black dark:border-white rounded-lg overflow-auto">
+              <Table>
+                <MembersTableHeader
+                  visibleColumns={visibleColumns}
+                  customFields={customFields}
+                  orderedColumns={orderedColumns}
+                  columnWidths={columnWidths}
+                  onResizeColumn={resizeColumn}
+                  freezeColumnKey={freezeColumnKey}
+                  frozenColumnOffsets={frozenColumnOffsets}
+                />
               <TableBody>
                 {filteredAndSortedMembers.map((member, index) => (
                   <MemberRow
@@ -164,6 +245,11 @@ export const MembersTable = memo(function MembersTable({
                     index={index}
                     currentUserId={currentUserId}
                     visibleColumns={visibleColumns}
+                    customFields={customFields}
+                    orderedColumns={orderedColumns}
+                    columnWidths={columnWidths}
+                    freezeColumnKey={freezeColumnKey}
+                    frozenColumnOffsets={frozenColumnOffsets}
                     canEditRole={canEditRole(member)}
                     canEditActiveStatus={canEditActiveStatus(member)}
                     canEditDeparture={canEditDeparture(member)}
@@ -175,6 +261,7 @@ export const MembersTable = memo(function MembersTable({
                     isUpdatingBaptism={updatingBaptismId === member.id}
                     isUpdatingCampuses={updatingCampusesId === member.id}
                     isUpdatingProfile={updatingProfileId === member.id}
+                    updatingCustomFieldKey={updatingCustomFieldKey}
                     allCampuses={allCampuses}
                     onRoleChange={handleRoleChange}
                     onActiveChange={handleActiveChange}
@@ -182,12 +269,14 @@ export const MembersTable = memo(function MembersTable({
                     onBaptismChange={handleBaptismChange}
                     onCampusesChange={handleCampusesChange}
                     onProfileChange={handleProfileChange}
+                    onCustomFieldChange={handleCustomFieldChange}
                     onDeleteOffline={openDeleteDialog}
                   />
                 ))}
               </TableBody>
-            </Table>
-          </div>
+              </Table>
+            </div>
+          </DndContext>
         </TooltipProvider>
       )}
 
@@ -199,6 +288,8 @@ export const MembersTable = memo(function MembersTable({
         currentFilterState={filterState}
         currentSortState={sortState}
         currentVisibleColumns={visibleColumns}
+        currentColumnsConfig={columnsConfig}
+        currentFreezeColumnKey={freezeColumnKey}
         editingView={viewsManager.editingView}
         onSuccess={viewsManager.handleViewSuccess}
       />

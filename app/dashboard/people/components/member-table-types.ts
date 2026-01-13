@@ -15,6 +15,8 @@ export {
   calculateAge,
 } from '@/lib/types'
 
+import type { CustomFieldValuesMap } from '@/types/custom-fields'
+
 import { calculateAge as calcAge, formatDate as fmt } from '@/lib/types'
 
 // Re-export calculateAge with string return for backwards compatibility
@@ -55,4 +57,5 @@ export interface Member {
   created_at: string
   ministry_members: MinistryMember[]
   campuses: Campus[]
+  custom_field_values: CustomFieldValuesMap
 }

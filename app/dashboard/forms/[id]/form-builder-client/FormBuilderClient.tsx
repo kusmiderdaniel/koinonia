@@ -12,6 +12,7 @@ import { FormBuilder } from '../builder/FormBuilder'
 import { PreviewPanel } from '../builder/preview-panel'
 import { ResponsesTable } from '../responses/ResponsesTable'
 import { FormSettings } from '../settings/FormSettings'
+import { AnalyticsDashboard } from '../analytics'
 import { useFormBuilderClientState } from './useFormBuilderClientState'
 import { FormBuilderHeader } from './FormBuilderHeader'
 import { useIsMobile } from '@/lib/hooks'
@@ -77,6 +78,12 @@ export function FormBuilderClient({ initialData }: FormBuilderClientProps) {
             >
               {t('builder.tabs.settings')}
             </TabsTrigger>
+            <TabsTrigger
+              value="analytics"
+              className="h-8 px-3 rounded-md data-[state=active]:bg-brand data-[state=active]:text-white"
+            >
+              {t('builder.tabs.analytics')}
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -96,6 +103,13 @@ export function FormBuilderClient({ initialData }: FormBuilderClientProps) {
           className="flex-1 mt-0 min-h-0 overflow-y-auto"
         >
           <FormSettings />
+        </TabsContent>
+
+        <TabsContent
+          value="analytics"
+          className="flex-1 mt-0 min-h-0 overflow-hidden"
+        >
+          <AnalyticsDashboard formId={state.currentForm.id} />
         </TabsContent>
       </Tabs>
 

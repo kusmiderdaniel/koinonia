@@ -49,7 +49,7 @@ export function ViewSelector({
   const displayName = selectedView?.name || selectedBuiltInView?.name
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -127,22 +127,37 @@ export function ViewSelector({
     </DropdownMenu>
 
       {/* Save changes button - appears when view has unsaved changes */}
-      {/* For built-in views, anyone can save (personal prefs). For saved views, only managers. */}
-      {hasUnsavedChanges && hasSelectedView && (canManageViews || selectedBuiltInView) && onSaveChanges && (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onSaveChanges}
-          disabled={isSavingChanges}
-          className="gap-1 !border !border-brand text-brand hover:bg-brand/10"
-        >
-          {isSavingChanges ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Save className="h-4 w-4" />
-          )}
-          <span className="hidden sm:inline">{t('save')}</span>
-        </Button>
+      {/* For "All" view: shows "Save as New View" to create a new view */}
+      {/* For saved views: shows "Save" to update the existing view */}
+      {hasUnsavedChanges && canManageViews && (
+        hasSelectedView && onSaveChanges ? (
+          // Existing view - save changes to it
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onSaveChanges}
+            disabled={isSavingChanges}
+            className="gap-1 !border !border-brand text-brand hover:bg-brand/10"
+          >
+            {isSavingChanges ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
+            <span className="hidden sm:inline">{t('save')}</span>
+          </Button>
+        ) : (
+          // "All" view - create a new view to save changes
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onCreateView}
+            className="gap-1 !border !border-brand text-brand hover:bg-brand/10"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline">{t('saveAsNew')}</span>
+          </Button>
+        )
       )}
     </div>
   )

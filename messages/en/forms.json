@@ -114,7 +114,8 @@
     "tabs": {
       "build": "Build",
       "responses": "Responses ({count})",
-      "settings": "Settings"
+      "settings": "Settings",
+      "analytics": "Analytics"
     },
     "preview": "Preview",
     "previewTitle": "Form Preview",
@@ -320,5 +321,64 @@
       "published": "Form is live and accepting responses.",
       "closed": "Form is closed and no longer accepting responses."
     }
+  },
+
+  "analytics": {
+    "views": "Views",
+    "starts": "Starts",
+    "submissions": "Submissions",
+    "completionRate": "Completion Rate",
+    "activityOverTime": "Activity Over Time",
+    "deviceBreakdown": "Device Breakdown",
+    "responseSummary": "Response Summary",
+    "responses": "responses",
+    "desktop": "Desktop",
+    "mobile": "Mobile",
+    "tablet": "Tablet",
+    "allTime": "All time",
+    "last7Days": "Last 7 days",
+    "last30Days": "Last 30 days",
+    "last90Days": "Last 90 days",
+    "yes": "Yes",
+    "no": "No",
+    "min": "Min",
+    "max": "Max",
+    "average": "Avg",
+    "median": "Median",
+    "dateRange": "Date range",
+    "from": "From",
+    "to": "To",
+    "textResponses": "text responses",
+    "responsesOverTime": "Responses Over Time",
+    "showField": "Show field",
+    "dateField": "Date field",
+    "groupBy": "Group by",
+    "perDate": "Per day",
+    "perWeek": "Per week",
+    "perMonth": "Per month",
+    "perYear": "Per year",
+    "aggregation": "Aggregation",
+    "sum": "Sum",
+    "avg": "Average",
+    "splitBy": "Split by",
+    "none": "None",
+    "noDataForSelection": "No data available for this selection"
+  },
+
+  "fieldPlaceholders": {
+    "pickDate": "Pick a date",
+    "selectOption": "Select an option",
+    "selectOptions": "Select options",
+    "enterText": "Enter your answer",
+    "enterNumber": "Enter a number",
+    "enterEmail": "Enter your email",
+    "text": "Text answer",
+    "textarea": "Long text answer",
+    "number": "Number",
+    "email": "email@example.com",
+    "date": "Pick a date",
+    "single_select": "Select an option",
+    "multi_select": "Select options",
+    "checkbox": "Yes / No"
   }
 }

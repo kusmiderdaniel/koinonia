@@ -1,6 +1,7 @@
 import type { SavedView } from '@/types/saved-views'
 import type { FilterState } from '../filter-types'
 import type { SortState } from '../sort-types'
+import type { CustomFieldDefinition } from '@/types/custom-fields'
 import {
   type Member,
   type AssignableRole,
@@ -8,6 +9,7 @@ import {
 
 export type { Member, AssignableRole }
 export type { FilterState, SortState, SavedView }
+export type { CustomFieldDefinition }
 
 export interface AvailableCampus {
   id: string
@@ -23,6 +25,7 @@ export interface MembersTableProps {
   savedViews: SavedView[]
   canManageViews: boolean
   allCampuses: AvailableCampus[]
+  customFields: CustomFieldDefinition[]
 }
 
 export interface MemberUpdateState {

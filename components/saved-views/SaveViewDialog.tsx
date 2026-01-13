@@ -27,6 +27,8 @@ export function SaveViewDialog({
   currentSortState,
   currentGroupBy = 'none',
   currentVisibleColumns,
+  currentColumnsConfig,
+  currentFreezeColumnKey,
   editingView,
   onSuccess,
 }: SaveViewDialogProps) {
@@ -72,6 +74,8 @@ export function SaveViewDialog({
       sort_state: currentSortState,
       group_by: viewType === 'tasks' ? currentGroupBy : null,
       visible_columns: viewType === 'people' ? currentVisibleColumns : null,
+      columns_config: viewType === 'people' ? currentColumnsConfig : null,
+      freeze_column_key: viewType === 'people' ? currentFreezeColumnKey : null,
       is_default: isDefault,
     }
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Popover,
@@ -15,6 +16,7 @@ import { FieldWrapper } from './FieldWrapper'
 import type { DateFieldProps } from './types'
 
 export function DateField({ field, value, error, onValueChange, weekStartsOn }: DateFieldProps) {
+  const t = useTranslations('forms.fieldPlaceholders')
   const [mounted, setMounted] = useState(false)
   const dateValue = value ? new Date(value as string) : undefined
 
@@ -38,7 +40,7 @@ export function DateField({ field, value, error, onValueChange, weekStartsOn }: 
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateValue ? format(dateValue, 'PPP') : 'Pick a date'}
+              {dateValue ? format(dateValue, 'PPP') : t('pickDate')}
             </Button>
           </PopoverTrigger>
           <PopoverContent
@@ -69,7 +71,7 @@ export function DateField({ field, value, error, onValueChange, weekStartsOn }: 
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {dateValue ? format(dateValue, 'PPP') : 'Pick a date'}
+          {dateValue ? format(dateValue, 'PPP') : t('pickDate')}
         </Button>
       )}
     </FieldWrapper>

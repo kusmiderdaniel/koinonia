@@ -36,8 +36,8 @@
       "churchNamePlaceholder": "Kościół Baptystyczny",
       "churchUrl": "Adres URL kościoła",
       "churchUrlPlaceholder": "twoj-kosciol",
-      "subdomainAvailable": "Ta subdomena jest dostępna!",
-      "subdomainUnavailable": "Ta subdomena nie jest dostępna"
+      "subdomainAvailable": "Ta podstrona jest dostępna!",
+      "subdomainUnavailable": "Ta podstrona nie jest dostępna"
     },
     "contact": {
       "title": "Informacje kontaktowe",

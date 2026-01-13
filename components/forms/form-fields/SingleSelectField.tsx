@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Select,
   SelectContent,
@@ -13,6 +14,7 @@ import { FieldWrapper } from './FieldWrapper'
 import type { BaseFieldProps } from './types'
 
 export function SingleSelectField({ field, value, error, onValueChange }: BaseFieldProps) {
+  const t = useTranslations('forms.fieldPlaceholders')
   const [mounted, setMounted] = useState(false)
   const selectedOption = field.options?.find((o) => o.value === value)
   const colorClasses = selectedOption
@@ -39,7 +41,7 @@ export function SingleSelectField({ field, value, error, onValueChange }: BaseFi
                 {selectedOption.label}
               </span>
             ) : (
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder={t('selectOption')} />
             )}
           </SelectTrigger>
           <SelectContent
@@ -63,7 +65,7 @@ export function SingleSelectField({ field, value, error, onValueChange }: BaseFi
         </Select>
       ) : (
         <div className={`flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs ${error ? 'border-red-500' : ''}`}>
-          <span className="text-muted-foreground">Select an option</span>
+          <span className="text-muted-foreground">{t('selectOption')}</span>
         </div>
       )}
     </FieldWrapper>

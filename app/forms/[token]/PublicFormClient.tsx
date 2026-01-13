@@ -11,6 +11,7 @@ import { useIsMobile } from '@/lib/hooks'
 import {
   FormFields,
   LanguageSelector,
+  useFormAnalytics,
   useFormConditions,
   useFormState,
   useFormValidation,
@@ -121,6 +122,29 @@ export function PublicFormClient({
     setErrors,
   })
 
+  // Analytics tracking
+  const { trackStart, trackSubmit } = useFormAnalytics({
+    formId: form.id || '',
+    token,
+  })
+
+  // Wrap value change to track start
+  const handleValueChangeWithTracking = useCallback(
+    (fieldId: string, value: unknown) => {
+      trackStart()
+      handleValueChange(fieldId, value)
+    },
+    [trackStart, handleValueChange]
+  )
+
+  const handleMultiSelectChangeWithTracking = useCallback(
+    (fieldId: string, optionValue: string, checked: boolean) => {
+      trackStart()
+      handleMultiSelectChange(fieldId, optionValue, checked)
+    },
+    [trackStart, handleMultiSelectChange]
+  )
+
   // Submit handler
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -158,6 +182,7 @@ export function PublicFormClient({
           throw new Error(data.error || t('toast.submitFailed'))
         }
 
+        trackSubmit()
         toast.success(t('toast.submitted'))
         router.push(`/forms/${token}/success`)
       } catch (error) {
@@ -169,7 +194,7 @@ export function PublicFormClient({
         setIsSubmitting(false)
       }
     },
-    [token, visibleFields, values, email, validateForm, router, t]
+    [token, visibleFields, values, email, validateForm, router, t, trackSubmit]
   )
 
   return (
@@ -222,8 +247,8 @@ export function PublicFormClient({
               fields={visibleFields}
               values={values}
               errors={errors}
-              onValueChange={handleValueChange}
-              onMultiSelectChange={handleMultiSelectChange}
+              onValueChange={handleValueChangeWithTracking}
+              onMultiSelectChange={handleMultiSelectChangeWithTracking}
               weekStartsOn={weekStartsOn}
             />
           </div>

@@ -91,8 +91,8 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
   // Show placeholder button until mounted to prevent hydration mismatch
   if (!mounted) {
     return trigger || (
-      <Button variant="outline" className="!border !border-black dark:!border-white">
-        <UserPlus className="h-4 w-4 mr-2" />
+      <Button variant="outline" className="gap-2 justify-center !border !border-black dark:!border-white">
+        <UserPlus className="h-4 w-4" />
         {t('offlineMember.button')}
       </Button>
     )
@@ -102,8 +102,8 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button variant="outline" className="!border !border-black dark:!border-white">
-            <UserPlus className="h-4 w-4 mr-2" />
+          <Button variant="outline" className="gap-2 justify-center !border !border-black dark:!border-white">
+            <UserPlus className="h-4 w-4" />
             {t('offlineMember.button')}
           </Button>
         )}

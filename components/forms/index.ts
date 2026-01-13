@@ -21,6 +21,7 @@ export { LanguageTabs } from './LanguageTabs'
 export { LanguageSelector } from './LanguageSelector'
 
 // Hooks
+export { useFormAnalytics } from './hooks/useFormAnalytics'
 export { useFormConditions } from './hooks/useFormConditions'
 export { useFormState } from './hooks/useFormState'
 export { useFormValidation } from './hooks/useFormValidation'

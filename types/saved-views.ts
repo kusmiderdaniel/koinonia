@@ -5,6 +5,13 @@ import type { GroupByField } from '@/app/dashboard/tasks/components/GroupBySelec
 // View types available
 export type ViewType = 'people' | 'tasks'
 
+// Column configuration for ordering, sizing, and visibility
+export interface ColumnConfig {
+  key: string        // Column key (e.g., 'name', 'email', 'cf_uuid')
+  width?: number     // Width in pixels, undefined = auto
+  visible?: boolean  // false to hide, undefined/true = visible
+}
+
 // Base saved view from database
 export interface SavedView {
   id: string
@@ -15,7 +22,9 @@ export interface SavedView {
   filter_state: FilterState
   sort_state: SortState
   group_by: GroupByField | null
-  visible_columns: string[] | null // Column keys to display, null means all
+  visible_columns: string[] | null // DEPRECATED: Use columns_config instead
+  columns_config: ColumnConfig[] | null // Column order, widths, and visibility
+  freeze_column_key: string | null // Column key marking freeze boundary (inclusive)
   is_default: boolean
   created_by: string | null
   created_at: string
@@ -30,7 +39,9 @@ export interface CreateSavedViewInput {
   filter_state: FilterState
   sort_state: SortState
   group_by?: GroupByField | null
-  visible_columns?: string[] | null
+  visible_columns?: string[] | null // DEPRECATED
+  columns_config?: ColumnConfig[] | null
+  freeze_column_key?: string | null
   is_default?: boolean
 }
 
@@ -41,7 +52,9 @@ export interface UpdateSavedViewInput {
   filter_state?: FilterState
   sort_state?: SortState
   group_by?: GroupByField | null
-  visible_columns?: string[] | null
+  visible_columns?: string[] | null // DEPRECATED
+  columns_config?: ColumnConfig[] | null
+  freeze_column_key?: string | null
   is_default?: boolean
 }
 
@@ -88,7 +101,9 @@ export interface SaveViewDialogProps {
   currentFilterState: FilterState
   currentSortState: SortState
   currentGroupBy?: GroupByField
-  currentVisibleColumns?: string[] | null
+  currentVisibleColumns?: string[] | null // DEPRECATED
+  currentColumnsConfig?: ColumnConfig[] | null
+  currentFreezeColumnKey?: string | null
   editingView?: SavedView | null
   onSuccess?: (view: SavedView) => void
 }
