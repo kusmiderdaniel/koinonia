@@ -1,14 +1,14 @@
 {
   "title": "Członkowie kościoła",
-  "titleLeader": "Członkowie lokalizacji",
+  "titleLeader": "Członkowie kampusu",
   "subtitle": "Wszyscy członkowie, którzy dołączyli do kościoła.",
-  "subtitleLeader": "Członkowie w Twojej lokalizacji.",
+  "subtitleLeader": "Członkowie w Twoim kampusie.",
   "subtitleClickRole": "Kliknij na rolę, aby ją zmienić.",
   "members": "Członkowie",
   "addMember": "Dodaj członka",
   "inviteMember": "Zaproś członka",
   "noMembers": "Brak członków. Udostępnij link zaproszenia, aby rozpocząć!",
-  "noMembersLeader": "Brak członków w Twojej lokalizacji.",
+  "noMembersLeader": "Brak członków w Twoim kampusie.",
   "search": "Szukaj członków...",
   "pendingBadge": "Oczekujące",
   "showingMembers": "Pokazuje {filtered} z {total} {total, plural, =1 {członka} few {członków} other {członków}}",
@@ -53,7 +53,7 @@
     "emailTooltip": "Nie można zmienić",
     "phone": "Telefon",
     "role": "Rola",
-    "campus": "Lokalizacja",
+    "campus": "Kampus",
     "ministryRoles": "Role w służbach",
     "gender": "Płeć",
     "genderTooltip": "Można zmienić w ustawieniach profilu użytkownika",
@@ -80,7 +80,7 @@
     "age": "Wiek",
     "dob": "Data ur.",
     "joined": "Dołączył",
-    "campus": "Lokalizacja",
+    "campus": "Kampus",
     "baptized": "Ochrzczony",
     "yes": "Tak",
     "no": "Nie",
@@ -124,6 +124,11 @@
     "deleteTitle": "Usuń członka",
     "deleteConfirmation": "Czy na pewno chcesz usunąć \"{name}\" z kościoła? Ta akcja jest nieodwracalna."
   },
+  "deleteOffline": {
+    "button": "Usuń członka offline",
+    "title": "Usuń członka offline",
+    "description": "Czy na pewno chcesz trwale usunąć {name}? Spowoduje to usunięcie wszystkich danych z systemu. Ta akcja jest nieodwracalna."
+  },
   "actions": {
     "cancel": "Anuluj",
     "save": "Zapisz",
@@ -137,7 +142,7 @@
     "noRegistrationsDescription": "Nowe rejestracje pojawią się tutaj do zatwierdzenia",
     "name": "Imię i nazwisko",
     "email": "Email",
-    "campus": "Lokalizacja",
+    "campus": "Kampus",
     "campusNotSpecified": "Nie określono",
     "registered": "Zarejestrowano",
     "actionsColumn": "Akcje",
@@ -199,5 +204,9 @@
     "baptism_date": "Data chrztu",
     "date_of_departure": "Data odejścia",
     "created_at": "Dołączył"
+  },
+  "columns": {
+    "title": "Kolumny",
+    "showAll": "Pokaż wszystkie kolumny"
   }
 }

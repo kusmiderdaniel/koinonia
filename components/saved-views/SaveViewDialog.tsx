@@ -26,6 +26,7 @@ export function SaveViewDialog({
   currentFilterState,
   currentSortState,
   currentGroupBy = 'none',
+  currentVisibleColumns,
   editingView,
   onSuccess,
 }: SaveViewDialogProps) {
@@ -70,6 +71,7 @@ export function SaveViewDialog({
       filter_state: currentFilterState,
       sort_state: currentSortState,
       group_by: viewType === 'tasks' ? currentGroupBy : null,
+      visible_columns: viewType === 'people' ? currentVisibleColumns : null,
       is_default: isDefault,
     }
 
@@ -124,7 +126,7 @@ export function SaveViewDialog({
               />
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between gap-4">
               <div>
                 <Label htmlFor="is-default" className="font-medium">
                   {t('setAsDefault')}
@@ -133,7 +135,7 @@ export function SaveViewDialog({
                   {t('defaultHint')}
                 </p>
               </div>
-              <Switch id="is-default" checked={isDefault} onCheckedChange={setIsDefault} />
+              <Switch id="is-default" checked={isDefault} onCheckedChange={setIsDefault} className="flex-shrink-0 mt-0.5" />
             </div>
           </div>
 

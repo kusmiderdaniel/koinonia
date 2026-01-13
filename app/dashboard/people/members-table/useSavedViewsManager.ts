@@ -4,21 +4,26 @@ import { deleteSavedView, setDefaultView, updateSavedView } from '@/lib/actions/
 import { createEmptyFilterState } from '../filter-types'
 import { createEmptySortState } from '../sort-types'
 import type { SavedView, FilterState, SortState } from './types'
+import type { PeopleColumnKey } from './columns'
 
 interface UseSavedViewsManagerOptions {
   savedViews: SavedView[]
   filterState: FilterState
   sortState: SortState
+  visibleColumns: PeopleColumnKey[] | null
   setFilterState: (state: FilterState) => void
   setSortState: (state: SortState) => void
+  setVisibleColumns: (columns: PeopleColumnKey[] | null) => void
 }
 
 export function useSavedViewsManager({
   savedViews,
   filterState,
   sortState,
+  visibleColumns,
   setFilterState,
   setSortState,
+  setVisibleColumns,
 }: UseSavedViewsManagerOptions) {
   const [views, setViews] = useState<SavedView[]>(savedViews)
   const [selectedViewId, setSelectedViewId] = useState<string | null>(() => {
@@ -39,9 +44,10 @@ export function useSavedViewsManager({
 
     const filterChanged = JSON.stringify(filterState) !== JSON.stringify(selectedView.filter_state)
     const sortChanged = JSON.stringify(sortState) !== JSON.stringify(selectedView.sort_state)
+    const columnsChanged = JSON.stringify(visibleColumns) !== JSON.stringify(selectedView.visible_columns)
 
-    return filterChanged || sortChanged
-  }, [selectedViewId, views, filterState, sortState])
+    return filterChanged || sortChanged || columnsChanged
+  }, [selectedViewId, views, filterState, sortState, visibleColumns])
 
   // Apply selected view's configuration
   useEffect(() => {
@@ -50,12 +56,14 @@ export function useSavedViewsManager({
       if (view) {
         setFilterState(view.filter_state as FilterState)
         setSortState(view.sort_state as SortState)
+        setVisibleColumns(view.visible_columns as PeopleColumnKey[] | null)
       }
     } else {
       setFilterState(createEmptyFilterState())
       setSortState(createEmptySortState())
+      setVisibleColumns(null) // Show all columns when no view selected
     }
-  }, [selectedViewId, views, setFilterState, setSortState])
+  }, [selectedViewId, views, setFilterState, setSortState, setVisibleColumns])
 
   // Sync views when savedViews prop changes
   useEffect(() => {
@@ -117,6 +125,7 @@ export function useSavedViewsManager({
     const result = await updateSavedView(selectedViewId, {
       filter_state: filterState,
       sort_state: sortState,
+      visible_columns: visibleColumns,
     })
     setIsSavingChanges(false)
 
@@ -130,7 +139,7 @@ export function useSavedViewsManager({
         )
       }
     }
-  }, [selectedViewId, views, filterState, sortState])
+  }, [selectedViewId, views, filterState, sortState, visibleColumns])
 
   const handleCreateView = useCallback(() => {
     setEditingView(null)
@@ -155,6 +164,7 @@ export function useSavedViewsManager({
     isDeletingView,
     isSavingChanges,
     hasUnsavedChanges,
+    visibleColumns,
 
     // Handlers
     handleViewSuccess,

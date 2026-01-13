@@ -124,6 +124,11 @@
     "deleteTitle": "Delete Member",
     "deleteConfirmation": "Are you sure you want to remove \"{name}\" from the church? This action cannot be undone."
   },
+  "deleteOffline": {
+    "button": "Delete offline member",
+    "title": "Delete Offline Member",
+    "description": "Are you sure you want to permanently delete {name}? This will remove all their data from the system. This action cannot be undone."
+  },
   "actions": {
     "cancel": "Cancel",
     "save": "Save",
@@ -199,5 +204,9 @@
     "baptism_date": "Baptism Date",
     "date_of_departure": "Departure Date",
     "created_at": "Joined"
+  },
+  "columns": {
+    "title": "Columns",
+    "showAll": "Show all columns"
   }
 }

@@ -49,7 +49,7 @@ export function InlineDateEditor({
 
   if (!canEdit) {
     return (
-      <span className="px-2 py-1 inline-block">
+      <span className="inline-block">
         {value ? formatDate(value) : placeholder}
       </span>
     )
@@ -61,7 +61,7 @@ export function InlineDateEditor({
         <button
           disabled={disabled}
           className={cn(
-            'h-8 px-2 text-sm text-left rounded-md hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 min-w-[100px]',
+            'h-8 text-sm text-left rounded-md hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1',
             !selectedDate && 'text-muted-foreground/50',
             disabled && 'opacity-50 cursor-not-allowed'
           )}

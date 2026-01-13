@@ -12,6 +12,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { Info } from 'lucide-react'
+import { isColumnVisible, type PeopleColumnKey } from './columns'
 
 function HeaderWithTooltip({ label, tooltip }: { label: string; tooltip: string }) {
   return (
@@ -29,33 +30,69 @@ function HeaderWithTooltip({ label, tooltip }: { label: string; tooltip: string 
   )
 }
 
-export function MembersTableHeader() {
+interface MembersTableHeaderProps {
+  visibleColumns: PeopleColumnKey[] | null
+}
+
+export function MembersTableHeader({ visibleColumns }: MembersTableHeaderProps) {
   const t = useTranslations('people')
+
+  const show = (key: PeopleColumnKey) => isColumnVisible(key, visibleColumns)
 
   return (
     <TableHeader>
       <TableRow>
-        <TableHead className="w-[60px]">{t('tableHeader.active')}</TableHead>
-        <TableHead>{t('tableHeader.name')}</TableHead>
-        <TableHead>
-          <HeaderWithTooltip label={t('tableHeader.email')} tooltip={t('tableHeader.emailTooltip')} />
-        </TableHead>
-        <TableHead>{t('tableHeader.phone')}</TableHead>
-        <TableHead>{t('tableHeader.role')}</TableHead>
-        <TableHead>{t('tableHeader.campus')}</TableHead>
-        <TableHead>{t('tableHeader.ministryRoles')}</TableHead>
-        <TableHead>
-          <HeaderWithTooltip label={t('tableHeader.gender')} tooltip={t('tableHeader.genderTooltip')} />
-        </TableHead>
-        <TableHead>
-          <HeaderWithTooltip label={t('tableHeader.dateOfBirth')} tooltip={t('tableHeader.dateOfBirthTooltip')} />
-        </TableHead>
-        <TableHead>{t('tableHeader.age')}</TableHead>
-        <TableHead className="w-[70px]">{t('tableHeader.baptized')}</TableHead>
-        <TableHead>{t('tableHeader.baptismDate')}</TableHead>
-        <TableHead>{t('tableHeader.departureDate')}</TableHead>
-        <TableHead>{t('tableHeader.departureReason')}</TableHead>
-        <TableHead>{t('tableHeader.joined')}</TableHead>
+        {show('active') && (
+          <TableHead className="w-[60px]">{t('tableHeader.active')}</TableHead>
+        )}
+        {show('name') && (
+          <TableHead>{t('tableHeader.name')}</TableHead>
+        )}
+        {show('email') && (
+          <TableHead>
+            <HeaderWithTooltip label={t('tableHeader.email')} tooltip={t('tableHeader.emailTooltip')} />
+          </TableHead>
+        )}
+        {show('phone') && (
+          <TableHead>{t('tableHeader.phone')}</TableHead>
+        )}
+        {show('role') && (
+          <TableHead>{t('tableHeader.role')}</TableHead>
+        )}
+        {show('campus') && (
+          <TableHead>{t('tableHeader.campus')}</TableHead>
+        )}
+        {show('ministry_roles') && (
+          <TableHead>{t('tableHeader.ministryRoles')}</TableHead>
+        )}
+        {show('gender') && (
+          <TableHead>
+            <HeaderWithTooltip label={t('tableHeader.gender')} tooltip={t('tableHeader.genderTooltip')} />
+          </TableHead>
+        )}
+        {show('date_of_birth') && (
+          <TableHead>
+            <HeaderWithTooltip label={t('tableHeader.dateOfBirth')} tooltip={t('tableHeader.dateOfBirthTooltip')} />
+          </TableHead>
+        )}
+        {show('age') && (
+          <TableHead>{t('tableHeader.age')}</TableHead>
+        )}
+        {show('baptized') && (
+          <TableHead className="w-[70px]">{t('tableHeader.baptized')}</TableHead>
+        )}
+        {show('baptism_date') && (
+          <TableHead>{t('tableHeader.baptismDate')}</TableHead>
+        )}
+        {show('departure_date') && (
+          <TableHead>{t('tableHeader.departureDate')}</TableHead>
+        )}
+        {show('departure_reason') && (
+          <TableHead>{t('tableHeader.departureReason')}</TableHead>
+        )}
+        {show('joined') && (
+          <TableHead>{t('tableHeader.joined')}</TableHead>
+        )}
       </TableRow>
     </TableHeader>
   )

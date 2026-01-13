@@ -70,8 +70,7 @@ export async function updateMemberRole(memberId: string, newRole: AssignableChur
     return { error: 'Failed to update role' }
   }
 
-  revalidatePath('/dashboard/people')
-
+  // No revalidatePath - optimistic updates handle UI instantly
   return { success: true }
 }
 
@@ -135,8 +134,7 @@ export async function updateMemberActive(memberId: string, active: boolean) {
     return { error: 'Failed to update active status' }
   }
 
-  revalidatePath('/dashboard/people')
-
+  // No revalidatePath - optimistic updates handle UI instantly
   return { success: true }
 }
 
@@ -209,8 +207,7 @@ export async function updateMemberDeparture(
     return { error: 'Failed to update departure information' }
   }
 
-  revalidatePath('/dashboard/people')
-
+  // No revalidatePath - optimistic updates handle UI instantly
   return { success: true }
 }
 
@@ -259,8 +256,7 @@ export async function updateMemberBaptism(
     return { error: 'Failed to update baptism information' }
   }
 
-  revalidatePath('/dashboard/people')
-
+  // No revalidatePath - optimistic updates handle UI instantly
   return { success: true }
 }
 
@@ -350,8 +346,7 @@ export async function updateMemberCampuses(
     }
   }
 
-  revalidatePath('/dashboard/people')
-
+  // No revalidatePath - optimistic updates handle UI instantly
   return { success: true }
 }
 
@@ -400,9 +395,74 @@ export async function createOfflineMember(data: {
     return { error: 'Failed to create member' }
   }
 
+  // Assign default campus if one exists
+  const { data: defaultCampus } = await adminClient
+    .from('campuses')
+    .select('id')
+    .eq('church_id', profile.church_id)
+    .eq('is_default', true)
+    .single()
+
+  if (defaultCampus) {
+    await adminClient
+      .from('profile_campuses')
+      .insert({
+        profile_id: profileId,
+        campus_id: defaultCampus.id,
+        is_primary: true,
+      })
+  }
+
   revalidatePath('/dashboard/people')
 
   return { success: true, profileId }
+}
+
+export async function deleteOfflineMember(memberId: string) {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  // Only admins and owners can delete offline members
+  const permError = requireAdminPermission(profile.role, 'delete offline members')
+  if (permError) return { error: permError }
+
+  // Get target member's profile
+  const { data: targetProfile } = await adminClient
+    .from('profiles')
+    .select('church_id, member_type')
+    .eq('id', memberId)
+    .single()
+
+  if (!targetProfile) {
+    return { error: 'Member not found' }
+  }
+
+  // Verify same church
+  if (profile.church_id !== targetProfile.church_id) {
+    return { error: 'Cannot delete members from other churches' }
+  }
+
+  // Only allow deleting offline members
+  if (targetProfile.member_type !== 'offline') {
+    return { error: 'Can only delete offline members' }
+  }
+
+  // Delete the member (cascade will handle related records)
+  const { error: deleteError } = await adminClient
+    .from('profiles')
+    .delete()
+    .eq('id', memberId)
+
+  if (deleteError) {
+    console.error('Delete error:', deleteError)
+    return { error: 'Failed to delete member' }
+  }
+
+  revalidatePath('/dashboard/people')
+
+  return { success: true }
 }
 
 export async function updateMemberProfile(
@@ -411,6 +471,7 @@ export async function updateMemberProfile(
     sex?: string | null
     dateOfBirth?: string | null
     phone?: string | null
+    email?: string | null
   }
 ) {
   const auth = await getAuthenticatedUserWithProfile()
@@ -445,7 +506,7 @@ export async function updateMemberProfile(
   }
 
   // Build update data
-  const updateData: { sex?: string | null; date_of_birth?: string | null; phone?: string | null } = {}
+  const updateData: { sex?: string | null; date_of_birth?: string | null; phone?: string | null; email?: string | null } = {}
 
   if (data.sex !== undefined) {
     updateData.sex = data.sex
@@ -455,6 +516,9 @@ export async function updateMemberProfile(
   }
   if (data.phone !== undefined) {
     updateData.phone = data.phone
+  }
+  if (data.email !== undefined) {
+    updateData.email = data.email
   }
 
   const { error: updateError } = await adminClient
@@ -467,7 +531,6 @@ export async function updateMemberProfile(
     return { error: 'Failed to update member profile' }
   }
 
-  revalidatePath('/dashboard/people')
-
+  // No revalidatePath - optimistic updates handle UI instantly
   return { success: true }
 }

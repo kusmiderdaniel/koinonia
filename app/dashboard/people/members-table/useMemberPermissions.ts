@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react'
-import { isLeaderOrAbove, ROLE_HIERARCHY, type UserRole } from '@/lib/permissions'
+import { isLeaderOrAbove, isAdminOrOwner, ROLE_HIERARCHY, type UserRole } from '@/lib/permissions'
 import type { Member } from './types'
 
 interface UseMemberPermissionsOptions {
@@ -52,11 +52,18 @@ export function useMemberPermissions({
     return currentLevel > memberLevel
   }, [currentUserId, currentUserRole, canEditFields])
 
+  // Only admins and owners can delete offline members
+  const canDeleteOffline = useMemo(
+    () => isAdminOrOwner(currentUserRole),
+    [currentUserRole]
+  )
+
   return {
     canEditActive,
     canEditFields,
     canEditRole,
     canEditActiveStatus,
     canEditDeparture,
+    canDeleteOffline,
   }
 }

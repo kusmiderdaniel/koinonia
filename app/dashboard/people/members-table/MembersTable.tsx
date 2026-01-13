@@ -14,10 +14,12 @@ import { applySorts } from '../sort-logic'
 import { MemberRow, MemberCard } from '../components'
 import { ViewSelector, SaveViewDialog } from '@/components/saved-views'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
-import { useMembersTableState } from './useMembersTableState'
+import { useOptimisticMembers } from './useOptimisticMembers'
 import { useSavedViewsManager } from './useSavedViewsManager'
 import { useMemberPermissions } from './useMemberPermissions'
 import { MembersTableHeader } from './MembersTableHeader'
+import { ColumnSelector } from './ColumnSelector'
+import { type PeopleColumnKey } from './columns'
 import type { MembersTableProps } from './types'
 
 export const MembersTable = memo(function MembersTable({
@@ -32,30 +34,39 @@ export const MembersTable = memo(function MembersTable({
   const isMobile = useIsMobile()
   const [filterState, setFilterState] = useState<FilterState>(createEmptyFilterState)
   const [sortState, setSortState] = useState<SortState>(createDefaultPeopleSortState)
+  const [visibleColumns, setVisibleColumns] = useState<PeopleColumnKey[] | null>(null)
 
-  // Member update handlers
+  // Member update handlers with optimistic updates
   const {
+    members: optimisticMembers,
     updatingId,
     updatingActiveId,
     updatingDepartureId,
     updatingBaptismId,
     updatingCampusesId,
     updatingProfileId,
+    deletingMember,
+    isDeleting,
     handleRoleChange,
     handleActiveChange,
     handleDepartureChange,
     handleBaptismChange,
     handleCampusesChange,
     handleProfileChange,
-  } = useMembersTableState()
+    openDeleteDialog,
+    closeDeleteDialog,
+    handleDeleteMember,
+  } = useOptimisticMembers(members, allCampuses)
 
   // Saved views management
   const viewsManager = useSavedViewsManager({
     savedViews,
     filterState,
     sortState,
+    visibleColumns,
     setFilterState,
     setSortState,
+    setVisibleColumns,
   })
 
   // Permission checks
@@ -64,13 +75,14 @@ export const MembersTable = memo(function MembersTable({
     canEditRole,
     canEditActiveStatus,
     canEditDeparture,
+    canDeleteOffline,
   } = useMemberPermissions({ currentUserId, currentUserRole })
 
-  // Apply filters and sorts to members
+  // Apply filters and sorts to members (using optimistic data)
   const filteredAndSortedMembers = useMemo(() => {
-    const filtered = applyFilters(members, filterState)
+    const filtered = applyFilters(optimisticMembers, filterState)
     return applySorts(filtered, sortState)
-  }, [members, filterState, sortState])
+  }, [optimisticMembers, filterState, sortState])
 
   const activeFilterCount = countActiveFilters(filterState)
   const activeSortCount = countActiveSorts(sortState)
@@ -79,9 +91,13 @@ export const MembersTable = memo(function MembersTable({
     <div className="flex-1 flex flex-col space-y-4 min-h-0">
       {/* Filter and Sort toolbar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-        <div className="grid grid-cols-3 sm:flex sm:items-center gap-2 w-full sm:w-auto">
+        <div className="grid grid-cols-4 sm:flex sm:items-center gap-2 w-full sm:w-auto">
           <PeopleSortBuilder sortState={sortState} onChange={setSortState} />
           <PeopleFilterBuilder filterState={filterState} onChange={setFilterState} />
+          <ColumnSelector
+            visibleColumns={visibleColumns}
+            onChange={setVisibleColumns}
+          />
           <ViewSelector
             viewType="people"
             views={viewsManager.views}
@@ -99,7 +115,7 @@ export const MembersTable = memo(function MembersTable({
         </div>
         {(activeFilterCount > 0 || activeSortCount > 0) && (
           <p className="text-sm text-muted-foreground">
-            {t('showingMembers', { filtered: filteredAndSortedMembers.length, total: members.length })}
+            {t('showingMembers', { filtered: filteredAndSortedMembers.length, total: optimisticMembers.length })}
           </p>
         )}
       </div>
@@ -116,6 +132,7 @@ export const MembersTable = memo(function MembersTable({
               canEditActiveStatus={canEditActiveStatus(member)}
               canEditDeparture={canEditDeparture(member)}
               canEditFields={canEditFields}
+              canDeleteOffline={canDeleteOffline}
               isUpdatingRole={updatingId === member.id}
               isUpdatingActive={updatingActiveId === member.id}
               isUpdatingDeparture={updatingDepartureId === member.id}
@@ -129,6 +146,7 @@ export const MembersTable = memo(function MembersTable({
               onBaptismChange={handleBaptismChange}
               onCampusesChange={handleCampusesChange}
               onProfileChange={handleProfileChange}
+              onDeleteOffline={openDeleteDialog}
             />
           ))}
         </div>
@@ -137,17 +155,20 @@ export const MembersTable = memo(function MembersTable({
         <TooltipProvider>
           <div className="flex-1 border border-black dark:border-white rounded-lg overflow-auto">
             <Table>
-              <MembersTableHeader />
+              <MembersTableHeader visibleColumns={visibleColumns} />
               <TableBody>
-                {filteredAndSortedMembers.map((member) => (
+                {filteredAndSortedMembers.map((member, index) => (
                   <MemberRow
                     key={member.id}
                     member={member}
+                    index={index}
                     currentUserId={currentUserId}
+                    visibleColumns={visibleColumns}
                     canEditRole={canEditRole(member)}
                     canEditActiveStatus={canEditActiveStatus(member)}
                     canEditDeparture={canEditDeparture(member)}
                     canEditFields={canEditFields}
+                    canDeleteOffline={canDeleteOffline}
                     isUpdatingRole={updatingId === member.id}
                     isUpdatingActive={updatingActiveId === member.id}
                     isUpdatingDeparture={updatingDepartureId === member.id}
@@ -161,6 +182,7 @@ export const MembersTable = memo(function MembersTable({
                     onBaptismChange={handleBaptismChange}
                     onCampusesChange={handleCampusesChange}
                     onProfileChange={handleProfileChange}
+                    onDeleteOffline={openDeleteDialog}
                   />
                 ))}
               </TableBody>
@@ -176,6 +198,7 @@ export const MembersTable = memo(function MembersTable({
         viewType="people"
         currentFilterState={filterState}
         currentSortState={sortState}
+        currentVisibleColumns={visibleColumns}
         editingView={viewsManager.editingView}
         onSuccess={viewsManager.handleViewSuccess}
       />
@@ -189,6 +212,20 @@ export const MembersTable = memo(function MembersTable({
         destructive
         onConfirm={viewsManager.handleDeleteViewConfirm}
         isLoading={viewsManager.isDeletingView}
+      />
+
+      {/* Delete Offline Member Dialog */}
+      <ConfirmDialog
+        open={!!deletingMember}
+        onOpenChange={(open) => !open && closeDeleteDialog()}
+        title={t('deleteOffline.title')}
+        description={t('deleteOffline.description', {
+          name: deletingMember ? `${deletingMember.first_name} ${deletingMember.last_name}` : ''
+        })}
+        confirmLabel={t('actions.delete')}
+        destructive
+        onConfirm={handleDeleteMember}
+        isLoading={isDeleting}
       />
     </div>
   )

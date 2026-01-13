@@ -2,7 +2,7 @@
 
 import { useState, memo } from 'react'
 import { useTranslations } from 'next-intl'
-import { Check } from 'lucide-react'
+import { Check, Trash2 } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { TableCell, TableRow } from '@/components/ui/table'
 import {
@@ -40,6 +40,7 @@ import {
   formatDateOfBirth,
   calculateAge,
 } from './member-table-types'
+import { isColumnVisible, type PeopleColumnKey } from '../members-table/columns'
 
 interface AvailableCampus {
   id: string
@@ -50,11 +51,14 @@ interface AvailableCampus {
 
 interface MemberRowProps {
   member: Member
+  index: number
   currentUserId: string
+  visibleColumns: PeopleColumnKey[] | null
   canEditRole: boolean
   canEditActiveStatus: boolean
   canEditDeparture: boolean
   canEditFields: boolean
+  canDeleteOffline: boolean
   isUpdatingRole: boolean
   isUpdatingActive: boolean
   isUpdatingDeparture: boolean
@@ -67,16 +71,20 @@ interface MemberRowProps {
   onDepartureChange: (memberId: string, date: string | null, reason: string | null) => void
   onBaptismChange: (memberId: string, baptism: boolean, date: string | null) => void
   onCampusesChange: (memberId: string, campusIds: string[]) => void
-  onProfileChange: (memberId: string, data: { sex?: string | null; dateOfBirth?: string | null; phone?: string | null }) => void
+  onProfileChange: (memberId: string, data: { sex?: string | null; dateOfBirth?: string | null; phone?: string | null; email?: string | null }) => void
+  onDeleteOffline: (member: Member) => void
 }
 
 export const MemberRow = memo(function MemberRow({
   member,
+  index,
   currentUserId,
+  visibleColumns,
   canEditRole,
   canEditActiveStatus,
   canEditDeparture,
   canEditFields,
+  canDeleteOffline,
   isUpdatingRole,
   isUpdatingActive,
   isUpdatingDeparture,
@@ -90,12 +98,17 @@ export const MemberRow = memo(function MemberRow({
   onBaptismChange,
   onCampusesChange,
   onProfileChange,
+  onDeleteOffline,
 }: MemberRowProps) {
+  // Helper to check column visibility
+  const show = (key: PeopleColumnKey) => isColumnVisible(key, visibleColumns)
   const t = useTranslations('people')
   const [departurePopoverOpen, setDeparturePopoverOpen] = useState(false)
   const [campusPopoverOpen, setCampusPopoverOpen] = useState(false)
   const [phonePopoverOpen, setPhonePopoverOpen] = useState(false)
   const [phoneValue, setPhoneValue] = useState(member.phone || '')
+  const [emailPopoverOpen, setEmailPopoverOpen] = useState(false)
+  const [emailValue, setEmailValue] = useState(member.email || '')
 
   // Can edit profile fields only for offline members
   const canEditOfflineProfile = canEditFields && member.member_type === 'offline'
@@ -120,19 +133,25 @@ export const MemberRow = memo(function MemberRow({
   }
 
   return (
-    <TableRow className={!member.active ? 'opacity-50' : ''}>
+    <TableRow className={cn(
+      index % 2 === 0 && 'bg-zinc-100 dark:bg-zinc-800',
+      !member.active && 'opacity-50'
+    )}>
       {/* Active Checkbox */}
-      <TableCell>
-        <Checkbox
-          checked={member.active}
-          onCheckedChange={(checked) => onActiveChange(member.id, checked as boolean)}
-          disabled={!canEditActiveStatus || isUpdatingActive}
-          className={isUpdatingActive ? 'opacity-50' : ''}
-        />
-      </TableCell>
+      {show('active') && (
+        <TableCell>
+          <Checkbox
+            checked={member.active}
+            onCheckedChange={(checked) => onActiveChange(member.id, checked as boolean)}
+            disabled={!canEditActiveStatus || isUpdatingActive}
+            className={isUpdatingActive ? 'opacity-50' : ''}
+          />
+        </TableCell>
+      )}
 
       {/* Name */}
-      <TableCell className="font-medium">
+      {show('name') && (
+        <TableCell className="font-medium">
         <div className="flex items-center gap-2">
           <span>{member.first_name} {member.last_name}</span>
           {member.id === currentUserId && (
@@ -143,24 +162,92 @@ export const MemberRow = memo(function MemberRow({
               {t('offline')}
             </span>
           )}
+          {member.member_type === 'offline' && canDeleteOffline && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+              onClick={() => onDeleteOffline(member)}
+              title={t('deleteOffline.button')}
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </Button>
+          )}
         </div>
-      </TableCell>
+        </TableCell>
+      )}
 
       {/* Email */}
-      <TableCell>{member.email || '—'}</TableCell>
-
-      {/* Phone */}
-      <TableCell className="text-muted-foreground">
-        {canEditOfflineProfile ? (
-          <Popover open={phonePopoverOpen} onOpenChange={(open) => {
-            setPhonePopoverOpen(open)
-            if (open) setPhoneValue(member.phone || '')
+      {show('email') && (
+        <TableCell className="text-muted-foreground">
+          {canEditOfflineProfile ? (
+          <Popover open={emailPopoverOpen} onOpenChange={(open) => {
+            setEmailPopoverOpen(open)
+            if (open) setEmailValue(member.email || '')
           }}>
             <PopoverTrigger asChild>
               <button
                 disabled={isUpdatingProfile}
                 className={cn(
-                  'h-8 px-2 text-sm text-left rounded-md hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 min-w-[80px]',
+                  'h-8 text-sm text-left rounded-md hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1',
+                  !member.email && 'text-muted-foreground/50',
+                  isUpdatingProfile && 'opacity-50 cursor-not-allowed'
+                )}
+              >
+                {member.email || '—'}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 bg-white dark:bg-zinc-950 border border-black dark:border-white shadow-lg" align="start">
+              <div className="space-y-2">
+                <Input
+                  type="email"
+                  value={emailValue}
+                  onChange={(e) => setEmailValue(e.target.value)}
+                  placeholder={t('offlineMember.emailPlaceholder')}
+                  className="!border !border-black dark:!border-white"
+                />
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="!border !border-black dark:!border-white"
+                    onClick={() => setEmailPopoverOpen(false)}
+                  >
+                    {t('actions.cancel')}
+                  </Button>
+                  <Button
+                    size="sm"
+                    disabled={isUpdatingProfile}
+                    onClick={() => {
+                      onProfileChange(member.id, { email: emailValue || null })
+                      setEmailPopoverOpen(false)
+                    }}
+                  >
+                    {isUpdatingProfile ? t('actions.saving') : t('actions.save')}
+                  </Button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+          ) : (
+            member.email || '—'
+          )}
+        </TableCell>
+      )}
+
+      {/* Phone */}
+      {show('phone') && (
+        <TableCell className="text-muted-foreground">
+          {canEditOfflineProfile ? (
+            <Popover open={phonePopoverOpen} onOpenChange={(open) => {
+              setPhonePopoverOpen(open)
+              if (open) setPhoneValue(member.phone || '')
+          }}>
+            <PopoverTrigger asChild>
+              <button
+                disabled={isUpdatingProfile}
+                className={cn(
+                  'h-8 text-sm text-left rounded-md hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1',
                   !member.phone && 'text-muted-foreground/50',
                   isUpdatingProfile && 'opacity-50 cursor-not-allowed'
                 )}
@@ -200,13 +287,15 @@ export const MemberRow = memo(function MemberRow({
               </div>
             </PopoverContent>
           </Popover>
-        ) : (
-          member.phone || '—'
-        )}
-      </TableCell>
+          ) : (
+            member.phone || '—'
+          )}
+        </TableCell>
+      )}
 
       {/* Role */}
-      <TableCell>
+      {show('role') && (
+        <TableCell>
         {canEditRole ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild disabled={isUpdatingRole}>
@@ -234,15 +323,17 @@ export const MemberRow = memo(function MemberRow({
               })}
             </DropdownMenuContent>
           </DropdownMenu>
-        ) : (
-          <span className={getRoleBadgeClasses(member.role)}>
-            {member.role}
-          </span>
-        )}
-      </TableCell>
+          ) : (
+            <span className={getRoleBadgeClasses(member.role)}>
+              {member.role}
+            </span>
+          )}
+        </TableCell>
+      )}
 
       {/* Campus */}
-      <TableCell>
+      {show('campus') && (
+        <TableCell>
         {canEditFields ? (
           <Popover open={campusPopoverOpen} onOpenChange={setCampusPopoverOpen}>
             <PopoverTrigger asChild>
@@ -300,21 +391,23 @@ export const MemberRow = memo(function MemberRow({
               </div>
             </PopoverContent>
           </Popover>
-        ) : (
-          member.campuses && member.campuses.length > 0 ? (
-            <CampusBadges
-              campuses={member.campuses}
-              size="sm"
-              maxVisible={2}
-            />
           ) : (
-            <span className="text-muted-foreground text-sm">—</span>
-          )
-        )}
-      </TableCell>
+            member.campuses && member.campuses.length > 0 ? (
+              <CampusBadges
+                campuses={member.campuses}
+                size="sm"
+                maxVisible={2}
+              />
+            ) : (
+              <span className="text-muted-foreground text-sm">—</span>
+            )
+          )}
+        </TableCell>
+      )}
 
       {/* Ministry Roles */}
-      <TableCell>
+      {show('ministry_roles') && (
+        <TableCell>
         <div className="flex flex-wrap gap-1.5">
           {member.ministry_members && member.ministry_members.length > 0 ? (
             member.ministry_members
@@ -341,16 +434,18 @@ export const MemberRow = memo(function MemberRow({
                   </span>
                 )
               })
-          ) : (
-            <span className="text-muted-foreground">—</span>
-          )}
-        </div>
-      </TableCell>
+            ) : (
+              <span className="text-muted-foreground">—</span>
+            )}
+          </div>
+        </TableCell>
+      )}
 
       {/* Gender */}
-      <TableCell className="text-muted-foreground">
-        {canEditOfflineProfile ? (
-          <Select
+      {show('gender') && (
+        <TableCell className="text-muted-foreground">
+          {canEditOfflineProfile ? (
+            <Select
             value={member.sex || ''}
             onValueChange={(value) => onProfileChange(member.id, { sex: value || null })}
             disabled={isUpdatingProfile}
@@ -366,65 +461,77 @@ export const MemberRow = memo(function MemberRow({
               <SelectItem value="female">{t('sex.female')}</SelectItem>
             </SelectContent>
           </Select>
-        ) : (
-          member.sex ? t(`sex.${member.sex}`) : '—'
-        )}
-      </TableCell>
+          ) : (
+            member.sex ? t(`sex.${member.sex}`) : '—'
+          )}
+        </TableCell>
+      )}
 
       {/* Date of Birth */}
-      <TableCell className="text-muted-foreground">
-        {canEditOfflineProfile ? (
-          <InlineDateEditor
+      {show('date_of_birth') && (
+        <TableCell className="text-muted-foreground">
+          {canEditOfflineProfile ? (
+            <InlineDateEditor
             value={member.date_of_birth}
             onChange={(date) => onProfileChange(member.id, { dateOfBirth: date })}
             disabled={isUpdatingProfile}
             canEdit={true}
           />
-        ) : (
-          formatDateOfBirth(member.date_of_birth)
-        )}
-      </TableCell>
+          ) : (
+            formatDateOfBirth(member.date_of_birth)
+          )}
+        </TableCell>
+      )}
 
       {/* Age */}
-      <TableCell className="text-muted-foreground">
-        {calculateAge(member.date_of_birth)}
-      </TableCell>
+      {show('age') && (
+        <TableCell className="text-muted-foreground">
+          {calculateAge(member.date_of_birth)}
+        </TableCell>
+      )}
 
       {/* Baptized Checkbox */}
-      <TableCell>
+      {show('baptized') && (
+        <TableCell>
         <Checkbox
           checked={member.baptism}
           onCheckedChange={(checked) => {
             const newBaptism = checked as boolean
             onBaptismChange(member.id, newBaptism, newBaptism ? member.baptism_date : null)
           }}
-          disabled={!canEditFields || isUpdatingBaptism}
-          className={isUpdatingBaptism ? 'opacity-50' : ''}
-        />
-      </TableCell>
+            disabled={!canEditFields || isUpdatingBaptism}
+            className={isUpdatingBaptism ? 'opacity-50' : ''}
+          />
+        </TableCell>
+      )}
 
       {/* Baptism Date */}
-      <TableCell className="text-muted-foreground">
-        <InlineDateEditor
-          value={member.baptism_date}
-          onChange={(date) => onBaptismChange(member.id, date ? true : member.baptism, date)}
-          disabled={isUpdatingBaptism}
-          canEdit={canEditFields}
-        />
-      </TableCell>
+      {show('baptism_date') && (
+        <TableCell className="text-muted-foreground">
+          <InlineDateEditor
+            value={member.baptism_date}
+            onChange={(date) => onBaptismChange(member.id, date ? true : member.baptism, date)}
+            disabled={isUpdatingBaptism}
+            canEdit={canEditFields}
+          />
+        </TableCell>
+      )}
 
       {/* Departure Date */}
-      <TableCell className="text-muted-foreground">
-        <InlineDateEditor
-          value={member.date_of_departure}
-          onChange={(date) => onDepartureChange(member.id, date, member.reason_for_departure)}
-          disabled={isUpdatingDeparture}
-          canEdit={canEditDeparture}
-        />
-      </TableCell>
+      {show('departure_date') && (
+        <TableCell className="text-muted-foreground">
+          <InlineDateEditor
+            value={member.date_of_departure}
+            onChange={(date) => onDepartureChange(member.id, date, member.reason_for_departure)}
+            disabled={isUpdatingDeparture}
+            canEdit={canEditDeparture}
+          />
+        </TableCell>
+      )}
 
       {/* Departure Reason */}
-      <TableCell className="text-muted-foreground">
+      {show('departure_reason') && (
+        <TableCell className="text-muted-foreground">
         {canEditDeparture ? (
           <Popover open={departurePopoverOpen} onOpenChange={setDeparturePopoverOpen}>
             <PopoverTrigger asChild>
@@ -465,15 +572,18 @@ export const MemberRow = memo(function MemberRow({
               </div>
             </PopoverContent>
           </Popover>
-        ) : (
-          <span className="px-2 py-1 inline-block">{member.reason_for_departure || '—'}</span>
-        )}
-      </TableCell>
+          ) : (
+            <span className="px-2 py-1 inline-block">{member.reason_for_departure || '—'}</span>
+          )}
+        </TableCell>
+      )}
 
       {/* Joined Date */}
-      <TableCell className="text-muted-foreground">
-        {formatDate(member.created_at)}
-      </TableCell>
+      {show('joined') && (
+        <TableCell className="text-muted-foreground">
+          {formatDate(member.created_at)}
+        </TableCell>
+      )}
     </TableRow>
   )
 })

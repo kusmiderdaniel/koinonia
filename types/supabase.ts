@@ -1979,6 +1979,7 @@ export type Database = {
           sort_state: Json
           updated_at: string | null
           view_type: string
+          visible_columns: Json | null
         }
         Insert: {
           church_id: string
@@ -1993,6 +1994,7 @@ export type Database = {
           sort_state?: Json
           updated_at?: string | null
           view_type: string
+          visible_columns?: Json | null
         }
         Update: {
           church_id?: string
@@ -2007,6 +2009,7 @@ export type Database = {
           sort_state?: Json
           updated_at?: string | null
           view_type?: string
+          visible_columns?: Json | null
         }
         Relationships: [
           {

@@ -15,6 +15,7 @@ export interface SavedView {
   filter_state: FilterState
   sort_state: SortState
   group_by: GroupByField | null
+  visible_columns: string[] | null // Column keys to display, null means all
   is_default: boolean
   created_by: string | null
   created_at: string
@@ -29,6 +30,7 @@ export interface CreateSavedViewInput {
   filter_state: FilterState
   sort_state: SortState
   group_by?: GroupByField | null
+  visible_columns?: string[] | null
   is_default?: boolean
 }
 
@@ -39,6 +41,7 @@ export interface UpdateSavedViewInput {
   filter_state?: FilterState
   sort_state?: SortState
   group_by?: GroupByField | null
+  visible_columns?: string[] | null
   is_default?: boolean
 }
 
@@ -85,6 +88,7 @@ export interface SaveViewDialogProps {
   currentFilterState: FilterState
   currentSortState: SortState
   currentGroupBy?: GroupByField
+  currentVisibleColumns?: string[] | null
   editingView?: SavedView | null
   onSuccess?: (view: SavedView) => void
 }

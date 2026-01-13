@@ -31,7 +31,7 @@ export async function getSavedViews(viewType: ViewType): Promise<{
 
   const { data, error } = await adminClient
     .from('saved_views')
-    .select('id, church_id, view_type, name, description, filter_state, sort_state, group_by, is_default, created_by, created_at, updated_at')
+    .select('id, church_id, view_type, name, description, filter_state, sort_state, group_by, visible_columns, is_default, created_by, created_at, updated_at')
     .eq('church_id', profile.church_id)
     .eq('view_type', viewType)
     .order('is_default', { ascending: false })
@@ -81,6 +81,7 @@ export async function createSavedView(
       filter_state: input.filter_state,
       sort_state: input.sort_state,
       group_by: input.group_by || null,
+      visible_columns: input.visible_columns || null,
       is_default: input.is_default || false,
       created_by: profile.id,
     })
@@ -92,8 +93,8 @@ export async function createSavedView(
     return { error: 'Failed to create view' }
   }
 
-  revalidatePath('/dashboard/tasks')
-  revalidatePath('/dashboard/people')
+  // Don't revalidatePath here - the hook updates state optimistically
+  // and selects the new view automatically
 
   return { success: true, data: data as SavedView }
 }
@@ -155,8 +156,8 @@ export async function updateSavedView(
     return { error: 'Failed to update view' }
   }
 
-  revalidatePath('/dashboard/tasks')
-  revalidatePath('/dashboard/people')
+  // Don't revalidatePath here - the hook updates state optimistically
+  // and we don't want to reset the selected view
 
   return { success: true, data: data as SavedView }
 }

@@ -10,7 +10,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { CampusBadges } from '@/components/CampusBadge'
 import {
   type Member,
@@ -38,6 +39,7 @@ interface MemberCardProps {
   canEditActiveStatus: boolean
   canEditDeparture: boolean
   canEditFields: boolean
+  canDeleteOffline: boolean
   isUpdatingRole: boolean
   isUpdatingActive: boolean
   isUpdatingDeparture: boolean
@@ -50,7 +52,8 @@ interface MemberCardProps {
   onDepartureChange: (memberId: string, date: string | null, reason: string | null) => void
   onBaptismChange: (memberId: string, baptism: boolean, date: string | null) => void
   onCampusesChange: (memberId: string, campusIds: string[]) => void
-  onProfileChange: (memberId: string, data: { sex?: string | null; dateOfBirth?: string | null; phone?: string | null }) => void
+  onProfileChange: (memberId: string, data: { sex?: string | null; dateOfBirth?: string | null; phone?: string | null; email?: string | null }) => void
+  onDeleteOffline: (member: Member) => void
 }
 
 export const MemberCard = memo(function MemberCard({
@@ -58,10 +61,12 @@ export const MemberCard = memo(function MemberCard({
   currentUserId,
   canEditRole,
   canEditActiveStatus,
+  canDeleteOffline,
   isUpdatingRole,
   isUpdatingActive,
   onRoleChange,
   onActiveChange,
+  onDeleteOffline,
   // Unused but received from parent
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   canEditDeparture: _canEditDeparture,
@@ -111,9 +116,25 @@ export const MemberCard = memo(function MemberCard({
               <span className="text-xs text-muted-foreground flex-shrink-0">{t('you')}</span>
             )}
             {member.member_type === 'offline' && (
-              <span className="inline-flex items-center bg-amber-50 text-amber-700 border-amber-200 border rounded-full px-1.5 py-0.5 text-[10px] font-medium flex-shrink-0">
-                {t('offline')}
-              </span>
+              <>
+                <span className="inline-flex items-center bg-amber-50 text-amber-700 border-amber-200 border rounded-full px-1.5 py-0.5 text-[10px] font-medium flex-shrink-0">
+                  {t('offline')}
+                </span>
+                {canDeleteOffline && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onDeleteOffline(member)
+                    }}
+                    title={t('deleteOffline.button')}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </div>
