@@ -14,9 +14,7 @@ import {
 import {
   SortableContext,
   verticalListSortingStrategy,
-  useSortable,
 } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,116 +23,16 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Columns3, GripVertical, RotateCcw, Snowflake } from 'lucide-react'
+import { Columns3, RotateCcw, Snowflake } from 'lucide-react'
 import {
-  PEOPLE_COLUMNS,
   getAllColumns,
-  isPinnedColumn,
   isColumnFrozen,
   type PeopleColumn,
   type PeopleColumnKey,
 } from './columns'
+import { SortableColumnItem } from './SortableColumnItem'
 import { cn } from '@/lib/utils'
 import type { CustomFieldDefinition } from '@/types/custom-fields'
-
-// Sortable column item component
-function SortableColumnItem({
-  column,
-  isVisible,
-  onToggle,
-  onFreeze,
-  isFrozen,
-  t,
-  tColumns,
-}: {
-  column: PeopleColumn
-  isVisible: boolean
-  onToggle: () => void
-  onFreeze?: () => void
-  isFrozen?: boolean
-  t: ReturnType<typeof useTranslations>
-  tColumns: ReturnType<typeof useTranslations>
-}) {
-  const isPinned = isPinnedColumn(column.key)
-
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: column.key,
-    disabled: isPinned,
-  })
-
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 1 : undefined,
-  }
-
-  const label = column.isCustomField ? column.labelKey : t(column.labelKey)
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={cn(
-        'flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-muted group',
-        isDragging && 'bg-muted',
-        isFrozen && 'bg-blue-50 dark:bg-blue-950/30'
-      )}
-    >
-      {/* Drag handle - only for non-pinned columns */}
-      {!isPinned ? (
-        <div
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
-        >
-          <GripVertical className="h-4 w-4" />
-        </div>
-      ) : (
-        <div className="w-4" /> // Placeholder for alignment
-      )}
-      <label className="flex items-center gap-2 flex-1 cursor-pointer">
-        <Checkbox
-          checked={isVisible}
-          onCheckedChange={onToggle}
-          disabled={!column.canHide}
-        />
-        <span className={cn('text-sm', !column.canHide && 'text-muted-foreground')}>
-          {label}
-        </span>
-        {isFrozen && (
-          <Snowflake className="h-3.5 w-3.5 text-blue-500 flex-shrink-0" />
-        )}
-      </label>
-      {/* Freeze button - only for visible columns */}
-      {isVisible && onFreeze && (
-        <button
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            onFreeze()
-          }}
-          className={cn(
-            'text-xs px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity',
-            isFrozen
-              ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-              : 'hover:bg-muted-foreground/10 text-muted-foreground hover:text-foreground'
-          )}
-          title={isFrozen ? tColumns('unfreezeHere') : tColumns('freezeUpToHere')}
-        >
-          <Snowflake className="h-3 w-3" />
-        </button>
-      )}
-    </div>
-  )
-}
 
 interface ColumnSelectorProps {
   visibleColumns: PeopleColumnKey[] | null
@@ -164,15 +62,13 @@ export function ColumnSelector({
 
   // Get all columns including custom fields
   const allColumns = useMemo(() => getAllColumns(customFields), [customFields])
-  const allColumnKeys = useMemo(() => allColumns.map(c => c.key), [allColumns])
+  const allColumnKeys = useMemo(() => allColumns.map((c) => c.key), [allColumns])
 
   // Use orderedColumns if provided, otherwise fall back to allColumns
   const columnsToDisplay = orderedColumns || allColumns
 
   // Calculate how many columns are hidden
-  const hiddenCount = visibleColumns
-    ? allColumnKeys.length - visibleColumns.length
-    : 0
+  const hiddenCount = visibleColumns ? allColumnKeys.length - visibleColumns.length : 0
 
   // DnD sensors configuration
   const sensors = useSensors(
@@ -185,13 +81,16 @@ export function ColumnSelector({
   )
 
   // Handle drag end
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over } = event
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event
 
-    if (over && active.id !== over.id && onReorderColumns) {
-      onReorderColumns(active.id as string, over.id as string)
-    }
-  }, [onReorderColumns])
+      if (over && active.id !== over.id && onReorderColumns) {
+        onReorderColumns(active.id as string, over.id as string)
+      }
+    },
+    [onReorderColumns]
+  )
 
   const handleToggleColumn = (columnKey: PeopleColumnKey) => {
     // If all columns are visible (null), start with all columns
@@ -241,12 +140,12 @@ export function ColumnSelector({
   }
 
   // Separate static and custom columns from ordered columns
-  const staticColumnsOrdered = columnsToDisplay.filter(c => !c.isCustomField)
-  const customColumnsOrdered = columnsToDisplay.filter(c => c.isCustomField)
+  const staticColumnsOrdered = columnsToDisplay.filter((c) => !c.isCustomField)
+  const customColumnsOrdered = columnsToDisplay.filter((c) => c.isCustomField)
 
   // Get column keys for sortable context
-  const staticColumnKeys = staticColumnsOrdered.map(c => c.key)
-  const customColumnKeys = customColumnsOrdered.map(c => c.key)
+  const staticColumnKeys = staticColumnsOrdered.map((c) => c.key)
+  const customColumnKeys = customColumnsOrdered.map((c) => c.key)
 
   return (
     <DropdownMenu>
@@ -265,15 +164,15 @@ export function ColumnSelector({
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-64 bg-white dark:bg-zinc-950 p-2 max-h-96 overflow-y-auto">
+      <DropdownMenuContent
+        align="start"
+        className="w-64 bg-white dark:bg-zinc-950 p-2 max-h-96 overflow-y-auto"
+      >
         <div className="space-y-1">
           {/* Action buttons */}
           <div className="flex flex-wrap gap-2 mb-2">
             {hiddenCount > 0 && (
-              <button
-                onClick={handleShowAll}
-                className="text-xs text-brand hover:underline"
-              >
+              <button onClick={handleShowAll} className="text-xs text-brand hover:underline">
                 {tColumns('showAll')}
               </button>
             )}
@@ -334,7 +233,9 @@ export function ColumnSelector({
                         column={column}
                         isVisible={isColumnVisible(column.key)}
                         onToggle={() => handleToggleColumn(column.key)}
-                        onFreeze={onFreezeColumnChange ? () => handleFreezeColumn(column.key) : undefined}
+                        onFreeze={
+                          onFreezeColumnChange ? () => handleFreezeColumn(column.key) : undefined
+                        }
                         isFrozen={checkIsFrozen(column.key)}
                         t={t}
                         tColumns={tColumns}
@@ -378,9 +279,7 @@ export function ColumnSelector({
                         checked={isColumnVisible(column.key)}
                         onCheckedChange={() => handleToggleColumn(column.key)}
                       />
-                      <span className="text-sm">
-                        {column.labelKey}
-                      </span>
+                      <span className="text-sm">{column.labelKey}</span>
                     </label>
                   ))}
                 </>

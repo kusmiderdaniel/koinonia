@@ -14,6 +14,7 @@
   "showingMembers": "Pokazuje {filtered} z {total} {total, plural, =1 {członka} few {członków} other {członków}}",
   "you": "(ty)",
   "offline": "Offline",
+  "live": "Online",
   "noEmail": "Brak emaila",
   "fields": {
     "firstName": "Imię",
@@ -49,6 +50,7 @@
   "tableHeader": {
     "active": "Aktywny",
     "name": "Imię i nazwisko",
+    "userType": "Typ",
     "email": "Email",
     "emailTooltip": "Nie można zmienić",
     "phone": "Telefon",

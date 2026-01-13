@@ -6,6 +6,7 @@ import type { ColumnConfig } from '@/types/saved-views'
 export type StaticColumnKey =
   | 'active'
   | 'name'
+  | 'user_type'
   | 'email'
   | 'phone'
   | 'role'
@@ -38,6 +39,7 @@ export interface PeopleColumn {
 export const PEOPLE_COLUMNS: PeopleColumn[] = [
   { key: 'active', labelKey: 'tableHeader.active', defaultVisible: true, canHide: true },
   { key: 'name', labelKey: 'tableHeader.name', defaultVisible: true, canHide: false },
+  { key: 'user_type', labelKey: 'tableHeader.userType', defaultVisible: true, canHide: true },
   { key: 'email', labelKey: 'tableHeader.email', defaultVisible: true, canHide: true },
   { key: 'phone', labelKey: 'tableHeader.phone', defaultVisible: true, canHide: true },
   { key: 'role', labelKey: 'tableHeader.role', defaultVisible: true, canHide: true },
@@ -143,7 +145,8 @@ export function isPinnedColumn(key: PeopleColumnKey): boolean {
 // These are used for frozen columns to prevent collapse during horizontal scroll
 export const COLUMN_MIN_WIDTHS: Partial<Record<PeopleColumnKey, number>> = {
   active: 70,
-  name: 200,
+  name: 250,
+  user_type: 80,
   email: 180,
   phone: 120,
   role: 100,
