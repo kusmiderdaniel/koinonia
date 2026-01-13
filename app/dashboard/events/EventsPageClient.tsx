@@ -25,14 +25,6 @@ import {
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 
 // Dynamic imports for heavy components
-const CalendarView = dynamic(
-  () => import('./calendar-view').then((mod) => ({ default: mod.CalendarView })),
-  {
-    loading: () => <CalendarViewSkeleton />,
-    ssr: false,
-  }
-)
-
 const TemplatesTab = dynamic(
   () => import('./templates/TemplatesTab').then((mod) => ({ default: mod.TemplatesTab })),
   {
@@ -159,8 +151,8 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
     firstDayOfWeek,
   } = eventList
 
-  // On mobile, force list view if calendar/matrix is selected (they don't work well on small screens)
-  const viewMode = isMobile && (rawViewMode === 'calendar' || rawViewMode === 'matrix')
+  // On mobile, force list view if matrix is selected (it doesn't work well on small screens)
+  const viewMode = isMobile && rawViewMode === 'matrix'
     ? 'list'
     : rawViewMode
 
@@ -264,20 +256,6 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
               onOpenSongEditor={(data) => {
                 dialogs.openSongEditor(data)
               }}
-            />
-          </ErrorBoundary>
-        ) : viewMode === 'calendar' ? (
-          <ErrorBoundary>
-            <CalendarView
-              events={events}
-              firstDayOfWeek={firstDayOfWeek}
-              timeFormat={initialData.timeFormat}
-              onEventSelect={handlers.handleSelectEvent}
-              leftPanelContent={
-                detailPanelProps ? (
-                  <EventDetailPanel {...detailPanelProps} />
-                ) : undefined
-              }
             />
           </ErrorBoundary>
         ) : (

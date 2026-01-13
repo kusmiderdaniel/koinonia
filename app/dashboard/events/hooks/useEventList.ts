@@ -8,7 +8,7 @@ import { isLeaderOrAbove, isAdminOrOwner } from '@/lib/permissions'
 import { getEvents, getChurchMembers } from '../actions'
 import type { Event, Member } from '../types'
 
-export type ViewMode = 'list' | 'calendar' | 'matrix' | 'templates'
+export type ViewMode = 'list' | 'matrix' | 'templates'
 
 export interface EventsInitialData {
   events: Event[]
@@ -56,7 +56,7 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
   // Initialize viewMode from URL param (survives page revalidation)
   const initialViewMode = (): ViewMode => {
     const viewParam = searchParams.get('view')
-    if (viewParam === 'list' || viewParam === 'calendar' || viewParam === 'matrix' || viewParam === 'templates') {
+    if (viewParam === 'list' || viewParam === 'matrix' || viewParam === 'templates') {
       return viewParam
     }
     return 'list'
@@ -127,7 +127,7 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
   // Sync viewMode with URL param changes (e.g., browser back/forward)
   useEffect(() => {
     const viewParam = searchParams.get('view')
-    const targetMode: ViewMode = (viewParam === 'list' || viewParam === 'calendar' || viewParam === 'matrix' || viewParam === 'templates')
+    const targetMode: ViewMode = (viewParam === 'list' || viewParam === 'matrix' || viewParam === 'templates')
       ? viewParam
       : 'list'
     // Only update if different to avoid unnecessary state updates

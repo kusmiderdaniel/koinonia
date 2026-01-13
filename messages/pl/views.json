@@ -2,10 +2,10 @@
   "title": "Widoki",
   "all": "Wszystkie",
   "noSavedViews": "Brak zapisanych widokow",
-  "saveCurrentView": "Zapisz obecny widok",
+  "saveCurrentView": "Zapisz jako nowy widok",
   "save": "Zapisz",
   "edit": "Edytuj",
-  "setAsDefault": "Ustaw jako domyslny",
+  "setAsDefault": "Ustaw jako domyślny",
   "delete": "Usun",
   "dialog": {
     "saveTitle": "Zapisz widok",
@@ -17,12 +17,12 @@
     "nameRequired": "Wprowadz nazwe dla tego widoku",
     "descriptionLabel": "Opis",
     "descriptionPlaceholder": "Opcjonalny opis...",
-    "setAsDefault": "Ustaw jako domyslny",
+    "setAsDefault": "Ustaw jako domyślny",
     "defaultHint": "Ten widok zaladuje sie automatycznie po otwarciu tej strony",
     "saving": "Zapisywanie...",
     "saveView": "Zapisz widok",
     "saveChanges": "Zapisz zmiany",
-    "viewSaved": "Widok zapisany pomyslnie",
-    "viewUpdated": "Widok zaktualizowany pomyslnie"
+    "viewSaved": "Widok zapisany pomyślnie",
+    "viewUpdated": "Widok zaktualizowany pomyślnie"
   }
 }

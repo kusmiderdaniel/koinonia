@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Calendar, FileText } from 'lucide-react'
 import { EventsViewModeToggle } from './EventsViewModeToggle'
 
-type ViewMode = 'list' | 'calendar' | 'matrix' | 'templates'
+type ViewMode = 'list' | 'matrix' | 'templates'
 
 interface EventsHeaderProps {
   viewMode: ViewMode

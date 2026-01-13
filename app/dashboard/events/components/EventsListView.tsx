@@ -63,11 +63,10 @@ export function EventsListView({
         </div>
         {canManage && onCreateEvent && (
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="flex-shrink-0 rounded-full !border !border-black dark:!border-white"
+            className="shrink-0 rounded-full !border !border-black dark:!border-white"
             onClick={onCreateEvent}
-            title={t('createEvent')}
           >
             <Plus className="w-4 h-4" />
           </Button>

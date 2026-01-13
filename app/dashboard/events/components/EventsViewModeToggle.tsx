@@ -10,19 +10,18 @@ import {
 } from '@/components/ui/tooltip'
 import {
   List,
-  CalendarDays,
   Grid3X3,
   FileText,
 } from 'lucide-react'
 
-type ViewMode = 'list' | 'calendar' | 'matrix' | 'templates'
+type ViewMode = 'list' | 'matrix' | 'templates'
 
 interface EventsViewModeToggleProps {
   viewMode: ViewMode
   onViewModeChange: (mode: ViewMode) => void
   canManageContent: boolean
   compact?: boolean
-  mobileOnly?: boolean // When true, only show list and templates (no calendar/matrix)
+  mobileOnly?: boolean // When true, only show list and templates (no matrix)
 }
 
 export function EventsViewModeToggle({
@@ -33,7 +32,6 @@ export function EventsViewModeToggle({
   mobileOnly = false,
 }: EventsViewModeToggleProps) {
   const t = useTranslations('events.viewModes')
-  const showCalendar = !mobileOnly
   const showMatrix = !mobileOnly && canManageContent
 
   return (
@@ -58,22 +56,6 @@ export function EventsViewModeToggle({
           </TooltipTrigger>
           <TooltipContent>{t('list')}</TooltipContent>
         </Tooltip>
-        {showCalendar && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span>
-                <ToggleGroupItem
-                  value="calendar"
-                  aria-label={t('calendar')}
-                  className={`!rounded-full ${compact ? 'h-8 w-8' : ''} ${viewMode === 'calendar' ? '!bg-brand !text-brand-foreground' : ''}`}
-                >
-                  <CalendarDays className={compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
-                </ToggleGroupItem>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>{t('calendar')}</TooltipContent>
-          </Tooltip>
-        )}
         {showMatrix && (
           <Tooltip>
             <TooltipTrigger asChild>

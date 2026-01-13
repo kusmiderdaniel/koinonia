@@ -30,7 +30,7 @@ export function ChurchLogo({
     >
       <div
         className={cn(
-          'flex items-center',
+          'flex items-center min-w-0 w-full',
           collapsed ? 'justify-center' : 'justify-between gap-3'
         )}
       >
@@ -70,7 +70,7 @@ export function ChurchLogo({
                 {churchInitial}
               </div>
             )}
-            <h1 className="font-semibold text-lg truncate">{churchName}</h1>
+            <h1 className="font-semibold text-base truncate">{churchName}</h1>
           </div>
         )}
       </div>

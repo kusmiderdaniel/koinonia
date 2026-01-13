@@ -12,6 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { CampusBadge } from '@/components/CampusBadge'
+import { cn } from '@/lib/utils'
 import type { PendingRegistration, OfflineMember } from './types'
 
 interface RegistrationsTableProps {
@@ -77,8 +78,8 @@ export function RegistrationsTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {registrations.map((registration) => (
-          <TableRow key={registration.id}>
+        {registrations.map((registration, index) => (
+          <TableRow key={registration.id} className={cn(index % 2 === 0 && 'bg-zinc-100 dark:bg-zinc-800')}>
             <TableCell className="font-medium">
               {registration.first_name} {registration.last_name}
             </TableCell>

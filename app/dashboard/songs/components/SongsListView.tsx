@@ -58,11 +58,10 @@ export function SongsListView({
           </div>
           {canManage && onAddClick && (
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon"
-              className="flex-shrink-0 rounded-full !border !border-black dark:!border-white"
+              className="shrink-0 rounded-full !border !border-black dark:!border-white"
               onClick={onAddClick}
-              title={t('addSong')}
             >
               <Plus className="w-4 h-4" />
             </Button>
