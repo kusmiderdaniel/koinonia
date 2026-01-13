@@ -86,7 +86,7 @@ export default function SignInPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder="••••••••••••"
                 className="h-11 focus:placeholder-transparent"
                 {...register('password')}
                 disabled={isLoading}

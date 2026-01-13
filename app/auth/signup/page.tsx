@@ -139,7 +139,7 @@ function SignUpContent() {
             <Input
               id="confirmPassword"
               type="password"
-              placeholder="••••••••"
+              placeholder="••••••••••••"
               className="h-11 focus:placeholder-transparent"
               {...register('confirmPassword')}
               disabled={isLoading}
