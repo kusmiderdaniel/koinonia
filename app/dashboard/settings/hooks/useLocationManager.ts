@@ -17,7 +17,7 @@ interface UseLocationManagerReturn {
   locationName: string
   locationAddress: string
   locationNotes: string
-  locationCampusId: string | null
+  locationCampusIds: string[]
   isSavingLocation: boolean
   deleteLocationDialogOpen: boolean
   locationToDelete: Location | null
@@ -26,7 +26,7 @@ interface UseLocationManagerReturn {
   setLocationName: (name: string) => void
   setLocationAddress: (address: string) => void
   setLocationNotes: (notes: string) => void
-  setLocationCampusId: (campusId: string | null) => void
+  setLocationCampusIds: (campusIds: string[]) => void
   openLocationDialog: (location?: Location, defaultCampusId?: string | null) => void
   closeLocationDialog: () => void
   openDeleteLocationDialog: (location: Location) => void
@@ -51,7 +51,7 @@ export function useLocationManager(translations: LocationManagerTranslations): U
   const [locationName, setLocationName] = useState('')
   const [locationAddress, setLocationAddress] = useState('')
   const [locationNotes, setLocationNotes] = useState('')
-  const [locationCampusId, setLocationCampusId] = useState<string | null>(null)
+  const [locationCampusIds, setLocationCampusIds] = useState<string[]>([])
   const [isSavingLocation, setIsSavingLocation] = useState(false)
   const [deleteLocationDialogOpen, setDeleteLocationDialogOpen] = useState(false)
   const [locationToDelete, setLocationToDelete] = useState<Location | null>(null)
@@ -62,13 +62,15 @@ export function useLocationManager(translations: LocationManagerTranslations): U
       setLocationName(location.name)
       setLocationAddress(location.address || '')
       setLocationNotes(location.notes || '')
-      setLocationCampusId(location.campus_id || null)
+      // Extract campus IDs from the campuses array
+      setLocationCampusIds(location.campuses?.map((c) => c.id) || [])
     } else {
       setEditingLocation(null)
       setLocationName('')
       setLocationAddress('')
       setLocationNotes('')
-      setLocationCampusId(defaultCampusId ?? null)
+      // Set default campus if provided
+      setLocationCampusIds(defaultCampusId ? [defaultCampusId] : [])
     }
     setLocationDialogOpen(true)
   }, [])
@@ -79,7 +81,7 @@ export function useLocationManager(translations: LocationManagerTranslations): U
     setLocationName('')
     setLocationAddress('')
     setLocationNotes('')
-    setLocationCampusId(null)
+    setLocationCampusIds([])
   }, [])
 
   const openDeleteLocationDialog = useCallback((location: Location) => {
@@ -106,7 +108,7 @@ export function useLocationManager(translations: LocationManagerTranslations): U
         name: locationName,
         address: locationAddress || undefined,
         notes: locationNotes || undefined,
-        campusId: locationCampusId,
+        campusIds: locationCampusIds,
       }
 
       const result = editingLocation
@@ -126,7 +128,7 @@ export function useLocationManager(translations: LocationManagerTranslations): U
       }
       setIsSavingLocation(false)
     },
-    [editingLocation, locationName, locationAddress, locationNotes, locationCampusId, translations.createdSuccess, translations.updatedSuccess]
+    [editingLocation, locationName, locationAddress, locationNotes, locationCampusIds, translations.createdSuccess, translations.updatedSuccess]
   )
 
   const handleDeleteLocation = useCallback(
@@ -160,7 +162,7 @@ export function useLocationManager(translations: LocationManagerTranslations): U
     locationName,
     locationAddress,
     locationNotes,
-    locationCampusId,
+    locationCampusIds,
     isSavingLocation,
     deleteLocationDialogOpen,
     locationToDelete,
@@ -169,7 +171,7 @@ export function useLocationManager(translations: LocationManagerTranslations): U
     setLocationName,
     setLocationAddress,
     setLocationNotes,
-    setLocationCampusId,
+    setLocationCampusIds,
     openLocationDialog,
     closeLocationDialog,
     openDeleteLocationDialog,

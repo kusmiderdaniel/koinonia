@@ -320,6 +320,7 @@ export async function leaveChurch(reason?: string) {
     .from('profiles')
     .update({
       active: false,
+      role: 'member', // Revert role to member when leaving
       user_id: null, // Detach from auth user so they can go through onboarding again
       member_type: 'offline',
       date_of_departure: today,
@@ -356,11 +357,12 @@ export async function deleteAccount(reason?: string) {
 
   const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
 
-  // Update profile: mark as inactive, offline member, set departure info
+  // Update profile: mark as inactive, offline member, set departure info, revert role
   const { error: profileError } = await adminClient
     .from('profiles')
     .update({
       active: false,
+      role: 'member', // Revert role to member when deleting account
       member_type: 'offline',
       user_id: null, // Remove auth connection
       date_of_departure: today,

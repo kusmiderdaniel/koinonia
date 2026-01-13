@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
+import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { signIn } from '../actions'
 import { signInSchema, type SignInInput } from '@/lib/validations/auth'
 import { Button } from '@/components/ui/button'
@@ -37,7 +38,11 @@ export default function SignInPage() {
         // Error is now a translation key
         setError(tErrors(result.error))
       }
-    } catch {
+    } catch (err) {
+      // Re-throw redirect errors (they're not actual errors)
+      if (isRedirectError(err)) {
+        throw err
+      }
       setError(tErrors('generic'))
     } finally {
       setIsLoading(false)

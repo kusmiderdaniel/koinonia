@@ -1509,10 +1509,45 @@ export type Database = {
           },
         ]
       }
+      location_campuses: {
+        Row: {
+          campus_id: string
+          created_at: string
+          id: string
+          location_id: string
+        }
+        Insert: {
+          campus_id: string
+          created_at?: string
+          id?: string
+          location_id: string
+        }
+        Update: {
+          campus_id?: string
+          created_at?: string
+          id?: string
+          location_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_campuses_campus_id_fkey"
+            columns: ["campus_id"]
+            isOneToOne: false
+            referencedRelation: "campuses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "location_campuses_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           address: string | null
-          campus_id: string | null
           church_id: string
           created_at: string
           id: string
@@ -1523,7 +1558,6 @@ export type Database = {
         }
         Insert: {
           address?: string | null
-          campus_id?: string | null
           church_id: string
           created_at?: string
           id?: string
@@ -1534,7 +1568,6 @@ export type Database = {
         }
         Update: {
           address?: string | null
-          campus_id?: string | null
           church_id?: string
           created_at?: string
           id?: string
@@ -1544,13 +1577,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "locations_campus_id_fkey"
-            columns: ["campus_id"]
-            isOneToOne: false
-            referencedRelation: "campuses"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "locations_church_id_fkey"
             columns: ["church_id"]

@@ -123,7 +123,7 @@ export function LocationPicker({
       name: newName,
       address: newAddress || undefined,
       notes: newNotes || undefined,
-      campusId: filterByCampusIds.length > 0 ? filterByCampusIds[0] : null,
+      campusIds: filterByCampusIds.length > 0 ? filterByCampusIds : [],
     })
 
     if (result.error) {

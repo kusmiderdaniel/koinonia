@@ -34,7 +34,7 @@ export const locationSchema = z.object({
   name: z.string().min(1, 'Location name is required'),
   address: z.string().optional(),
   notes: z.string().optional(),
-  campusId: z.string().uuid().nullable().optional(),
+  campusIds: z.array(z.string().uuid()).optional(),
 })
 
 export type LocationInput = z.infer<typeof locationSchema>

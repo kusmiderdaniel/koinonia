@@ -3,15 +3,14 @@
 import type { Campus } from './entities'
 
 /**
- * Location with optional campus association
+ * Location with optional campus associations (many-to-many)
  */
 export interface Location {
   id: string
   name: string
   address: string | null
   notes?: string | null
-  campus_id?: string | null
-  campus?: Campus | null
+  campuses?: Campus[]
 }
 
 /**

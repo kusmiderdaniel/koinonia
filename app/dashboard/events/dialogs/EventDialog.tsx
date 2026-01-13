@@ -93,8 +93,11 @@ export const EventDialog = memo(function EventDialog({
   const handleCampusChange = (newCampusIds: string[]) => {
     setSelectedCampusIds(newCampusIds)
 
-    if (selectedLocation && selectedLocation.campus_id) {
-      if (newCampusIds.length > 0 && !newCampusIds.includes(selectedLocation.campus_id)) {
+    // If location is selected and campus filter changes, check if location is still valid
+    if (selectedLocation && selectedLocation.campuses && selectedLocation.campuses.length > 0) {
+      const locationCampusIds = selectedLocation.campuses.map(c => c.id)
+      // Clear location if none of its campuses match the new filter
+      if (newCampusIds.length > 0 && !newCampusIds.some(id => locationCampusIds.includes(id))) {
         setSelectedLocation(null)
       }
     }

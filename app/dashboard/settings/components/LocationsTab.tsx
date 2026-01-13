@@ -17,8 +17,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { MapPin, Plus, Pencil, Trash2 } from 'lucide-react'
-import { SingleCampusPicker } from '@/components/CampusPicker'
-import { CampusBadge } from '@/components/CampusBadge'
+import { CampusPicker } from '@/components/CampusPicker'
+import { CampusBadges } from '@/components/CampusBadge'
 import type { useLocationManager } from '../hooks'
 import type { Location } from '../types'
 import type { Campus } from '../actions'
@@ -79,8 +79,8 @@ export const LocationsTab = memo(function LocationsTab({
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-1 md:gap-2">
                         <span className="font-medium text-sm md:text-base truncate">{location.name}</span>
-                        {location.campus && (
-                          <CampusBadge name={location.campus.name} color={location.campus.color} size="sm" />
+                        {location.campuses && location.campuses.length > 0 && (
+                          <CampusBadges campuses={location.campuses} size="sm" maxVisible={2} />
                         )}
                       </div>
                       {location.address && (
@@ -160,11 +160,12 @@ export const LocationsTab = memo(function LocationsTab({
             {campuses.length > 0 && (
               <div className="space-y-2">
                 <Label>{t('dialog.campusLabel')}</Label>
-                <SingleCampusPicker
+                <CampusPicker
                   campuses={campuses}
-                  selectedCampusId={locationManager.locationCampusId}
-                  onChange={locationManager.setLocationCampusId}
+                  selectedCampusIds={locationManager.locationCampusIds}
+                  onChange={locationManager.setLocationCampusIds}
                   placeholder={t('dialog.campusPlaceholder')}
+                  multiple={true}
                 />
               </div>
             )}
