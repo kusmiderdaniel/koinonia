@@ -1,13 +1,21 @@
 'use server'
 
-import { format } from 'date-fns'
+import { format, type Locale } from 'date-fns'
+import { enUS, pl } from 'date-fns/locale'
 import { sendEmail } from '@/lib/email/config'
 import { InvitationResponseEmail } from '@/emails/InvitationResponseEmail'
+import { getEmailTranslations, interpolate } from '@/lib/email/translations'
 import {
   parseNotificationPreferences,
   shouldNotify,
 } from '@/lib/notifications/preferences'
 import { sendPushToUser } from '@/lib/push/send'
+
+// Map locale strings to date-fns locales
+const dateFnsLocales: Record<string, Locale> = {
+  en: enUS,
+  pl: pl,
+}
 
 // Type definitions for notification recipients
 type RecipientData = {
@@ -16,6 +24,7 @@ type RecipientData = {
   email: string | null
   receive_email_notifications: boolean
   notification_preferences: unknown
+  language: string | null
 }
 
 type ProfileData = { id: string; first_name: string; last_name: string }
@@ -27,11 +36,16 @@ type MinistryData = {
   leader: RecipientData | RecipientData[] | null
 }
 
+type ChurchData = {
+  name: string
+}
+
 type EventData = {
   id: string
   title: string
   start_time: string
   church_id: string
+  church: ChurchData | ChurchData[] | null
   responsible_person_id: string | null
   responsible_person: RecipientData | RecipientData[] | null
 }
@@ -68,11 +82,12 @@ async function sendNotificationToRecipient(
   preferenceKey: 'ministry_invitation_accepted' | 'ministry_invitation_declined' | 'event_invitation_accepted' | 'event_invitation_declined',
   notificationData: {
     churchId: string
+    churchName: string
     eventId: string
     assignmentId: string
     positionTitle: string
     eventTitle: string
-    eventDate: string
+    eventStartTime: string
     ministryName: string
     responderName: string
     response: 'accepted' | 'declined'
@@ -82,6 +97,12 @@ async function sendNotificationToRecipient(
   const responseVerb = notificationData.response === 'accepted' ? 'accepted' : 'declined'
   const responseEmoji = notificationData.response === 'accepted' ? '✅' : '❌'
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+  // Get recipient's language preference and translations
+  const userLocale = recipient.language || 'en'
+  const emailTranslations = getEmailTranslations(userLocale)
+  const dateFnsLocale = dateFnsLocales[userLocale] || enUS
+  const eventDate = format(new Date(notificationData.eventStartTime), 'EEEE, MMMM d, yyyy', { locale: dateFnsLocale })
 
   // Check in-app notification preference
   if (shouldNotify(prefs, preferenceKey, 'in_app')) {
@@ -108,18 +129,28 @@ async function sendNotificationToRecipient(
     recipient.receive_email_notifications &&
     shouldNotify(prefs, preferenceKey, 'email')
   ) {
+    const t = emailTranslations.invitationResponse
+    const isAccepted = notificationData.response === 'accepted'
+    const subject = interpolate(isAccepted ? t.acceptedSubject : t.declinedSubject, {
+      name: notificationData.responderName,
+      positionTitle: notificationData.positionTitle,
+      eventTitle: notificationData.eventTitle,
+    })
+
     sendEmail({
       to: recipient.email,
-      subject: `${responseEmoji} ${notificationData.responderName} ${responseVerb} invitation for ${notificationData.positionTitle}`,
+      subject: `${responseEmoji} ${subject}`,
       react: InvitationResponseEmail({
         leaderName: recipient.first_name,
         volunteerName: notificationData.responderName,
         response: responseVerb,
         positionTitle: notificationData.positionTitle,
         eventTitle: notificationData.eventTitle,
-        eventDate: notificationData.eventDate,
+        eventDate,
         ministryName: notificationData.ministryName,
         viewEventUrl: `${siteUrl}/dashboard/events/${notificationData.eventId}`,
+        churchName: notificationData.churchName,
+        translations: t,
       }),
     }).catch((err) => console.error('[Email] Failed to send notification email:', err))
   }
@@ -171,7 +202,8 @@ export async function notifyMinistryLeaderOfResponse(
             first_name,
             email,
             receive_email_notifications,
-            notification_preferences
+            notification_preferences,
+            language
           )
         ),
         event:events!inner (
@@ -179,13 +211,17 @@ export async function notifyMinistryLeaderOfResponse(
           title,
           start_time,
           church_id,
+          church:churches (
+            name
+          ),
           responsible_person_id,
           responsible_person:profiles!events_responsible_person_id_fkey (
             id,
             first_name,
             email,
             receive_email_notifications,
-            notification_preferences
+            notification_preferences,
+            language
           )
         )
       )
@@ -211,6 +247,7 @@ export async function notifyMinistryLeaderOfResponse(
 
   const ministryLeader = ministry?.leader ? unwrapRelation(ministry.leader) : null
   const eventResponsible = event.responsible_person ? unwrapRelation(event.responsible_person) : null
+  const church = event.church ? unwrapRelation(event.church) : null
 
   // Get the responder's name
   let responderName: string
@@ -220,8 +257,6 @@ export async function notifyMinistryLeaderOfResponse(
     const profile = unwrapRelation(typedAssignment.profile)
     responderName = profile ? `${profile.first_name} ${profile.last_name}` : 'A volunteer'
   }
-
-  const eventDate = format(new Date(event.start_time), 'EEEE, MMMM d, yyyy')
 
   // Track who we've already notified to avoid duplicates
   const notifiedIds = new Set<string>()
@@ -237,11 +272,12 @@ export async function notifyMinistryLeaderOfResponse(
   // Prepare notification data
   const notificationData = {
     churchId: event.church_id,
+    churchName: church?.name || 'Your Church',
     eventId: event.id,
     assignmentId,
     positionTitle: position.title,
     eventTitle: event.title,
-    eventDate,
+    eventStartTime: event.start_time,
     ministryName: ministry?.name || 'Ministry',
     responderName,
     response,

@@ -1,0 +1,62 @@
+{
+  "invitation": {
+    "subject": "Zaproszenie do posługi: {positionTitle} na {eventTitle}",
+    "preview": "Zaproszenie do posługi jako {positionTitle} na {eventTitle}",
+    "heading": "Zaproszenie do Posługi",
+    "greeting": "Cześć {name},",
+    "intro": "Zostałeś zaproszony do posługi w <strong>{churchName}</strong>:",
+    "acceptButton": "Przyjmij zaproszenie",
+    "declineButton": "Odrzuć",
+    "viewInApp": "Lub <link>zobacz to zaproszenie w aplikacji</link>",
+    "footer": "Otrzymujesz ten email, ponieważ jesteś członkiem {churchName}.",
+    "footerUnsubscribe": "Aby przestać otrzymywać te emaile, zaktualizuj ustawienia powiadomień w aplikacji."
+  },
+  "invitationResponse": {
+    "acceptedSubject": "{name} przyjął/przyjęła: {positionTitle} na {eventTitle}",
+    "declinedSubject": "{name} odrzucił/odrzuciła: {positionTitle} na {eventTitle}",
+    "acceptedPreview": "{name} przyjął/przyjęła zaproszenie do posługi jako {positionTitle}",
+    "declinedPreview": "{name} odrzucił/odrzuciła zaproszenie do posługi jako {positionTitle}",
+    "acceptedHeading": "Zaproszenie Przyjęte",
+    "declinedHeading": "Zaproszenie Odrzucone",
+    "acceptedIntro": "<strong>{name}</strong> przyjął/przyjęła zaproszenie do posługi:",
+    "declinedIntro": "<strong>{name}</strong> odrzucił/odrzuciła zaproszenie do posługi:",
+    "viewEvent": "Zobacz wydarzenie",
+    "footer": "Otrzymujesz ten email, ponieważ zarządzasz wydarzeniami w {churchName}."
+  },
+  "pendingMember": {
+    "subject": "Nowy członek oczekuje na zatwierdzenie: {name}",
+    "preview": "{name} chce dołączyć do {churchName}",
+    "heading": "Nowa Prośba o Członkostwo",
+    "intro": "Nowa osoba chce dołączyć do <strong>{churchName}</strong>:",
+    "nameLabel": "Imię i nazwisko",
+    "emailLabel": "Email",
+    "reviewButton": "Przejrzyj prośbę",
+    "footer": "Otrzymujesz ten email, ponieważ jesteś administratorem {churchName}."
+  },
+  "unfilledPositions": {
+    "subject": "Przypomnienie: {count} nieobsadzonych pozycji na {eventTitle}",
+    "preview": "{count} pozycji wciąż potrzebuje wolontariuszy na {eventTitle}",
+    "heading": "Przypomnienie o Nieobsadzonych Pozycjach",
+    "intro": "Następujące wydarzenie ma pozycje, które wciąż potrzebują wolontariuszy:",
+    "positionsHeading": "Nieobsadzone pozycje:",
+    "viewEvent": "Zobacz wydarzenie i wyślij zaproszenia",
+    "footer": "Otrzymujesz ten email, ponieważ zarządzasz wydarzeniami w {churchName}.",
+    "footerUnsubscribe": "Aby przestać otrzymywać te przypomnienia, zaktualizuj ustawienia powiadomień."
+  },
+  "legalDocumentUpdate": {
+    "subject": "Zaktualizowano {documentType}: Wymagane działanie",
+    "preview": "Proszę przejrzeć i zaakceptować zaktualizowany {documentType}",
+    "heading": "Dokument Prawny Zaktualizowany",
+    "intro": "Zaktualizowaliśmy nasz <strong>{documentType}</strong>. Proszę przejrzeć zmiany i zaakceptować, aby kontynuować korzystanie z {appName}.",
+    "summaryHeading": "Podsumowanie zmian",
+    "reviewButton": "Przejrzyj i zaakceptuj",
+    "footer": "Otrzymujesz ten email, ponieważ jesteś użytkownikiem {appName}.",
+    "footerRequired": "Akceptacja zaktualizowanych warunków jest wymagana do dalszego korzystania z usługi."
+  },
+  "common": {
+    "eventLabel": "Wydarzenie",
+    "dateLabel": "Data",
+    "timeLabel": "Czas",
+    "positionLabel": "Pozycja"
+  }
+}

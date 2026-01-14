@@ -1,0 +1,62 @@
+{
+  "invitation": {
+    "subject": "You're invited to serve: {positionTitle} for {eventTitle}",
+    "preview": "You're invited to serve as {positionTitle} for {eventTitle}",
+    "heading": "You're Invited to Serve",
+    "greeting": "Hi {name},",
+    "intro": "You've been invited to serve at <strong>{churchName}</strong>:",
+    "acceptButton": "Accept Invitation",
+    "declineButton": "Decline",
+    "viewInApp": "Or <link>view this invitation in the app</link>",
+    "footer": "You received this email because you're a member of {churchName}.",
+    "footerUnsubscribe": "To stop receiving these emails, update your notification preferences in the app."
+  },
+  "invitationResponse": {
+    "acceptedSubject": "{name} accepted: {positionTitle} for {eventTitle}",
+    "declinedSubject": "{name} declined: {positionTitle} for {eventTitle}",
+    "acceptedPreview": "{name} has accepted to serve as {positionTitle}",
+    "declinedPreview": "{name} has declined to serve as {positionTitle}",
+    "acceptedHeading": "Invitation Accepted",
+    "declinedHeading": "Invitation Declined",
+    "acceptedIntro": "<strong>{name}</strong> has accepted to serve:",
+    "declinedIntro": "<strong>{name}</strong> has declined to serve:",
+    "viewEvent": "View Event",
+    "footer": "You received this email because you manage events at {churchName}."
+  },
+  "pendingMember": {
+    "subject": "New member pending approval: {name}",
+    "preview": "{name} has requested to join {churchName}",
+    "heading": "New Member Request",
+    "intro": "A new person has requested to join <strong>{churchName}</strong>:",
+    "nameLabel": "Name",
+    "emailLabel": "Email",
+    "reviewButton": "Review Request",
+    "footer": "You received this email because you're an administrator of {churchName}."
+  },
+  "unfilledPositions": {
+    "subject": "Reminder: {count} unfilled positions for {eventTitle}",
+    "preview": "{count} positions still need volunteers for {eventTitle}",
+    "heading": "Unfilled Positions Reminder",
+    "intro": "The following event has positions that still need volunteers:",
+    "positionsHeading": "Unfilled Positions:",
+    "viewEvent": "View Event & Send Invitations",
+    "footer": "You received this email because you manage events at {churchName}.",
+    "footerUnsubscribe": "To stop receiving these reminders, update your notification preferences."
+  },
+  "legalDocumentUpdate": {
+    "subject": "Updated {documentType}: Action Required",
+    "preview": "Please review and accept the updated {documentType}",
+    "heading": "Legal Document Updated",
+    "intro": "We've updated our <strong>{documentType}</strong>. Please review the changes and accept to continue using {appName}.",
+    "summaryHeading": "Summary of Changes",
+    "reviewButton": "Review & Accept",
+    "footer": "You received this email because you're a user of {appName}.",
+    "footerRequired": "Accepting the updated terms is required to continue using the service."
+  },
+  "common": {
+    "eventLabel": "Event",
+    "dateLabel": "Date",
+    "timeLabel": "Time",
+    "positionLabel": "Position"
+  }
+}

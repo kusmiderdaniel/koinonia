@@ -10,6 +10,21 @@ import {
   Section,
   Text,
 } from '@react-email/components'
+import type { InvitationResponseEmailTranslations } from '@/lib/email/translations'
+
+// Default English translations for preview
+const defaultTranslations: InvitationResponseEmailTranslations = {
+  acceptedSubject: "{name} accepted: {positionTitle} for {eventTitle}",
+  declinedSubject: "{name} declined: {positionTitle} for {eventTitle}",
+  acceptedPreview: "{name} has accepted to serve as {positionTitle}",
+  declinedPreview: "{name} has declined to serve as {positionTitle}",
+  acceptedHeading: "Invitation Accepted",
+  declinedHeading: "Invitation Declined",
+  acceptedIntro: "<strong>{name}</strong> has accepted to serve:",
+  declinedIntro: "<strong>{name}</strong> has declined to serve:",
+  viewEvent: "View Event",
+  footer: "You received this email because you manage events at {churchName}."
+}
 
 export interface InvitationResponseEmailProps {
   leaderName: string
@@ -20,6 +35,8 @@ export interface InvitationResponseEmailProps {
   eventDate: string
   ministryName: string
   viewEventUrl: string
+  churchName?: string
+  translations?: InvitationResponseEmailTranslations
 }
 
 export function InvitationResponseEmail({
@@ -31,25 +48,38 @@ export function InvitationResponseEmail({
   eventDate,
   ministryName,
   viewEventUrl,
+  churchName = 'Your Church',
+  translations = defaultTranslations,
 }: InvitationResponseEmailProps) {
+  const t = translations
   const isAccepted = response === 'accepted'
   const emoji = isAccepted ? '✅' : '❌'
-  const statusText = isAccepted ? 'Accepted' : 'Declined'
-  const statusColor = isAccepted ? '#16a34a' : '#dc2626'
+
+  // Helper to interpolate values
+  const i = (template: string, params: Record<string, string>) =>
+    template.replace(/\{(\w+)\}/g, (_, key) => params[key] ?? '')
+
+  const heading = isAccepted ? t.acceptedHeading : t.declinedHeading
+  const previewText = i(isAccepted ? t.acceptedPreview : t.declinedPreview, {
+    name: volunteerName,
+    positionTitle,
+  })
+  const introText = i(isAccepted ? t.acceptedIntro : t.declinedIntro, {
+    name: volunteerName,
+  })
+  const footerText = i(t.footer, { churchName })
 
   return (
     <Html>
       <Head />
-      <Preview>{volunteerName} {response} the invitation for {positionTitle}</Preview>
+      <Preview>{previewText}</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Heading style={h1}>{emoji} Invitation {statusText}</Heading>
+          <Heading style={h1}>{emoji} {heading}</Heading>
 
           <Text style={text}>Hi {leaderName},</Text>
 
-          <Text style={text}>
-            <strong>{volunteerName}</strong> has <span style={{ color: statusColor, fontWeight: 600 }}>{response}</span> the invitation to serve:
-          </Text>
+          <Text style={text} dangerouslySetInnerHTML={{ __html: introText }} />
 
           <Section style={eventBox}>
             <Text style={eventTitleStyle}>{eventTitle}</Text>
@@ -61,25 +91,15 @@ export function InvitationResponseEmail({
             </Text>
           </Section>
 
-          {!isAccepted && (
-            <Text style={noteText}>
-              You may need to find another volunteer for this position.
-            </Text>
-          )}
-
           <Section style={buttonContainer}>
             <Button style={viewButton} href={viewEventUrl}>
-              View Event Details
+              {t.viewEvent}
             </Button>
           </Section>
 
           <Hr style={hr} />
 
-          <Text style={footer}>
-            You received this email because you&apos;re the leader of {ministryName}.
-            <br />
-            To stop receiving these emails, update your notification preferences in the app.
-          </Text>
+          <Text style={footer}>{footerText}</Text>
         </Container>
       </Body>
     </Html>

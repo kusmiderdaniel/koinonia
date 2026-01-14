@@ -11,6 +11,21 @@ import {
   Section,
   Text,
 } from '@react-email/components'
+import type { InvitationEmailTranslations } from '@/lib/email/translations'
+
+// Default English translations for preview
+const defaultTranslations: InvitationEmailTranslations = {
+  subject: "You're invited to serve: {positionTitle} for {eventTitle}",
+  preview: "You're invited to serve as {positionTitle} for {eventTitle}",
+  heading: "You're Invited to Serve",
+  greeting: "Hi {name},",
+  intro: "You've been invited to serve at <strong>{churchName}</strong>:",
+  acceptButton: "Accept Invitation",
+  declineButton: "Decline",
+  viewInApp: "Or <link>view this invitation in the app</link>",
+  footer: "You received this email because you're a member of {churchName}.",
+  footerUnsubscribe: "To stop receiving these emails, update your notification preferences in the app."
+}
 
 export interface InvitationEmailProps {
   recipientName: string
@@ -24,6 +39,7 @@ export interface InvitationEmailProps {
   declineUrl: string
   viewInAppUrl: string
   churchName: string
+  translations?: InvitationEmailTranslations
 }
 
 export function InvitationEmail({
@@ -38,20 +54,31 @@ export function InvitationEmail({
   declineUrl,
   viewInAppUrl,
   churchName,
+  translations = defaultTranslations,
 }: InvitationEmailProps) {
+  const t = translations
+
+  // Helper to interpolate values
+  const i = (template: string, params: Record<string, string>) =>
+    template.replace(/\{(\w+)\}/g, (_, key) => params[key] ?? '')
+
+  const previewText = i(t.preview, { positionTitle, eventTitle })
+  const greetingText = i(t.greeting, { name: recipientName })
+  const footerText = i(t.footer, { churchName })
+
   return (
     <Html>
       <Head />
-      <Preview>You&apos;re invited to serve as {positionTitle} for {eventTitle}</Preview>
+      <Preview>{previewText}</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Heading style={h1}>You&apos;re Invited to Serve</Heading>
+          <Heading style={h1}>{t.heading}</Heading>
 
-          <Text style={text}>Hi {recipientName},</Text>
+          <Text style={text}>{greetingText}</Text>
 
-          <Text style={text}>
-            You&apos;ve been invited to serve at <strong>{churchName}</strong>:
-          </Text>
+          <Text style={text} dangerouslySetInnerHTML={{
+            __html: i(t.intro, { churchName })
+          }} />
 
           <Section style={eventBox}>
             <Text style={eventTitleStyle}>{eventTitle}</Text>
@@ -68,26 +95,30 @@ export function InvitationEmail({
 
           <Section style={buttonContainer}>
             <Button style={acceptButton} href={acceptUrl}>
-              Accept Invitation
+              {t.acceptButton}
             </Button>
           </Section>
 
           <Section style={buttonContainerSecondary}>
             <Button style={declineButton} href={declineUrl}>
-              Decline
+              {t.declineButton}
             </Button>
           </Section>
 
           <Text style={orText}>
-            Or <Link href={viewInAppUrl} style={link}>view this invitation in the app</Link>
+            {t.viewInApp.split('<link>')[0]}
+            <Link href={viewInAppUrl} style={link}>
+              {t.viewInApp.match(/<link>(.*?)<\/link>/)?.[1] || 'view this invitation in the app'}
+            </Link>
+            {t.viewInApp.split('</link>')[1] || ''}
           </Text>
 
           <Hr style={hr} />
 
           <Text style={footer}>
-            You received this email because you&apos;re a member of {churchName}.
+            {footerText}
             <br />
-            To stop receiving these emails, update your notification preferences in the app.
+            {t.footerUnsubscribe}
           </Text>
         </Container>
       </Body>

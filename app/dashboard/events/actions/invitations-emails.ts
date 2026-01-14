@@ -1,12 +1,20 @@
 'use server'
 
-import { format } from 'date-fns'
+import { format, type Locale } from 'date-fns'
+import { enUS, pl } from 'date-fns/locale'
 import { unwrapRelation } from './helpers'
 import { sendEmail } from '@/lib/email/config'
 import { InvitationEmail } from '@/emails/InvitationEmail'
+import { getEmailTranslations, interpolate } from '@/lib/email/translations'
 import { formatTimeFromDate, type TimeFormat } from '@/lib/utils/format'
 import { sendPushToUser } from '@/lib/push/send'
 import type { AssignmentWithPosition } from './invitations-types'
+
+// Map locale strings to date-fns locales
+const dateFnsLocales: Record<string, Locale> = {
+  en: enUS,
+  pl: pl,
+}
 
 /**
  * Send invitation emails and push notifications to volunteers
@@ -19,7 +27,7 @@ export async function sendInvitationEmails(
   const profileIds = assignments.map((a) => a.profile_id)
   const { data: profiles } = await adminClient
     .from('profiles')
-    .select('id, first_name, email, receive_email_notifications')
+    .select('id, first_name, email, receive_email_notifications, language')
     .in('id', profileIds)
 
   const profileMap = new Map(profiles?.map((p) => [p.id, p]) || [])
@@ -41,16 +49,27 @@ export async function sendInvitationEmails(
     const ministry = unwrapRelation(position.ministry)
     const church = unwrapRelation(event.church)
 
+    // Get user's language preference and translations
+    const userLocale = profile.language || 'en'
+    const emailTranslations = getEmailTranslations(userLocale)
+    const dateFnsLocale = dateFnsLocales[userLocale] || enUS
+
     const startDate = new Date(event.start_time)
-    const eventDate = format(startDate, 'EEEE, MMMM d, yyyy')
+    const eventDate = format(startDate, 'EEEE, MMMM d, yyyy', { locale: dateFnsLocale })
     const timeFormat = (church?.time_format || '24h') as TimeFormat
     const eventTime = event.end_time
       ? `${formatTimeFromDate(startDate, timeFormat)} - ${formatTimeFromDate(new Date(event.end_time), timeFormat)}`
       : formatTimeFromDate(startDate, timeFormat)
 
+    // Generate translated subject
+    const subject = interpolate(emailTranslations.invitation.subject, {
+      positionTitle: position.title,
+      eventTitle: event.title,
+    })
+
     sendEmail({
       to: profile.email,
-      subject: `You're invited to serve: ${position.title} for ${event.title}`,
+      subject,
       react: InvitationEmail({
         recipientName: profile.first_name,
         eventTitle: event.title,
@@ -63,10 +82,11 @@ export async function sendInvitationEmails(
         declineUrl: `${siteUrl}/api/invitation/respond?token=${notification.email_token}&action=decline`,
         viewInAppUrl: `${siteUrl}/dashboard/inbox`,
         churchName: church?.name || 'Your Church',
+        translations: emailTranslations.invitation,
       }),
     }).catch((err) => console.error('[Email] Failed to send invitation email:', err))
 
-    // Send push notification
+    // Send push notification (still in English for now - push notifications are typically short)
     sendPushToUser(notification.recipient_id, {
       title: "You've been invited to serve",
       body: `${position.title} for ${event.title} on ${eventDate}`,
