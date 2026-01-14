@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Geist, Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { NavigationProgress } from "@/components/NavigationProgress";
 import { Toaster } from "sonner";
@@ -49,6 +50,7 @@ export default async function RootLayout({
           </Suspense>
           <QueryProvider>{children}</QueryProvider>
           <Toaster position="top-right" richColors duration={2000} />
+          <SpeedInsights />
         </NextIntlClientProvider>
       </body>
     </html>
