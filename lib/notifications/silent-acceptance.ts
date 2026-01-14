@@ -146,6 +146,7 @@ export async function sendSilentAcceptanceNotifications(document: DocumentInfo) 
   )
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const viewUrl = `${siteUrl}/legal/${document.documentType.replace(/_/g, '-')}`
   const disagreeUrl = `${siteUrl}/legal/disagree?doc=${document.documentType}&id=${document.id}`
 
   // Format dates and labels using document language
@@ -184,6 +185,7 @@ export async function sendSilentAcceptanceNotifications(document: DocumentInfo) 
             effectiveDate: formattedEffectiveDate,
             disagreementDeadline: formattedDeadline,
             summaryOfChanges: document.summary,
+            viewUrl,
             disagreeUrl,
             translations,
           }),

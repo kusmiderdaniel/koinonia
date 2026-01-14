@@ -20,41 +20,50 @@ export interface SilentAcceptanceEmailTranslations {
   effectiveDateLabel: string
   deadlineLabel: string
   deadlineExplanation: string
-  pdfAttached: string
+  whatHappens: string
+  automaticAcceptance: string
+  viewDocumentButton: string
   disagreeButton: string
-  continueUsing: string
+  disagreeWarning: string
+  pdfAttached: string
   footer: string
   footerDisclaimer: string
 }
 
 export const defaultTranslations: SilentAcceptanceEmailTranslations = {
-  subject: 'Updated {documentTitle} - Review Required',
-  preview: 'Important changes to {documentTitle} - Review before {deadline}',
+  subject: 'Updated {documentTitle} - Changes effective {effectiveDate}',
+  preview: 'Important changes to {documentTitle} effective {effectiveDate}',
   heading: 'Legal Document Updated',
   greeting: 'Hi {name},',
-  intro: "We've made changes to our <strong>{documentTitle}</strong>. Please review the attached document and the summary below.",
-  effectiveDateLabel: 'Effective Date',
-  deadlineLabel: 'Disagreement Deadline',
-  deadlineExplanation: 'If you have concerns about these changes, you must express your disagreement before this date.',
+  intro: "We've updated our <strong>{documentTitle}</strong>. These changes will take effect on <strong>{effectiveDate}</strong>.",
+  effectiveDateLabel: 'Changes take effect on',
+  deadlineLabel: 'Deadline to disagree',
+  deadlineExplanation: 'If you do not express disagreement by this date, you automatically accept the updated terms.',
+  whatHappens: 'What happens next?',
+  automaticAcceptance: "You don't need to do anything. If you continue using Koinonia after {effectiveDate}, the updated terms will apply to you automatically.",
+  viewDocumentButton: 'View Updated Document',
+  disagreeButton: 'I Disagree with These Changes',
+  disagreeWarning: 'If you disagree, your account will be scheduled for deletion. You have until {effectiveDate} to express disagreement.',
   pdfAttached: 'The full document is attached to this email as a PDF.',
-  disagreeButton: 'Disagree with Changes',
-  continueUsing: 'If you continue using Koinonia after {effectiveDate}, you accept these changes.',
   footer: 'This is an important legal notification from Koinonia.',
   footerDisclaimer: 'You received this email because you are a user of Koinonia.',
 }
 
 export const polishTranslations: SilentAcceptanceEmailTranslations = {
-  subject: 'Zaktualizowano {documentTitle} - Wymagana weryfikacja',
-  preview: 'Ważne zmiany w {documentTitle} - Sprawdź przed {deadline}',
+  subject: 'Zaktualizowano {documentTitle} - Zmiany wchodzą w życie {effectiveDate}',
+  preview: 'Ważne zmiany w {documentTitle} wchodzą w życie {effectiveDate}',
   heading: 'Dokument prawny zaktualizowany',
   greeting: 'Cześć {name},',
-  intro: 'Wprowadziliśmy zmiany w naszym dokumencie <strong>{documentTitle}</strong>. Prosimy o zapoznanie się z załączonym dokumentem i poniższym podsumowaniem.',
-  effectiveDateLabel: 'Data wejścia w życie',
-  deadlineLabel: 'Termin na zgłoszenie sprzeciwu',
-  deadlineExplanation: 'Jeśli masz zastrzeżenia do tych zmian, musisz zgłosić swój sprzeciw przed tą datą.',
+  intro: 'Zaktualizowaliśmy nasz dokument <strong>{documentTitle}</strong>. Zmiany wchodzą w życie <strong>{effectiveDate}</strong>.',
+  effectiveDateLabel: 'Zmiany wchodzą w życie',
+  deadlineLabel: 'Termin na wyrażenie sprzeciwu',
+  deadlineExplanation: 'Jeśli nie wyrazisz sprzeciwu do tego terminu, automatycznie akceptujesz zaktualizowane warunki.',
+  whatHappens: 'Co dalej?',
+  automaticAcceptance: 'Nie musisz nic robić. Jeśli będziesz kontynuować korzystanie z Koinonia po {effectiveDate}, zaktualizowane warunki będą obowiązywać automatycznie.',
+  viewDocumentButton: 'Zobacz zaktualizowany dokument',
+  disagreeButton: 'Nie zgadzam się ze zmianami',
+  disagreeWarning: 'Jeśli się nie zgadzasz, Twoje konto zostanie zaplanowane do usunięcia. Masz czas do {effectiveDate}, aby wyrazić sprzeciw.',
   pdfAttached: 'Pełny dokument jest załączony do tej wiadomości jako PDF.',
-  disagreeButton: 'Zgłoś sprzeciw',
-  continueUsing: 'Jeśli będziesz nadal korzystać z Koinonia po {effectiveDate}, akceptujesz te zmiany.',
   footer: 'Jest to ważne powiadomienie prawne od Koinonia.',
   footerDisclaimer: 'Otrzymujesz tę wiadomość, ponieważ jesteś użytkownikiem Koinonia.',
 }
@@ -66,6 +75,7 @@ export interface SilentAcceptanceEmailProps {
   effectiveDate: string
   disagreementDeadline: string
   summaryOfChanges: string | null
+  viewUrl: string
   disagreeUrl: string
   translations?: SilentAcceptanceEmailTranslations
 }
@@ -81,6 +91,7 @@ export function SilentAcceptanceEmail({
   effectiveDate,
   disagreementDeadline,
   summaryOfChanges,
+  viewUrl,
   disagreeUrl,
   translations = defaultTranslations,
 }: SilentAcceptanceEmailProps) {
@@ -149,18 +160,33 @@ export function SilentAcceptanceEmail({
             <Text style={attachmentText}>📎 {t.pdfAttached}</Text>
           </Section>
 
-          {/* Disagree button */}
+          {/* View document button - Primary action */}
           <Section style={buttonContainer}>
-            <Button style={disagreeButton} href={disagreeUrl}>
-              {t.disagreeButton}
+            <Button style={viewButton} href={viewUrl}>
+              {t.viewDocumentButton}
             </Button>
           </Section>
 
-          {/* Warning about continued use */}
-          <Section style={warningBox}>
-            <Text style={warningText}>
-              {interpolate(t.continueUsing, values)}
+          {/* What happens next - Automatic acceptance explanation */}
+          <Section style={infoBox}>
+            <Text style={infoTitle}>{t.whatHappens}</Text>
+            <Text style={infoText}>
+              {interpolate(t.automaticAcceptance, values)}
             </Text>
+          </Section>
+
+          <Hr style={sectionHr} />
+
+          {/* Disagree section */}
+          <Section style={disagreeSection}>
+            <Text style={disagreeWarningText}>
+              {interpolate(t.disagreeWarning, values)}
+            </Text>
+            <Section style={buttonContainer}>
+              <Button style={disagreeButtonStyle} href={disagreeUrl}>
+                {t.disagreeButton}
+              </Button>
+            </Section>
           </Section>
 
           <Hr style={footerHr} />
@@ -319,8 +345,8 @@ const buttonContainer = {
   margin: '24px 0',
 }
 
-const disagreeButton = {
-  backgroundColor: '#dc2626',
+const viewButton = {
+  backgroundColor: '#f49f1e',
   borderRadius: '9999px',
   color: '#ffffff',
   fontSize: '16px',
@@ -331,20 +357,56 @@ const disagreeButton = {
   display: 'inline-block',
 }
 
-const warningBox = {
-  backgroundColor: '#fef2f2',
+const infoBox = {
+  backgroundColor: '#f0fdf4',
   borderRadius: '6px',
-  border: '1px solid #fecaca',
+  border: '1px solid #bbf7d0',
   padding: '16px',
   margin: '24px 0',
 }
 
-const warningText = {
-  color: '#991b1b',
+const infoTitle = {
+  color: '#166534',
+  fontSize: '16px',
+  fontWeight: '600',
+  lineHeight: '24px',
+  margin: '0 0 8px',
+}
+
+const infoText = {
+  color: '#15803d',
   fontSize: '14px',
   lineHeight: '20px',
   margin: '0',
+}
+
+const sectionHr = {
+  borderColor: '#e5e7eb',
+  margin: '24px 0',
+}
+
+const disagreeSection = {
+  margin: '24px 0',
+}
+
+const disagreeWarningText = {
+  color: '#991b1b',
+  fontSize: '14px',
+  lineHeight: '20px',
+  margin: '0 0 16px',
   textAlign: 'center' as const,
+}
+
+const disagreeButtonStyle = {
+  backgroundColor: '#dc2626',
+  borderRadius: '9999px',
+  color: '#ffffff',
+  fontSize: '14px',
+  fontWeight: '600',
+  padding: '10px 24px',
+  textDecoration: 'none',
+  textAlign: 'center' as const,
+  display: 'inline-block',
 }
 
 const footerHr = {
