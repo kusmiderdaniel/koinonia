@@ -1,10 +1,10 @@
 {
   "invitation": {
-    "subject": "Zaproszenie do posługi: {positionTitle} na {eventTitle}",
-    "preview": "Zaproszenie do posługi jako {positionTitle} na {eventTitle}",
-    "heading": "Zaproszenie do Posługi",
+    "subject": "Zaproszenie do służby: {positionTitle} na {eventTitle}",
+    "preview": "Zaproszenie do służby jako {positionTitle} na {eventTitle}",
+    "heading": "Zaproszenie do służby",
     "greeting": "Cześć {name},",
-    "intro": "Zostałeś zaproszony do posługi w <strong>{churchName}</strong>:",
+    "intro": "Zostałeś zaproszony do służby w <strong>{churchName}</strong>:",
     "acceptButton": "Przyjmij zaproszenie",
     "declineButton": "Odrzuć",
     "viewInApp": "Lub <link>zobacz to zaproszenie w aplikacji</link>",
@@ -14,12 +14,12 @@
   "invitationResponse": {
     "acceptedSubject": "{name} przyjął/przyjęła: {positionTitle} na {eventTitle}",
     "declinedSubject": "{name} odrzucił/odrzuciła: {positionTitle} na {eventTitle}",
-    "acceptedPreview": "{name} przyjął/przyjęła zaproszenie do posługi jako {positionTitle}",
-    "declinedPreview": "{name} odrzucił/odrzuciła zaproszenie do posługi jako {positionTitle}",
+    "acceptedPreview": "{name} przyjął/przyjęła zaproszenie do służby jako {positionTitle}",
+    "declinedPreview": "{name} odrzucił/odrzuciła zaproszenie do służby jako {positionTitle}",
     "acceptedHeading": "Zaproszenie Przyjęte",
     "declinedHeading": "Zaproszenie Odrzucone",
-    "acceptedIntro": "<strong>{name}</strong> przyjął/przyjęła zaproszenie do posługi:",
-    "declinedIntro": "<strong>{name}</strong> odrzucił/odrzuciła zaproszenie do posługi:",
+    "acceptedIntro": "<strong>{name}</strong> przyjął/przyjęła zaproszenie do służby:",
+    "declinedIntro": "<strong>{name}</strong> odrzucił/odrzuciła zaproszenie do służby:",
     "viewEvent": "Zobacz wydarzenie",
     "footer": "Otrzymujesz ten email, ponieważ zarządzasz wydarzeniami w {churchName}."
   },
