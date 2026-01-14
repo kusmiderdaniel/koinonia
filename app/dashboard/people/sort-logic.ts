@@ -28,6 +28,35 @@ function calculateAge(dateOfBirth: string | null): number | null {
 
 // Get sortable value from member
 function getSortValue(member: Member, fieldId: string): string | number | boolean | null {
+  // Handle custom fields (prefixed with cf_)
+  if (fieldId.startsWith('cf_')) {
+    const customFieldId = fieldId.slice(3) // Remove 'cf_' prefix
+    const value = member.custom_field_values?.[customFieldId]
+
+    if (value === null || value === undefined) return null
+
+    // Handle different value types for sorting
+    if (typeof value === 'string') {
+      // Could be text, date, or select value
+      // Try to parse as date if it looks like ISO date
+      if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+        return new Date(value).getTime()
+      }
+      return value.toLowerCase()
+    }
+    if (typeof value === 'number') {
+      return value
+    }
+    if (typeof value === 'boolean') {
+      return value ? 1 : 0
+    }
+    if (Array.isArray(value)) {
+      // For multiselect, sort by joined string
+      return value.join(', ').toLowerCase()
+    }
+    return null
+  }
+
   switch (fieldId) {
     case 'name':
       return `${member.first_name} ${member.last_name}`.toLowerCase()

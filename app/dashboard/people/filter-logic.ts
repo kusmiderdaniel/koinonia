@@ -16,6 +16,14 @@ function calculateAge(dateOfBirth: string | null): number | null {
 
 // Get field value from member
 function getFieldValue(member: Member, fieldId: string): string | boolean | number | null | string[] {
+  // Handle custom fields (prefixed with cf_)
+  if (fieldId.startsWith('cf_')) {
+    const customFieldId = fieldId.slice(3) // Remove 'cf_' prefix
+    const value = member.custom_field_values?.[customFieldId]
+    if (value === undefined) return null
+    return value as string | boolean | number | null | string[]
+  }
+
   switch (fieldId) {
     case 'name':
       return `${member.first_name} ${member.last_name}`
@@ -56,14 +64,45 @@ function getFieldValue(member: Member, fieldId: string): string | boolean | numb
   }
 }
 
+// Infer filter type for custom fields based on value type
+function inferTypeFromValue(value: string | boolean | number | null | string[]): string {
+  if (value === null || value === undefined) return 'text'
+  if (typeof value === 'boolean') return 'boolean'
+  if (typeof value === 'number') return 'number'
+  if (Array.isArray(value)) return 'multiSelect'
+  if (typeof value === 'string') {
+    // Check if it looks like a date (YYYY-MM-DD format)
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return 'date'
+    return 'text' // Could be text or select, but they evaluate similarly
+  }
+  return 'text'
+}
+
 // Evaluate a single rule against a member
 function evaluateRule(member: Member, rule: FilterRule): boolean {
   const fieldValue = getFieldValue(member, rule.field)
-  const field = FILTER_FIELDS.find(f => f.id === rule.field)
 
-  if (!field) return true
+  // For custom fields, infer type from value or use select/text based on operator
+  let fieldType: string
+  if (rule.field.startsWith('cf_')) {
+    // Infer type from value or from operator hints
+    if (rule.operator === 'is' || rule.operator === 'is_not') {
+      // Could be select or boolean
+      if (typeof fieldValue === 'boolean') {
+        fieldType = 'boolean'
+      } else {
+        fieldType = 'select'
+      }
+    } else {
+      fieldType = inferTypeFromValue(fieldValue)
+    }
+  } else {
+    const field = FILTER_FIELDS.find(f => f.id === rule.field)
+    if (!field) return true
+    fieldType = field.type
+  }
 
-  switch (field.type) {
+  switch (fieldType) {
     case 'text':
       return evaluateTextRule(fieldValue as string | null, rule.operator, rule.value as string)
     case 'select':
