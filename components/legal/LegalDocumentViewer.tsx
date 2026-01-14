@@ -89,12 +89,6 @@ export function LegalDocumentViewer({
 
     setIsDownloading(true)
     try {
-      // Create a new window with print-friendly content
-      const printWindow = window.open('', '_blank')
-      if (!printWindow) {
-        throw new Error('Could not open print window')
-      }
-
       const versionText = `${t('documents.version', { version: document.version })} | ${t('documents.effectiveDate', { date: new Date(document.effective_date).toLocaleDateString(locale) })}`
 
       // Function to convert markdown tables to HTML
@@ -125,7 +119,6 @@ export function LegalDocumentViewer({
               tableRows.forEach((row, idx) => {
                 const cells = row.split('|').filter(cell => cell.trim() !== '')
                 const tag = idx === 0 ? 'th' : 'td'
-                const rowTag = idx === 0 ? 'thead' : 'tbody'
                 if (idx === 0) tableHtml += '<thead>'
                 if (idx === 1) tableHtml += '<tbody>'
                 tableHtml += '<tr>'
@@ -197,12 +190,13 @@ export function LegalDocumentViewer({
         .replace(/<p>\s*<\/p>/g, '')
         .replace(/<p><\/p>/g, '')
 
-      printWindow.document.write(`
+      // Create HTML content for print
+      const printHtml = `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="UTF-8">
-          <title>${document.title}</title>
+          <title>${document.title} - Koinonia</title>
           <style>
             @page {
               size: A4;
@@ -259,18 +253,29 @@ export function LegalDocumentViewer({
           <div class="content">
             <p>${htmlContent}</p>
           </div>
-          <script>
-            window.onload = function() {
-              window.print();
-              window.onafterprint = function() {
-                window.close();
-              };
-            };
-          </script>
         </body>
         </html>
-      `)
-      printWindow.document.close()
+      `
+
+      // Create a Blob with the HTML content
+      const blob = new Blob([printHtml], { type: 'text/html' })
+      const blobUrl = URL.createObjectURL(blob)
+
+      // Open the blob URL in a new window
+      const printWindow = window.open(blobUrl, '_blank')
+      if (!printWindow) {
+        URL.revokeObjectURL(blobUrl)
+        throw new Error('Could not open print window')
+      }
+
+      // Wait for the window to load, then print and clean up
+      printWindow.onload = () => {
+        printWindow.print()
+        printWindow.onafterprint = () => {
+          printWindow.close()
+          URL.revokeObjectURL(blobUrl)
+        }
+      }
     } catch (err) {
       console.error('Failed to generate PDF:', err)
     } finally {
