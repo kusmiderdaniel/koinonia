@@ -4,6 +4,7 @@ import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { isSuperAdmin } from '@/lib/permissions'
 import { revalidatePath } from 'next/cache'
 import { notifyUsersOfDocumentUpdate } from '@/lib/notifications/legal-document-update'
+import { sendSilentAcceptanceNotifications } from '@/lib/notifications/silent-acceptance'
 
 export type DocumentType = 'terms_of_service' | 'privacy_policy' | 'dpa' | 'church_admin_terms'
 export type Language = 'en' | 'pl'
@@ -328,9 +329,24 @@ export async function publishDocument(
     return { success: false, error: 'Failed to publish document' }
   }
 
-  // 3. If email notification is requested and acceptance type is active
-  if (sendNotificationEmail && doc.acceptance_type === 'active') {
-    // Send email notifications asynchronously (don't wait for completion)
+  // 3. Send notifications based on acceptance type
+  if (doc.acceptance_type === 'silent') {
+    // Silent acceptance: Always send notification emails with PDF attachments
+    // Users can disagree within the grace period (14 days for ToS/PP, 30 days for DPA/AT)
+    sendSilentAcceptanceNotifications({
+      id: doc.id,
+      title: doc.title,
+      content: doc.content,
+      documentType: doc.document_type,
+      version: doc.version,
+      effectiveDate: doc.effective_date,
+      summary: doc.summary,
+      language: doc.language as 'en' | 'pl',
+    }).catch((err) => {
+      console.error('Error sending silent acceptance notifications:', err)
+    })
+  } else if (sendNotificationEmail && doc.acceptance_type === 'active') {
+    // Active acceptance: Optionally send notification emails
     notifyUsersOfDocumentUpdate({
       id: doc.id,
       title: doc.title,

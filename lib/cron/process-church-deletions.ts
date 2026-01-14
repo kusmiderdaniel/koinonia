@@ -1,0 +1,128 @@
+import { createServiceRoleClient } from '@/lib/supabase/server'
+
+interface ProcessChurchDeletionsResult {
+  processed: number
+  deleted: number
+  membersDisconnected: number
+  errors: number
+}
+
+/**
+ * Process pending church deletions for DPA/Admin Terms disagreements.
+ * Runs daily to find deletions past their deadline and delete churches.
+ */
+export async function processChurchDeletions(): Promise<ProcessChurchDeletionsResult> {
+  const adminClient = createServiceRoleClient()
+  const now = new Date().toISOString()
+
+  let processed = 0
+  let deleted = 0
+  let membersDisconnected = 0
+  let errors = 0
+
+  // Find pending church deletions past their deadline
+  const { data: pendingDeletions, error: fetchError } = await adminClient
+    .from('church_deletion_schedules')
+    .select(`
+      id,
+      church_id,
+      disagreement_id,
+      church:churches(id, name)
+    `)
+    .eq('status', 'pending')
+    .lt('scheduled_deletion_at', now)
+
+  if (fetchError) {
+    console.error('[Cron:ChurchDeletions] Error fetching pending deletions:', fetchError)
+    return { processed: 0, deleted: 0, membersDisconnected: 0, errors: 1 }
+  }
+
+  if (!pendingDeletions || pendingDeletions.length === 0) {
+    console.log('[Cron:ChurchDeletions] No pending church deletions to process')
+    return { processed: 0, deleted: 0, membersDisconnected: 0, errors: 0 }
+  }
+
+  console.log(`[Cron:ChurchDeletions] Found ${pendingDeletions.length} churches to process`)
+
+  for (const schedule of pendingDeletions) {
+    processed++
+
+    try {
+      const churchData = schedule.church as Array<{ id: string; name: string }> | null
+      const church = churchData?.[0]
+      const churchName = church?.name || 'Unknown Church'
+
+      console.log(`[Cron:ChurchDeletions] Processing deletion for church: ${churchName}`)
+
+      // Update schedule status to processing
+      await adminClient
+        .from('church_deletion_schedules')
+        .update({ status: 'completed' })
+        .eq('id', schedule.id)
+
+      // Count and disconnect all members
+      const { data: members, error: membersError } = await adminClient
+        .from('profiles')
+        .select('id')
+        .eq('church_id', schedule.church_id)
+
+      if (membersError) {
+        console.error(`[Cron:ChurchDeletions] Error fetching members for church ${schedule.church_id}:`, membersError)
+      }
+
+      const memberCount = members?.length || 0
+
+      // Disconnect all members from the church (set church_id to null)
+      // This preserves their accounts but removes church association
+      const { error: disconnectError } = await adminClient
+        .from('profiles')
+        .update({ church_id: null, role: 'member' })
+        .eq('church_id', schedule.church_id)
+
+      if (disconnectError) {
+        console.error(`[Cron:ChurchDeletions] Error disconnecting members from church ${schedule.church_id}:`, disconnectError)
+        errors++
+        continue
+      }
+
+      membersDisconnected += memberCount
+
+      // Delete the church
+      // This should cascade to related tables (ministries, events, etc.)
+      const { error: deleteError } = await adminClient
+        .from('churches')
+        .delete()
+        .eq('id', schedule.church_id)
+
+      if (deleteError) {
+        console.error(`[Cron:ChurchDeletions] Error deleting church ${schedule.church_id}:`, deleteError)
+        errors++
+        continue
+      }
+
+      // Update disagreement status to completed
+      await adminClient
+        .from('legal_disagreements')
+        .update({
+          status: 'completed',
+          processed_at: new Date().toISOString(),
+        })
+        .eq('id', schedule.disagreement_id)
+
+      deleted++
+      console.log(`[Cron:ChurchDeletions] Successfully deleted church ${churchName}, disconnected ${memberCount} members`)
+    } catch (error) {
+      console.error(`[Cron:ChurchDeletions] Error processing schedule ${schedule.id}:`, error)
+      errors++
+
+      // Mark as completed to avoid reprocessing
+      await adminClient
+        .from('church_deletion_schedules')
+        .update({ status: 'completed' })
+        .eq('id', schedule.id)
+    }
+  }
+
+  console.log(`[Cron:ChurchDeletions] Completed: ${deleted} deleted, ${membersDisconnected} members disconnected, ${errors} errors`)
+  return { processed, deleted, membersDisconnected, errors }
+}

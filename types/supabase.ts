@@ -274,6 +274,51 @@ export type Database = {
           },
         ]
       }
+      church_deletion_schedules: {
+        Row: {
+          church_id: string
+          created_at: string | null
+          disagreement_id: string
+          id: string
+          member_notification_sent_at: string | null
+          scheduled_deletion_at: string
+          status: string
+        }
+        Insert: {
+          church_id: string
+          created_at?: string | null
+          disagreement_id: string
+          id?: string
+          member_notification_sent_at?: string | null
+          scheduled_deletion_at: string
+          status?: string
+        }
+        Update: {
+          church_id?: string
+          created_at?: string | null
+          disagreement_id?: string
+          id?: string
+          member_notification_sent_at?: string | null
+          scheduled_deletion_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_deletion_schedules_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "church_deletion_schedules_disagreement_id_fkey"
+            columns: ["disagreement_id"]
+            isOneToOne: false
+            referencedRelation: "legal_disagreements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       church_holidays: {
         Row: {
           church_id: string
@@ -449,7 +494,7 @@ export type Database = {
             columns: ["document_id"]
             isOneToOne: false
             referencedRelation: "legal_document_stats"
-            referencedColumns: ["document_id"]
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "consent_records_document_id_fkey"
@@ -1473,6 +1518,95 @@ export type Database = {
           },
         ]
       }
+      legal_disagreements: {
+        Row: {
+          church_id: string | null
+          deadline_at: string
+          disagreement_type: string
+          document_id: string | null
+          document_type: string
+          document_version: number
+          id: string
+          ip_address: unknown
+          processed_at: string | null
+          profile_id: string | null
+          reason: string | null
+          recorded_at: string
+          status: string
+          user_agent: string | null
+          user_id: string
+          verified_at: string | null
+          warning_email_sent_at: string | null
+        }
+        Insert: {
+          church_id?: string | null
+          deadline_at: string
+          disagreement_type: string
+          document_id?: string | null
+          document_type: string
+          document_version: number
+          id?: string
+          ip_address?: unknown
+          processed_at?: string | null
+          profile_id?: string | null
+          reason?: string | null
+          recorded_at?: string
+          status?: string
+          user_agent?: string | null
+          user_id: string
+          verified_at?: string | null
+          warning_email_sent_at?: string | null
+        }
+        Update: {
+          church_id?: string | null
+          deadline_at?: string
+          disagreement_type?: string
+          document_id?: string | null
+          document_type?: string
+          document_version?: number
+          id?: string
+          ip_address?: unknown
+          processed_at?: string | null
+          profile_id?: string | null
+          reason?: string | null
+          recorded_at?: string
+          status?: string
+          user_agent?: string | null
+          user_id?: string
+          verified_at?: string | null
+          warning_email_sent_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_disagreements_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_disagreements_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "legal_document_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_disagreements_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "legal_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_disagreements_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       legal_documents: {
         Row: {
           acceptance_type: string
@@ -1485,6 +1619,7 @@ export type Database = {
           is_current: boolean | null
           language: string
           published_at: string | null
+          silent_notification_sent_at: string | null
           status: string
           summary: string | null
           title: string
@@ -1501,6 +1636,7 @@ export type Database = {
           is_current?: boolean | null
           language: string
           published_at?: string | null
+          silent_notification_sent_at?: string | null
           status?: string
           summary?: string | null
           title: string
@@ -1517,6 +1653,7 @@ export type Database = {
           is_current?: boolean | null
           language?: string
           published_at?: string | null
+          silent_notification_sent_at?: string | null
           status?: string
           summary?: string | null
           title?: string
@@ -2939,14 +3076,17 @@ export type Database = {
         Row: {
           acceptance_type: string | null
           accepted_count: number | null
+          content: string | null
           created_at: string | null
-          document_id: string | null
+          created_by: string | null
           document_type: string | null
           effective_date: string | null
+          id: string | null
           is_current: boolean | null
           language: string | null
           published_at: string | null
           status: string | null
+          summary: string | null
           title: string | null
           version: number | null
           withdrawn_count: number | null
@@ -2955,6 +3095,14 @@ export type Database = {
       }
     }
     Functions: {
+      check_user_has_pending_disagreement: {
+        Args: { p_user_id: string }
+        Returns: {
+          deadline_at: string
+          document_type: string
+          has_pending: boolean
+        }[]
+      }
       check_user_needs_reconsent: {
         Args: { p_user_id: string }
         Returns: boolean

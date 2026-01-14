@@ -209,5 +209,125 @@
     "acceptDpa": "You must accept the Data Processing Agreement",
     "acceptAdminTerms": "You must accept the Church Administrator Terms",
     "acceptDataSharing": "You must consent to data sharing"
+  },
+  "disagreement": {
+    "title": "Disagree with Changes",
+    "user": {
+      "title": "Account Deletion Warning",
+      "description": "Please read this carefully before proceeding",
+      "warning": "Your account will be permanently deleted",
+      "warningDescription": "If you disagree with the updated {documentType} and do not re-agree before the deadline, your Koinonia account and all associated data will be permanently deleted.",
+      "effectiveDate": "Effective Date",
+      "deletionDeadline": "Deletion Deadline",
+      "acknowledgements": "By disagreeing, you acknowledge that:",
+      "acknowledgementsList": [
+        "You cannot use Koinonia without accepting the current terms",
+        "Your account will be deleted on the deadline date if you don't re-agree",
+        "You can withdraw your disagreement at any time before the deadline",
+        "Once deleted, your account cannot be recovered"
+      ],
+      "confirmTitle": "Confirm Your Disagreement",
+      "confirmDescription": "Enter your password to confirm your disagreement with the {documentType}",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "understandCheckbox": "I understand that my account will be permanently deleted on {deadline} if I do not withdraw this disagreement.",
+      "confirmButton": "Confirm Disagreement",
+      "processing": "Processing...",
+      "goBack": "Go Back",
+      "iUnderstandContinue": "I Understand, Continue"
+    },
+    "church": {
+      "title": "Church Deletion Warning",
+      "description": "Please read this carefully before proceeding",
+      "warning": "Your church will be permanently deleted",
+      "warningDescription": "If you disagree with the updated {documentType} and do not re-agree before the deadline, {churchName} and all associated data will be permanently deleted.",
+      "membersDisconnected": "All church members will be disconnected from the church",
+      "membersNotified": "Church members will be notified 10 days before deletion",
+      "acknowledgements": "By disagreeing, you acknowledge that:",
+      "acknowledgementsList": [
+        "Your church cannot operate without accepting the current terms",
+        "{churchName} will be deleted on the deadline date if you don't re-agree",
+        "All church members will be disconnected from the church",
+        "Church members will be notified 10 days before deletion",
+        "You can withdraw your disagreement at any time before the deadline",
+        "Once deleted, your church data cannot be recovered"
+      ],
+      "optionsTitle": "Your Options",
+      "optionsDescription": "Before deleting your church, consider these alternatives",
+      "transferOwnership": "Transfer Ownership",
+      "transferDescription": "Transfer the church to another admin who accepts the new terms",
+      "transferButton": "Transfer to Another Admin",
+      "exportData": "Export Church Data",
+      "exportDescription": "Download all your church data before deletion",
+      "exportButton": "Export Church Data",
+      "exporting": "Exporting...",
+      "proceedWithDisagreement": "Proceed with Disagreement",
+      "proceedDescription": "Schedule your church for deletion",
+      "confirmTitle": "Confirm Your Disagreement",
+      "confirmDescription": "Enter your password to confirm your disagreement with the {documentType}",
+      "understandCheckbox": "I understand that {churchName} will be permanently deleted on {deadline} if I do not withdraw this disagreement.",
+      "transferDialog": {
+        "title": "Transfer Church Ownership",
+        "description": "Select an admin to transfer ownership to. This will cancel the scheduled deletion.",
+        "selectLabel": "Select New Owner",
+        "selectPlaceholder": "Select an admin",
+        "passwordLabel": "Your Password",
+        "passwordPlaceholder": "Enter your password to confirm",
+        "cancelButton": "Cancel",
+        "transferButton": "Transfer Ownership",
+        "transferring": "Transferring..."
+      }
+    },
+    "pending": {
+      "userTitle": "Pending Disagreements",
+      "userDescription": "You have disagreed with the following documents. Your account will be deleted if you don't withdraw your disagreement before the deadline.",
+      "churchTitle": "Pending Church Deletions",
+      "churchDescription": "You have disagreed with the following documents. Your church will be deleted if you don't withdraw your disagreement before the deadline.",
+      "deadline": "Deadline: {date}",
+      "reAgree": "Re-agree",
+      "backToDashboard": "Back to Dashboard"
+    },
+    "success": {
+      "title": "Disagreement Recorded",
+      "description": "Your disagreement has been recorded successfully",
+      "userConsequences": [
+        "Your account is scheduled for deletion on the deadline date",
+        "You can continue using Koinonia until then",
+        "You can withdraw your disagreement at any time before the deadline",
+        "If you withdraw, you accept the updated terms and your account will not be deleted"
+      ],
+      "churchConsequences": [
+        "Your church is scheduled for deletion",
+        "Church members will be notified 10 days before deletion",
+        "You can transfer church ownership to another admin before the deadline",
+        "You can export your church data before deletion",
+        "You can withdraw your disagreement at any time before the deadline"
+      ],
+      "changeYourMind": "Change your mind?",
+      "withdrawInfo": "You can withdraw your disagreement from your profile settings at any time before the deadline.",
+      "viewDisagreements": "View My Disagreements",
+      "continueToDashboard": "Continue to Dashboard"
+    },
+    "emails": {
+      "silentAcceptance": {
+        "subject": "Updated {documentTitle} - Action Required by {deadline}",
+        "preview": "Important legal document update - review and take action if needed"
+      },
+      "churchDeletionWarning": {
+        "subject": "Important: {churchName} will be deleted on {date}",
+        "preview": "Your church is scheduled for deletion - your account is safe"
+      }
+    },
+    "errors": {
+      "notAuthenticated": "Not authenticated",
+      "documentNotFound": "Document not found",
+      "alreadyPending": "You already have a pending disagreement for this document",
+      "deadlinePassed": "The disagreement deadline has passed",
+      "onlyOwners": "Only church owners can disagree with DPA/Admin Terms",
+      "incorrectPassword": "Incorrect password",
+      "failedToRecord": "Failed to record disagreement",
+      "notFound": "Disagreement not found or already processed",
+      "failedToWithdraw": "Failed to withdraw disagreement"
+    }
   }
 }

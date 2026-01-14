@@ -209,5 +209,125 @@
     "acceptDpa": "Musisz zaakceptować Umowę Powierzenia Przetwarzania Danych",
     "acceptAdminTerms": "Musisz zaakceptować Warunki dla Administratorów Kościoła",
     "acceptDataSharing": "Musisz wyrazić zgodę na udostępnianie danych"
+  },
+  "disagreement": {
+    "title": "Wyraź Sprzeciw wobec Zmian",
+    "user": {
+      "title": "Ostrzeżenie o Usunięciu Konta",
+      "description": "Przeczytaj to uważnie przed kontynuowaniem",
+      "warning": "Twoje konto zostanie trwale usunięte",
+      "warningDescription": "Jeśli wyrazisz sprzeciw wobec zaktualizowanego dokumentu {documentType} i nie zaakceptujesz go ponownie przed terminem, Twoje konto Koinonia i wszystkie powiązane dane zostaną trwale usunięte.",
+      "effectiveDate": "Data wejścia w życie",
+      "deletionDeadline": "Termin usunięcia",
+      "acknowledgements": "Wyrażając sprzeciw, przyjmujesz do wiadomości, że:",
+      "acknowledgementsList": [
+        "Nie możesz korzystać z Koinonia bez akceptacji aktualnych warunków",
+        "Twoje konto zostanie usunięte w dniu terminu, jeśli nie zaakceptujesz ponownie",
+        "Możesz wycofać sprzeciw w dowolnym momencie przed terminem",
+        "Po usunięciu konta nie można go odzyskać"
+      ],
+      "confirmTitle": "Potwierdź Swój Sprzeciw",
+      "confirmDescription": "Wprowadź hasło, aby potwierdzić sprzeciw wobec {documentType}",
+      "passwordLabel": "Hasło",
+      "passwordPlaceholder": "Wprowadź swoje hasło",
+      "understandCheckbox": "Rozumiem, że moje konto zostanie trwale usunięte {deadline}, jeśli nie wycofam tego sprzeciwu.",
+      "confirmButton": "Potwierdź Sprzeciw",
+      "processing": "Przetwarzanie...",
+      "goBack": "Wróć",
+      "iUnderstandContinue": "Rozumiem, Kontynuuj"
+    },
+    "church": {
+      "title": "Ostrzeżenie o Usunięciu Kościoła",
+      "description": "Przeczytaj to uważnie przed kontynuowaniem",
+      "warning": "Twój kościół zostanie trwale usunięty",
+      "warningDescription": "Jeśli wyrazisz sprzeciw wobec zaktualizowanego dokumentu {documentType} i nie zaakceptujesz go ponownie przed terminem, {churchName} i wszystkie powiązane dane zostaną trwale usunięte.",
+      "membersDisconnected": "Wszyscy członkowie kościoła zostaną odłączeni od kościoła",
+      "membersNotified": "Członkowie kościoła zostaną powiadomieni 10 dni przed usunięciem",
+      "acknowledgements": "Wyrażając sprzeciw, przyjmujesz do wiadomości, że:",
+      "acknowledgementsList": [
+        "Twój kościół nie może działać bez akceptacji aktualnych warunków",
+        "{churchName} zostanie usunięty w dniu terminu, jeśli nie zaakceptujesz ponownie",
+        "Wszyscy członkowie kościoła zostaną odłączeni od kościoła",
+        "Członkowie kościoła zostaną powiadomieni 10 dni przed usunięciem",
+        "Możesz wycofać sprzeciw w dowolnym momencie przed terminem",
+        "Po usunięciu danych kościoła nie można ich odzyskać"
+      ],
+      "optionsTitle": "Twoje Opcje",
+      "optionsDescription": "Przed usunięciem kościoła rozważ te alternatywy",
+      "transferOwnership": "Przekaż Własność",
+      "transferDescription": "Przekaż kościół innemu administratorowi, który zaakceptuje nowe warunki",
+      "transferButton": "Przekaż Innemu Administratorowi",
+      "exportData": "Eksportuj Dane Kościoła",
+      "exportDescription": "Pobierz wszystkie dane kościoła przed usunięciem",
+      "exportButton": "Eksportuj Dane Kościoła",
+      "exporting": "Eksportowanie...",
+      "proceedWithDisagreement": "Kontynuuj ze Sprzeciwem",
+      "proceedDescription": "Zaplanuj usunięcie kościoła",
+      "confirmTitle": "Potwierdź Swój Sprzeciw",
+      "confirmDescription": "Wprowadź hasło, aby potwierdzić sprzeciw wobec {documentType}",
+      "understandCheckbox": "Rozumiem, że {churchName} zostanie trwale usunięty {deadline}, jeśli nie wycofam tego sprzeciwu.",
+      "transferDialog": {
+        "title": "Przekaż Własność Kościoła",
+        "description": "Wybierz administratora, któremu chcesz przekazać własność. Anuluje to zaplanowane usunięcie.",
+        "selectLabel": "Wybierz Nowego Właściciela",
+        "selectPlaceholder": "Wybierz administratora",
+        "passwordLabel": "Twoje Hasło",
+        "passwordPlaceholder": "Wprowadź hasło, aby potwierdzić",
+        "cancelButton": "Anuluj",
+        "transferButton": "Przekaż Własność",
+        "transferring": "Przekazywanie..."
+      }
+    },
+    "pending": {
+      "userTitle": "Oczekujące Sprzeciwy",
+      "userDescription": "Wyraziłeś sprzeciw wobec następujących dokumentów. Twoje konto zostanie usunięte, jeśli nie wycofasz sprzeciwu przed terminem.",
+      "churchTitle": "Oczekujące Usunięcia Kościołów",
+      "churchDescription": "Wyraziłeś sprzeciw wobec następujących dokumentów. Twój kościół zostanie usunięty, jeśli nie wycofasz sprzeciwu przed terminem.",
+      "deadline": "Termin: {date}",
+      "reAgree": "Zaakceptuj Ponownie",
+      "backToDashboard": "Wróć do Pulpitu"
+    },
+    "success": {
+      "title": "Sprzeciw Zapisany",
+      "description": "Twój sprzeciw został pomyślnie zapisany",
+      "userConsequences": [
+        "Twoje konto jest zaplanowane do usunięcia w dniu terminu",
+        "Możesz kontynuować korzystanie z Koinonia do tego czasu",
+        "Możesz wycofać sprzeciw w dowolnym momencie przed terminem",
+        "Jeśli wycofasz sprzeciw, akceptujesz zaktualizowane warunki i Twoje konto nie zostanie usunięte"
+      ],
+      "churchConsequences": [
+        "Twój kościół jest zaplanowany do usunięcia",
+        "Członkowie kościoła zostaną powiadomieni 10 dni przed usunięciem",
+        "Możesz przekazać własność kościoła innemu administratorowi przed terminem",
+        "Możesz wyeksportować dane kościoła przed usunięciem",
+        "Możesz wycofać sprzeciw w dowolnym momencie przed terminem"
+      ],
+      "changeYourMind": "Zmienisz zdanie?",
+      "withdrawInfo": "Możesz wycofać sprzeciw w ustawieniach profilu w dowolnym momencie przed terminem.",
+      "viewDisagreements": "Zobacz Moje Sprzeciwy",
+      "continueToDashboard": "Kontynuuj do Pulpitu"
+    },
+    "emails": {
+      "silentAcceptance": {
+        "subject": "Zaktualizowany {documentTitle} - Wymagane działanie do {deadline}",
+        "preview": "Ważna aktualizacja dokumentu prawnego - przejrzyj i podejmij działanie w razie potrzeby"
+      },
+      "churchDeletionWarning": {
+        "subject": "Ważne: {churchName} zostanie usunięty {date}",
+        "preview": "Twój kościół jest zaplanowany do usunięcia - Twoje konto jest bezpieczne"
+      }
+    },
+    "errors": {
+      "notAuthenticated": "Nie uwierzytelniono",
+      "documentNotFound": "Nie znaleziono dokumentu",
+      "alreadyPending": "Masz już oczekujący sprzeciw wobec tego dokumentu",
+      "deadlinePassed": "Termin sprzeciwu minął",
+      "onlyOwners": "Tylko właściciele kościołów mogą wyrazić sprzeciw wobec DPA/Warunków Administratora",
+      "incorrectPassword": "Nieprawidłowe hasło",
+      "failedToRecord": "Nie udało się zapisać sprzeciwu",
+      "notFound": "Nie znaleziono sprzeciwu lub został już przetworzony",
+      "failedToWithdraw": "Nie udało się wycofać sprzeciwu"
+    }
   }
 }
