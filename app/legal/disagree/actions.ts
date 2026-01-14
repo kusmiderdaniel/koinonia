@@ -34,96 +34,102 @@ export async function getDisagreementInfo(
   documentType: DocumentType,
   documentId?: string
 ): Promise<{ data?: DisagreementInfo; error?: string }> {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) {
-    return { error: 'Not authenticated' }
-  }
+    if (!user) {
+      return { error: 'Not authenticated' }
+    }
 
-  const adminClient = createServiceRoleClient()
+    const adminClient = createServiceRoleClient()
 
-  // Get the document
-  let query = adminClient
-    .from('legal_documents')
-    .select('*')
-    .eq('document_type', documentType)
-    .eq('is_current', true)
-    .eq('status', 'published')
-
-  if (documentId) {
-    query = adminClient
+    // Get the document
+    let query = adminClient
       .from('legal_documents')
       .select('*')
-      .eq('id', documentId)
-  }
+      .eq('document_type', documentType)
+      .eq('is_current', true)
+      .eq('status', 'published')
 
-  const { data: doc, error: docError } = await query.single()
+    if (documentId) {
+      query = adminClient
+        .from('legal_documents')
+        .select('*')
+        .eq('id', documentId)
+    }
 
-  if (docError || !doc) {
-    return { error: 'Document not found' }
-  }
+    const { data: doc, error: docError } = await query.single()
 
-  // Check if user already has a pending disagreement for this document
-  const { data: existingDisagreement } = await adminClient
-    .from('legal_disagreements')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('document_id', doc.id)
-    .eq('status', 'pending')
-    .single()
+    if (docError || !doc) {
+      console.error('[getDisagreementInfo] Document query error:', docError)
+      return { error: 'Document not found' }
+    }
 
-  if (existingDisagreement) {
-    return { error: 'You already have a pending disagreement for this document' }
-  }
-
-  // Calculate deadline
-  const effectiveDate = new Date(doc.effective_date)
-  const deadlineDays = DEADLINE_DAYS[documentType as keyof typeof DEADLINE_DAYS] || 14
-  const deadline = addDays(effectiveDate, deadlineDays)
-
-  // Check if deadline has passed
-  if (deadline < new Date()) {
-    return { error: 'The disagreement deadline has passed' }
-  }
-
-  // For DPA/Admin Terms, get church info
-  const isChurchDeletion = documentType === 'dpa' || documentType === 'church_admin_terms'
-  let churchName: string | undefined
-  let churchId: string | undefined
-
-  if (isChurchDeletion) {
-    const { data: profile } = await adminClient
-      .from('profiles')
-      .select('church_id, role, church:churches(id, name)')
+    // Check if user already has a pending disagreement for this document
+    const { data: existingDisagreement } = await adminClient
+      .from('legal_disagreements')
+      .select('id')
       .eq('user_id', user.id)
+      .eq('document_id', doc.id)
+      .eq('status', 'pending')
       .single()
 
-    if (!profile || profile.role !== 'owner') {
-      return { error: 'Only church owners can disagree with DPA/Admin Terms' }
+    if (existingDisagreement) {
+      return { error: 'You already have a pending disagreement for this document' }
     }
 
-    // church is an array from the join, get the first element
-    const churchData = profile.church as Array<{ id: string; name: string }> | null
-    const church = churchData?.[0]
-    if (church) {
-      churchName = church.name
-      churchId = church.id
-    }
-  }
+    // Calculate deadline
+    const effectiveDate = new Date(doc.effective_date)
+    const deadlineDays = DEADLINE_DAYS[documentType as keyof typeof DEADLINE_DAYS] || 14
+    const deadline = addDays(effectiveDate, deadlineDays)
 
-  return {
-    data: {
-      id: doc.id,
-      documentType: doc.document_type as DocumentType,
-      documentTitle: doc.title,
-      documentVersion: doc.version,
-      effectiveDate: doc.effective_date,
-      deadline: deadline.toISOString(),
-      isChurchDeletion,
-      churchName,
-      churchId,
-    },
+    // Check if deadline has passed
+    if (deadline < new Date()) {
+      return { error: 'The disagreement deadline has passed' }
+    }
+
+    // For DPA/Admin Terms, get church info
+    const isChurchDeletion = documentType === 'dpa' || documentType === 'church_admin_terms'
+    let churchName: string | undefined
+    let churchId: string | undefined
+
+    if (isChurchDeletion) {
+      const { data: profile } = await adminClient
+        .from('profiles')
+        .select('church_id, role, church:churches(id, name)')
+        .eq('user_id', user.id)
+        .single()
+
+      if (!profile || profile.role !== 'owner') {
+        return { error: 'Only church owners can disagree with DPA/Admin Terms' }
+      }
+
+      // church is an array from the join, get the first element
+      const churchData = profile.church as Array<{ id: string; name: string }> | null
+      const church = churchData?.[0]
+      if (church) {
+        churchName = church.name
+        churchId = church.id
+      }
+    }
+
+    return {
+      data: {
+        id: doc.id,
+        documentType: doc.document_type as DocumentType,
+        documentTitle: doc.title,
+        documentVersion: doc.version,
+        effectiveDate: doc.effective_date,
+        deadline: deadline.toISOString(),
+        isChurchDeletion,
+        churchName,
+        churchId,
+      },
+    }
+  } catch (error) {
+    console.error('[getDisagreementInfo] Error:', error)
+    return { error: 'Failed to load document information' }
   }
 }
 
