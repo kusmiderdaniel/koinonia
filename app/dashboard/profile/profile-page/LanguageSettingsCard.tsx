@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select'
 import { locales, localeNames, type Locale } from '@/lib/i18n/config'
 import { updateLanguagePreference } from '../actions'
+import { setLocaleCookie } from '@/lib/i18n/actions'
 
 interface LanguageSettingsCardProps {
   currentLanguage: Locale | null
@@ -38,9 +39,14 @@ export function LanguageSettingsCard({ currentLanguage }: LanguageSettingsCardPr
     // Update local state immediately for responsive UI
     setSelectedLanguage(value)
 
-    const result = await updateLanguagePreference(value)
-    if (result.error) {
-      toast.error(result.error)
+    // Update both the database and the cookie for consistency
+    const [dbResult] = await Promise.all([
+      updateLanguagePreference(value),
+      setLocaleCookie(value),
+    ])
+
+    if (dbResult.error) {
+      toast.error(dbResult.error)
       // Revert on error
       setSelectedLanguage(currentLanguage)
     } else {

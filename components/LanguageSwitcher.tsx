@@ -12,18 +12,21 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { locales, localeNames, type Locale } from '@/lib/i18n/config'
-import { setLocaleCookie } from '@/lib/i18n/actions'
+import { setLocaleCookie, updateUserLanguagePreference } from '@/lib/i18n/actions'
 
 interface LanguageSwitcherProps {
   variant?: 'default' | 'ghost' | 'outline'
   size?: 'default' | 'sm' | 'icon'
   showLabel?: boolean
+  /** If true, also updates the database (for logged-in users) */
+  updateDatabase?: boolean
 }
 
 export function LanguageSwitcher({
   variant = 'ghost',
   size = 'sm',
   showLabel = true,
+  updateDatabase = false,
 }: LanguageSwitcherProps) {
   const locale = useLocale() as Locale
   const router = useRouter()
@@ -32,7 +35,14 @@ export function LanguageSwitcher({
   const handleLocaleChange = async (newLocale: Locale) => {
     if (newLocale === locale) return
 
+    // Always set the cookie for immediate UI update
     await setLocaleCookie(newLocale)
+
+    // Also update the database if requested (for logged-in users)
+    if (updateDatabase) {
+      await updateUserLanguagePreference(newLocale)
+    }
+
     startTransition(() => {
       router.refresh()
     })
