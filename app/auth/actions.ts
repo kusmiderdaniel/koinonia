@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { signInSchema, signUpSchema, resetPasswordSchema } from '@/lib/validations/auth'
@@ -59,11 +59,12 @@ export async function signIn(data: SignInInput) {
 
 export async function signUp(data: SignUpInput) {
   const supabase = await createClient()
+  const headersList = await headers()
 
   // Validate input
   const validatedData = signUpSchema.parse(data)
 
-  const { error } = await supabase.auth.signUp({
+  const { data: signUpData, error } = await supabase.auth.signUp({
     email: validatedData.email,
     password: validatedData.password,
     options: {
@@ -77,6 +78,54 @@ export async function signUp(data: SignUpInput) {
 
   if (error) {
     return { error: mapAuthError(error.message) }
+  }
+
+  // Record consent using service role (user not authenticated yet)
+  if (signUpData?.user?.id) {
+    const serviceClient = createServiceRoleClient()
+    const ipAddress = headersList.get('x-forwarded-for')?.split(',')[0] ||
+                      headersList.get('x-real-ip') ||
+                      null
+    const userAgent = headersList.get('user-agent') || null
+
+    // Get current legal documents
+    const { data: termsDoc } = await serviceClient
+      .from('legal_documents')
+      .select('id, version')
+      .eq('document_type', 'terms_of_service')
+      .eq('is_current', true)
+      .single()
+
+    const { data: privacyDoc } = await serviceClient
+      .from('legal_documents')
+      .select('id, version')
+      .eq('document_type', 'privacy_policy')
+      .eq('is_current', true)
+      .single()
+
+    // Record both consents
+    const consents = [
+      {
+        user_id: signUpData.user.id,
+        consent_type: 'terms_of_service',
+        document_id: termsDoc?.id || null,
+        document_version: termsDoc?.version || null,
+        action: 'granted',
+        ip_address: ipAddress,
+        user_agent: userAgent,
+      },
+      {
+        user_id: signUpData.user.id,
+        consent_type: 'privacy_policy',
+        document_id: privacyDoc?.id || null,
+        document_version: privacyDoc?.version || null,
+        action: 'granted',
+        ip_address: ipAddress,
+        user_agent: userAgent,
+      },
+    ]
+
+    await serviceClient.from('consent_records').insert(consents)
   }
 
   // Return success with message key for translation

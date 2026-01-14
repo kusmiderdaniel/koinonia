@@ -35,8 +35,13 @@ export function LinksPageClient({
   linksPageEnabled: initialLinksPageEnabled,
 }: LinksPageClientProps) {
   const t = useTranslations('links')
+  const [mounted, setMounted] = useState(false)
   const [desktopTab, setDesktopTab] = useState('links')
   const [mobileTab, setMobileTab] = useState('links')
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   const [settings, setSettings] = useState<LinkTreeSettingsRow | null>(initialSettings)
   const [links, setLinks] = useState<LinkTreeLinkRow[]>(initialLinks)
   const [linksPageEnabled, setLinksPageEnabled] = useState(initialLinksPageEnabled)
@@ -77,6 +82,10 @@ export function LinksPageClient({
       toast.success(checked ? t('toast.pageEnabled') : t('toast.pageDisabled'))
     }
     setIsTogglingPage(false)
+  }
+
+  if (!mounted) {
+    return null
   }
 
   return (

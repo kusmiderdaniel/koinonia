@@ -7,6 +7,7 @@
     "password": "Hasło",
     "notifications": "Ustawienia powiadomień",
     "language": "Język",
+    "privacy": "Prywatność i Dane",
     "account": "Konto"
   },
   "tabDescriptions": {
@@ -14,6 +15,7 @@
     "password": "Zmień swoje hasło",
     "notifications": "Zarządzaj preferencjami powiadomień",
     "language": "Wybierz preferowany język",
+    "privacy": "Zarządzaj zgodami, eksportuj dane, usuń konto",
     "account": "Opuść kościół lub usuń konto"
   },
   "personalInfo": {

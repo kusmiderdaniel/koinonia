@@ -7,6 +7,7 @@ import events from './events.json'
 import filter from './filter.json'
 import forms from './forms.json'
 import inbox from './inbox.json'
+import legal from './legal.json'
 import links from './links.json'
 import ministries from './ministries.json'
 import onboarding from './onboarding.json'
@@ -29,6 +30,7 @@ const messages = {
   filter,
   forms,
   inbox,
+  legal,
   links,
   ministries,
   onboarding,

@@ -19,6 +19,8 @@ export function useJoinChurchPageState() {
   const [phone, setPhone] = useState('')
   const [dateOfBirth, setDateOfBirth] = useState('')
   const [sex, setSex] = useState<'male' | 'female' | ''>()
+  const [dataSharingConsent, setDataSharingConsent] = useState(false)
+  const [consentError, setConsentError] = useState<string | null>(null)
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -116,8 +118,14 @@ export function useJoinChurchPageState() {
   }, [handleValidateCode])
 
   const onSubmitCampus = useCallback(async () => {
+    // Validate data sharing consent
+    if (!dataSharingConsent) {
+      setConsentError('consent_required')
+      return
+    }
+    setConsentError(null)
     await submitRegistration()
-  }, [submitRegistration])
+  }, [submitRegistration, dataSharingConsent])
 
   const handleSignOut = useCallback(async () => {
     const supabase = createClient()
@@ -149,6 +157,9 @@ export function useJoinChurchPageState() {
     setDateOfBirth,
     sex,
     setSex,
+    dataSharingConsent,
+    setDataSharingConsent,
+    consentError,
     joinCodeValue,
     handleJoinCodeChange,
     onSubmitCode,

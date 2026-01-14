@@ -61,7 +61,8 @@ export function useSongList(initialData?: SongsInitialData): UseSongListReturn {
       songs: initialData.songs,
       canManage: initialData.canManage,
     } : undefined,
-    staleTime: 60 * 1000, // Data fresh for 1 minute
+    staleTime: 0, // Always refetch on mount
+    refetchOnMount: 'always',
     refetchOnWindowFocus: false,
   })
 

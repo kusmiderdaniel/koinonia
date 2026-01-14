@@ -101,7 +101,8 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
       role: initialData.role,
       firstDayOfWeek: initialData.firstDayOfWeek,
     } : undefined,
-    staleTime: 60 * 1000, // Data fresh for 1 minute
+    staleTime: 0, // Always refetch on mount
+    refetchOnMount: 'always',
     refetchOnWindowFocus: false,
   })
 
@@ -113,7 +114,8 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
       return result.data || []
     },
     initialData: initialData?.churchMembers,
-    staleTime: 5 * 60 * 1000, // Members data fresh for 5 minutes
+    staleTime: 0, // Always refetch on mount
+    refetchOnMount: 'always',
     refetchOnWindowFocus: false,
   })
 

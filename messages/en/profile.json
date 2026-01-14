@@ -7,6 +7,7 @@
     "password": "Password",
     "notifications": "Notification Settings",
     "language": "Language",
+    "privacy": "Privacy & Data",
     "account": "Account"
   },
   "tabDescriptions": {
@@ -14,6 +15,7 @@
     "password": "Change your password",
     "notifications": "Manage notification preferences",
     "language": "Choose your preferred language",
+    "privacy": "Manage consents, export data, delete account",
     "account": "Leave church or delete account"
   },
   "personalInfo": {

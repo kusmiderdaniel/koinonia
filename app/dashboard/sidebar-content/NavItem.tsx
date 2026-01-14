@@ -33,6 +33,7 @@ export function NavItem({
   const linkContent = (
     <ProgressLink
       href={item.href}
+      prefetch={false}
       onClick={onNavigate}
       onMouseEnter={onPrefetch}
       className={cn(

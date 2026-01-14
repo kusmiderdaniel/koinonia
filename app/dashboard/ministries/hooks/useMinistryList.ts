@@ -61,7 +61,8 @@ export function useMinistryList(initialData?: MinistriesInitialData): UseMinistr
       data: initialData.ministries,
       role: initialData.role,
     } : undefined,
-    staleTime: 60 * 1000, // Data fresh for 1 minute
+    staleTime: 0, // Always refetch on mount
+    refetchOnMount: 'always',
     refetchOnWindowFocus: false,
   })
 

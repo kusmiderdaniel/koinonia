@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select'
 import { DatePicker } from '@/components/ui/date-picker'
 import { ArrowLeft, Loader2, MapPin, User } from 'lucide-react'
+import { DataSharingPreview } from '@/components/legal'
 import type { CampusInfo } from './types'
 
 interface CampusStepProps {
@@ -30,6 +31,10 @@ interface CampusStepProps {
   sex: 'male' | 'female' | '' | undefined
   onSexChange: (value: 'male' | 'female') => void
   weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  churchName: string
+  dataSharingConsent: boolean
+  onDataSharingConsentChange: (checked: boolean) => void
+  consentError: string | null
   onBack: () => void
   onSubmit: () => void
 }
@@ -47,11 +52,16 @@ export function CampusStep({
   sex,
   onSexChange,
   weekStartsOn,
+  churchName,
+  dataSharingConsent,
+  onDataSharingConsentChange,
+  consentError,
   onBack,
   onSubmit,
 }: CampusStepProps) {
   const t = useTranslations('onboarding.joinChurch.campusStep')
   const tErrors = useTranslations('onboarding.errors')
+  const tLegal = useTranslations('legal')
 
   // Translate error if it's a known key, otherwise display as-is
   const translatedError = error
@@ -167,6 +177,14 @@ export function CampusStep({
         </div>
       </div>
 
+      {/* Data Sharing Consent */}
+      <DataSharingPreview
+        churchName={churchName}
+        checked={dataSharingConsent}
+        onCheckedChange={onDataSharingConsentChange}
+        error={consentError ? tLegal('dataSharing.consentRequired') : undefined}
+      />
+
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-4 pt-4">
         <Button
@@ -184,7 +202,7 @@ export function CampusStep({
           type="button"
           size="lg"
           className="sm:flex-1 h-14 text-base !rounded-full !bg-brand hover:!bg-brand/90 text-white order-1 sm:order-2"
-          disabled={isLoading || (campuses.length > 1 && !selectedCampusId)}
+          disabled={isLoading || (campuses.length > 1 && !selectedCampusId) || !dataSharingConsent}
           onClick={onSubmit}
         >
           {isLoading ? (

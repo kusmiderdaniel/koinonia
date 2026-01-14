@@ -143,6 +143,15 @@ export function isLeaderOrAbove(role: string): boolean {
 }
 
 /**
+ * Check if user is a platform super admin
+ * Super admins have platform-level permissions (e.g., managing legal documents)
+ * This is separate from church-level roles
+ */
+export function isSuperAdmin(profile: { is_super_admin?: boolean | null } | null): boolean {
+  return profile?.is_super_admin === true
+}
+
+/**
  * Get role hierarchy level (higher = more permissions)
  */
 export function getRoleLevel(role: string): number {

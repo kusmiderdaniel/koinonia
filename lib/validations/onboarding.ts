@@ -14,6 +14,13 @@ export const createChurchSchema = z.object({
   phone: z.string().optional(),
   email: z.string().email('Invalid email address').min(1, 'Email is required'),
   timezone: z.string().optional(),
+  // Legal consent fields
+  acceptDpa: z.literal(true, {
+    error: 'You must accept the Data Processing Agreement',
+  }),
+  acceptAdminTerms: z.literal(true, {
+    error: 'You must accept the Church Administrator Terms',
+  }),
 })
 
 export const joinChurchSchema = z.object({

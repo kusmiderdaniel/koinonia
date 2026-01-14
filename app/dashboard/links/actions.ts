@@ -266,12 +266,15 @@ export async function getAnalytics(): Promise<{ analytics: AnalyticsSummary | nu
   weekStart.setDate(weekStart.getDate() - 7)
   const monthStart = new Date(todayStart)
   monthStart.setMonth(monthStart.getMonth() - 1)
+  const chartStartDate = new Date(todayStart)
+  chartStartDate.setDate(chartStartDate.getDate() - 13) // Last 14 days for chart
 
-  // Get all clicks for this church
+  // Get clicks from last 30 days only (all we need for analytics)
   const { data: clicks, error: clicksError } = await adminClient
     .from('link_tree_clicks')
     .select('link_id, clicked_at')
     .eq('church_id', profile.church_id)
+    .gte('clicked_at', monthStart.toISOString())
 
   if (clicksError) {
     return { analytics: null, error: clicksError.message }
@@ -298,8 +301,6 @@ export async function getAnalytics(): Promise<{ analytics: AnalyticsSummary | nu
 
   // Generate daily click data for the last 14 days
   const dailyClicks: { date: string; [key: string]: number | string }[] = []
-  const chartStartDate = new Date(todayStart)
-  chartStartDate.setDate(chartStartDate.getDate() - 13) // Last 14 days including today
 
   for (let i = 0; i < 14; i++) {
     const currentDate = new Date(chartStartDate)

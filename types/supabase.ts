@@ -34,6 +34,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_deletion_requests: {
+        Row: {
+          anonymized_data_summary: Json | null
+          cancelled_at: string | null
+          grace_period_ends_at: string | null
+          id: string
+          ip_address: unknown
+          processed_at: string | null
+          profile_id: string | null
+          reason: string | null
+          requested_at: string | null
+          status: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          anonymized_data_summary?: Json | null
+          cancelled_at?: string | null
+          grace_period_ends_at?: string | null
+          id?: string
+          ip_address?: unknown
+          processed_at?: string | null
+          profile_id?: string | null
+          reason?: string | null
+          requested_at?: string | null
+          status?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          anonymized_data_summary?: Json | null
+          cancelled_at?: string | null
+          grace_period_ends_at?: string | null
+          id?: string
+          ip_address?: unknown
+          processed_at?: string | null
+          profile_id?: string | null
+          reason?: string | null
+          requested_at?: string | null
+          status?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_deletion_requests_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agenda_item_presets: {
         Row: {
           church_id: string
@@ -340,6 +393,73 @@ export type Database = {
         }
         Relationships: []
       }
+      consent_records: {
+        Row: {
+          action: string
+          church_id: string | null
+          consent_type: string
+          context: Json | null
+          data_categories_shared: string[] | null
+          document_id: string | null
+          document_version: number | null
+          id: string
+          ip_address: unknown
+          recorded_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          church_id?: string | null
+          consent_type: string
+          context?: Json | null
+          data_categories_shared?: string[] | null
+          document_id?: string | null
+          document_version?: number | null
+          id?: string
+          ip_address?: unknown
+          recorded_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          church_id?: string | null
+          consent_type?: string
+          context?: Json | null
+          data_categories_shared?: string[] | null
+          document_id?: string | null
+          document_version?: number | null
+          id?: string
+          ip_address?: unknown
+          recorded_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consent_records_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consent_records_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "legal_document_stats"
+            referencedColumns: ["document_id"]
+          },
+          {
+            foreignKeyName: "consent_records_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "legal_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       custom_field_definitions: {
         Row: {
           church_id: string
@@ -453,6 +573,56 @@ export type Database = {
           {
             foreignKeyName: "custom_field_values_updated_by_fkey"
             columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      data_export_requests: {
+        Row: {
+          download_expires_at: string | null
+          download_url: string | null
+          error_message: string | null
+          id: string
+          ip_address: unknown
+          processed_at: string | null
+          profile_id: string | null
+          requested_at: string | null
+          status: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          download_expires_at?: string | null
+          download_url?: string | null
+          error_message?: string | null
+          id?: string
+          ip_address?: unknown
+          processed_at?: string | null
+          profile_id?: string | null
+          requested_at?: string | null
+          status?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          download_expires_at?: string | null
+          download_url?: string | null
+          error_message?: string | null
+          id?: string
+          ip_address?: unknown
+          processed_at?: string | null
+          profile_id?: string | null
+          requested_at?: string | null
+          status?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_export_requests_profile_id_fkey"
+            columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -1303,6 +1473,57 @@ export type Database = {
           },
         ]
       }
+      legal_documents: {
+        Row: {
+          acceptance_type: string
+          content: string
+          created_at: string | null
+          created_by: string | null
+          document_type: string
+          effective_date: string
+          id: string
+          is_current: boolean | null
+          language: string
+          published_at: string | null
+          status: string
+          summary: string | null
+          title: string
+          version: number
+        }
+        Insert: {
+          acceptance_type?: string
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          document_type: string
+          effective_date: string
+          id?: string
+          is_current?: boolean | null
+          language: string
+          published_at?: string | null
+          status?: string
+          summary?: string | null
+          title: string
+          version?: number
+        }
+        Update: {
+          acceptance_type?: string
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          document_type?: string
+          effective_date?: string
+          id?: string
+          is_current?: boolean | null
+          language?: string
+          published_at?: string | null
+          status?: string
+          summary?: string | null
+          title?: string
+          version?: number
+        }
+        Relationships: []
+      }
       link_tree_clicks: {
         Row: {
           church_id: string
@@ -2009,6 +2230,7 @@ export type Database = {
           emergency_contact_phone: string | null
           first_name: string
           id: string
+          is_super_admin: boolean | null
           language: string | null
           last_name: string
           member_type: string
@@ -2038,6 +2260,7 @@ export type Database = {
           emergency_contact_phone?: string | null
           first_name: string
           id: string
+          is_super_admin?: boolean | null
           language?: string | null
           last_name: string
           member_type?: string
@@ -2067,6 +2290,7 @@ export type Database = {
           emergency_contact_phone?: string | null
           first_name?: string
           id?: string
+          is_super_admin?: boolean | null
           language?: string | null
           last_name?: string
           member_type?: string
@@ -2711,9 +2935,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      legal_document_stats: {
+        Row: {
+          acceptance_type: string | null
+          accepted_count: number | null
+          created_at: string | null
+          document_id: string | null
+          document_type: string | null
+          effective_date: string | null
+          is_current: boolean | null
+          language: string | null
+          published_at: string | null
+          status: string | null
+          title: string | null
+          version: number | null
+          withdrawn_count: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      check_user_needs_reconsent: {
+        Args: { p_user_id: string }
+        Returns: boolean
+      }
       expire_past_event_invitations: { Args: never; Returns: undefined }
       generate_alphanumeric_code: { Args: { length?: number }; Returns: string }
       generate_unique_join_code: { Args: never; Returns: string }
@@ -2721,8 +2966,22 @@ export type Database = {
         Args: { target_church_id: string }
         Returns: string
       }
+      get_next_legal_document_version: {
+        Args: { p_document_type: string; p_language: string }
+        Returns: number
+      }
       get_user_campus_ids: { Args: never; Returns: string[] }
       get_user_church_id: { Args: never; Returns: string }
+      get_user_consent_status: {
+        Args: { p_user_id: string }
+        Returns: {
+          consented_at: string
+          consented_version: number
+          current_version: number
+          document_type: string
+          has_current_consent: boolean
+        }[]
+      }
       get_user_profile_id: { Args: never; Returns: string }
       is_admin_or_owner: { Args: never; Returns: boolean }
       is_leader_or_above: { Args: never; Returns: boolean }

@@ -26,11 +26,16 @@ export function InboxPageClient({
 }: InboxPageClientProps) {
   const t = useTranslations('inbox')
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
   const [notifications, setNotifications] = useState(initialNotifications)
   const [unreadCount, setUnreadCount] = useState(initialUnreadCount)
   const [actionableCount, setActionableCount] = useState(initialActionableCount)
   const [isMarkingAllRead, setIsMarkingAllRead] = useState(false)
   const [activeTab, setActiveTab] = useState<'all' | 'unread' | 'actionable'>('all')
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Refresh notifications
   const refreshNotifications = useCallback(async () => {
@@ -97,6 +102,10 @@ export function InboxPageClient({
     }
     return true
   })
+
+  if (!mounted) {
+    return null
+  }
 
   return (
     <div className="flex h-[calc(100vh-3.5rem)] md:h-screen overflow-hidden">

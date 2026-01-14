@@ -84,6 +84,9 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '5mb',
     },
+    staleTimes: {
+      dynamic: 0, // Don't cache dynamic pages in the router
+    },
   },
   // Apply security headers to all routes
   async headers() {

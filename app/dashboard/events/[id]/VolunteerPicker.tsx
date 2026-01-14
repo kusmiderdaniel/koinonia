@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { useDebouncedValue } from '@/lib/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -56,6 +57,8 @@ export function VolunteerPicker({
   position,
   onSuccess,
 }: VolunteerPickerProps) {
+  const t = useTranslations('events.volunteerPicker')
+  const tActions = useTranslations('events.actions')
   const [volunteers, setVolunteers] = useState<Volunteer[]>([])
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebouncedValue(search, 300)
@@ -113,7 +116,7 @@ export function VolunteerPicker({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Assign Volunteer</DialogTitle>
+          <DialogTitle>{t('title')}</DialogTitle>
           <div className="text-sm text-muted-foreground">
             {position.title}
             {position.role && position.role.name !== position.title && (
@@ -121,7 +124,7 @@ export function VolunteerPicker({
                 {position.role.name}
               </Badge>
             )}
-            <span className="ml-2">({remainingSlots} slot{remainingSlots !== 1 ? 's' : ''} remaining)</span>
+            <span className="ml-2">{t('slotsRemaining', { count: remainingSlots })}</span>
           </div>
         </DialogHeader>
 
@@ -135,7 +138,7 @@ export function VolunteerPicker({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name..."
+            placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -146,7 +149,7 @@ export function VolunteerPicker({
         {/* Volunteer List */}
         {isLoading ? (
           <p className="text-sm text-muted-foreground text-center py-4">
-            Loading volunteers...
+            {t('loading')}
           </p>
         ) : (
           <SmartVirtualizedList
@@ -157,8 +160,8 @@ export function VolunteerPicker({
             emptyMessage={
               <p className="text-sm text-muted-foreground text-center py-4">
                 {volunteers.length === 0
-                  ? 'No eligible volunteers found in this ministry'
-                  : 'No volunteers found matching your search'}
+                  ? t('noEligible')
+                  : t('noMatch')}
               </p>
             }
             renderItem={(volunteer) => (
@@ -184,13 +187,13 @@ export function VolunteerPicker({
                       {volunteer.isUnavailable && (
                         <Badge variant="outline" className="text-xs border-red-500 text-red-600 dark:text-red-400">
                           <AlertTriangle className="w-3 h-3 mr-1" />
-                          Unavailable
+                          {t('unavailable')}
                         </Badge>
                       )}
                       {volunteer.isAlreadyAssigned && (
                         <Badge variant="outline" className="text-xs border-amber-500 text-amber-600 dark:text-amber-400">
                           <AlertTriangle className="w-3 h-3 mr-1" />
-                          Already assigned
+                          {t('alreadyAssigned')}
                         </Badge>
                       )}
                     </div>
@@ -201,12 +204,12 @@ export function VolunteerPicker({
                     )}
                     {volunteer.isUnavailable && volunteer.unavailableReason && (
                       <div className="text-xs text-red-600 dark:text-red-400 mt-1">
-                        Reason: {volunteer.unavailableReason}
+                        {t('reason', { reason: volunteer.unavailableReason })}
                       </div>
                     )}
                     {volunteer.isAlreadyAssigned && (
                       <div className="text-xs text-amber-600 dark:text-amber-400 mt-1">
-                        Assigned to: {volunteer.assignedPositions.join(', ')}
+                        {t('assignedTo', { positions: volunteer.assignedPositions.join(', ') })}
                       </div>
                     )}
                     {volunteer.roles.length > 0 && (
@@ -232,7 +235,7 @@ export function VolunteerPicker({
         {/* Actions */}
         <div className="flex justify-end pt-2">
           <Button variant="outline-pill" className="!border !border-black dark:!border-white" onClick={() => onOpenChange(false)} disabled={isAssigning}>
-            Close
+            {tActions('close')}
           </Button>
         </div>
       </DialogContent>

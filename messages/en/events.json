@@ -346,6 +346,18 @@
     "invitationsSent": "{count} {count, plural, one {invitation} other {invitations}} sent!",
     "sendFailed": "Failed to send invitations"
   },
+  "volunteerPicker": {
+    "title": "Assign Volunteer",
+    "slotsRemaining": "({count} {count, plural, one {slot} other {slots}} remaining)",
+    "searchPlaceholder": "Search by name...",
+    "loading": "Loading volunteers...",
+    "noEligible": "No eligible volunteers found in this ministry",
+    "noMatch": "No volunteers found matching your search",
+    "unavailable": "Unavailable",
+    "alreadyAssigned": "Already assigned",
+    "reason": "Reason: {reason}",
+    "assignedTo": "Assigned to: {positions}"
+  },
   "calendar": {
     "today": "Today",
     "noEventsSelected": "Select a date to view events",

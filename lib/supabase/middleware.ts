@@ -105,6 +105,24 @@ export async function updateSession(request: NextRequest) {
       url.pathname = '/onboarding'
       return NextResponse.redirect(url)
     }
+
+    // Check if user needs to re-consent to updated legal documents
+    // Only check for dashboard routes (not for reconsent page itself)
+    if (
+      request.nextUrl.pathname.startsWith('/dashboard') &&
+      !request.nextUrl.pathname.startsWith('/legal/reconsent')
+    ) {
+      const { data: needsReconsent } = await supabase.rpc(
+        'check_user_needs_reconsent',
+        { p_user_id: user.id }
+      )
+
+      if (needsReconsent === true) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/legal/reconsent'
+        return NextResponse.redirect(url)
+      }
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're

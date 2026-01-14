@@ -77,6 +77,10 @@ export function JoinChurchPageClient() {
                   sex={state.sex}
                   onSexChange={state.setSex}
                   weekStartsOn={state.churchInfo?.firstDayOfWeek ?? 0}
+                  churchName={state.churchInfo?.name || ''}
+                  dataSharingConsent={state.dataSharingConsent}
+                  onDataSharingConsentChange={state.setDataSharingConsent}
+                  consentError={state.consentError}
                   onBack={state.handleBack}
                   onSubmit={state.onSubmitCampus}
                 />

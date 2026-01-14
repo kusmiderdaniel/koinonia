@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
@@ -14,8 +14,9 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { createClient } from '@/lib/supabase/client'
-import { Check, X, Loader2, Building2, ArrowLeft, LogOut, Globe, MapPin, Mail } from 'lucide-react'
+import { Check, X, Loader2, Building2, ArrowLeft, LogOut, MapPin, Mail, FileText } from 'lucide-react'
 import { slugify } from '@/lib/utils/slugify'
+import { ConsentCheckbox } from '@/components/legal'
 
 export default function CreateChurchPage() {
   const router = useRouter()
@@ -27,9 +28,11 @@ export default function CreateChurchPage() {
   const [hasManuallyEditedSubdomain, setHasManuallyEditedSubdomain] = useState(false)
   const checkTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
+  const tLegal = useTranslations('legal')
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     watch,
     setValue,
@@ -39,6 +42,8 @@ export default function CreateChurchPage() {
       country: 'USA',
       timezone: 'America/New_York',
       subdomain: '',
+      acceptDpa: false as unknown as true,
+      acceptAdminTerms: false as unknown as true,
     },
   })
 
@@ -319,6 +324,62 @@ export default function CreateChurchPage() {
                         className="h-11"
                         {...register('country')}
                         disabled={isLoading}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Legal Agreements Section */}
+                <div className="space-y-5">
+                  <div className="flex items-center gap-3 pb-2 border-b">
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                      <FileText className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <h3 className="font-semibold">{tLegal('createChurch.legal.title')}</h3>
+                  </div>
+
+                  <Alert>
+                    <AlertDescription className="text-sm">
+                      {tLegal('createChurch.legal.description')}
+                    </AlertDescription>
+                  </Alert>
+
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-lg border bg-muted/30 space-y-3">
+                      <p className="text-sm text-muted-foreground">
+                        {tLegal('createChurch.legal.dpaDescription')}
+                      </p>
+                      <Controller
+                        name="acceptDpa"
+                        control={control}
+                        render={({ field }) => (
+                          <ConsentCheckbox
+                            documentType="dpa"
+                            checked={field.value === true}
+                            onCheckedChange={(checked) => field.onChange(checked)}
+                            error={errors.acceptDpa ? tLegal('validation.acceptDpa') : undefined}
+                            disabled={isLoading}
+                          />
+                        )}
+                      />
+                    </div>
+
+                    <div className="p-4 rounded-lg border bg-muted/30 space-y-3">
+                      <p className="text-sm text-muted-foreground">
+                        {tLegal('createChurch.legal.adminTermsDescription')}
+                      </p>
+                      <Controller
+                        name="acceptAdminTerms"
+                        control={control}
+                        render={({ field }) => (
+                          <ConsentCheckbox
+                            documentType="church_admin_terms"
+                            checked={field.value === true}
+                            onCheckedChange={(checked) => field.onChange(checked)}
+                            error={errors.acceptAdminTerms ? tLegal('validation.acceptAdminTerms') : undefined}
+                            disabled={isLoading}
+                          />
+                        )}
                       />
                     </div>
                   </div>

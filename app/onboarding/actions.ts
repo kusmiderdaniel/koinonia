@@ -1,5 +1,6 @@
 'use server'
 
+import { headers } from 'next/headers'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import {
   createChurchSchema,
@@ -12,6 +13,15 @@ import {
 import { notifyLeadersOfPendingMember } from '@/lib/notifications/pending-member'
 import { isReservedSubdomain } from '@/lib/constants/subdomains'
 
+// Data categories shared with church administrators
+const DATA_SHARING_CATEGORIES = [
+  'name',
+  'email',
+  'phone',
+  'ministry_assignments',
+  'event_participation',
+]
+
 // Helper function to generate random alphanumeric string
 function generateRandomCode(length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -20,6 +30,30 @@ function generateRandomCode(length: number): string {
     result += chars.charAt(Math.floor(Math.random() * chars.length))
   }
   return result
+}
+
+// Helper function to record data sharing consent when joining a church
+async function recordDataSharingConsent(
+  adminClient: ReturnType<typeof createServiceRoleClient>,
+  userId: string,
+  churchId: string
+) {
+  const headersList = await headers()
+  const ipAddress = headersList.get('x-forwarded-for')?.split(',')[0] ||
+                    headersList.get('x-real-ip') ||
+                    null
+  const userAgent = headersList.get('user-agent') || null
+
+  await adminClient.from('consent_records').insert({
+    user_id: userId,
+    church_id: churchId,
+    consent_type: 'data_sharing',
+    action: 'granted',
+    ip_address: ipAddress,
+    user_agent: userAgent,
+    data_categories_shared: DATA_SHARING_CATEGORIES,
+    context: { source: 'join_church_flow' },
+  })
 }
 
 // Check if a subdomain is available
@@ -257,6 +291,54 @@ export async function createChurch(data: CreateChurchInput) {
     }
   }
 
+  // Record DPA and Admin Terms consent
+  const headersList = await headers()
+  const ipAddress = headersList.get('x-forwarded-for')?.split(',')[0] ||
+                    headersList.get('x-real-ip') ||
+                    null
+  const userAgent = headersList.get('user-agent') || null
+
+  // Get current legal documents
+  const { data: dpaDoc } = await adminClient
+    .from('legal_documents')
+    .select('id, version')
+    .eq('document_type', 'dpa')
+    .eq('is_current', true)
+    .single()
+
+  const { data: adminTermsDoc } = await adminClient
+    .from('legal_documents')
+    .select('id, version')
+    .eq('document_type', 'church_admin_terms')
+    .eq('is_current', true)
+    .single()
+
+  // Record consents (linked to the church)
+  const consents = [
+    {
+      user_id: user.id,
+      church_id: church.id,
+      consent_type: 'dpa',
+      document_id: dpaDoc?.id || null,
+      document_version: dpaDoc?.version || null,
+      action: 'granted',
+      ip_address: ipAddress,
+      user_agent: userAgent,
+    },
+    {
+      user_id: user.id,
+      church_id: church.id,
+      consent_type: 'church_admin_terms',
+      document_id: adminTermsDoc?.id || null,
+      document_version: adminTermsDoc?.version || null,
+      action: 'granted',
+      ip_address: ipAddress,
+      user_agent: userAgent,
+    },
+  ]
+
+  await adminClient.from('consent_records').insert(consents)
+
   return { success: true }
 }
 
@@ -373,6 +455,9 @@ export async function joinChurch(data: JoinChurchInput & {
       .eq('user_id', user.id)
       .eq('church_id', church.id)
 
+    // Record data sharing consent for returning member
+    await recordDataSharingConsent(adminClient, user.id, church.id)
+
     return { success: true }
   }
 
@@ -432,6 +517,9 @@ export async function joinChurch(data: JoinChurchInput & {
     console.error('Pending registration creation error:', pendingError)
     return { error: 'Failed to submit your registration. Please try again.' }
   }
+
+  // Record data sharing consent for new member
+  await recordDataSharingConsent(adminClient, user.id, church.id)
 
   // Notify church leaders about the new pending member
   notifyLeadersOfPendingMember(

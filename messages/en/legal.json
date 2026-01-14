@@ -1,0 +1,213 @@
+{
+  "documents": {
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "dpa": "Data Processing Agreement",
+    "churchAdminTerms": "Church Administrator Terms",
+    "effectiveDate": "Effective Date: {date}",
+    "version": "Version {version}",
+    "loading": "Loading document...",
+    "error": "Failed to load document",
+    "download": "Print"
+  },
+  "consent": {
+    "acceptTerms": "I agree to the {link}",
+    "acceptPrivacy": "I agree to the {link}",
+    "acceptDpa": "I agree to the {link} on behalf of my church",
+    "acceptAdminTerms": "I agree to the {link}",
+    "acceptDataSharing": "I consent to sharing my data with {churchName}",
+    "viewDocument": "View full document",
+    "required": "You must accept to continue"
+  },
+  "dataSharing": {
+    "title": "Data Sharing with Your Church",
+    "description": "When you join {churchName}, the following information will be accessible to church administrators:",
+    "whatIsShared": "What information will be shared",
+    "name": "Your name",
+    "nameDescription": "First and last name from your profile",
+    "email": "Your email address",
+    "emailDescription": "Used for church communications",
+    "phone": "Your phone number",
+    "phoneDescription": "If you choose to provide it",
+    "ministryAssignments": "Ministry assignments",
+    "ministryAssignmentsDescription": "Your roles and team memberships",
+    "eventParticipation": "Event participation",
+    "eventParticipationDescription": "Your volunteer history and attendance",
+    "formResponses": "Form responses",
+    "formResponsesDescription": "Answers to church forms and surveys",
+    "customFields": "Custom profile fields",
+    "customFieldsDescription": "Additional information requested by the church",
+    "required": "Required",
+    "optional": "Optional",
+    "whoCanSee": "Who can see your data",
+    "whoCanSeeDescription": "Church administrators and ministry leaders will have access to this information to coordinate church activities and provide pastoral care.",
+    "dataController": "Data Controller",
+    "dataControllerDescription": "{churchName} is the data controller for your shared information. Contact church administrators for data requests.",
+    "withdrawConsent": "You can leave the church at any time to stop sharing data",
+    "consentLabel": "I consent to sharing my data with {churchName} as described above",
+    "consentRequired": "You must consent to data sharing to join this church"
+  },
+  "privacy": {
+    "title": "Privacy & Data",
+    "description": "Manage your privacy settings and personal data",
+    "dataSharing": "Data Sharing Consent",
+    "yourConsents": "Your Consents",
+    "yourConsentsDescription": "Documents you have agreed to",
+    "consentHistory": "Consent History",
+    "consentHistoryDescription": "Complete history of your consent actions",
+    "noConsents": "No consent records found",
+    "consentedOn": "Consented on {date}",
+    "withdrawnOn": "Withdrawn on {date}",
+    "status": {
+      "active": "Active",
+      "withdrawn": "Withdrawn",
+      "outdated": "Update Required"
+    },
+    "dataExport": {
+      "title": "Download Your Data",
+      "description": "Request a copy of all your personal data in JSON format",
+      "button": "Request Export",
+      "requesting": "Requesting...",
+      "pending": "Export in progress",
+      "pendingDescription": "We're preparing your data. This may take a few minutes.",
+      "ready": "Download Ready",
+      "readyDescription": "Your data export is ready to download",
+      "downloadButton": "Download Export",
+      "expiresOn": "Download expires on {date}",
+      "expired": "Export Expired",
+      "expiredDescription": "This export has expired. Request a new one.",
+      "failed": "Export Failed",
+      "failedDescription": "Something went wrong. Please try again.",
+      "retryButton": "Try Again",
+      "rateLimited": "You can request one export per 24 hours",
+      "contents": "Your export will include:",
+      "contentsProfile": "Profile information",
+      "contentsMinistries": "Ministry memberships",
+      "contentsEvents": "Event assignments and history",
+      "contentsForms": "Form submissions",
+      "contentsConsents": "Consent records"
+    },
+    "deleteAccount": {
+      "title": "Delete Account",
+      "description": "Permanently delete your account and personal data",
+      "warning": "This action cannot be undone",
+      "warningDescription": "Your account will be anonymized, and you will lose access to all churches you've joined.",
+      "button": "Delete My Account",
+      "dialogTitle": "Delete Your Account?",
+      "dialogDescription": "This will permanently remove your login access and anonymize your personal data. Church records will be retained with anonymized references.",
+      "reasonLabel": "Reason for leaving (optional)",
+      "reasonPlaceholder": "Tell us why you're leaving...",
+      "gracePeriod": "You have 24 hours to cancel this request",
+      "confirmButton": "Yes, Delete My Account",
+      "cancelButton": "Cancel",
+      "deleting": "Processing...",
+      "pendingTitle": "Deletion Pending",
+      "pendingDescription": "Your account will be deleted on {date}",
+      "cancelDeletion": "Cancel Deletion",
+      "cancelling": "Cancelling..."
+    }
+  },
+  "reconsent": {
+    "title": "Updated Legal Documents",
+    "description": "We've updated our terms. Please review and accept to continue using Koinonia.",
+    "documentsUpdated": "The following documents have been updated:",
+    "reviewAndAccept": "Please review and accept each document to continue.",
+    "acceptAll": "Accept All & Continue",
+    "accepting": "Accepting...",
+    "mustAcceptAll": "You must accept all documents to continue"
+  },
+  "pages": {
+    "termsOfService": {
+      "title": "Terms of Service",
+      "description": "Read our terms of service"
+    },
+    "privacyPolicy": {
+      "title": "Privacy Policy",
+      "description": "Learn how we handle your data"
+    },
+    "dpa": {
+      "title": "Data Processing Agreement",
+      "description": "For church administrators"
+    },
+    "churchAdminTerms": {
+      "title": "Church Administrator Terms",
+      "description": "Responsibilities for church admins"
+    }
+  },
+  "createChurch": {
+    "legal": {
+      "title": "Legal Agreements",
+      "description": "As a church administrator, you accept responsibility for your members' data",
+      "dpaDescription": "The Data Processing Agreement governs how Koinonia processes data on behalf of your church. Your church will be the Data Controller for member data.",
+      "adminTermsDescription": "The Church Administrator Terms outline your responsibilities as a data controller.",
+      "representChurch": "I confirm I am authorized to act on behalf of this church organization"
+    }
+  },
+  "admin": {
+    "title": "Legal Documents Management",
+    "description": "Manage legal documents, versions, and acceptance settings",
+    "newDocument": "New Document",
+    "tabs": {
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "dpa": "DPA",
+      "churchAdminTerms": "Admin Terms"
+    },
+    "status": {
+      "draft": "Draft",
+      "published": "Published",
+      "current": "Current"
+    },
+    "acceptanceType": {
+      "active": "Active",
+      "silent": "Silent",
+      "activeDescription": "Users must explicitly re-accept",
+      "silentDescription": "Users automatically accept on next login"
+    },
+    "actions": {
+      "preview": "Preview",
+      "edit": "Edit",
+      "publish": "Publish",
+      "delete": "Delete",
+      "viewStats": "Statistics",
+      "saveDraft": "Save Draft"
+    },
+    "publish": {
+      "title": "Publish Document",
+      "confirm": "This will make this version current and archive the previous one.",
+      "sendEmail": "Send email notification to all users",
+      "button": "Publish Document"
+    },
+    "stats": {
+      "accepted": "Accepted",
+      "withdrawn": "Withdrawn",
+      "pending": "Pending",
+      "totalUsers": "Total Users",
+      "acceptanceRate": "Acceptance Rate",
+      "recentActivity": "Recent Activity"
+    },
+    "editor": {
+      "titleLabel": "Title",
+      "summaryLabel": "Summary (optional)",
+      "summaryPlaceholder": "Brief description of changes in this version",
+      "effectiveDateLabel": "Effective Date",
+      "acceptanceTypeLabel": "Acceptance Type",
+      "contentLabel": "Content (Markdown)"
+    },
+    "noDocuments": "No documents found for this type and language.",
+    "createPrompt": "Click \"New Document\" to create one."
+  },
+  "errors": {
+    "loadFailed": "Failed to load legal document",
+    "consentFailed": "Failed to record consent",
+    "exportFailed": "Failed to request data export",
+    "deleteFailed": "Failed to request account deletion"
+  },
+  "validation": {
+    "acceptTerms": "You must accept the Terms of Service",
+    "acceptPrivacy": "You must accept the Privacy Policy",
+    "acceptDpa": "You must accept the Data Processing Agreement",
+    "acceptAdminTerms": "You must accept the Church Administrator Terms",
+    "acceptDataSharing": "You must consent to data sharing"
+  }
+}

@@ -34,6 +34,12 @@ export const signUpSchema = z.object({
   confirmPassword: z.string(),
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
+  acceptTerms: z.literal(true, {
+    error: 'You must accept the Terms of Service',
+  }),
+  acceptPrivacy: z.literal(true, {
+    error: 'You must accept the Privacy Policy',
+  }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword'],

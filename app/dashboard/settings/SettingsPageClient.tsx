@@ -66,6 +66,7 @@ interface TabItem {
 
 export function SettingsPageClient({ initialData, defaultTab = 'details' }: SettingsPageClientProps) {
   const t = useTranslations('settings')
+  const [mounted, setMounted] = useState(false)
   const isMobile = useIsMobile()
   const settings = useChurchSettings(initialData, {
     savedSuccess: t('details.savedSuccess'),
@@ -94,6 +95,10 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
 
   // Mobile navigation state
   const [mobileSelectedTab, setMobileSelectedTab] = useState<TabKey | null>(null)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Initialize preferences from loaded settings
   useEffect(() => {
@@ -192,6 +197,10 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
       default:
         return null
     }
+  }
+
+  if (!mounted) {
+    return null
   }
 
   // Mobile Layout - Master/Detail pattern

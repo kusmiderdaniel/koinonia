@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { useTranslations } from 'next-intl'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { ConsentCheckbox } from '@/components/legal'
 
 function SignUpContent() {
   const t = useTranslations('auth.signup')
@@ -24,9 +25,14 @@ function SignUpContent() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<SignUpInput>({
     resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      acceptTerms: false as unknown as true,
+      acceptPrivacy: false as unknown as true,
+    },
   })
 
   const onSubmit = async (data: SignUpInput) => {
@@ -147,6 +153,37 @@ function SignUpContent() {
             {errors.confirmPassword && (
               <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
             )}
+          </div>
+
+          {/* Legal Consent Checkboxes */}
+          <div className="space-y-3 pt-2">
+            <Controller
+              name="acceptTerms"
+              control={control}
+              render={({ field }) => (
+                <ConsentCheckbox
+                  documentType="terms_of_service"
+                  checked={field.value === true}
+                  onCheckedChange={(checked) => field.onChange(checked)}
+                  error={errors.acceptTerms?.message}
+                  disabled={isLoading}
+                />
+              )}
+            />
+
+            <Controller
+              name="acceptPrivacy"
+              control={control}
+              render={({ field }) => (
+                <ConsentCheckbox
+                  documentType="privacy_policy"
+                  checked={field.value === true}
+                  onCheckedChange={(checked) => field.onChange(checked)}
+                  error={errors.acceptPrivacy?.message}
+                  disabled={isLoading}
+                />
+              )}
+            />
           </div>
         </CardContent>
 

@@ -1,0 +1,213 @@
+{
+  "documents": {
+    "termsOfService": "Regulamin Usługi",
+    "privacyPolicy": "Polityka Prywatności",
+    "dpa": "Umowa Powierzenia Przetwarzania Danych",
+    "churchAdminTerms": "Warunki dla Administratorów Kościoła",
+    "effectiveDate": "Data wejścia w życie: {date}",
+    "version": "Wersja {version}",
+    "loading": "Ładowanie dokumentu...",
+    "error": "Nie udało się załadować dokumentu",
+    "download": "Drukuj"
+  },
+  "consent": {
+    "acceptTerms": "Akceptuję {link}",
+    "acceptPrivacy": "Akceptuję {link}",
+    "acceptDpa": "Akceptuję {link} w imieniu mojego kościoła",
+    "acceptAdminTerms": "Akceptuję {link}",
+    "acceptDataSharing": "Wyrażam zgodę na udostępnienie moich danych {churchName}",
+    "viewDocument": "Zobacz pełny dokument",
+    "required": "Musisz zaakceptować, aby kontynuować"
+  },
+  "dataSharing": {
+    "title": "Udostępnianie Danych Twojemu Kościołowi",
+    "description": "Dołączając do {churchName}, następujące informacje będą dostępne dla administratorów kościoła:",
+    "whatIsShared": "Jakie informacje będą udostępnione",
+    "name": "Twoje imię i nazwisko",
+    "nameDescription": "Imię i nazwisko z Twojego profilu",
+    "email": "Twój adres e-mail",
+    "emailDescription": "Używany do komunikacji kościelnej",
+    "phone": "Twój numer telefonu",
+    "phoneDescription": "Jeśli zdecydujesz się go podać",
+    "ministryAssignments": "Przypisania do służb",
+    "ministryAssignmentsDescription": "Twoje role i członkostwa w zespołach",
+    "eventParticipation": "Uczestnictwo w wydarzeniach",
+    "eventParticipationDescription": "Twoja historia wolontariatu i obecności",
+    "formResponses": "Odpowiedzi na formularze",
+    "formResponsesDescription": "Odpowiedzi na formularze i ankiety kościoła",
+    "customFields": "Niestandardowe pola profilu",
+    "customFieldsDescription": "Dodatkowe informacje wymagane przez kościół",
+    "required": "Wymagane",
+    "optional": "Opcjonalne",
+    "whoCanSee": "Kto może zobaczyć Twoje dane",
+    "whoCanSeeDescription": "Administratorzy kościoła i liderzy służb będą mieli dostęp do tych informacji w celu koordynowania działań kościoła i opieki duszpasterskiej.",
+    "dataController": "Administrator Danych",
+    "dataControllerDescription": "{churchName} jest administratorem danych dla Twoich udostępnionych informacji. Skontaktuj się z administratorami kościoła w sprawie żądań dotyczących danych.",
+    "withdrawConsent": "Możesz opuścić kościół w dowolnym momencie, aby przestać udostępniać dane",
+    "consentLabel": "Wyrażam zgodę na udostępnianie moich danych {churchName} zgodnie z powyższym opisem",
+    "consentRequired": "Musisz wyrazić zgodę na udostępnianie danych, aby dołączyć do tego kościoła"
+  },
+  "privacy": {
+    "title": "Prywatność i Dane",
+    "description": "Zarządzaj ustawieniami prywatności i danymi osobowymi",
+    "dataSharing": "Zgoda na Udostępnianie Danych",
+    "yourConsents": "Twoje Zgody",
+    "yourConsentsDescription": "Dokumenty, na które wyraziłeś zgodę",
+    "consentHistory": "Historia Zgód",
+    "consentHistoryDescription": "Pełna historia Twoich działań związanych ze zgodami",
+    "noConsents": "Nie znaleziono zapisów zgód",
+    "consentedOn": "Zgoda wyrażona {date}",
+    "withdrawnOn": "Wycofana {date}",
+    "status": {
+      "active": "Aktywna",
+      "withdrawn": "Wycofana",
+      "outdated": "Wymaga aktualizacji"
+    },
+    "dataExport": {
+      "title": "Pobierz Swoje Dane",
+      "description": "Zażądaj kopii wszystkich swoich danych osobowych w formacie JSON",
+      "button": "Zażądaj Eksportu",
+      "requesting": "Żądanie...",
+      "pending": "Eksport w trakcie",
+      "pendingDescription": "Przygotowujemy Twoje dane. To może potrwać kilka minut.",
+      "ready": "Gotowy do Pobrania",
+      "readyDescription": "Twój eksport danych jest gotowy do pobrania",
+      "downloadButton": "Pobierz Eksport",
+      "expiresOn": "Pobieranie wygasa {date}",
+      "expired": "Eksport Wygasł",
+      "expiredDescription": "Ten eksport wygasł. Zażądaj nowego.",
+      "failed": "Eksport Nie Powiódł Się",
+      "failedDescription": "Coś poszło nie tak. Spróbuj ponownie.",
+      "retryButton": "Spróbuj Ponownie",
+      "rateLimited": "Możesz zażądać jednego eksportu na 24 godziny",
+      "contents": "Twój eksport będzie zawierał:",
+      "contentsProfile": "Informacje z profilu",
+      "contentsMinistries": "Członkostwa w służbach",
+      "contentsEvents": "Przypisania do wydarzeń i historię",
+      "contentsForms": "Odpowiedzi na formularze",
+      "contentsConsents": "Zapisy zgód"
+    },
+    "deleteAccount": {
+      "title": "Usuń Konto",
+      "description": "Trwale usuń swoje konto i dane osobowe",
+      "warning": "Tej czynności nie można cofnąć",
+      "warningDescription": "Twoje konto zostanie zanonimizowane i stracisz dostęp do wszystkich kościołów, do których dołączyłeś.",
+      "button": "Usuń Moje Konto",
+      "dialogTitle": "Usunąć Twoje Konto?",
+      "dialogDescription": "To trwale usunie Twój dostęp do logowania i zanonimizuje Twoje dane osobowe. Zapisy kościelne zostaną zachowane z zanonimizowanymi odniesieniami.",
+      "reasonLabel": "Powód odejścia (opcjonalnie)",
+      "reasonPlaceholder": "Powiedz nam, dlaczego odchodzisz...",
+      "gracePeriod": "Masz 24 godziny na anulowanie tego żądania",
+      "confirmButton": "Tak, Usuń Moje Konto",
+      "cancelButton": "Anuluj",
+      "deleting": "Przetwarzanie...",
+      "pendingTitle": "Usunięcie Oczekuje",
+      "pendingDescription": "Twoje konto zostanie usunięte {date}",
+      "cancelDeletion": "Anuluj Usunięcie",
+      "cancelling": "Anulowanie..."
+    }
+  },
+  "reconsent": {
+    "title": "Zaktualizowane Dokumenty Prawne",
+    "description": "Zaktualizowaliśmy nasze warunki. Prosimy o zapoznanie się i akceptację, aby kontynuować korzystanie z Koinonia.",
+    "documentsUpdated": "Następujące dokumenty zostały zaktualizowane:",
+    "reviewAndAccept": "Prosimy o przejrzenie i zaakceptowanie każdego dokumentu, aby kontynuować.",
+    "acceptAll": "Zaakceptuj Wszystko i Kontynuuj",
+    "accepting": "Akceptowanie...",
+    "mustAcceptAll": "Musisz zaakceptować wszystkie dokumenty, aby kontynuować"
+  },
+  "pages": {
+    "termsOfService": {
+      "title": "Regulamin Usługi",
+      "description": "Przeczytaj nasz regulamin usługi"
+    },
+    "privacyPolicy": {
+      "title": "Polityka Prywatności",
+      "description": "Dowiedz się, jak przetwarzamy Twoje dane"
+    },
+    "dpa": {
+      "title": "Umowa Powierzenia Przetwarzania Danych",
+      "description": "Dla administratorów kościoła"
+    },
+    "churchAdminTerms": {
+      "title": "Warunki dla Administratorów Kościoła",
+      "description": "Obowiązki administratorów kościoła"
+    }
+  },
+  "createChurch": {
+    "legal": {
+      "title": "Umowy Prawne",
+      "description": "Jako administrator kościoła, akceptujesz odpowiedzialność za dane swoich członków",
+      "dpaDescription": "Umowa Powierzenia Przetwarzania Danych reguluje sposób, w jaki Koinonia przetwarza dane w imieniu Twojego kościoła. Twój kościół będzie Administratorem Danych dla danych członków.",
+      "adminTermsDescription": "Warunki dla Administratorów Kościoła określają Twoje obowiązki jako administratora danych.",
+      "representChurch": "Potwierdzam, że jestem upoważniony do działania w imieniu tej organizacji kościelnej"
+    }
+  },
+  "admin": {
+    "title": "Zarządzanie Dokumentami Prawnymi",
+    "description": "Zarządzaj dokumentami prawnymi, wersjami i ustawieniami akceptacji",
+    "newDocument": "Nowy Dokument",
+    "tabs": {
+      "termsOfService": "Regulamin",
+      "privacyPolicy": "Polityka Prywatności",
+      "dpa": "DPA",
+      "churchAdminTerms": "Warunki Admina"
+    },
+    "status": {
+      "draft": "Szkic",
+      "published": "Opublikowany",
+      "current": "Aktualny"
+    },
+    "acceptanceType": {
+      "active": "Aktywna",
+      "silent": "Cicha",
+      "activeDescription": "Użytkownicy muszą ponownie zaakceptować",
+      "silentDescription": "Użytkownicy automatycznie akceptują przy następnym logowaniu"
+    },
+    "actions": {
+      "preview": "Podgląd",
+      "edit": "Edytuj",
+      "publish": "Opublikuj",
+      "delete": "Usuń",
+      "viewStats": "Statystyki",
+      "saveDraft": "Zapisz Szkic"
+    },
+    "publish": {
+      "title": "Opublikuj Dokument",
+      "confirm": "Ta wersja stanie się aktualna, a poprzednia zostanie zarchiwizowana.",
+      "sendEmail": "Wyślij powiadomienie email do wszystkich użytkowników",
+      "button": "Opublikuj Dokument"
+    },
+    "stats": {
+      "accepted": "Zaakceptowane",
+      "withdrawn": "Wycofane",
+      "pending": "Oczekujące",
+      "totalUsers": "Wszyscy Użytkownicy",
+      "acceptanceRate": "Wskaźnik Akceptacji",
+      "recentActivity": "Ostatnia Aktywność"
+    },
+    "editor": {
+      "titleLabel": "Tytuł",
+      "summaryLabel": "Podsumowanie (opcjonalnie)",
+      "summaryPlaceholder": "Krótki opis zmian w tej wersji",
+      "effectiveDateLabel": "Data Wejścia w Życie",
+      "acceptanceTypeLabel": "Typ Akceptacji",
+      "contentLabel": "Treść (Markdown)"
+    },
+    "noDocuments": "Nie znaleziono dokumentów dla tego typu i języka.",
+    "createPrompt": "Kliknij \"Nowy Dokument\", aby utworzyć."
+  },
+  "errors": {
+    "loadFailed": "Nie udało się załadować dokumentu prawnego",
+    "consentFailed": "Nie udało się zapisać zgody",
+    "exportFailed": "Nie udało się zażądać eksportu danych",
+    "deleteFailed": "Nie udało się zażądać usunięcia konta"
+  },
+  "validation": {
+    "acceptTerms": "Musisz zaakceptować Regulamin Usługi",
+    "acceptPrivacy": "Musisz zaakceptować Politykę Prywatności",
+    "acceptDpa": "Musisz zaakceptować Umowę Powierzenia Przetwarzania Danych",
+    "acceptAdminTerms": "Musisz zaakceptować Warunki dla Administratorów Kościoła",
+    "acceptDataSharing": "Musisz wyrazić zgodę na udostępnianie danych"
+  }
+}
