@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import {
   DropdownMenu,
@@ -35,6 +36,7 @@ export function InlineSelectEditor({
   disabled = false,
   canEdit = true,
 }: InlineSelectEditorProps) {
+  const t = useTranslations('common')
   const selectedOption = options.find((o) => o.value === value)
 
   const renderValue = () => {
@@ -80,7 +82,7 @@ export function InlineSelectEditor({
           onClick={() => onChange(null)}
           className="cursor-pointer rounded text-sm text-muted-foreground"
         >
-          Clear
+          {t('clear')}
         </DropdownMenuItem>
         {/* Option items */}
         {options.map((option, index) => {
