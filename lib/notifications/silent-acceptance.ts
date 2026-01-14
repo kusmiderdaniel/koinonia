@@ -58,6 +58,8 @@ const DOCUMENT_TYPE_LABELS: Record<string, Record<'en' | 'pl', string>> = {
  * Send silent acceptance notification emails with PDF attachments.
  * This is called when publishing a document with acceptance_type='silent'.
  *
+ * Only sends to users whose language preference matches the document language.
+ *
  * @param document - The legal document that was published
  * @returns Object with count of sent and failed emails
  */
@@ -65,8 +67,8 @@ export async function sendSilentAcceptanceNotifications(document: DocumentInfo) 
   const adminClient = createServiceRoleClient()
 
   // Determine recipients based on document type
-  // ToS / Privacy Policy → All users
-  // DPA / Church Admin Terms → Church owners only
+  // ToS / Privacy Policy → All users with matching language
+  // DPA / Church Admin Terms → Church owners only with matching language
   const isChurchOwnerDocument =
     document.documentType === 'dpa' || document.documentType === 'church_admin_terms'
 
@@ -78,11 +80,12 @@ export async function sendSilentAcceptanceNotifications(document: DocumentInfo) 
   }>
 
   if (isChurchOwnerDocument) {
-    // Get only church owners
+    // Get only church owners with matching language
     const { data, error } = await adminClient
       .from('profiles')
       .select('id, first_name, email, language')
       .eq('role', 'owner')
+      .eq('language', document.language)
       .eq('receive_email_notifications', true)
       .not('email', 'is', null)
 
@@ -92,10 +95,11 @@ export async function sendSilentAcceptanceNotifications(document: DocumentInfo) 
     }
     users = data
   } else {
-    // Get all users
+    // Get all users with matching language
     const { data, error } = await adminClient
       .from('profiles')
       .select('id, first_name, email, language')
+      .eq('language', document.language)
       .eq('receive_email_notifications', true)
       .not('email', 'is', null)
 
@@ -107,9 +111,11 @@ export async function sendSilentAcceptanceNotifications(document: DocumentInfo) 
   }
 
   if (users.length === 0) {
-    console.log('[SilentAcceptance] No recipients found for document:', document.title)
+    console.log(`[SilentAcceptance] No recipients found for document "${document.title}" (language: ${document.language})`)
     return { sent: 0, failed: 0 }
   }
+
+  console.log(`[SilentAcceptance] Found ${users.length} recipients for "${document.title}" (language: ${document.language})`)
 
   // Calculate deadline
   const effectiveDate = new Date(document.effectiveDate)
@@ -142,6 +148,12 @@ export async function sendSilentAcceptanceNotifications(document: DocumentInfo) 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const disagreeUrl = `${siteUrl}/legal/disagree?doc=${document.documentType}&id=${document.id}`
 
+  // Format dates and labels using document language
+  const dateFnsLocale = document.language === 'pl' ? pl : enUS
+  const formattedEffectiveDate = format(effectiveDate, 'PPP', { locale: dateFnsLocale })
+  const formattedDeadline = format(deadline, 'PPP', { locale: dateFnsLocale })
+  const documentTypeLabel = DOCUMENT_TYPE_LABELS[document.documentType]?.[document.language] || document.documentType
+
   let sent = 0
   let failed = 0
 
@@ -153,18 +165,9 @@ export async function sendSilentAcceptanceNotifications(document: DocumentInfo) 
     const batch = users.slice(i * BATCH_SIZE, (i + 1) * BATCH_SIZE)
 
     const emailPromises = batch.map(async (user) => {
-      // Determine user's language for email
-      const userLang = (user.language || document.language) as 'en' | 'pl'
+      // Use document language (all users are filtered to match document language)
       const translations: SilentAcceptanceEmailTranslations =
-        userLang === 'pl' ? polishTranslations : defaultTranslations
-
-      const dateFnsLocale = userLang === 'pl' ? pl : enUS
-
-      // Format dates
-      const formattedEffectiveDate = format(effectiveDate, 'PPP', { locale: dateFnsLocale })
-      const formattedDeadline = format(deadline, 'PPP', { locale: dateFnsLocale })
-
-      const documentTypeLabel = DOCUMENT_TYPE_LABELS[document.documentType]?.[userLang] || document.documentType
+        document.language === 'pl' ? polishTranslations : defaultTranslations
 
       // Interpolate subject
       const subject = translations.subject
