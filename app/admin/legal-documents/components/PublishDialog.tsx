@@ -38,7 +38,11 @@ export function PublishDialog({ document, onClose, onSuccess }: PublishDialogPro
     if (result.error) {
       toast.error(result.error)
     } else {
-      toast.success('Document published successfully')
+      if (document.acceptance_type === 'silent') {
+        toast.success('Document published. Email notifications are being sent.')
+      } else {
+        toast.success('Document published successfully')
+      }
       onClose()
       onSuccess()
     }
@@ -73,8 +77,10 @@ export function PublishDialog({ document, onClose, onSuccess }: PublishDialogPro
                 </>
               ) : (
                 <>
-                  <strong>Silent acceptance:</strong> Users will automatically
-                  accept this document on their next login. No re-consent required.
+                  <strong>Silent acceptance:</strong> Email notifications will be
+                  sent to all users with a matching language preference. Users who
+                  continue using the platform after the effective date automatically
+                  accept the changes. They can disagree via the email link.
                 </>
               )}
             </AlertDescription>
@@ -90,6 +96,18 @@ export function PublishDialog({ document, onClose, onSuccess }: PublishDialogPro
               <Label htmlFor="send-email" className="text-sm">
                 Send email notification to all users
               </Label>
+            </div>
+          )}
+
+          {document.acceptance_type === 'silent' && (
+            <div className="text-sm text-muted-foreground bg-muted/50 rounded-md p-3">
+              <p className="font-medium mb-1">Emails will include:</p>
+              <ul className="list-disc list-inside space-y-0.5 text-xs">
+                <li>PDF attachment of the full document</li>
+                <li>Effective date and disagreement deadline</li>
+                <li>Link to view the document online</li>
+                <li>Button to disagree (triggers account/church deletion)</li>
+              </ul>
             </div>
           )}
         </div>
