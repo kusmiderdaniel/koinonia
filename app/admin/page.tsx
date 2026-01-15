@@ -155,10 +155,10 @@ export default async function AdminPage() {
           </CardContent>
         </Card>
 
-        <Card className="border py-2 hover:border-muted-foreground/30 transition-colors">
+        <Card className="border py-2 hover:border-brand/50 transition-colors">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Church className="h-5 w-5 text-muted-foreground" />
+              <Church className="h-5 w-5 text-brand" />
               Churches
             </CardTitle>
             <CardDescription>
@@ -166,9 +166,12 @@ export default async function AdminPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full" disabled>
-              Coming Soon
-            </Button>
+            <Link href="/admin/churches">
+              <Button className="w-full bg-brand hover:bg-brand/90 text-brand-foreground">
+                Manage Churches
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </CardContent>
         </Card>
 
