@@ -88,20 +88,26 @@ export async function signUp(data: SignUpInput) {
                       null
     const userAgent = headersList.get('user-agent') || null
 
-    // Get current legal documents
-    const { data: termsDoc } = await serviceClient
+    // Get current legal documents (prefer English, but any language works for consent)
+    // Using limit(1) instead of single() to handle multiple language versions
+    const { data: termsDocs } = await serviceClient
       .from('legal_documents')
       .select('id, version')
       .eq('document_type', 'terms_of_service')
       .eq('is_current', true)
-      .single()
+      .order('language', { ascending: true }) // 'en' comes before 'pl'
+      .limit(1)
 
-    const { data: privacyDoc } = await serviceClient
+    const { data: privacyDocs } = await serviceClient
       .from('legal_documents')
       .select('id, version')
       .eq('document_type', 'privacy_policy')
       .eq('is_current', true)
-      .single()
+      .order('language', { ascending: true })
+      .limit(1)
+
+    const termsDoc = termsDocs?.[0]
+    const privacyDoc = privacyDocs?.[0]
 
     // Record both consents
     const consents = [

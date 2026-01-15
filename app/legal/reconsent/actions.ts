@@ -52,24 +52,52 @@ export async function getOutdatedConsents(): Promise<{
     documentTypes.push('dpa', 'church_admin_terms')
   }
 
-  // Get current versions of relevant documents for user's locale
+  // Get current versions of relevant documents
+  // First try user's preferred locale, then fall back to any language
   // Include acceptance_type to handle silent vs active acceptance
-  const { data: currentDocs } = await adminClient
+  let { data: currentDocs } = await adminClient
     .from('legal_documents')
-    .select('id, document_type, version, acceptance_type, title, summary, content, effective_date')
+    .select('id, document_type, version, acceptance_type, title, summary, content, effective_date, language')
     .eq('is_current', true)
     .eq('language', locale)
     .in('document_type', documentTypes)
+
+  // If no documents found for user's locale, try fetching all languages
+  // and prefer English as fallback
+  if (!currentDocs || currentDocs.length === 0) {
+    const { data: fallbackDocs } = await adminClient
+      .from('legal_documents')
+      .select('id, document_type, version, acceptance_type, title, summary, content, effective_date, language')
+      .eq('is_current', true)
+      .in('document_type', documentTypes)
+
+    currentDocs = fallbackDocs
+  }
 
   if (!currentDocs || currentDocs.length === 0) {
     return { consents: [] }
   }
 
-  // Deduplicate by document_type (take the first/highest version)
+  // Deduplicate by document_type
+  // Prefer user's locale, then 'en', then any available
   const uniqueDocs = Array.from(
     currentDocs.reduce((map, doc) => {
-      if (!map.has(doc.document_type) || map.get(doc.document_type)!.version < doc.version) {
+      const existing = map.get(doc.document_type)
+      if (!existing) {
         map.set(doc.document_type, doc)
+      } else {
+        // Prefer user's locale
+        if (doc.language === locale && existing.language !== locale) {
+          map.set(doc.document_type, doc)
+        }
+        // Then prefer English
+        else if (doc.language === 'en' && existing.language !== locale && existing.language !== 'en') {
+          map.set(doc.document_type, doc)
+        }
+        // If same language preference, prefer higher version
+        else if (doc.language === existing.language && doc.version > existing.version) {
+          map.set(doc.document_type, doc)
+        }
       }
       return map
     }, new Map<string, typeof currentDocs[0]>()).values()
