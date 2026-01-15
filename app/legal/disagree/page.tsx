@@ -44,16 +44,21 @@ export default async function DisagreePage({ searchParams }: DisagreePageProps) 
       redirect('/legal/disagree/user')
     }
 
+    // Determine route based on document type
+    const isChurchDocument = documentType === 'dpa' || documentType === 'church_admin_terms'
+    const basePath = isChurchDocument ? '/legal/disagree/church' : '/legal/disagree/user'
+
     // Get disagreement info
     const { data, error } = await getDisagreementInfo(documentType, params.id)
 
     if (error) {
-      // Redirect to dashboard with error message
-      redirect('/dashboard?error=' + encodeURIComponent(error))
+      // Redirect to appropriate sub-page with error (they handle error display)
+      redirect(`${basePath}?doc=${documentType}&id=${params.id || ''}&error=${encodeURIComponent(error)}`)
     }
 
     if (!data) {
-      redirect('/dashboard')
+      // Redirect to appropriate sub-page without data (they'll show pending disagreements or handle it)
+      redirect(`${basePath}?doc=${documentType}&id=${params.id || ''}`)
     }
 
     // Route based on document type
@@ -66,7 +71,7 @@ export default async function DisagreePage({ searchParams }: DisagreePageProps) 
     }
   } catch (error) {
     console.error('[DisagreePage] Error:', error)
-    // Redirect to dashboard on any error
-    redirect('/dashboard?error=' + encodeURIComponent('Failed to load disagreement page'))
+    // Redirect to user page with error (it can display the error properly)
+    redirect('/legal/disagree/user?error=' + encodeURIComponent('Failed to load disagreement page'))
   }
 }

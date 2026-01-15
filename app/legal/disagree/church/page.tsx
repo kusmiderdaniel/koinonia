@@ -7,6 +7,7 @@ interface ChurchDisagreePageProps {
   searchParams: Promise<{
     doc?: string
     id?: string
+    error?: string
   }>
 }
 
@@ -25,6 +26,16 @@ export default async function ChurchDisagreePage({ searchParams }: ChurchDisagre
     redirect('/auth/signin?redirect=/legal/disagree/church')
   }
 
+  // If error was passed from the parent page, show it
+  if (params.error) {
+    return (
+      <ChurchDisagreementClient
+        mode="error"
+        error={params.error}
+      />
+    )
+  }
+
   // If no document specified, check for pending disagreements
   if (!params.doc || !params.id) {
     const { data: pending } = await getPendingDisagreements()
@@ -41,8 +52,13 @@ export default async function ChurchDisagreePage({ searchParams }: ChurchDisagre
       )
     }
 
-    // No document and no pending - redirect to dashboard
-    redirect('/dashboard')
+    // No document and no pending - show helpful message
+    return (
+      <ChurchDisagreementClient
+        mode="error"
+        error="No document specified. If you followed a link from an email, please try again or contact support."
+      />
+    )
   }
 
   // Get disagreement info for the specified document
@@ -65,7 +81,12 @@ export default async function ChurchDisagreePage({ searchParams }: ChurchDisagre
   }
 
   if (!data) {
-    redirect('/dashboard')
+    return (
+      <ChurchDisagreementClient
+        mode="error"
+        error="Document information not found. Please try again or contact support."
+      />
+    )
   }
 
   // Get list of admins who can become owners (for transfer option)

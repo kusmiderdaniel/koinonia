@@ -25,7 +25,6 @@ export interface SilentAcceptanceEmailTranslations {
   viewDocumentButton: string
   disagreeButton: string
   disagreeWarning: string
-  pdfAttached: string
   footer: string
   footerDisclaimer: string
 }
@@ -44,7 +43,6 @@ export const defaultTranslations: SilentAcceptanceEmailTranslations = {
   viewDocumentButton: 'View Updated Document',
   disagreeButton: 'I Disagree with These Changes',
   disagreeWarning: 'If you disagree, your account will be scheduled for deletion. You have until {effectiveDate} to express disagreement.',
-  pdfAttached: 'The full document is attached to this email as a PDF.',
   footer: 'This is an important legal notification from Koinonia.',
   footerDisclaimer: 'You received this email because you are a user of Koinonia.',
 }
@@ -63,7 +61,6 @@ export const polishTranslations: SilentAcceptanceEmailTranslations = {
   viewDocumentButton: 'Zobacz zaktualizowany dokument',
   disagreeButton: 'Nie zgadzam się ze zmianami',
   disagreeWarning: 'Jeśli się nie zgadzasz, Twoje konto zostanie zaplanowane do usunięcia. Masz czas do {effectiveDate}, aby wyrazić sprzeciw.',
-  pdfAttached: 'Pełny dokument jest załączony do tej wiadomości jako PDF.',
   footer: 'Jest to ważne powiadomienie prawne od Koinonia.',
   footerDisclaimer: 'Otrzymujesz tę wiadomość, ponieważ jesteś użytkownikiem Koinonia.',
 }
@@ -153,11 +150,6 @@ export function SilentAcceptanceEmail({
                 <Text style={summaryText}>{summaryOfChanges}</Text>
               </>
             )}
-          </Section>
-
-          {/* PDF attachment note */}
-          <Section style={attachmentNote}>
-            <Text style={attachmentText}>📎 {t.pdfAttached}</Text>
           </Section>
 
           {/* View document button - Primary action */}
@@ -323,21 +315,6 @@ const summaryText = {
   fontSize: '14px',
   lineHeight: '20px',
   margin: '0',
-}
-
-const attachmentNote = {
-  backgroundColor: '#f3f4f6',
-  borderRadius: '6px',
-  padding: '12px 16px',
-  margin: '16px 0',
-}
-
-const attachmentText = {
-  color: '#4b5563',
-  fontSize: '14px',
-  lineHeight: '20px',
-  margin: '0',
-  textAlign: 'center' as const,
 }
 
 const buttonContainer = {

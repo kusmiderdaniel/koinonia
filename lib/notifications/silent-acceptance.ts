@@ -22,11 +22,6 @@ import {
   polishTranslations,
   type SilentAcceptanceEmailTranslations,
 } from '@/emails/SilentAcceptanceEmail'
-import {
-  generateLegalDocumentPDF,
-  generatePDFFilename,
-  getDocumentTypeLabel,
-} from '@/lib/pdf/legal-document'
 
 interface DocumentInfo {
   id: string
@@ -123,28 +118,6 @@ export async function sendSilentAcceptanceNotifications(document: DocumentInfo) 
     DEADLINE_DAYS[document.documentType as keyof typeof DEADLINE_DAYS] || 14
   const deadline = addDays(effectiveDate, deadlineDays)
 
-  // Generate PDF for the document
-  let pdfBuffer: Buffer
-  try {
-    pdfBuffer = await generateLegalDocumentPDF({
-      title: document.title,
-      content: document.content,
-      version: document.version,
-      effectiveDate: document.effectiveDate,
-      language: document.language,
-    })
-    console.log('[SilentAcceptance] PDF generated for:', document.title)
-  } catch (error) {
-    console.error('[SilentAcceptance] Failed to generate PDF:', error)
-    return { sent: 0, failed: 0 }
-  }
-
-  const pdfFilename = generatePDFFilename(
-    document.documentType,
-    document.version,
-    document.language
-  )
-
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   const viewUrl = `${siteUrl}/legal/${document.documentType.replace(/_/g, '-')}`
   const disagreeUrl = `${siteUrl}/legal/disagree?doc=${document.documentType}&id=${document.id}`
@@ -189,13 +162,6 @@ export async function sendSilentAcceptanceNotifications(document: DocumentInfo) 
             disagreeUrl,
             translations,
           }),
-          attachments: [
-            {
-              filename: pdfFilename,
-              content: pdfBuffer,
-              contentType: 'application/pdf',
-            },
-          ],
         })
         sent++
       } catch (error) {

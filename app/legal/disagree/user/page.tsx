@@ -7,6 +7,7 @@ interface UserDisagreePageProps {
   searchParams: Promise<{
     doc?: string
     id?: string
+    error?: string
   }>
 }
 
@@ -25,6 +26,16 @@ export default async function UserDisagreePage({ searchParams }: UserDisagreePag
     redirect('/auth/signin?redirect=/legal/disagree/user')
   }
 
+  // If error was passed from the parent page, show it
+  if (params.error) {
+    return (
+      <UserDisagreementClient
+        mode="error"
+        error={params.error}
+      />
+    )
+  }
+
   // If no document specified, check for pending disagreements
   if (!params.doc || !params.id) {
     const { data: pending } = await getPendingDisagreements()
@@ -39,8 +50,13 @@ export default async function UserDisagreePage({ searchParams }: UserDisagreePag
       )
     }
 
-    // No document and no pending - redirect to dashboard
-    redirect('/dashboard')
+    // No document and no pending - show helpful message instead of dashboard
+    return (
+      <UserDisagreementClient
+        mode="error"
+        error="No document specified. If you followed a link from an email, please try again or contact support."
+      />
+    )
   }
 
   // Get disagreement info for the specified document
