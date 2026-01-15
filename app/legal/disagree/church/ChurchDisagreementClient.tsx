@@ -583,7 +583,7 @@ export function ChurchDisagreementClient({
                       </p>
                     </div>
                   </div>
-                  <Link href="/settings/church?tab=ownership">
+                  <Link href="/dashboard/settings?tab=transfer">
                     <Button
                       variant="outline"
                       className="w-full border-blue-300 hover:bg-blue-100 dark:border-blue-800 dark:hover:bg-blue-900/50"
