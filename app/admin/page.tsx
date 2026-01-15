@@ -76,53 +76,53 @@ export default async function AdminPage() {
 
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="border py-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
             <CardTitle className="text-sm font-medium">Total Churches</CardTitle>
             <Church className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalChurches}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-1">
               <span className="text-green-600">+{stats.newChurches}</span> in last 30 days
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="border py-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalUsers}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-1">
               <span className="text-green-600">+{stats.newUsers}</span> in last 30 days
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="border py-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
             <CardTitle className="text-sm font-medium">Published Documents</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.publishedDocs}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-1">
               Legal documents active
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="border py-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
             <CardTitle className="text-sm font-medium">Pending Disagreements</CardTitle>
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.pendingDisagreements}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-1">
               {stats.pendingDisagreements > 0 ? (
                 <span className="text-amber-600">Requires attention</span>
               ) : (
@@ -135,7 +135,7 @@ export default async function AdminPage() {
 
       {/* Quick Actions */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="border hover:border-brand/50 transition-colors">
+        <Card className="border py-2 hover:border-brand/50 transition-colors">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5 text-brand" />
@@ -155,7 +155,7 @@ export default async function AdminPage() {
           </CardContent>
         </Card>
 
-        <Card className="border hover:border-muted-foreground/30 transition-colors">
+        <Card className="border py-2 hover:border-muted-foreground/30 transition-colors">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Church className="h-5 w-5 text-muted-foreground" />
@@ -172,7 +172,7 @@ export default async function AdminPage() {
           </CardContent>
         </Card>
 
-        <Card className="border hover:border-muted-foreground/30 transition-colors">
+        <Card className="border py-2 hover:border-muted-foreground/30 transition-colors">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="h-5 w-5 text-muted-foreground" />
