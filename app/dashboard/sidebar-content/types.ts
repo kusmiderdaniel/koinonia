@@ -17,6 +17,7 @@ export interface SidebarUser {
   lastName: string
   email: string
   role: string
+  isSuperAdmin?: boolean
 }
 
 export interface SidebarContentProps {

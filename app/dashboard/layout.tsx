@@ -37,6 +37,7 @@ export default async function DashboardLayout({
     lastName: profile.last_name,
     email: profile.email,
     role: profile.role,
+    isSuperAdmin: profile.is_super_admin === true,
   }
 
   return (
