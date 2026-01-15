@@ -100,7 +100,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
   }, [positionsByMinistry])
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-zinc-700 !gap-0 !py-0">
+    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-white !gap-0 !py-0">
       <EventHeader
         selectedEvent={selectedEvent}
         canManage={canManage}
