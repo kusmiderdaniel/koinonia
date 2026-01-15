@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { format, formatDistanceToNow } from 'date-fns'
+import { pl, enUS } from 'date-fns/locale'
 import {
   AlertTriangle,
   Calendar,
@@ -56,11 +57,177 @@ interface ChurchDisagreementClientProps {
     email: string
   }>
   error?: string
+  language: 'en' | 'pl'
 }
 
-const DOCUMENT_TYPE_NAMES: Record<string, string> = {
-  dpa: 'Data Processing Agreement',
-  church_admin_terms: 'Church Administrator Terms',
+const translations = {
+  en: {
+    documentTypes: {
+      dpa: 'Data Processing Agreement',
+      church_admin_terms: 'Church Administrator Terms',
+    },
+    error: {
+      title: 'Error',
+      backToDashboard: 'Back to Dashboard',
+    },
+    pending: {
+      title: 'Pending Church Deletions',
+      description:
+        "You have disagreed with the following documents. Your church will be deleted if you don't withdraw your disagreement before the deadline.",
+      deadline: 'Deadline',
+      reAgree: 'Re-agree',
+      exportData: 'Export Data',
+      exporting: 'Exporting...',
+      backToDashboard: 'Back to Dashboard',
+    },
+    warning: {
+      title: 'Church Deletion Warning',
+      subtitle: 'Please read this carefully before proceeding',
+      alertTitle: 'Your church will be permanently deleted',
+      alertDescription:
+        "If you disagree with the updated {document} and do not re-agree before the deadline, {churchName} and all associated data will be permanently deleted.",
+      effectiveDate: 'Effective Date',
+      deletionDeadline: 'Deletion Deadline',
+      acknowledgement: 'By disagreeing, you acknowledge that:',
+      point1: 'Your church cannot operate without accepting the current terms',
+      point2: "{churchName} will be deleted on the deadline date if you don't re-agree",
+      point3: 'All church members will be disconnected from the church',
+      point4: 'Church members will be notified 10 days before deletion',
+      point5: 'You can withdraw your disagreement at any time before the deadline',
+      point6: 'Once deleted, your church data cannot be recovered',
+      goBack: 'Go Back',
+      continueButton: 'I Understand, Continue',
+    },
+    options: {
+      title: 'Your Options',
+      subtitle: 'Before deleting your church, consider these alternatives',
+      transferTitle: 'Transfer Ownership',
+      transferDescription: 'Transfer the church to another admin who accepts the new terms',
+      transferButton: 'Transfer to Another Admin',
+      exportTitle: 'Export Church Data',
+      exportDescription: 'Download all your church data before deletion',
+      exportButton: 'Export Church Data',
+      exporting: 'Exporting...',
+      proceedTitle: 'Proceed with Disagreement',
+      proceedDescription: 'Schedule your church for deletion',
+      proceedButton: 'Proceed with Disagreement',
+      goBack: 'Go Back',
+    },
+    confirm: {
+      title: 'Confirm Your Disagreement',
+      description: 'Enter your password to confirm your disagreement with the {document}',
+      password: 'Password',
+      passwordPlaceholder: 'Enter your password',
+      checkbox:
+        'I understand that {churchName} will be permanently deleted on {date} if I do not withdraw this disagreement.',
+      goBack: 'Go Back',
+      confirmButton: 'Confirm Disagreement',
+      processing: 'Processing...',
+    },
+    transfer: {
+      title: 'Transfer Church Ownership',
+      description: 'Select an admin to transfer ownership to. This will cancel the scheduled deletion.',
+      selectLabel: 'Select New Owner',
+      selectPlaceholder: 'Select an admin',
+      passwordLabel: 'Your Password',
+      passwordPlaceholder: 'Enter your password to confirm',
+      cancel: 'Cancel',
+      transferButton: 'Transfer Ownership',
+      transferring: 'Transferring...',
+    },
+    toast: {
+      disagreementRecorded: 'Disagreement recorded',
+      disagreementWithdrawn: 'Disagreement withdrawn - you have re-agreed to the document',
+      ownershipTransferred: 'Ownership transferred successfully. Church deletion cancelled.',
+      exportSuccess: 'Church data exported successfully',
+      exportFailed: 'Failed to export data',
+      error: 'An error occurred',
+    },
+  },
+  pl: {
+    documentTypes: {
+      dpa: 'Umowa Powierzenia Danych',
+      church_admin_terms: 'Warunki dla Administratorów Kościoła',
+    },
+    error: {
+      title: 'Błąd',
+      backToDashboard: 'Wróć do panelu',
+    },
+    pending: {
+      title: 'Oczekujące usunięcia kościoła',
+      description:
+        'Wyraziłeś sprzeciw wobec poniższych dokumentów. Twój kościół zostanie usunięty, jeśli nie wycofasz sprzeciwu przed upływem terminu.',
+      deadline: 'Termin',
+      reAgree: 'Zaakceptuj ponownie',
+      exportData: 'Eksportuj dane',
+      exporting: 'Eksportowanie...',
+      backToDashboard: 'Wróć do panelu',
+    },
+    warning: {
+      title: 'Ostrzeżenie o usunięciu kościoła',
+      subtitle: 'Przeczytaj uważnie przed kontynuowaniem',
+      alertTitle: 'Twój kościół zostanie trwale usunięty',
+      alertDescription:
+        'Jeśli nie zgadzasz się z zaktualizowanym dokumentem {document} i nie zaakceptujesz go ponownie przed upływem terminu, {churchName} oraz wszystkie powiązane dane zostaną trwale usunięte.',
+      effectiveDate: 'Data wejścia w życie',
+      deletionDeadline: 'Termin usunięcia',
+      acknowledgement: 'Wyrażając sprzeciw, potwierdzasz że:',
+      point1: 'Twój kościół nie może działać bez akceptacji aktualnych warunków',
+      point2: '{churchName} zostanie usunięty w dniu terminu, jeśli nie zaakceptujesz ponownie',
+      point3: 'Wszyscy członkowie kościoła zostaną odłączeni od kościoła',
+      point4: 'Członkowie kościoła zostaną powiadomieni 10 dni przed usunięciem',
+      point5: 'Możesz wycofać sprzeciw w dowolnym momencie przed upływem terminu',
+      point6: 'Po usunięciu danych kościoła nie można ich odzyskać',
+      goBack: 'Wróć',
+      continueButton: 'Rozumiem, kontynuuj',
+    },
+    options: {
+      title: 'Twoje opcje',
+      subtitle: 'Przed usunięciem kościoła rozważ te alternatywy',
+      transferTitle: 'Przekaż własność',
+      transferDescription: 'Przekaż kościół innemu administratorowi, który akceptuje nowe warunki',
+      transferButton: 'Przekaż innemu administratorowi',
+      exportTitle: 'Eksportuj dane kościoła',
+      exportDescription: 'Pobierz wszystkie dane kościoła przed usunięciem',
+      exportButton: 'Eksportuj dane kościoła',
+      exporting: 'Eksportowanie...',
+      proceedTitle: 'Kontynuuj ze sprzeciwem',
+      proceedDescription: 'Zaplanuj usunięcie kościoła',
+      proceedButton: 'Kontynuuj ze sprzeciwem',
+      goBack: 'Wróć',
+    },
+    confirm: {
+      title: 'Potwierdź swój sprzeciw',
+      description: 'Wprowadź hasło, aby potwierdzić sprzeciw wobec dokumentu {document}',
+      password: 'Hasło',
+      passwordPlaceholder: 'Wprowadź hasło',
+      checkbox:
+        'Rozumiem, że {churchName} zostanie trwale usunięty {date}, jeśli nie wycofam tego sprzeciwu.',
+      goBack: 'Wróć',
+      confirmButton: 'Potwierdź sprzeciw',
+      processing: 'Przetwarzanie...',
+    },
+    transfer: {
+      title: 'Przekaż własność kościoła',
+      description:
+        'Wybierz administratora, któremu chcesz przekazać własność. Anuluje to zaplanowane usunięcie.',
+      selectLabel: 'Wybierz nowego właściciela',
+      selectPlaceholder: 'Wybierz administratora',
+      passwordLabel: 'Twoje hasło',
+      passwordPlaceholder: 'Wprowadź hasło, aby potwierdzić',
+      cancel: 'Anuluj',
+      transferButton: 'Przekaż własność',
+      transferring: 'Przekazywanie...',
+    },
+    toast: {
+      disagreementRecorded: 'Sprzeciw został zapisany',
+      disagreementWithdrawn: 'Sprzeciw wycofany - ponownie zaakceptowałeś dokument',
+      ownershipTransferred: 'Własność przekazana pomyślnie. Usunięcie kościoła anulowane.',
+      exportSuccess: 'Dane kościoła wyeksportowane pomyślnie',
+      exportFailed: 'Nie udało się wyeksportować danych',
+      error: 'Wystąpił błąd',
+    },
+  },
 }
 
 export function ChurchDisagreementClient({
@@ -69,6 +236,7 @@ export function ChurchDisagreementClient({
   pendingDisagreements,
   transferCandidates = [],
   error,
+  language,
 }: ChurchDisagreementClientProps) {
   const router = useRouter()
   const [password, setPassword] = useState('')
@@ -80,6 +248,13 @@ export function ChurchDisagreementClient({
   const [showTransferDialog, setShowTransferDialog] = useState(false)
   const [transferPassword, setTransferPassword] = useState('')
   const [isExporting, setIsExporting] = useState(false)
+
+  const t = translations[language]
+  const dateFnsLocale = language === 'pl' ? pl : enUS
+
+  const getDocumentTypeName = (type: string) => {
+    return t.documentTypes[type as keyof typeof t.documentTypes] || type
+  }
 
   const handleConfirmDisagreement = async () => {
     if (!disagreementInfo || !understood || !password) return
@@ -94,10 +269,10 @@ export function ChurchDisagreementClient({
         return
       }
 
-      toast.success('Disagreement recorded')
+      toast.success(t.toast.disagreementRecorded)
       router.push('/legal/disagree/success?type=church')
     } catch {
-      toast.error('An error occurred')
+      toast.error(t.toast.error)
       setIsSubmitting(false)
     }
   }
@@ -113,10 +288,10 @@ export function ChurchDisagreementClient({
         return
       }
 
-      toast.success('Disagreement withdrawn - you have re-agreed to the document')
+      toast.success(t.toast.disagreementWithdrawn)
       router.push('/dashboard')
     } catch {
-      toast.error('An error occurred')
+      toast.error(t.toast.error)
       setIsSubmitting(false)
     }
   }
@@ -134,11 +309,11 @@ export function ChurchDisagreementClient({
         return
       }
 
-      toast.success('Ownership transferred successfully. Church deletion cancelled.')
+      toast.success(t.toast.ownershipTransferred)
       setShowTransferDialog(false)
       router.push('/dashboard')
     } catch {
-      toast.error('An error occurred')
+      toast.error(t.toast.error)
       setIsSubmitting(false)
     }
   }
@@ -167,9 +342,9 @@ export function ChurchDisagreementClient({
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
 
-      toast.success('Church data exported successfully')
+      toast.success(t.toast.exportSuccess)
     } catch {
-      toast.error('Failed to export data')
+      toast.error(t.toast.exportFailed)
     } finally {
       setIsExporting(false)
     }
@@ -184,13 +359,13 @@ export function ChurchDisagreementClient({
             <div className="mx-auto w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
               <AlertTriangle className="h-6 w-6 text-red-600" />
             </div>
-            <CardTitle className="text-red-600">Error</CardTitle>
+            <CardTitle className="text-red-600">{t.error.title}</CardTitle>
             <CardDescription className="text-base mt-2">{error}</CardDescription>
           </CardHeader>
           <CardContent className="pt-4">
             <Button variant="outline" onClick={() => router.push('/dashboard')} className="w-full">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
+              {t.error.backToDashboard}
             </Button>
           </CardContent>
         </Card>
@@ -209,13 +384,10 @@ export function ChurchDisagreementClient({
                 <AlertTriangle className="h-5 w-5 text-yellow-600" />
               </div>
               <div>
-                <CardTitle>Pending Church Deletions</CardTitle>
+                <CardTitle>{t.pending.title}</CardTitle>
               </div>
             </div>
-            <CardDescription className="mt-3">
-              You have disagreed with the following documents. Your church will be deleted if you
-              don&apos;t withdraw your disagreement before the deadline.
-            </CardDescription>
+            <CardDescription className="mt-3">{t.pending.description}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {pendingDisagreements.map((d) => (
@@ -226,10 +398,10 @@ export function ChurchDisagreementClient({
                 <div>
                   <p className="font-medium">{d.documentTitle}</p>
                   <p className="text-sm text-muted-foreground">
-                    Deadline: {format(new Date(d.deadline), 'PPP')}
+                    {t.pending.deadline}: {format(new Date(d.deadline), 'PPP', { locale: dateFnsLocale })}
                   </p>
-                  <p className="text-sm text-red-600">
-                    {formatDistanceToNow(new Date(d.deadline), { addSuffix: true })}
+                  <p className="text-sm text-red-600 font-medium">
+                    {formatDistanceToNow(new Date(d.deadline), { addSuffix: true, locale: dateFnsLocale })}
                   </p>
                 </div>
                 <Button
@@ -240,7 +412,7 @@ export function ChurchDisagreementClient({
                   className="shrink-0"
                 >
                   <Check className="mr-2 h-4 w-4" />
-                  Re-agree
+                  {t.pending.reAgree}
                 </Button>
               </div>
             ))}
@@ -248,11 +420,11 @@ export function ChurchDisagreementClient({
             <div className="pt-4 flex gap-3">
               <Button variant="outline" onClick={handleExportData} disabled={isExporting}>
                 <Download className="mr-2 h-4 w-4" />
-                {isExporting ? 'Exporting...' : 'Export Data'}
+                {isExporting ? t.pending.exporting : t.pending.exportData}
               </Button>
               <Button variant="ghost" onClick={() => router.push('/dashboard')}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Dashboard
+                {t.pending.backToDashboard}
               </Button>
             </div>
           </CardContent>
@@ -265,6 +437,8 @@ export function ChurchDisagreementClient({
   if (mode === 'disagree' && disagreementInfo) {
     const deadline = new Date(disagreementInfo.deadline)
     const effectiveDate = new Date(disagreementInfo.effectiveDate)
+    const churchName = disagreementInfo.churchName || (language === 'pl' ? 'Twój kościół' : 'your church')
+    const documentName = getDocumentTypeName(disagreementInfo.documentType)
 
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-red-50/50 to-background dark:from-red-950/20">
@@ -277,8 +451,8 @@ export function ChurchDisagreementClient({
                     <AlertTriangle className="h-6 w-6 text-red-600" />
                   </div>
                   <div>
-                    <CardTitle className="text-red-600">Church Deletion Warning</CardTitle>
-                    <CardDescription>Please read this carefully before proceeding</CardDescription>
+                    <CardTitle className="text-red-600">{t.warning.title}</CardTitle>
+                    <CardDescription>{t.warning.subtitle}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -286,13 +460,12 @@ export function ChurchDisagreementClient({
                 <Alert className="border-red-500 bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-200">
                   <Building2 className="h-5 w-5 text-red-600 dark:text-red-400" />
                   <AlertTitle className="text-red-800 dark:text-red-200 font-semibold">
-                    Your church will be permanently deleted
+                    {t.warning.alertTitle}
                   </AlertTitle>
                   <AlertDescription className="text-red-700 dark:text-red-300">
-                    If you disagree with the updated{' '}
-                    <strong>{DOCUMENT_TYPE_NAMES[disagreementInfo.documentType]}</strong> and do not
-                    re-agree before the deadline, {disagreementInfo.churchName || 'your church'} and
-                    all associated data will be permanently deleted.
+                    {t.warning.alertDescription
+                      .replace('{document}', documentName)
+                      .replace('{churchName}', churchName)}
                   </AlertDescription>
                 </Alert>
 
@@ -302,8 +475,8 @@ export function ChurchDisagreementClient({
                       <Calendar className="h-5 w-5 text-muted-foreground" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm text-muted-foreground">Effective Date</p>
-                      <p className="font-semibold">{format(effectiveDate, 'PPPP')}</p>
+                      <p className="font-medium text-sm text-muted-foreground">{t.warning.effectiveDate}</p>
+                      <p className="font-semibold">{format(effectiveDate, 'PPPP', { locale: dateFnsLocale })}</p>
                     </div>
                   </div>
 
@@ -312,12 +485,12 @@ export function ChurchDisagreementClient({
                       <Clock className="h-5 w-5 text-red-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-sm text-red-600">Deletion Deadline</p>
+                      <p className="font-medium text-sm text-red-600">{t.warning.deletionDeadline}</p>
                       <p className="font-semibold text-red-700 dark:text-red-400">
-                        {format(deadline, 'PPPP')}
+                        {format(deadline, 'PPPP', { locale: dateFnsLocale })}
                       </p>
                       <p className="text-xs text-red-500 mt-0.5">
-                        {formatDistanceToNow(deadline, { addSuffix: true })}
+                        {formatDistanceToNow(deadline, { addSuffix: true, locale: dateFnsLocale })}
                       </p>
                     </div>
                   </div>
@@ -325,35 +498,32 @@ export function ChurchDisagreementClient({
 
                 <div className="space-y-3">
                   <p className="text-sm font-medium text-muted-foreground">
-                    By disagreeing, you acknowledge that:
+                    {t.warning.acknowledgement}
                   </p>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-start gap-2">
                       <span className="text-red-500 mt-1">•</span>
-                      <span>Your church cannot operate without accepting the current terms</span>
+                      <span>{t.warning.point1}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-red-500 mt-1">•</span>
-                      <span>
-                        <strong>{disagreementInfo.churchName || 'Your church'}</strong> will be
-                        deleted on the deadline date if you don&apos;t re-agree
-                      </span>
+                      <span>{t.warning.point2.replace('{churchName}', churchName)}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-red-500 mt-1">•</span>
-                      <span>All church members will be disconnected from the church</span>
+                      <span>{t.warning.point3}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-red-500 mt-1">•</span>
-                      <span>Church members will be notified 10 days before deletion</span>
+                      <span>{t.warning.point4}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-red-500 mt-1">•</span>
-                      <span>You can withdraw your disagreement at any time before the deadline</span>
+                      <span>{t.warning.point5}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-red-500 mt-1">•</span>
-                      <span>Once deleted, your church data cannot be recovered</span>
+                      <span>{t.warning.point6}</span>
                     </li>
                   </ul>
                 </div>
@@ -361,13 +531,13 @@ export function ChurchDisagreementClient({
                 <div className="flex gap-3 pt-2">
                   <Button variant="outline" onClick={() => router.back()} className="flex-1 h-11">
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Go Back
+                    {t.warning.goBack}
                   </Button>
                   <Button
                     onClick={() => setStep('options')}
                     className="flex-1 h-11 bg-red-600 hover:bg-red-700 text-white font-medium"
                   >
-                    I Understand, Continue
+                    {t.warning.continueButton}
                   </Button>
                 </div>
               </CardContent>
@@ -380,8 +550,8 @@ export function ChurchDisagreementClient({
                     <Building2 className="h-6 w-6 text-orange-600" />
                   </div>
                   <div>
-                    <CardTitle>Your Options</CardTitle>
-                    <CardDescription>Before deleting your church, consider these alternatives</CardDescription>
+                    <CardTitle>{t.options.title}</CardTitle>
+                    <CardDescription>{t.options.subtitle}</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -392,9 +562,9 @@ export function ChurchDisagreementClient({
                     <div className="flex items-center gap-3">
                       <UserCog className="h-5 w-5 text-blue-600" />
                       <div>
-                        <p className="font-medium">Transfer Ownership</p>
+                        <p className="font-medium">{t.options.transferTitle}</p>
                         <p className="text-sm text-muted-foreground">
-                          Transfer the church to another admin who accepts the new terms
+                          {t.options.transferDescription}
                         </p>
                       </div>
                     </div>
@@ -404,7 +574,7 @@ export function ChurchDisagreementClient({
                       className="w-full"
                     >
                       <Users className="mr-2 h-4 w-4" />
-                      Transfer to Another Admin
+                      {t.options.transferButton}
                     </Button>
                   </div>
                 )}
@@ -414,9 +584,9 @@ export function ChurchDisagreementClient({
                   <div className="flex items-center gap-3">
                     <Download className="h-5 w-5 text-green-600" />
                     <div>
-                      <p className="font-medium">Export Church Data</p>
+                      <p className="font-medium">{t.options.exportTitle}</p>
                       <p className="text-sm text-muted-foreground">
-                        Download all your church data before deletion
+                        {t.options.exportDescription}
                       </p>
                     </div>
                   </div>
@@ -427,7 +597,7 @@ export function ChurchDisagreementClient({
                     className="w-full"
                   >
                     <Download className="mr-2 h-4 w-4" />
-                    {isExporting ? 'Exporting...' : 'Export Church Data'}
+                    {isExporting ? t.options.exporting : t.options.exportButton}
                   </Button>
                 </div>
 
@@ -437,10 +607,10 @@ export function ChurchDisagreementClient({
                     <Trash2 className="h-5 w-5 text-red-600" />
                     <div>
                       <p className="font-medium text-red-700 dark:text-red-400">
-                        Proceed with Disagreement
+                        {t.options.proceedTitle}
                       </p>
                       <p className="text-sm text-red-600 dark:text-red-400">
-                        Schedule your church for deletion
+                        {t.options.proceedDescription}
                       </p>
                     </div>
                   </div>
@@ -452,13 +622,13 @@ export function ChurchDisagreementClient({
                     className="w-full bg-red-600 hover:bg-red-700 text-white font-medium"
                   >
                     <AlertTriangle className="mr-2 h-4 w-4" />
-                    Proceed with Disagreement
+                    {t.options.proceedButton}
                   </Button>
                 </div>
 
                 <Button variant="ghost" onClick={() => setStep('warning')} className="w-full">
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Go Back
+                  {t.options.goBack}
                 </Button>
               </CardContent>
             </>
@@ -470,10 +640,9 @@ export function ChurchDisagreementClient({
                     <AlertTriangle className="h-6 w-6 text-red-600" />
                   </div>
                   <div>
-                    <CardTitle>Confirm Your Disagreement</CardTitle>
+                    <CardTitle>{t.confirm.title}</CardTitle>
                     <CardDescription>
-                      Enter your password to confirm your disagreement with the{' '}
-                      {DOCUMENT_TYPE_NAMES[disagreementInfo.documentType]}
+                      {t.confirm.description.replace('{document}', documentName)}
                     </CardDescription>
                   </div>
                 </div>
@@ -481,13 +650,13 @@ export function ChurchDisagreementClient({
               <CardContent className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t.confirm.password}</Label>
                     <Input
                       id="password"
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your password"
+                      placeholder={t.confirm.passwordPlaceholder}
                     />
                   </div>
 
@@ -499,10 +668,9 @@ export function ChurchDisagreementClient({
                       className="mt-0.5"
                     />
                     <label htmlFor="understood" className="text-sm leading-relaxed cursor-pointer">
-                      I understand that <strong>{disagreementInfo.churchName || 'my church'}</strong>{' '}
-                      will be permanently deleted on{' '}
-                      <strong className="text-red-600">{format(deadline, 'PPP')}</strong> if I do not
-                      withdraw this disagreement.
+                      {t.confirm.checkbox
+                        .replace('{churchName}', churchName)
+                        .replace('{date}', format(deadline, 'PPP', { locale: dateFnsLocale }))}
                     </label>
                   </div>
                 </div>
@@ -510,14 +678,14 @@ export function ChurchDisagreementClient({
                 <div className="flex gap-3 pt-2">
                   <Button variant="outline" onClick={() => setStep('options')} className="flex-1 h-11">
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Go Back
+                    {t.confirm.goBack}
                   </Button>
                   <Button
                     onClick={handleConfirmDisagreement}
                     disabled={!understood || !password || isSubmitting}
                     className="flex-1 h-11 bg-red-600 hover:bg-red-700 text-white font-medium disabled:bg-red-400 disabled:opacity-50"
                   >
-                    {isSubmitting ? 'Processing...' : 'Confirm Disagreement'}
+                    {isSubmitting ? t.confirm.processing : t.confirm.confirmButton}
                   </Button>
                 </div>
               </CardContent>
@@ -529,18 +697,16 @@ export function ChurchDisagreementClient({
         <Dialog open={showTransferDialog} onOpenChange={setShowTransferDialog}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Transfer Church Ownership</DialogTitle>
-              <DialogDescription>
-                Select an admin to transfer ownership to. This will cancel the scheduled deletion.
-              </DialogDescription>
+              <DialogTitle>{t.transfer.title}</DialogTitle>
+              <DialogDescription>{t.transfer.description}</DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="newOwner">Select New Owner</Label>
+                <Label htmlFor="newOwner">{t.transfer.selectLabel}</Label>
                 <Select value={selectedNewOwner} onValueChange={setSelectedNewOwner}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select an admin" />
+                    <SelectValue placeholder={t.transfer.selectPlaceholder} />
                   </SelectTrigger>
                   <SelectContent>
                     {transferCandidates.map((admin) => (
@@ -553,26 +719,26 @@ export function ChurchDisagreementClient({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="transferPassword">Your Password</Label>
+                <Label htmlFor="transferPassword">{t.transfer.passwordLabel}</Label>
                 <Input
                   id="transferPassword"
                   type="password"
                   value={transferPassword}
                   onChange={(e) => setTransferPassword(e.target.value)}
-                  placeholder="Enter your password to confirm"
+                  placeholder={t.transfer.passwordPlaceholder}
                 />
               </div>
             </div>
 
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowTransferDialog(false)}>
-                Cancel
+                {t.transfer.cancel}
               </Button>
               <Button
                 onClick={handleTransferOwnership}
                 disabled={!selectedNewOwner || !transferPassword || isSubmitting}
               >
-                {isSubmitting ? 'Transferring...' : 'Transfer Ownership'}
+                {isSubmitting ? t.transfer.transferring : t.transfer.transferButton}
               </Button>
             </DialogFooter>
           </DialogContent>

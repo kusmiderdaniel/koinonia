@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { getDisagreementInfo, getPendingDisagreements } from '../actions'
 import { ChurchDisagreementClient } from './ChurchDisagreementClient'
@@ -26,12 +27,18 @@ export default async function ChurchDisagreePage({ searchParams }: ChurchDisagre
     redirect('/auth/signin?redirect=/legal/disagree/church')
   }
 
+  // Get user's language preference
+  const cookieStore = await cookies()
+  const locale = cookieStore.get('NEXT_LOCALE')?.value || 'en'
+  const language = (locale === 'pl' ? 'pl' : 'en') as 'en' | 'pl'
+
   // If error was passed from the parent page, show it
   if (params.error) {
     return (
       <ChurchDisagreementClient
         mode="error"
         error={params.error}
+        language={language}
       />
     )
   }
@@ -48,15 +55,21 @@ export default async function ChurchDisagreePage({ searchParams }: ChurchDisagre
         <ChurchDisagreementClient
           mode="pending"
           pendingDisagreements={churchPending}
+          language={language}
         />
       )
     }
 
     // No document and no pending - show helpful message
+    const errorMessage =
+      language === 'pl'
+        ? 'Nie określono dokumentu. Jeśli kliknąłeś link z e-maila, spróbuj ponownie lub skontaktuj się z pomocą techniczną.'
+        : 'No document specified. If you followed a link from an email, please try again or contact support.'
     return (
       <ChurchDisagreementClient
         mode="error"
-        error="No document specified. If you followed a link from an email, please try again or contact support."
+        error={errorMessage}
+        language={language}
       />
     )
   }
@@ -76,15 +89,21 @@ export default async function ChurchDisagreePage({ searchParams }: ChurchDisagre
       <ChurchDisagreementClient
         mode="error"
         error={error}
+        language={language}
       />
     )
   }
 
   if (!data) {
+    const errorMessage =
+      language === 'pl'
+        ? 'Nie znaleziono informacji o dokumencie. Spróbuj ponownie lub skontaktuj się z pomocą techniczną.'
+        : 'Document information not found. Please try again or contact support.'
     return (
       <ChurchDisagreementClient
         mode="error"
-        error="Document information not found. Please try again or contact support."
+        error={errorMessage}
+        language={language}
       />
     )
   }
@@ -112,7 +131,7 @@ export default async function ChurchDisagreePage({ searchParams }: ChurchDisagre
         const userData = admin.users as unknown as { email: string } | null
         return {
           id: admin.id,
-          name: `${admin.first_name || ''} ${admin.last_name || ''}`.trim() || 'Unnamed Admin',
+          name: `${admin.first_name || ''} ${admin.last_name || ''}`.trim() || (language === 'pl' ? 'Administrator bez nazwy' : 'Unnamed Admin'),
           email: userData?.email || '',
         }
       })
@@ -124,6 +143,7 @@ export default async function ChurchDisagreePage({ searchParams }: ChurchDisagre
       mode="disagree"
       disagreementInfo={data}
       transferCandidates={transferCandidates}
+      language={language}
     />
   )
 }
