@@ -178,14 +178,17 @@ export function ChurchDisagreementClient({
   // Error state
   if (mode === 'error') {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="max-w-md w-full">
-          <CardHeader>
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-muted/30 to-background">
+        <Card className="max-w-md w-full shadow-lg">
+          <CardHeader className="text-center pb-2">
+            <div className="mx-auto w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
+              <AlertTriangle className="h-6 w-6 text-red-600" />
+            </div>
             <CardTitle className="text-red-600">Error</CardTitle>
-            <CardDescription>{error}</CardDescription>
+            <CardDescription className="text-base mt-2">{error}</CardDescription>
           </CardHeader>
-          <CardContent>
-            <Button variant="outline" onClick={() => router.push('/dashboard')}>
+          <CardContent className="pt-4">
+            <Button variant="outline" onClick={() => router.push('/dashboard')} className="w-full">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Dashboard
             </Button>
@@ -198,14 +201,18 @@ export function ChurchDisagreementClient({
   // Pending disagreements list
   if (mode === 'pending' && pendingDisagreements) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="max-w-lg w-full">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-muted/30 to-background">
+        <Card className="max-w-lg w-full shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-yellow-500" />
-              Pending Church Deletions
-            </CardTitle>
-            <CardDescription>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
+                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+              </div>
+              <div>
+                <CardTitle>Pending Church Deletions</CardTitle>
+              </div>
+            </div>
+            <CardDescription className="mt-3">
               You have disagreed with the following documents. Your church will be deleted if you
               don&apos;t withdraw your disagreement before the deadline.
             </CardDescription>
@@ -214,7 +221,7 @@ export function ChurchDisagreementClient({
             {pendingDisagreements.map((d) => (
               <div
                 key={d.id}
-                className="flex items-center justify-between p-4 border rounded-lg"
+                className="flex items-center justify-between p-4 border rounded-lg bg-muted/30"
               >
                 <div>
                   <p className="font-medium">{d.documentTitle}</p>
@@ -230,6 +237,7 @@ export function ChurchDisagreementClient({
                   size="sm"
                   onClick={() => handleWithdraw(d.id)}
                   disabled={isSubmitting}
+                  className="shrink-0"
                 >
                   <Check className="mr-2 h-4 w-4" />
                   Re-agree
@@ -259,24 +267,28 @@ export function ChurchDisagreementClient({
     const effectiveDate = new Date(disagreementInfo.effectiveDate)
 
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="max-w-xl w-full">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-red-50/50 to-background dark:from-red-950/20">
+        <Card className="max-w-xl w-full shadow-lg border-red-200 dark:border-red-900/50">
           {step === 'warning' ? (
             <>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-red-600">
-                  <AlertTriangle className="h-6 w-6" />
-                  Church Deletion Warning
-                </CardTitle>
-                <CardDescription>
-                  Please read this carefully before proceeding
-                </CardDescription>
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                    <AlertTriangle className="h-6 w-6 text-red-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-red-600">Church Deletion Warning</CardTitle>
+                    <CardDescription>Please read this carefully before proceeding</CardDescription>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                <Alert variant="destructive">
-                  <Building2 className="h-4 w-4" />
-                  <AlertTitle>Your church will be permanently deleted</AlertTitle>
-                  <AlertDescription>
+                <Alert className="border-red-500 bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-200">
+                  <Building2 className="h-5 w-5 text-red-600 dark:text-red-400" />
+                  <AlertTitle className="text-red-800 dark:text-red-200 font-semibold">
+                    Your church will be permanently deleted
+                  </AlertTitle>
+                  <AlertDescription className="text-red-700 dark:text-red-300">
                     If you disagree with the updated{' '}
                     <strong>{DOCUMENT_TYPE_NAMES[disagreementInfo.documentType]}</strong> and do not
                     re-agree before the deadline, {disagreementInfo.churchName || 'your church'} and
@@ -284,55 +296,76 @@ export function ChurchDisagreementClient({
                   </AlertDescription>
                 </Alert>
 
-                <div className="grid gap-4">
-                  <div className="flex items-start gap-3 p-3 bg-muted rounded-lg">
-                    <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <div className="grid gap-3">
+                  <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
+                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0">
+                      <Calendar className="h-5 w-5 text-muted-foreground" />
+                    </div>
                     <div>
-                      <p className="font-medium">Effective Date</p>
-                      <p className="text-sm text-muted-foreground">
-                        {format(effectiveDate, 'PPPP')}
-                      </p>
+                      <p className="font-medium text-sm text-muted-foreground">Effective Date</p>
+                      <p className="font-semibold">{format(effectiveDate, 'PPPP')}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 p-3 bg-red-50 dark:bg-red-950 rounded-lg border border-red-200 dark:border-red-900">
-                    <Clock className="h-5 w-5 text-red-600 mt-0.5" />
+                  <div className="flex items-center gap-4 p-4 bg-red-50 dark:bg-red-950/30 rounded-lg border border-red-200 dark:border-red-900">
+                    <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center shrink-0">
+                      <Clock className="h-5 w-5 text-red-600" />
+                    </div>
                     <div>
-                      <p className="font-medium text-red-700 dark:text-red-400">Deletion Deadline</p>
-                      <p className="text-sm text-red-600 dark:text-red-400">
+                      <p className="font-medium text-sm text-red-600">Deletion Deadline</p>
+                      <p className="font-semibold text-red-700 dark:text-red-400">
                         {format(deadline, 'PPPP')}
                       </p>
-                      <p className="text-xs text-red-500 mt-1">
+                      <p className="text-xs text-red-500 mt-0.5">
                         {formatDistanceToNow(deadline, { addSuffix: true })}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  <p>By disagreeing, you acknowledge that:</p>
-                  <ul className="list-disc list-inside space-y-1">
-                    <li>Your church cannot operate without accepting the current terms</li>
-                    <li>
-                      <strong>{disagreementInfo.churchName || 'Your church'}</strong> will be
-                      deleted on the deadline date if you don&apos;t re-agree
+                <div className="space-y-3">
+                  <p className="text-sm font-medium text-muted-foreground">
+                    By disagreeing, you acknowledge that:
+                  </p>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-500 mt-1">•</span>
+                      <span>Your church cannot operate without accepting the current terms</span>
                     </li>
-                    <li>All church members will be disconnected from the church</li>
-                    <li>Church members will be notified 10 days before deletion</li>
-                    <li>You can withdraw your disagreement at any time before the deadline</li>
-                    <li>Once deleted, your church data cannot be recovered</li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-500 mt-1">•</span>
+                      <span>
+                        <strong>{disagreementInfo.churchName || 'Your church'}</strong> will be
+                        deleted on the deadline date if you don&apos;t re-agree
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-500 mt-1">•</span>
+                      <span>All church members will be disconnected from the church</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-500 mt-1">•</span>
+                      <span>Church members will be notified 10 days before deletion</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-500 mt-1">•</span>
+                      <span>You can withdraw your disagreement at any time before the deadline</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-red-500 mt-1">•</span>
+                      <span>Once deleted, your church data cannot be recovered</span>
+                    </li>
                   </ul>
                 </div>
 
-                <div className="flex gap-3">
-                  <Button variant="outline" onClick={() => router.back()} className="flex-1">
+                <div className="flex gap-3 pt-2">
+                  <Button variant="outline" onClick={() => router.back()} className="flex-1 h-11">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Go Back
                   </Button>
                   <Button
-                    variant="destructive"
                     onClick={() => setStep('options')}
-                    className="flex-1"
+                    className="flex-1 h-11 bg-red-600 hover:bg-red-700 text-white font-medium"
                   >
                     I Understand, Continue
                   </Button>
@@ -341,14 +374,16 @@ export function ChurchDisagreementClient({
             </>
           ) : step === 'options' ? (
             <>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Building2 className="h-6 w-6 text-orange-600" />
-                  Your Options
-                </CardTitle>
-                <CardDescription>
-                  Before deleting your church, consider these alternatives
-                </CardDescription>
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+                    <Building2 className="h-6 w-6 text-orange-600" />
+                  </div>
+                  <div>
+                    <CardTitle>Your Options</CardTitle>
+                    <CardDescription>Before deleting your church, consider these alternatives</CardDescription>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Transfer Ownership Option */}
@@ -410,12 +445,11 @@ export function ChurchDisagreementClient({
                     </div>
                   </div>
                   <Button
-                    variant="destructive"
                     onClick={() => {
                       setSelectedAction('disagree')
                       setStep('confirm')
                     }}
-                    className="w-full"
+                    className="w-full bg-red-600 hover:bg-red-700 text-white font-medium"
                   >
                     <AlertTriangle className="mr-2 h-4 w-4" />
                     Proceed with Disagreement
@@ -430,15 +464,19 @@ export function ChurchDisagreementClient({
             </>
           ) : (
             <>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-6 w-6 text-red-600" />
-                  Confirm Your Disagreement
-                </CardTitle>
-                <CardDescription>
-                  Enter your password to confirm your disagreement with the{' '}
-                  {DOCUMENT_TYPE_NAMES[disagreementInfo.documentType]}
-                </CardDescription>
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                    <AlertTriangle className="h-6 w-6 text-red-600" />
+                  </div>
+                  <div>
+                    <CardTitle>Confirm Your Disagreement</CardTitle>
+                    <CardDescription>
+                      Enter your password to confirm your disagreement with the{' '}
+                      {DOCUMENT_TYPE_NAMES[disagreementInfo.documentType]}
+                    </CardDescription>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-4">
@@ -453,13 +491,14 @@ export function ChurchDisagreementClient({
                     />
                   </div>
 
-                  <div className="flex items-start space-x-3">
+                  <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
                     <Checkbox
                       id="understood"
                       checked={understood}
                       onCheckedChange={(checked) => setUnderstood(checked === true)}
+                      className="mt-0.5"
                     />
-                    <label htmlFor="understood" className="text-sm">
+                    <label htmlFor="understood" className="text-sm leading-relaxed cursor-pointer">
                       I understand that <strong>{disagreementInfo.churchName || 'my church'}</strong>{' '}
                       will be permanently deleted on{' '}
                       <strong className="text-red-600">{format(deadline, 'PPP')}</strong> if I do not
@@ -468,16 +507,15 @@ export function ChurchDisagreementClient({
                   </div>
                 </div>
 
-                <div className="flex gap-3">
-                  <Button variant="outline" onClick={() => setStep('options')} className="flex-1">
+                <div className="flex gap-3 pt-2">
+                  <Button variant="outline" onClick={() => setStep('options')} className="flex-1 h-11">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Go Back
                   </Button>
                   <Button
-                    variant="destructive"
                     onClick={handleConfirmDisagreement}
                     disabled={!understood || !password || isSubmitting}
-                    className="flex-1"
+                    className="flex-1 h-11 bg-red-600 hover:bg-red-700 text-white font-medium disabled:bg-red-400 disabled:opacity-50"
                   >
                     {isSubmitting ? 'Processing...' : 'Confirm Disagreement'}
                   </Button>
