@@ -119,8 +119,8 @@ export const EventHeader = memo(function EventHeader({
               {canDelete && (
                 <Button
                   variant="outline"
-                  size="sm"
-                  className="rounded-full text-red-600 hover:text-red-700"
+                  size="icon"
+                  className="rounded-full text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
                   onClick={onDelete}
                 >
                   <Trash2 className="w-4 h-4" />
