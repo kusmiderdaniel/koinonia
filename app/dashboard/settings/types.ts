@@ -25,6 +25,7 @@ export interface ChurchSettingsData {
   time_format: '12h' | '24h' | null
   default_event_visibility: string | null
   logo_url: string | null
+  brand_color: string | null
 }
 
 export interface ChurchPreferences {

@@ -18,7 +18,7 @@ export async function getChurchSettings() {
   // Get church details
   const { data: church, error: churchError } = await adminClient
     .from('churches')
-    .select('id, name, subdomain, join_code, timezone, time_format, first_day_of_week, default_event_visibility, links_page_enabled, logo_url, address, city, state, zip_code, country, phone, email, website, created_at, updated_at')
+    .select('id, name, subdomain, join_code, timezone, time_format, first_day_of_week, default_event_visibility, links_page_enabled, logo_url, address, city, state, zip_code, country, phone, email, website, brand_color, created_at, updated_at')
     .eq('id', profile.church_id)
     .single()
 
@@ -314,6 +314,38 @@ export async function removeChurchLogo() {
   if (updateError) {
     console.error('Error removing logo URL:', updateError)
     return { error: 'Failed to remove logo' }
+  }
+
+  revalidatePath('/dashboard')
+  revalidatePath('/dashboard/settings')
+  return { success: true }
+}
+
+export async function updateBrandColor(brandColor: string) {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  // Only admins can update brand color
+  const permError = requireRole(profile.role, ['owner', 'admin'], 'update brand color')
+  if (permError) return { error: permError }
+
+  // Validate hex color format
+  const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
+  if (!hexColorRegex.test(brandColor)) {
+    return { error: 'Invalid color format. Please use hex format (e.g., #f49f1e)' }
+  }
+
+  // Update brand color
+  const { error: updateError } = await adminClient
+    .from('churches')
+    .update({ brand_color: brandColor })
+    .eq('id', profile.church_id)
+
+  if (updateError) {
+    console.error('Error updating brand color:', updateError)
+    return { error: 'Failed to update brand color' }
   }
 
   revalidatePath('/dashboard')

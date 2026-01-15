@@ -7,6 +7,7 @@ export {
   regenerateJoinCode,
   uploadChurchLogo,
   removeChurchLogo,
+  updateBrandColor,
 } from './church'
 
 // Locations CRUD

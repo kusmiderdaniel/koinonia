@@ -41,7 +41,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
   // Fetch church settings
   const { data: church } = await adminClient
     .from('churches')
-    .select('id, name, subdomain, join_code, timezone, time_format, first_day_of_week, default_event_visibility, links_page_enabled, logo_url, address, city, state, zip_code, country, phone, email, website, created_at, updated_at')
+    .select('id, name, subdomain, join_code, timezone, time_format, first_day_of_week, default_event_visibility, links_page_enabled, logo_url, address, city, state, zip_code, country, phone, email, website, brand_color, created_at, updated_at')
     .eq('id', profile.church_id)
     .single()
 
@@ -121,6 +121,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
     time_format: church.time_format as '12h' | '24h',
     default_event_visibility: church.default_event_visibility,
     logo_url: church.logo_url,
+    brand_color: church.brand_color,
   }
 
   return (

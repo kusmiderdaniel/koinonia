@@ -36,6 +36,13 @@
       "uploadSuccess": "Logo uploaded successfully",
       "removeSuccess": "Logo removed"
     },
+    "brandColor": {
+      "label": "Brand Color",
+      "apply": "Apply",
+      "saving": "Saving...",
+      "hint": "This color will be used for buttons, highlights, and accents throughout your church's app.",
+      "saveSuccess": "Brand color updated!"
+    },
     "savedSuccess": "Church settings updated successfully!",
     "name": "Church Name *",
     "email": "Church Email",

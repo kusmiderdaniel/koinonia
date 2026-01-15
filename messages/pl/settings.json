@@ -36,6 +36,13 @@
       "uploadSuccess": "Logo zostało przesłane",
       "removeSuccess": "Logo zostało usunięte"
     },
+    "brandColor": {
+      "label": "Kolor marki",
+      "apply": "Zastosuj",
+      "saving": "Zapisywanie...",
+      "hint": "Ten kolor będzie używany dla przycisków, wyróżnień i akcentów w aplikacji twojego kościoła.",
+      "saveSuccess": "Kolor marki zaktualizowany!"
+    },
     "savedSuccess": "Ustawienia kościoła zostały zaktualizowane!",
     "name": "Nazwa kościoła *",
     "email": "E-mail kościoła",

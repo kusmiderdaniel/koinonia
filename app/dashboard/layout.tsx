@@ -7,6 +7,7 @@ import { MainContent } from './MainContent'
 import { PushNotificationProvider } from '@/components/PushNotificationProvider'
 import { PushPermissionBanner } from '@/components/PushPermissionBanner'
 import { PWARefreshButton } from '@/components/PWARefreshButton'
+import { BrandColorProvider } from '@/components/BrandColorProvider'
 
 export default async function DashboardLayout({
   children,
@@ -41,37 +42,39 @@ export default async function DashboardLayout({
   }
 
   return (
-    <PushNotificationProvider>
-      <div className="min-h-screen bg-muted/30">
-        {/* Mobile Header - shown only on mobile */}
-        <MobileHeader churchName={profile.church.name} churchLogoUrl={profile.church.logo_url} />
+    <BrandColorProvider brandColor={profile.church.brand_color}>
+      <PushNotificationProvider>
+        <div className="min-h-screen bg-muted/30">
+          {/* Mobile Header - shown only on mobile */}
+          <MobileHeader churchName={profile.church.name} churchLogoUrl={profile.church.logo_url} />
 
-        {/* Desktop Sidebar - hidden on mobile */}
-        <Sidebar
-          user={userProps}
-          churchName={profile.church.name}
-          churchLogoUrl={profile.church.logo_url}
-          className="hidden md:flex"
-        />
+          {/* Desktop Sidebar - hidden on mobile */}
+          <Sidebar
+            user={userProps}
+            churchName={profile.church.name}
+            churchLogoUrl={profile.church.logo_url}
+            className="hidden md:flex"
+          />
 
-        {/* Mobile Sidebar Drawer */}
-        <MobileSidebar
-          user={userProps}
-          churchName={profile.church.name}
-          churchLogoUrl={profile.church.logo_url}
-        />
+          {/* Mobile Sidebar Drawer */}
+          <MobileSidebar
+            user={userProps}
+            churchName={profile.church.name}
+            churchLogoUrl={profile.church.logo_url}
+          />
 
-        {/* Main content - responsive padding */}
-        <MainContent>
-          {children}
-        </MainContent>
+          {/* Main content - responsive padding */}
+          <MainContent>
+            {children}
+          </MainContent>
 
-        {/* Push notification permission banner */}
-        <PushPermissionBanner />
+          {/* Push notification permission banner */}
+          <PushPermissionBanner />
 
-        {/* Refresh button for standalone PWA mode */}
-        <PWARefreshButton />
-      </div>
-    </PushNotificationProvider>
+          {/* Refresh button for standalone PWA mode */}
+          <PWARefreshButton />
+        </div>
+      </PushNotificationProvider>
+    </BrandColorProvider>
   )
 }

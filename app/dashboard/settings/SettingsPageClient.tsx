@@ -92,6 +92,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
   const [presets, setPresets] = useState<Preset[]>(initialData.presets)
   const presetsMinistries = initialData.ministries
   const [logoUrl, setLogoUrl] = useState<string | null>(initialData.church.logo_url)
+  const [brandColor, setBrandColor] = useState<string | null>(initialData.church.brand_color)
 
   // Mobile navigation state
   const [mobileSelectedTab, setMobileSelectedTab] = useState<TabKey | null>(null)
@@ -132,7 +133,9 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
             isAdmin={settings.isAdmin}
             churchData={settings.churchData}
             logoUrl={logoUrl}
+            brandColor={brandColor}
             onLogoChange={setLogoUrl}
+            onBrandColorChange={setBrandColor}
             onSubmit={settings.onSubmit}
           />
         )
@@ -389,7 +392,9 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
                   isAdmin={settings.isAdmin}
                   churchData={settings.churchData}
                   logoUrl={logoUrl}
+                  brandColor={brandColor}
                   onLogoChange={setLogoUrl}
+                  onBrandColorChange={setBrandColor}
                   onSubmit={settings.onSubmit}
                 />
               </TabsContent>
