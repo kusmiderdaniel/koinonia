@@ -33,7 +33,7 @@ export async function getProfile() {
 
   const { data: profileData, error } = await adminClient
     .from('profiles')
-    .select('first_name, last_name, email, phone, avatar_url, date_of_birth, sex, role, notification_preferences, language')
+    .select('first_name, last_name, email, phone, avatar_url, date_of_birth, sex, role, notification_preferences, language, theme_preference')
     .eq('id', profile.id)
     .single()
 
@@ -298,6 +298,35 @@ export async function updateLanguagePreference(language: string) {
   if (error) {
     console.error('Error updating language preference:', error)
     return { error: 'Failed to update language preference' }
+  }
+
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
+export type ThemePreference = 'light' | 'dark' | 'system'
+
+const VALID_THEMES: ThemePreference[] = ['light', 'dark', 'system']
+
+export async function updateThemePreference(theme: ThemePreference) {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) return { error: auth.error }
+
+  const { profile, adminClient } = auth
+
+  // Validate theme value
+  if (!VALID_THEMES.includes(theme)) {
+    return { error: 'Invalid theme value' }
+  }
+
+  const { error } = await adminClient
+    .from('profiles')
+    .update({ theme_preference: theme })
+    .eq('id', profile.id)
+
+  if (error) {
+    console.error('Error updating theme preference:', error)
+    return { error: 'Failed to update theme preference' }
   }
 
   revalidatePath('/dashboard')

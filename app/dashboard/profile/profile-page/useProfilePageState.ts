@@ -8,6 +8,7 @@ import {
   DEFAULT_NOTIFICATION_PREFERENCES,
 } from '@/types/notification-preferences'
 import { type Locale } from '@/lib/i18n/config'
+import { type ThemePreference } from '../actions'
 
 export interface ProfilePageTranslations {
   profileSavedSuccess: string
@@ -29,6 +30,7 @@ export function useProfilePageState(translations: ProfilePageTranslations) {
   const [firstDayOfWeek, setFirstDayOfWeek] = useState<0 | 1 | 2 | 3 | 4 | 5 | 6>(0)
   const [userRole, setUserRole] = useState<string>('')
   const [language, setLanguage] = useState<Locale | null>(null)
+  const [theme, setTheme] = useState<ThemePreference | null>(null)
   const [churchName, setChurchName] = useState<string>('')
 
   // Notification preferences state
@@ -76,6 +78,9 @@ export function useProfilePageState(translations: ProfilePageTranslations) {
         }
         if (result.data.language) {
           setLanguage(result.data.language as Locale)
+        }
+        if (result.data.theme_preference) {
+          setTheme(result.data.theme_preference as ThemePreference)
         }
         if (result.churchName) {
           setChurchName(result.churchName)
@@ -225,6 +230,7 @@ export function useProfilePageState(translations: ProfilePageTranslations) {
     firstDayOfWeek,
     userRole,
     language,
+    theme,
     churchName,
 
     // Profile handlers

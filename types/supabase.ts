@@ -2382,6 +2382,7 @@ export type Database = {
           role: string
           sex: string | null
           skills: string[] | null
+          theme_preference: string | null
           updated_at: string
           user_id: string | null
         }
@@ -2412,6 +2413,7 @@ export type Database = {
           role?: string
           sex?: string | null
           skills?: string[] | null
+          theme_preference?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -2442,6 +2444,7 @@ export type Database = {
           role?: string
           sex?: string | null
           skills?: string[] | null
+          theme_preference?: string | null
           updated_at?: string
           user_id?: string | null
         }

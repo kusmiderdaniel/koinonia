@@ -7,6 +7,7 @@
     "password": "Password",
     "notifications": "Notification Settings",
     "language": "Language",
+    "appearance": "Appearance",
     "privacy": "Privacy & Data",
     "account": "Account"
   },
@@ -15,6 +16,7 @@
     "password": "Change your password",
     "notifications": "Manage notification preferences",
     "language": "Choose your preferred language",
+    "appearance": "Light, dark, or system theme",
     "privacy": "Manage consents, export data, delete account",
     "account": "Leave church or delete account"
   },
@@ -88,6 +90,17 @@
     "label": "Display Language",
     "description": "Choose your preferred language for the interface",
     "updated": "Language preference updated"
+  },
+  "appearance": {
+    "title": "Appearance",
+    "label": "Theme",
+    "description": "Choose how the app looks on your device",
+    "updated": "Theme preference updated",
+    "options": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
   },
   "account": {
     "title": "Account Settings",

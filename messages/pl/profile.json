@@ -7,6 +7,7 @@
     "password": "Hasło",
     "notifications": "Ustawienia powiadomień",
     "language": "Język",
+    "appearance": "Wygląd",
     "privacy": "Prywatność i Dane",
     "account": "Konto"
   },
@@ -15,6 +16,7 @@
     "password": "Zmień swoje hasło",
     "notifications": "Zarządzaj preferencjami powiadomień",
     "language": "Wybierz preferowany język",
+    "appearance": "Jasny, ciemny lub systemowy motyw",
     "privacy": "Zarządzaj zgodami, eksportuj dane, usuń konto",
     "account": "Opuść kościół lub usuń konto"
   },
@@ -88,6 +90,17 @@
     "label": "Język interfejsu",
     "description": "Wybierz preferowany język interfejsu",
     "updated": "Preferencja językowa została zaktualizowana"
+  },
+  "appearance": {
+    "title": "Wygląd",
+    "label": "Motyw",
+    "description": "Wybierz jak aplikacja wygląda na twoim urządzeniu",
+    "updated": "Preferencja motywu została zaktualizowana",
+    "options": {
+      "light": "Jasny",
+      "dark": "Ciemny",
+      "system": "Systemowy"
+    }
   },
   "account": {
     "title": "Ustawienia konta",
