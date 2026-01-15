@@ -2,7 +2,7 @@ import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { isSuperAdmin } from '@/lib/permissions'
 import Link from 'next/link'
-import { FileText, ArrowLeft } from 'lucide-react'
+import { FileText, ArrowLeft, LayoutDashboard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export default async function AdminLayout({
@@ -50,6 +50,12 @@ export default async function AdminLayout({
             <span className="font-semibold text-lg">Admin Panel</span>
           </div>
           <nav className="flex items-center gap-2">
+            <Link href="/admin">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <LayoutDashboard className="h-4 w-4" />
+                Dashboard
+              </Button>
+            </Link>
             <Link href="/admin/legal-documents">
               <Button variant="ghost" size="sm" className="gap-2">
                 <FileText className="h-4 w-4" />
