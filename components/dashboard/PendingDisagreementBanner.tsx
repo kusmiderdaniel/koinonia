@@ -61,6 +61,9 @@ export function PendingDisagreementBanner({
   const deadline = new Date(firstDisagreement.deadline)
   const timeRemaining = formatDistanceToNow(deadline, { addSuffix: false })
 
+  // Route to the appropriate page based on whether it's a church or user document
+  const withdrawUrl = isChurchDeletion ? '/legal/disagree/church' : '/legal/disagree/user'
+
   return (
     <Alert variant="destructive" className="mb-6 border-red-500 bg-red-50 dark:bg-red-950/30">
       <AlertTriangle className="h-5 w-5" />
@@ -85,7 +88,7 @@ export function PendingDisagreementBanner({
           </p>
 
           <div className="flex flex-wrap gap-2 mt-1">
-            <Link href="/legal/disagree/user">
+            <Link href={withdrawUrl}>
               <Button
                 size="sm"
                 className="bg-red-600 hover:bg-red-700 text-white font-medium"
@@ -96,7 +99,7 @@ export function PendingDisagreementBanner({
             </Link>
 
             {hasMultiple && (
-              <Link href="/legal/disagree/user">
+              <Link href={withdrawUrl}>
                 <Button variant="outline" size="sm">
                   {t.viewAll} ({disagreements.length})
                 </Button>
