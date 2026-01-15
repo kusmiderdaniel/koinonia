@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Plus, FileText, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -33,16 +34,42 @@ const LANGUAGES: { key: Language; label: string; flag: string }[] = [
 ]
 
 export function LegalDocumentsClient({ initialDocuments }: LegalDocumentsClientProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Read initial values from URL or use defaults
+  const initialType = (searchParams.get('type') as DocumentType) || 'terms_of_service'
+  const initialLang = (searchParams.get('lang') as Language) || 'en'
+
   const [mounted, setMounted] = useState(false)
   const [documents, setDocuments] = useState(initialDocuments)
-  const [selectedType, setSelectedType] = useState<DocumentType>('terms_of_service')
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>('en')
+  const [selectedType, setSelectedType] = useState<DocumentType>(
+    DOCUMENT_TYPES.some(t => t.key === initialType) ? initialType : 'terms_of_service'
+  )
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>(
+    LANGUAGES.some(l => l.key === initialLang) ? initialLang : 'en'
+  )
   const [isEditorOpen, setIsEditorOpen] = useState(false)
   const [editingDocumentId, setEditingDocumentId] = useState<string | null>(null)
+
+  // Update URL when type or language changes
+  const updateURL = useCallback((type: DocumentType, lang: Language) => {
+    const params = new URLSearchParams()
+    params.set('type', type)
+    params.set('lang', lang)
+    router.replace(`/admin/legal-documents?${params.toString()}`, { scroll: false })
+  }, [router])
 
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  // Update URL when selection changes
+  useEffect(() => {
+    if (mounted) {
+      updateURL(selectedType, selectedLanguage)
+    }
+  }, [selectedType, selectedLanguage, mounted, updateURL])
 
   const currentDocs = documents[selectedType]?.[selectedLanguage] || []
 
@@ -57,7 +84,7 @@ export function LegalDocumentsClient({ initialDocuments }: LegalDocumentsClientP
   }
 
   const refreshDocuments = async () => {
-    window.location.reload()
+    router.refresh()
   }
 
   const selectedLang = LANGUAGES.find((l) => l.key === selectedLanguage)
