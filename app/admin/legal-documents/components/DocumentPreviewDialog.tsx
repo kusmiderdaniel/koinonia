@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import ReactMarkdown from 'react-markdown'
+import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
 import type { LegalDocumentWithStats } from '../actions'
 
@@ -45,7 +46,7 @@ export function DocumentPreviewDialog({
         <div className="h-[60vh] overflow-y-auto border rounded-lg bg-muted/30">
           <div className="prose prose-sm max-w-none dark:prose-invert p-4">
             <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
+              remarkPlugins={[remarkGfm, remarkBreaks]}
               components={{
                 h1: ({ children }) => (
                   <h1 className="text-xl font-bold mt-6 mb-4 first:mt-0">{children}</h1>

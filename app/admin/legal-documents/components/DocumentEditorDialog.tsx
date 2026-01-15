@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import ReactMarkdown from 'react-markdown'
+import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
 import {
   getLegalDocument,
@@ -329,7 +330,7 @@ export function DocumentEditorDialog({
                     <div className="flex-1 overflow-y-auto border rounded-md bg-muted/30 p-4">
                     <div className="prose prose-sm max-w-none dark:prose-invert">
                       <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
+                        remarkPlugins={[remarkGfm, remarkBreaks]}
                         components={{
                           h1: ({ children }) => (
                             <h1 className="text-xl font-bold mt-6 mb-4 first:mt-0">{children}</h1>
