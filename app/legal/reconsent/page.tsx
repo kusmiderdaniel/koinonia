@@ -257,7 +257,7 @@ export default function ReconsentPage() {
                         : 'border-2'
                     }`}
                   >
-                    <CardHeader className="pb-3">
+                    <CardHeader className="pt-6 pb-3">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -312,7 +312,7 @@ export default function ReconsentPage() {
                       )}
                     </CardHeader>
 
-                    <CardContent className="pt-0">
+                    <CardContent className="pt-0 pb-6">
                       {/* Expand/Collapse Button */}
                       {!isAccepted && (
                         <Button
