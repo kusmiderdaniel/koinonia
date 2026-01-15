@@ -22,7 +22,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Select,
@@ -467,17 +466,21 @@ export function ChurchDisagreementClient({
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                <Alert className="border-red-500 bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-200">
-                  <Building2 className="h-5 w-5 text-red-600 dark:text-red-400" />
-                  <AlertTitle className="text-red-800 dark:text-red-200 font-semibold">
-                    {t.warning.alertTitle}
-                  </AlertTitle>
-                  <AlertDescription className="text-red-700 dark:text-red-300">
-                    {t.warning.alertDescription
-                      .replace('{document}', documentName)
-                      .replace('{churchName}', churchName)}
-                  </AlertDescription>
-                </Alert>
+                <div className="rounded-lg border border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/50 p-4">
+                  <div className="flex gap-3">
+                    <Building2 className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-red-700 dark:text-red-400">
+                        {t.warning.alertTitle}
+                      </h4>
+                      <p className="text-sm text-red-600 dark:text-red-400">
+                        {t.warning.alertDescription
+                          .replace('{document}', documentName)
+                          .replace('{churchName}', churchName)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="grid gap-3">
                   <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
