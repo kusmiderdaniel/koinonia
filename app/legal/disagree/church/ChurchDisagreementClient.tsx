@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { format, formatDistanceToNow } from 'date-fns'
 import { pl, enUS } from 'date-fns/locale'
 import {
@@ -9,6 +10,7 @@ import {
   Calendar,
   Clock,
   ArrowLeft,
+  ArrowRight,
   Trash2,
   Check,
   Users,
@@ -104,6 +106,10 @@ const translations = {
       transferTitle: 'Transfer Ownership',
       transferDescription: 'Transfer the church to another admin who accepts the new terms',
       transferButton: 'Transfer to Another Admin',
+      transferSettingsTitle: 'Transfer Ownership',
+      transferSettingsDescription:
+        'Transfer church ownership to another admin. The new owner will need to accept the updated legal documents to keep the church active.',
+      transferSettingsButton: 'Go to Ownership Transfer',
       exportTitle: 'Export Church Data',
       exportDescription: 'Download all your church data before deletion',
       exportButton: 'Export Church Data',
@@ -187,6 +193,10 @@ const translations = {
       transferTitle: 'Przekaż własność',
       transferDescription: 'Przekaż kościół innemu administratorowi, który akceptuje nowe warunki',
       transferButton: 'Przekaż innemu administratorowi',
+      transferSettingsTitle: 'Przekaż własność',
+      transferSettingsDescription:
+        'Przekaż własność kościoła innemu administratorowi. Nowy właściciel będzie musiał zaakceptować zaktualizowane dokumenty prawne, aby kościół pozostał aktywny.',
+      transferSettingsButton: 'Przejdź do przekazania własności',
       exportTitle: 'Eksportuj dane kościoła',
       exportDescription: 'Pobierz wszystkie dane kościoła przed usunięciem',
       exportButton: 'Eksportuj dane kościoła',
@@ -557,28 +567,29 @@ export function ChurchDisagreementClient({
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Transfer Ownership Option */}
-                {transferCandidates.length > 0 && (
-                  <div className="p-4 border rounded-lg space-y-3">
-                    <div className="flex items-center gap-3">
-                      <UserCog className="h-5 w-5 text-blue-600" />
-                      <div>
-                        <p className="font-medium">{t.options.transferTitle}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {t.options.transferDescription}
-                        </p>
-                      </div>
+                {/* Transfer Ownership via Settings Option */}
+                <div className="p-4 border border-blue-200 dark:border-blue-900 rounded-lg space-y-3 bg-blue-50 dark:bg-blue-950/30">
+                  <div className="flex items-center gap-3">
+                    <UserCog className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <p className="font-medium text-blue-700 dark:text-blue-400">
+                        {t.options.transferSettingsTitle}
+                      </p>
+                      <p className="text-sm text-blue-600 dark:text-blue-400">
+                        {t.options.transferSettingsDescription}
+                      </p>
                     </div>
+                  </div>
+                  <Link href="/settings/church?tab=ownership">
                     <Button
                       variant="outline"
-                      onClick={() => setShowTransferDialog(true)}
-                      className="w-full"
+                      className="w-full border-blue-300 hover:bg-blue-100 dark:border-blue-800 dark:hover:bg-blue-900/50"
                     >
-                      <Users className="mr-2 h-4 w-4" />
-                      {t.options.transferButton}
+                      {t.options.transferSettingsButton}
+                      <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
-                  </div>
-                )}
+                  </Link>
+                </div>
 
                 {/* Export Data Option */}
                 <div className="p-4 border rounded-lg space-y-3">
