@@ -208,7 +208,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
   const positions = template.event_template_positions || []
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-zinc-700 !gap-0 !py-0">
+    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-white !gap-0 !py-0">
       <TemplateHeader
         template={template}
         canManage={canManage}

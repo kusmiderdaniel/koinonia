@@ -46,7 +46,7 @@ export function TemplatesList({
 
   return (
     <div
-      className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card ${
+      className={`flex flex-col border border-black dark:border-white rounded-lg bg-card ${
         isMobile ? 'w-full h-full' : 'w-80 flex-shrink-0'
       }`}
     >
