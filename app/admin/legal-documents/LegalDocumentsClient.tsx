@@ -125,7 +125,7 @@ export function LegalDocumentsClient({ initialDocuments }: LegalDocumentsClientP
                 {selectedLang?.flag} {selectedLang?.label}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="border border-border shadow-md">
               {LANGUAGES.map((lang) => (
                 <SelectItem key={lang.key} value={lang.key}>
                   {lang.flag} {lang.label}
