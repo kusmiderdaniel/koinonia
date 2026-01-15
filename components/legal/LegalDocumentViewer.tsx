@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Printer, Loader2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
 
 type DocumentType = 'terms_of_service' | 'privacy_policy' | 'dpa' | 'church_admin_terms'
@@ -316,7 +317,7 @@ export function LegalDocumentViewer({
       >
         <div className="p-4 legal-document">
           <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
+            remarkPlugins={[remarkGfm, remarkBreaks]}
             components={{
               h1: ({ children }) => (
                 <h1 className="text-xl font-bold mt-6 mb-4 first:mt-0">{children}</h1>

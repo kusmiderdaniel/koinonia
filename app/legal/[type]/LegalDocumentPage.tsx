@@ -6,6 +6,7 @@ import { ArrowLeft, FileText, Calendar, Hash, Printer, Loader2 } from 'lucide-re
 import Link from 'next/link'
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -136,7 +137,7 @@ export function LegalDocumentPage({ document, typeTitle }: LegalDocumentPageProp
               {/* Document Content */}
               <article className="legal-document prose prose-gray dark:prose-invert max-w-none">
                 <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
+                  remarkPlugins={[remarkGfm, remarkBreaks]}
                   components={{
                     h1: ({ children }) => (
                       <h1 className="text-xl font-bold mt-8 mb-4 first:mt-0 border-b pb-2 print:text-lg">
