@@ -30,7 +30,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { Card, CardContent } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
@@ -248,6 +249,9 @@ export function UsersClient({ initialUsers }: UsersClientProps) {
       {/* User Details Dialog */}
       <Dialog open={!!selectedUser} onOpenChange={(open) => !open && setSelectedUser(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] p-0 gap-0 overflow-hidden">
+          <VisuallyHidden>
+            <DialogTitle>User Details</DialogTitle>
+          </VisuallyHidden>
           {selectedUser && (
             <>
               {/* Header with gradient background */}

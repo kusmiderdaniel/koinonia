@@ -28,7 +28,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { Card, CardContent } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import type { ChurchWithStats } from './actions'
@@ -217,6 +218,9 @@ export function ChurchesClient({ initialChurches }: ChurchesClientProps) {
       {/* Church Details Dialog */}
       <Dialog open={!!selectedChurch} onOpenChange={(open) => !open && setSelectedChurch(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] p-0 gap-0 overflow-hidden">
+          <VisuallyHidden>
+            <DialogTitle>Church Details</DialogTitle>
+          </VisuallyHidden>
           {selectedChurch && (
             <>
               {/* Header with gradient background */}
