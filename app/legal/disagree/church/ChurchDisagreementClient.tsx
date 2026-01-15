@@ -442,7 +442,7 @@ export function ChurchDisagreementClient({
                       size="sm"
                       onClick={() => handleWithdraw(d.id)}
                       disabled={isSubmitting}
-                      className="bg-green-600 hover:bg-green-700 text-white"
+                      className="!bg-green-600 hover:!bg-green-700 !text-white"
                     >
                       <Check className="mr-2 h-4 w-4" />
                       {t.pending.reAgree}
