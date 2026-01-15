@@ -13,6 +13,8 @@ import {
   Search,
   ExternalLink,
   Eye,
+  Heart,
+  FileText,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -244,25 +246,25 @@ export function ChurchesClient({ initialChurches }: ChurchesClientProps) {
 
                 {/* Stats Row */}
                 <div className="grid grid-cols-4 gap-3 mt-5">
-                  <div className="bg-background/80 backdrop-blur rounded-xl p-3 text-center border shadow-sm">
-                    <Users className="h-4 w-4 mx-auto text-blue-500 mb-1" />
+                  <div className="bg-background/80 backdrop-blur rounded-xl px-2 py-4 text-center border shadow-sm">
+                    <Users className="h-4 w-4 mx-auto text-blue-500 mb-1.5" />
                     <div className="text-2xl font-bold">{selectedChurch.church.member_count}</div>
-                    <div className="text-xs text-muted-foreground">Members</div>
+                    <div className="text-xs text-muted-foreground mt-1">Members</div>
                   </div>
-                  <div className="bg-background/80 backdrop-blur rounded-xl p-3 text-center border shadow-sm">
-                    <Calendar className="h-4 w-4 mx-auto text-green-500 mb-1" />
+                  <div className="bg-background/80 backdrop-blur rounded-xl px-2 py-4 text-center border shadow-sm">
+                    <Calendar className="h-4 w-4 mx-auto text-green-500 mb-1.5" />
                     <div className="text-2xl font-bold">{selectedChurch.stats.totalEvents}</div>
-                    <div className="text-xs text-muted-foreground">Events</div>
+                    <div className="text-xs text-muted-foreground mt-1">Events</div>
                   </div>
-                  <div className="bg-background/80 backdrop-blur rounded-xl p-3 text-center border shadow-sm">
-                    <Users className="h-4 w-4 mx-auto text-purple-500 mb-1" />
+                  <div className="bg-background/80 backdrop-blur rounded-xl px-2 py-4 text-center border shadow-sm">
+                    <Heart className="h-4 w-4 mx-auto text-purple-500 mb-1.5" />
                     <div className="text-2xl font-bold">{selectedChurch.stats.totalMinistries}</div>
-                    <div className="text-xs text-muted-foreground">Ministries</div>
+                    <div className="text-xs text-muted-foreground mt-1">Ministries</div>
                   </div>
-                  <div className="bg-background/80 backdrop-blur rounded-xl p-3 text-center border shadow-sm">
-                    <Globe className="h-4 w-4 mx-auto text-orange-500 mb-1" />
+                  <div className="bg-background/80 backdrop-blur rounded-xl px-2 py-4 text-center border shadow-sm">
+                    <FileText className="h-4 w-4 mx-auto text-orange-500 mb-1.5" />
                     <div className="text-2xl font-bold">{selectedChurch.stats.totalForms}</div>
-                    <div className="text-xs text-muted-foreground">Forms</div>
+                    <div className="text-xs text-muted-foreground mt-1">Forms</div>
                   </div>
                 </div>
               </div>
