@@ -9,6 +9,7 @@ import { WeekTimelineSection } from './WeekTimelineSection'
 import { QuickAccessSection } from './QuickAccessSection'
 import { ChurchCalendarSection } from './ChurchCalendarSection'
 import { MemberLinksPanel } from './MemberLinksPanel'
+import { PendingDisagreementBanner, type PendingDisagreement } from './PendingDisagreementBanner'
 import { Link2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { TaskDetailSheet } from '@/components/tasks/TaskDetailSheet'
@@ -70,6 +71,8 @@ interface DashboardClientProps {
   calendarBirthdays?: CalendarBirthday[]
   canCreateEvents?: boolean
   linksData?: QuickLinksData | null
+  pendingDisagreements?: PendingDisagreement[]
+  language?: 'en' | 'pl'
 }
 
 export function DashboardClient({
@@ -94,6 +97,8 @@ export function DashboardClient({
   calendarBirthdays = [],
   canCreateEvents = false,
   linksData,
+  pendingDisagreements = [],
+  language = 'en',
 }: DashboardClientProps) {
   const router = useRouter()
   const t = useTranslations('dashboard')
@@ -138,6 +143,12 @@ export function DashboardClient({
 
   return (
     <div className="p-4 md:p-6">
+      {/* Pending Disagreement Banner */}
+      <PendingDisagreementBanner
+        disagreements={pendingDisagreements}
+        language={language}
+      />
+
       {/* Header */}
       <DashboardHeader
         firstName={firstName}

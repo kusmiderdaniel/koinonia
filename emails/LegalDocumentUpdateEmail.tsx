@@ -17,6 +17,36 @@ export interface LegalDocumentUpdateEmailProps {
   documentType: string
   summaryOfChanges: string | null
   reviewUrl: string
+  language?: 'en' | 'pl'
+}
+
+const translations = {
+  en: {
+    preview: (title: string) => `Important: ${title} has been updated`,
+    heading: 'Updated Legal Document',
+    greeting: (name: string) => `Hi ${name},`,
+    intro: (title: string) =>
+      `We've updated our ${title}. Please review and accept the new terms to continue using Koinonia.`,
+    summaryLabel: 'Summary of Changes:',
+    reviewButton: 'Review & Accept',
+    importantNote:
+      "You'll be asked to accept these updated terms the next time you log in to Koinonia.",
+    footer:
+      'This is an important legal notification from Koinonia. Please review the updated document at your earliest convenience.',
+  },
+  pl: {
+    preview: (title: string) => `Ważne: ${title} został zaktualizowany`,
+    heading: 'Zaktualizowany dokument prawny',
+    greeting: (name: string) => `Cześć ${name},`,
+    intro: (title: string) =>
+      `Zaktualizowaliśmy nasz dokument ${title}. Przejrzyj i zaakceptuj nowe warunki, aby kontynuować korzystanie z Koinonia.`,
+    summaryLabel: 'Podsumowanie zmian:',
+    reviewButton: 'Przejrzyj i zaakceptuj',
+    importantNote:
+      'Zostaniesz poproszony o zaakceptowanie tych zaktualizowanych warunków przy następnym logowaniu do Koinonia.',
+    footer:
+      'To jest ważne powiadomienie prawne od Koinonia. Prosimy o przejrzenie zaktualizowanego dokumentu w najbliższym możliwym czasie.',
+  },
 }
 
 export function LegalDocumentUpdateEmail({
@@ -25,21 +55,21 @@ export function LegalDocumentUpdateEmail({
   documentType,
   summaryOfChanges,
   reviewUrl,
+  language = 'en',
 }: LegalDocumentUpdateEmailProps) {
+  const t = translations[language]
+
   return (
     <Html>
       <Head />
-      <Preview>Important: {documentTitle} has been updated</Preview>
+      <Preview>{t.preview(documentTitle)}</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Heading style={h1}>Updated Legal Document</Heading>
+          <Heading style={h1}>{t.heading}</Heading>
 
-          <Text style={text}>Hi {recipientName},</Text>
+          <Text style={text}>{t.greeting(recipientName)}</Text>
 
-          <Text style={text}>
-            We&apos;ve updated our <strong>{documentTitle}</strong>. Please review
-            and accept the new terms to continue using Koinonia.
-          </Text>
+          <Text style={text}>{t.intro(documentTitle)}</Text>
 
           <Section style={documentBox}>
             <Text style={documentTitleStyle}>{documentTitle}</Text>
@@ -47,7 +77,7 @@ export function LegalDocumentUpdateEmail({
             {summaryOfChanges && (
               <>
                 <Hr style={hr} />
-                <Text style={summaryLabel}>Summary of Changes:</Text>
+                <Text style={summaryLabel}>{t.summaryLabel}</Text>
                 <Text style={summaryText}>{summaryOfChanges}</Text>
               </>
             )}
@@ -55,22 +85,15 @@ export function LegalDocumentUpdateEmail({
 
           <Section style={buttonContainer}>
             <Button style={reviewButton} href={reviewUrl}>
-              Review & Accept
+              {t.reviewButton}
             </Button>
           </Section>
 
-          <Text style={importantText}>
-            You&apos;ll be asked to accept these updated terms the next time you
-            log in to Koinonia.
-          </Text>
+          <Text style={importantText}>{t.importantNote}</Text>
 
           <Hr style={hr} />
 
-          <Text style={footer}>
-            This is an important legal notification from Koinonia.
-            <br />
-            Please review the updated document at your earliest convenience.
-          </Text>
+          <Text style={footer}>{t.footer}</Text>
         </Container>
       </Body>
     </Html>

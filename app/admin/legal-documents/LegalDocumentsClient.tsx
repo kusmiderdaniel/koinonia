@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/select'
 import { DocumentList } from './components/DocumentList'
 import { DocumentEditorDialog } from './components/DocumentEditorDialog'
-import type { GroupedDocuments, DocumentType, Language } from './actions'
+import { getLegalDocuments, type GroupedDocuments, type DocumentType, type Language } from './actions'
 
 interface LegalDocumentsClientProps {
   initialDocuments: GroupedDocuments
@@ -83,9 +83,12 @@ export function LegalDocumentsClient({ initialDocuments }: LegalDocumentsClientP
     setIsEditorOpen(true)
   }
 
-  const refreshDocuments = async () => {
-    router.refresh()
-  }
+  const refreshDocuments = useCallback(async () => {
+    const result = await getLegalDocuments()
+    if (result.data) {
+      setDocuments(result.data)
+    }
+  }, [])
 
   const selectedLang = LANGUAGES.find((l) => l.key === selectedLanguage)
 

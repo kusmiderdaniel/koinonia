@@ -3,6 +3,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { ChurchCalendarSection } from './ChurchCalendarSection'
 import { MemberLinksPanel } from './MemberLinksPanel'
+import { PendingDisagreementBanner, type PendingDisagreement } from './PendingDisagreementBanner'
 import { type CalendarEvent, type ChurchHoliday } from '@/app/dashboard/actions'
 import { Link2 } from 'lucide-react'
 
@@ -51,6 +52,8 @@ interface MemberDashboardProps {
   firstDayOfWeek: 0 | 1 | 2 | 3 | 4 | 5 | 6
   timeFormat: '12h' | '24h'
   linksData?: MemberLinksData | null
+  pendingDisagreements?: PendingDisagreement[]
+  language?: 'en' | 'pl'
 }
 
 export function MemberDashboard({
@@ -62,11 +65,19 @@ export function MemberDashboard({
   firstDayOfWeek,
   timeFormat,
   linksData,
+  pendingDisagreements = [],
+  language = 'en',
 }: MemberDashboardProps) {
   const hasLinks = linksData && linksData.links.length > 0
 
   return (
     <div className="p-4 md:p-6">
+      {/* Pending Disagreement Banner */}
+      <PendingDisagreementBanner
+        disagreements={pendingDisagreements}
+        language={language}
+      />
+
       {/* Simple Header for Members */}
       <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold">

@@ -11,6 +11,7 @@ import {
   getChurchHolidays,
   getCalendarBirthdays,
 } from './actions'
+import { getPendingDisagreements } from '../legal/disagree/actions'
 import { DashboardClient } from '@/components/dashboard/DashboardClient'
 import { MemberDashboard } from '@/components/dashboard/MemberDashboard'
 import { createUrgentItems, createWeekItems } from '@/lib/utils/dashboard-helpers'
@@ -41,6 +42,7 @@ export default async function DashboardPage() {
   const firstDayOfWeek = (profile.church?.first_day_of_week ?? 0) as 0 | 1 | 2 | 3 | 4 | 5 | 6
   const timeFormat = (profile.church?.time_format ?? '24h') as '12h' | '24h'
   const role = profile.role as UserRole
+  const language = (profile.language === 'pl' ? 'pl' : 'en') as 'en' | 'pl'
 
   // Get current month/year for calendar
   const now = new Date()
@@ -53,11 +55,12 @@ export default async function DashboardPage() {
   // Check if user should see birthdays (leaders, admins, owners)
   const showBirthdays = ['leader', 'admin', 'owner'].includes(role)
 
-  // For members: Fetch calendar events, holidays, and optionally links
+  // For members: Fetch calendar events, holidays, pending disagreements, and optionally links
   if (isMemberOnly) {
-    const [calendarResult, holidaysResult] = await Promise.all([
+    const [calendarResult, holidaysResult, pendingDisagreementsResult] = await Promise.all([
       getCalendarEventsForMember(currentMonth, currentYear),
       getChurchHolidays(currentMonth, currentYear),
+      getPendingDisagreements(),
     ])
 
     // Check if links page is enabled for this church
@@ -134,6 +137,8 @@ export default async function DashboardPage() {
         firstDayOfWeek={firstDayOfWeek}
         timeFormat={timeFormat}
         linksData={linksData}
+        pendingDisagreements={pendingDisagreementsResult.data || []}
+        language={language}
       />
     )
   }
@@ -208,6 +213,7 @@ export default async function DashboardPage() {
     birthdaysResult,
     holidaysResult,
     calendarBirthdaysResult,
+    pendingDisagreementsResult,
   ] = await Promise.all([
     getMyAssignments(),
     getUpcomingEvents(),
@@ -275,6 +281,8 @@ export default async function DashboardPage() {
     getChurchHolidays(currentMonth, currentYear),
     // Calendar birthdays for leaders+ (for calendar display)
     showBirthdays ? getCalendarBirthdays(currentMonth, currentYear) : Promise.resolve({ data: [] }),
+    // Pending legal disagreements
+    getPendingDisagreements(),
   ])
 
   const assignments = assignmentsResult.data || []
@@ -341,6 +349,8 @@ export default async function DashboardPage() {
       calendarBirthdays={calendarBirthdays}
       canCreateEvents={canCreateEvents}
       linksData={linksData}
+      pendingDisagreements={pendingDisagreementsResult.data || []}
+      language={language}
     />
   )
 }

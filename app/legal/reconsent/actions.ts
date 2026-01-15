@@ -4,9 +4,15 @@ import { headers, cookies } from 'next/headers'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 
 interface OutdatedConsent {
+  documentId: string
   documentType: string
+  documentTitle: string
   currentVersion: number
   acceptedVersion: number | null
+  summary: string | null
+  content: string
+  effectiveDate: string
+  isChurchDocument: boolean // true for DPA and church_admin_terms
 }
 
 export async function getOutdatedConsents(): Promise<{
@@ -25,18 +31,35 @@ export async function getOutdatedConsents(): Promise<{
 
   const adminClient = createServiceRoleClient()
 
+  // Get user's profile to check if they're a church owner
+  const { data: profile } = await adminClient
+    .from('profiles')
+    .select('id, role, church_id')
+    .eq('user_id', user.id)
+    .single()
+
+  const isChurchOwner = profile?.role === 'owner'
+
   // Get user's locale from cookie or default to 'en'
   const cookieStore = await cookies()
   const locale = cookieStore.get('NEXT_LOCALE')?.value || 'en'
 
-  // Get current versions of TOS and Privacy Policy for user's locale
+  // Determine which document types to fetch
+  // All users need ToS and Privacy Policy
+  // Church owners also need DPA and Church Admin Terms
+  const documentTypes = ['terms_of_service', 'privacy_policy']
+  if (isChurchOwner) {
+    documentTypes.push('dpa', 'church_admin_terms')
+  }
+
+  // Get current versions of relevant documents for user's locale
   // Include acceptance_type to handle silent vs active acceptance
   const { data: currentDocs } = await adminClient
     .from('legal_documents')
-    .select('id, document_type, version, acceptance_type')
+    .select('id, document_type, version, acceptance_type, title, summary, content, effective_date')
     .eq('is_current', true)
     .eq('language', locale)
-    .in('document_type', ['terms_of_service', 'privacy_policy'])
+    .in('document_type', documentTypes)
 
   if (!currentDocs || currentDocs.length === 0) {
     return { consents: [] }
@@ -81,10 +104,17 @@ export async function getOutdatedConsents(): Promise<{
         continue
       }
 
+      const isChurchDoc = doc.document_type === 'dpa' || doc.document_type === 'church_admin_terms'
       outdatedConsents.push({
+        documentId: doc.id,
         documentType: doc.document_type,
+        documentTitle: doc.title,
         currentVersion: doc.version,
         acceptedVersion: null,
+        summary: doc.summary,
+        content: doc.content,
+        effectiveDate: doc.effective_date,
+        isChurchDocument: isChurchDoc,
       })
       continue
     }
@@ -109,15 +139,74 @@ export async function getOutdatedConsents(): Promise<{
       }
 
       // Active acceptance - user must explicitly accept
+      const isChurchDoc = doc.document_type === 'dpa' || doc.document_type === 'church_admin_terms'
       outdatedConsents.push({
+        documentId: doc.id,
         documentType: doc.document_type,
+        documentTitle: doc.title,
         currentVersion: doc.version,
         acceptedVersion,
+        summary: doc.summary,
+        content: doc.content,
+        effectiveDate: doc.effective_date,
+        isChurchDocument: isChurchDoc,
       })
     }
   }
 
   return { consents: outdatedConsents }
+}
+
+export async function recordSingleConsent(
+  documentId: string
+): Promise<{ success?: boolean; error?: string }> {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { error: 'Not authenticated' }
+  }
+
+  const adminClient = createServiceRoleClient()
+  const headersList = await headers()
+  const ipAddress =
+    headersList.get('x-forwarded-for')?.split(',')[0] ||
+    headersList.get('x-real-ip') ||
+    null
+  const userAgent = headersList.get('user-agent') || null
+
+  // Get the document
+  const { data: doc } = await adminClient
+    .from('legal_documents')
+    .select('id, document_type, version')
+    .eq('id', documentId)
+    .single()
+
+  if (!doc) {
+    return { error: 'Document not found' }
+  }
+
+  // Create consent record
+  const { error } = await adminClient.from('consent_records').insert({
+    user_id: user.id,
+    consent_type: doc.document_type,
+    document_id: doc.id,
+    document_version: doc.version,
+    action: 'granted',
+    ip_address: ipAddress,
+    user_agent: userAgent,
+    context: { source: 'active_acceptance_flow' },
+  })
+
+  if (error) {
+    console.error('Error recording consent:', error)
+    return { error: 'Failed to record consent' }
+  }
+
+  return { success: true }
 }
 
 export async function recordReconsentAction(
