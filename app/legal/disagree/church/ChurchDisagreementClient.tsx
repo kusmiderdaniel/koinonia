@@ -429,18 +429,16 @@ export function ChurchDisagreementClient({
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 pt-1">
+                  <div className="flex flex-wrap items-center gap-2 pt-2">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => window.open(documentUrl, '_blank')}
-                      className="text-muted-foreground"
                     >
                       <ExternalLink className="mr-2 h-4 w-4" />
                       {t.pending.viewDocument}
                     </Button>
                     <Button
-                      variant="default"
                       size="sm"
                       onClick={() => handleWithdraw(d.id)}
                       disabled={isSubmitting}
