@@ -17,6 +17,7 @@ import {
   Download,
   UserCog,
   Building2,
+  ExternalLink,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -77,6 +78,7 @@ const translations = {
         "You have disagreed with the following documents. Your church will be deleted if you don't withdraw your disagreement before the deadline.",
       deadline: 'Deadline',
       reAgree: 'Re-agree',
+      viewDocument: 'View Document',
       exportData: 'Export Data',
       exporting: 'Exporting...',
       backToDashboard: 'Back to Dashboard',
@@ -164,6 +166,7 @@ const translations = {
         'Wyraziłeś sprzeciw wobec poniższych dokumentów. Twój kościół zostanie usunięty, jeśli nie wycofasz sprzeciwu przed upływem terminu.',
       deadline: 'Termin',
       reAgree: 'Zaakceptuj ponownie',
+      viewDocument: 'Zobacz dokument',
       exportData: 'Eksportuj dane',
       exporting: 'Eksportowanie...',
       backToDashboard: 'Wróć do panelu',
@@ -399,32 +402,57 @@ export function ChurchDisagreementClient({
             <CardDescription className="mt-3">{t.pending.description}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {pendingDisagreements.map((d) => (
-              <div
-                key={d.id}
-                className="flex items-center justify-between p-4 border rounded-lg bg-muted/30"
-              >
-                <div>
-                  <p className="font-medium">{d.documentTitle}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {t.pending.deadline}: {format(new Date(d.deadline), 'PPP', { locale: dateFnsLocale })}
-                  </p>
-                  <p className="text-sm text-red-600 font-medium">
-                    {formatDistanceToNow(new Date(d.deadline), { addSuffix: true, locale: dateFnsLocale })}
-                  </p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleWithdraw(d.id)}
-                  disabled={isSubmitting}
-                  className="shrink-0"
+            {pendingDisagreements.map((d) => {
+              const formattedTitle = getDocumentTypeName(d.documentType)
+              const documentUrl = `/legal/${d.documentType.replace(/_/g, '-')}`
+
+              return (
+                <div
+                  key={d.id}
+                  className="p-4 border rounded-lg bg-muted/30 space-y-3"
                 >
-                  <Check className="mr-2 h-4 w-4" />
-                  {t.pending.reAgree}
-                </Button>
-              </div>
-            ))}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="space-y-1">
+                      <p className="font-semibold text-base">{formattedTitle}</p>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Calendar className="h-4 w-4" />
+                        <span>
+                          {t.pending.deadline}: {format(new Date(d.deadline), 'PPP', { locale: dateFnsLocale })}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-red-600 font-medium">
+                        <Clock className="h-4 w-4" />
+                        <span>
+                          {formatDistanceToNow(new Date(d.deadline), { addSuffix: true, locale: dateFnsLocale })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open(documentUrl, '_blank')}
+                      className="text-muted-foreground"
+                    >
+                      <ExternalLink className="mr-2 h-4 w-4" />
+                      {t.pending.viewDocument}
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => handleWithdraw(d.id)}
+                      disabled={isSubmitting}
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      <Check className="mr-2 h-4 w-4" />
+                      {t.pending.reAgree}
+                    </Button>
+                  </div>
+                </div>
+              )
+            })}
 
             <div className="pt-4 flex gap-3">
               <Button variant="outline" onClick={handleExportData} disabled={isExporting}>
