@@ -116,7 +116,11 @@ export function PublishDialog({ document, onClose, onSuccess }: PublishDialogPro
           <Button variant="outline" onClick={onClose} disabled={isPublishing}>
             Cancel
           </Button>
-          <Button onClick={handlePublish} disabled={isPublishing}>
+          <Button
+            onClick={handlePublish}
+            disabled={isPublishing}
+            className="bg-brand hover:bg-brand/90 text-brand-foreground"
+          >
             {isPublishing ? 'Publishing...' : 'Publish Document'}
           </Button>
         </DialogFooter>
