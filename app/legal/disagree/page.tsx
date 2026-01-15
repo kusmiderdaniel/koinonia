@@ -2,6 +2,16 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getDisagreementInfo } from './actions'
 
+// Helper to check if error is a Next.js redirect
+function isRedirectError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    'digest' in error &&
+    typeof (error as { digest?: string }).digest === 'string' &&
+    (error as { digest: string }).digest.startsWith('NEXT_REDIRECT')
+  )
+}
+
 interface DisagreePageProps {
   searchParams: Promise<{
     doc?: string
@@ -70,6 +80,10 @@ export default async function DisagreePage({ searchParams }: DisagreePageProps) 
       redirect(`/legal/disagree/user?doc=${documentType}&id=${data.id}`)
     }
   } catch (error) {
+    // Re-throw redirect errors (they're intentional)
+    if (isRedirectError(error)) {
+      throw error
+    }
     console.error('[DisagreePage] Error:', error)
     // Redirect to user page with error (it can display the error properly)
     redirect('/legal/disagree/user?error=' + encodeURIComponent('Failed to load disagreement page'))
