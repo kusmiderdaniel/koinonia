@@ -1,15 +1,58 @@
+/**
+ * @module lib/cron/process-church-deletions
+ * @description Handles automated church deletion processing for GDPR/DPA compliance.
+ *
+ * This cron job processes churches that have been scheduled for deletion due to
+ * legal disagreements (e.g., DPA rejection, Admin Terms disagreement). It runs
+ * daily to find and process deletions past their deadline.
+ *
+ * @workflow
+ * 1. Find all church_deletion_schedules with status 'pending' and past deadline
+ * 2. For each scheduled deletion:
+ *    - Disconnect all church members (set church_id to null)
+ *    - Delete the church (cascades to related data)
+ *    - Update the related legal_disagreement status to 'completed'
+ *
+ * @database-tables
+ * - church_deletion_schedules: Tracks scheduled church deletions
+ * - legal_disagreements: Original disagreement records
+ * - profiles: Member profiles to disconnect
+ * - churches: Church records to delete
+ *
+ * @schedule Runs daily via Vercel Cron
+ * @see /app/api/cron/process-church-deletions/route.ts
+ */
+
 import { createServiceRoleClient } from '@/lib/supabase/server'
 
+/**
+ * Result of processing church deletions
+ */
 interface ProcessChurchDeletionsResult {
+  /** Number of scheduled deletions found and processed */
   processed: number
+  /** Number of churches successfully deleted */
   deleted: number
+  /** Number of members disconnected from deleted churches */
   membersDisconnected: number
+  /** Number of errors encountered during processing */
   errors: number
 }
 
 /**
  * Process pending church deletions for DPA/Admin Terms disagreements.
- * Runs daily to find deletions past their deadline and delete churches.
+ *
+ * This function finds all church deletion schedules that are past their deadline
+ * and processes them by disconnecting members and deleting the church.
+ *
+ * @returns {Promise<ProcessChurchDeletionsResult>} Results of the deletion processing
+ *
+ * @example
+ * // Called from the cron API route
+ * const result = await processChurchDeletions()
+ * // { processed: 2, deleted: 2, membersDisconnected: 15, errors: 0 }
+ *
+ * @throws Never throws - errors are caught and logged, returned in result.errors
  */
 export async function processChurchDeletions(): Promise<ProcessChurchDeletionsResult> {
   const adminClient = createServiceRoleClient()

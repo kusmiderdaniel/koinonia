@@ -61,8 +61,10 @@ export function useSongList(initialData?: SongsInitialData): UseSongListReturn {
       songs: initialData.songs,
       canManage: initialData.canManage,
     } : undefined,
-    staleTime: 0, // Always refetch on mount
-    refetchOnMount: 'always',
+    initialDataUpdatedAt: initialData ? Date.now() : undefined, // Mark initial data as fresh
+    staleTime: 60000, // 1 minute - data considered fresh
+    gcTime: 300000, // 5 minutes - keep in cache
+    refetchOnMount: true, // Only refetch if stale
     refetchOnWindowFocus: false,
   })
 

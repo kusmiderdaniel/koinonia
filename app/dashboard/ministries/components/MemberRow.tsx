@@ -129,6 +129,7 @@ export const MemberRow = memo(function MemberRow({
             size="icon"
             className={`text-red-600 hover:text-red-700 hover:bg-red-50 ${isMobile ? 'h-7 w-7' : 'h-8 w-8'}`}
             onClick={onRemove}
+            aria-label={t('members.remove')}
           >
             <Trash2 className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
           </Button>

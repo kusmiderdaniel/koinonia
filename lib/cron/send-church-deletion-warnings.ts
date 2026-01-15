@@ -1,3 +1,29 @@
+/**
+ * @module lib/cron/send-church-deletion-warnings
+ * @description Sends warning emails to church members before church deletion.
+ *
+ * This cron job notifies church members when their church is scheduled for
+ * deletion, giving them 10 days notice to export their data or find a new
+ * church. It supports multi-language emails (English and Polish).
+ *
+ * @workflow
+ * 1. Find church_deletion_schedules within 10 days that haven't been notified
+ * 2. For each schedule:
+ *    - Get all church members (excluding the disagreement initiator)
+ *    - Send localized warning emails to each member
+ *    - Update schedule status to 'notified'
+ *
+ * @database-tables
+ * - church_deletion_schedules: Tracks notification status
+ * - profiles: Member contact info and language preferences
+ * - churches: Church names for email content
+ *
+ * @email-template ChurchDeletionWarningEmail
+ * @rate-limiting Pauses 1 second every 10 emails to avoid rate limits
+ * @schedule Runs daily via Vercel Cron
+ * @see /app/api/cron/send-church-deletion-warnings/route.ts
+ */
+
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { sendEmail } from '@/lib/email/config'
 import ChurchDeletionWarningEmail, {
@@ -6,16 +32,33 @@ import ChurchDeletionWarningEmail, {
 } from '@/emails/ChurchDeletionWarningEmail'
 import { addDays, format } from 'date-fns'
 
+/**
+ * Result of sending church deletion warnings
+ */
 interface SendWarningsResult {
+  /** Number of church deletion schedules processed */
   schedulesProcessed: number
+  /** Number of warning emails successfully sent */
   emailsSent: number
+  /** Number of errors encountered (email failures, DB errors) */
   errors: number
 }
 
 /**
  * Send warning emails to church members 10 days before church deletion.
- * Runs daily to find churches scheduled for deletion within 10 days
- * that haven't been notified yet.
+ *
+ * Finds all pending church deletions within 10 days that haven't been notified
+ * yet and sends localized warning emails to all members (except the disagreement
+ * initiator who already knows about the deletion).
+ *
+ * @returns {Promise<SendWarningsResult>} Results of the notification processing
+ *
+ * @example
+ * // Called from the cron API route
+ * const result = await sendChurchDeletionWarnings()
+ * // { schedulesProcessed: 1, emailsSent: 25, errors: 0 }
+ *
+ * @throws Never throws - errors are caught and logged, returned in result.errors
  */
 export async function sendChurchDeletionWarnings(): Promise<SendWarningsResult> {
   const adminClient = createServiceRoleClient()

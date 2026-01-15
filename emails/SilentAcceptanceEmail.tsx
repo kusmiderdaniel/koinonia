@@ -77,8 +77,19 @@ export interface SilentAcceptanceEmailProps {
   translations?: SilentAcceptanceEmailTranslations
 }
 
+// Escape HTML entities to prevent XSS in email templates
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
+// Helper to interpolate values with HTML escaping for safety
 function interpolate(template: string, values: Record<string, string>): string {
-  return template.replace(/\{(\w+)\}/g, (_, key) => values[key] || `{${key}}`)
+  return template.replace(/\{(\w+)\}/g, (_, key) => escapeHtml(values[key] || ''))
 }
 
 export function SilentAcceptanceEmail({

@@ -16,13 +16,6 @@ export const EVENT_TYPE_COLORS: Record<string, string> = {
   other: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200',
 }
 
-export const VISIBILITY_LABELS: Record<string, string> = {
-  members: 'All Members',
-  volunteers: 'Volunteers+',
-  leaders: 'Leaders+',
-  hidden: 'Private',
-}
-
 export const VISIBILITY_STYLES: Record<string, string> = {
   members: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200',
   volunteers: 'bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-200',

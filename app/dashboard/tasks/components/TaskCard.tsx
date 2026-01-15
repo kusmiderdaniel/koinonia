@@ -141,7 +141,7 @@ export const TaskCard = memo(function TaskCard({
       {/* Actions */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-          <Button variant="ghost" size="icon" className={`shrink-0 ${isMobile ? 'h-6 w-6' : 'h-8 w-8'}`}>
+          <Button variant="ghost" size="icon" className={`shrink-0 ${isMobile ? 'h-6 w-6' : 'h-8 w-8'}`} aria-label={t('actions.openMenu')}>
             <MoreHorizontal className={isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
           </Button>
         </DropdownMenuTrigger>

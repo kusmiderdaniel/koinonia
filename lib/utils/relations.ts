@@ -37,25 +37,6 @@ export function unwrapRelation<T>(
 }
 
 /**
- * Unwrap a Supabase relation with a default value.
- *
- * @example
- * const church = unwrapRelationWithDefault(profile.churches, { name: 'Unknown' })
- * // church is guaranteed to have 'name' property
- *
- * @param relation - The relation value from Supabase
- * @param defaultValue - Default value to return if relation is null/undefined
- * @returns The unwrapped object or the default value
- */
-export function unwrapRelationWithDefault<T>(
-  relation: T | T[] | null | undefined,
-  defaultValue: T
-): T {
-  const unwrapped = unwrapRelation(relation)
-  return unwrapped ?? defaultValue
-}
-
-/**
  * Safely access a property from a Supabase relation.
  *
  * @example

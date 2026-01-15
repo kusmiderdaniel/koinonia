@@ -53,6 +53,7 @@ export function MinistriesListView({
               size="icon"
               className="shrink-0 rounded-full !border !border-black dark:!border-white"
               onClick={onAddClick}
+              aria-label={t('addMinistry')}
             >
               <Plus className="w-4 h-4" />
             </Button>

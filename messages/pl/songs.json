@@ -169,6 +169,7 @@
   },
 
   "actions": {
+    "add": "Dodaj piosenkę",
     "cancel": "Anuluj",
     "delete": "Usuń",
     "save": "Zapisz",

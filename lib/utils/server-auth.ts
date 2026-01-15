@@ -184,3 +184,105 @@ export function verifyNestedOwnership(
   }
   return null
 }
+
+/**
+ * Generic result type for server actions
+ */
+export type ActionResult<T> = { data: T } | { error: string }
+
+/**
+ * Higher-order function that wraps server actions with authentication.
+ * Eliminates the repeated auth boilerplate pattern across server actions.
+ *
+ * @example
+ * // Before (repeated in every action):
+ * export async function getProfile() {
+ *   const auth = await getAuthenticatedUserWithProfile()
+ *   if (isAuthError(auth)) return { error: auth.error }
+ *   const { profile, adminClient } = auth
+ *   // ... action logic
+ * }
+ *
+ * // After (using withAuth):
+ * export async function getProfile() {
+ *   return withAuth(async ({ profile, adminClient }) => {
+ *     // ... action logic
+ *     return { data: result }
+ *   })
+ * }
+ */
+export async function withAuth<T>(
+  action: (auth: AuthResult) => Promise<ActionResult<T>>
+): Promise<ActionResult<T>> {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) {
+    return { error: auth.error }
+  }
+  return action(auth)
+}
+
+/**
+ * Variant of withAuth that requires a specific role.
+ * Returns an error if the user doesn't have the required role.
+ *
+ * @example
+ * export async function deleteChurch() {
+ *   return withAuthRole(['owner', 'admin'], async ({ profile, adminClient }) => {
+ *     // Only owners and admins can delete churches
+ *     return { data: { success: true } }
+ *   }, 'delete this church')
+ * }
+ */
+export async function withAuthRole<T>(
+  allowedRoles: string[],
+  action: (auth: AuthResult) => Promise<ActionResult<T>>,
+  actionDescription: string = 'perform this action'
+): Promise<ActionResult<T>> {
+  const auth = await getAuthenticatedUserWithProfile()
+  if (isAuthError(auth)) {
+    return { error: auth.error }
+  }
+
+  const roleError = requireRole(auth.profile.role, allowedRoles, actionDescription)
+  if (roleError) {
+    return { error: roleError }
+  }
+
+  return action(auth)
+}
+
+/**
+ * Variant of withAuth that requires admin permissions (owner, admin).
+ *
+ * @example
+ * export async function updateChurchSettings() {
+ *   return withAdminAuth(async ({ profile, adminClient }) => {
+ *     // Only admins can update church settings
+ *     return { data: { success: true } }
+ *   }, 'update church settings')
+ * }
+ */
+export async function withAdminAuth<T>(
+  action: (auth: AuthResult) => Promise<ActionResult<T>>,
+  actionDescription: string = 'perform this action'
+): Promise<ActionResult<T>> {
+  return withAuthRole(['owner', 'admin'], action, actionDescription)
+}
+
+/**
+ * Variant of withAuth that requires management permissions (owner, admin, leader).
+ *
+ * @example
+ * export async function createEvent() {
+ *   return withManageAuth(async ({ profile, adminClient }) => {
+ *     // Owners, admins, and leaders can create events
+ *     return { data: { success: true } }
+ *   }, 'create events')
+ * }
+ */
+export async function withManageAuth<T>(
+  action: (auth: AuthResult) => Promise<ActionResult<T>>,
+  actionDescription: string = 'manage this resource'
+): Promise<ActionResult<T>> {
+  return withAuthRole(['owner', 'admin', 'leader'], action, actionDescription)
+}

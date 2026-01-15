@@ -31,41 +31,36 @@ export function AppearanceSettingsCard({ currentTheme }: AppearanceSettingsCardP
   const [isPending, startTransition] = useTransition()
   const [mounted, setMounted] = useState(false)
 
-  // Track the selected theme locally for immediate UI update
-  const [selectedTheme, setSelectedTheme] = useState<ThemePreference | null>(currentTheme)
+  // Use theme from next-themes as source of truth (persists in localStorage)
+  // Fall back to database value only on first load when next-themes hasn't initialized
+  const effectiveTheme = (theme as ThemePreference) ?? currentTheme ?? 'system'
 
-  // Use the saved preference if set, otherwise default to 'system'
-  const effectiveTheme = selectedTheme ?? currentTheme ?? 'system'
-
-  // Sync theme with next-themes on mount
+  // Only set mounted state - don't override theme from next-themes
   useEffect(() => {
     setMounted(true)
-    // Apply the saved theme preference on mount
-    if (currentTheme) {
+    // Only sync from database if next-themes doesn't have a value yet
+    // This happens on very first visit before any theme was set
+    if (!theme && currentTheme) {
       setTheme(currentTheme)
     }
-  }, [currentTheme, setTheme])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps -- Only sync from DB on initial mount
 
-  const handleChange = async (value: ThemePreference) => {
+  const handleChange = (value: ThemePreference) => {
     if (value === effectiveTheme) return
 
-    // Update local state immediately for responsive UI
-    setSelectedTheme(value)
-
-    // Apply theme immediately via next-themes
+    // Apply theme via next-themes (updates localStorage and DOM)
     setTheme(value)
 
-    // Save to database
-    const result = await updateThemePreference(value)
+    // Save to database in background (non-blocking)
+    startTransition(async () => {
+      const result = await updateThemePreference(value)
 
-    if (result.error) {
-      toast.error(result.error)
-      // Revert on error
-      setSelectedTheme(currentTheme)
-      setTheme(currentTheme ?? 'system')
-    } else {
-      toast.success(t('updated'))
-    }
+      if (result.error) {
+        toast.error(result.error)
+        // Revert on error
+        setTheme(currentTheme ?? 'system')
+      }
+    })
   }
 
   // Prevent hydration mismatch

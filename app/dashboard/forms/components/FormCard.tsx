@@ -107,7 +107,7 @@ export const FormCard = memo(function FormCard({
             e.stopPropagation()
             onDuplicate?.(form)
           }}
-          title={t('list.duplicate')}
+          aria-label={t('list.duplicate')}
         >
           <Copy className="w-3.5 h-3.5" />
         </Button>
@@ -119,7 +119,7 @@ export const FormCard = memo(function FormCard({
             e.stopPropagation()
             onEdit?.(form)
           }}
-          title={t('detail.edit')}
+          aria-label={t('detail.edit')}
         >
           <Pencil className="w-3.5 h-3.5" />
         </Button>
@@ -131,7 +131,7 @@ export const FormCard = memo(function FormCard({
             e.stopPropagation()
             onDelete?.(form)
           }}
-          title={t('list.delete')}
+          aria-label={t('list.delete')}
         >
           <Trash2 className="w-3.5 h-3.5" />
         </Button>

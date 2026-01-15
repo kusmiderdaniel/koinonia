@@ -37,6 +37,25 @@ export function NotificationCenter() {
     setMounted(true)
   }, [])
 
+  // Fetch badge counts (unread + actionable)
+  const fetchCounts = useCallback(async () => {
+    try {
+      const [unreadResult, actionableResult] = await Promise.all([
+        getUnreadCount(),
+        getActionableCount(),
+      ])
+      if (typeof unreadResult.count === 'number') {
+        setUnreadBadgeCount(unreadResult.count)
+      }
+      if (typeof actionableResult.count === 'number') {
+        setActionableCount(actionableResult.count)
+      }
+    } catch (error) {
+      console.error('Error fetching notification counts:', error)
+    }
+  }, [])
+
+  // Fetch full notifications list
   const fetchNotifications = useCallback(async () => {
     setIsLoading(true)
     try {
@@ -71,47 +90,23 @@ export function NotificationCenter() {
     }
   }, [isOpen, fetchNotifications])
 
-  // Initial fetch for badge count
+  // Initial fetch for badge count + polling every 30 seconds
   useEffect(() => {
-    const fetchCounts = async () => {
-      const [unreadResult, actionableResult] = await Promise.all([
-        getUnreadCount(),
-        getActionableCount(),
-      ])
-      if (typeof unreadResult.count === 'number') {
-        setUnreadBadgeCount(unreadResult.count)
-      }
-      if (typeof actionableResult.count === 'number') {
-        setActionableCount(actionableResult.count)
-      }
-    }
     fetchCounts()
-
-    // Poll for new notifications every 30 seconds
     const interval = setInterval(fetchCounts, 30000)
     return () => clearInterval(interval)
-  }, [])
+  }, [fetchCounts])
 
   // Listen for notification refresh events (e.g., when invitation is responded to)
   useEffect(() => {
-    const fetchCounts = async () => {
-      const [unreadResult, actionableResult] = await Promise.all([
-        getUnreadCount(),
-        getActionableCount(),
-      ])
-      if (typeof unreadResult.count === 'number') {
-        setUnreadBadgeCount(unreadResult.count)
-      }
-      if (typeof actionableResult.count === 'number') {
-        setActionableCount(actionableResult.count)
-      }
-      // Also refresh notifications if dropdown is open
+    return onNotificationRefresh(() => {
+      fetchCounts()
+      // Also refresh full notifications if dropdown is open
       if (isOpen) {
         fetchNotifications()
       }
-    }
-    return onNotificationRefresh(fetchCounts)
-  }, [isOpen, fetchNotifications])
+    })
+  }, [isOpen, fetchCounts, fetchNotifications])
 
   const handleMarkAllRead = async () => {
     setIsMarkingAllRead(true)

@@ -1,14 +1,60 @@
+/**
+ * @module lib/cron/process-user-deletions
+ * @description Handles automated user account deletion for GDPR/ToS compliance.
+ *
+ * This cron job processes individual user accounts that have been scheduled for
+ * deletion due to legal disagreements (e.g., ToS rejection, Privacy Policy
+ * disagreement). It runs daily to find and process deletions past their deadline.
+ *
+ * @workflow
+ * 1. Find all legal_disagreements with type 'user_deletion', status 'pending', past deadline
+ * 2. For each disagreement:
+ *    - Anonymize the user's profile data (preserves audit trail)
+ *    - Delete the user from Supabase Auth
+ *    - Update the disagreement status to 'completed'
+ *
+ * @gdpr-compliance
+ * - Anonymizes profile data before deletion (first_name: 'Deleted', last_name: 'User')
+ * - Removes PII (avatar_url, phone, address)
+ * - Auth deletion cascades to remove user session data
+ *
+ * @database-tables
+ * - legal_disagreements: Original disagreement records
+ * - profiles: User profiles to anonymize
+ * - auth.users: Supabase Auth records to delete
+ *
+ * @schedule Runs daily via Vercel Cron
+ * @see /app/api/cron/process-user-deletions/route.ts
+ */
+
 import { createServiceRoleClient } from '@/lib/supabase/server'
 
+/**
+ * Result of processing user deletions
+ */
 interface ProcessUserDeletionsResult {
+  /** Number of disagreements found and processed */
   processed: number
+  /** Number of user accounts successfully deleted */
   deleted: number
+  /** Number of errors encountered during processing */
   errors: number
 }
 
 /**
  * Process pending user deletions for ToS/Privacy Policy disagreements.
- * Runs daily to find disagreements past their deadline and delete/anonymize accounts.
+ *
+ * This function finds all user deletion disagreements that are past their deadline
+ * and processes them by anonymizing profile data and deleting the auth account.
+ *
+ * @returns {Promise<ProcessUserDeletionsResult>} Results of the deletion processing
+ *
+ * @example
+ * // Called from the cron API route
+ * const result = await processUserDeletions()
+ * // { processed: 5, deleted: 5, errors: 0 }
+ *
+ * @throws Never throws - errors are caught and logged, returned in result.errors
  */
 export async function processUserDeletions(): Promise<ProcessUserDeletionsResult> {
   const adminClient = createServiceRoleClient()

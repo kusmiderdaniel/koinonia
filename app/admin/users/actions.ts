@@ -137,11 +137,15 @@ export async function getUserDetails(userId: string): Promise<{
     `)
     .eq('profile_id', userId)
 
-  const ministries = ministryMembers?.map((mm) => ({
-    id: (mm.ministry as any)?.id || '',
-    name: (mm.ministry as any)?.name || '',
-    role: mm.role,
-  })) || []
+  const ministries = ministryMembers?.map((mm) => {
+    // Supabase returns relations as arrays, extract the first item
+    const ministry = Array.isArray(mm.ministry) ? mm.ministry[0] : mm.ministry
+    return {
+      id: ministry?.id || '',
+      name: ministry?.name || '',
+      role: mm.role,
+    }
+  }) || []
 
   // Get forms submitted count
   const { count: formsSubmitted } = await adminClient
@@ -149,9 +153,15 @@ export async function getUserDetails(userId: string): Promise<{
     .select('*', { count: 'exact', head: true })
     .eq('profile_id', userId)
 
+  // Transform user data to match expected interface
+  const transformedUser = {
+    ...user,
+    church: Array.isArray(user.church) ? user.church[0] || null : user.church,
+  }
+
   return {
     data: {
-      user: user as any,
+      user: transformedUser,
       stats: {
         eventsAttended: eventsAttended || 0,
         ministriesJoined: ministries.length,

@@ -112,6 +112,7 @@ export const CampusesTab = memo(function CampusesTab({
                       size="icon"
                       className="h-7 w-7 md:h-8 md:w-8"
                       onClick={() => campusManager.openCampusDialog(campus)}
+                      aria-label={t('editCampus')}
                     >
                       <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     </Button>
@@ -121,6 +122,7 @@ export const CampusesTab = memo(function CampusesTab({
                       className="h-7 w-7 md:h-8 md:w-8"
                       onClick={() => campusManager.openDeleteCampusDialog(campus)}
                       disabled={campus.is_default || campuses.length <= 1}
+                      aria-label={t('deleteCampus')}
                     >
                       <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-red-500" />
                     </Button>

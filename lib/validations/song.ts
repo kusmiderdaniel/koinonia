@@ -20,18 +20,6 @@ export const tagSchema = z.object({
 
 export type TagInput = z.infer<typeof tagSchema>
 
-// Music key options
-export const MUSIC_KEYS = [
-  'C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F',
-  'F#', 'Gb', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B',
-  'Cm', 'C#m', 'Dbm', 'Dm', 'D#m', 'Ebm', 'Em', 'Fm',
-  'F#m', 'Gbm', 'Gm', 'G#m', 'Abm', 'Am', 'A#m', 'Bbm', 'Bm',
-] as const
-
-export type MusicKey = typeof MUSIC_KEYS[number]
-
-export const musicKeySchema = z.enum(MUSIC_KEYS).optional()
-
 // Schema for song sections
 export const songSectionSchema = z.object({
   sectionType: z.enum(SECTION_TYPES),

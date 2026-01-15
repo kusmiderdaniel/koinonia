@@ -169,6 +169,7 @@
   },
 
   "actions": {
+    "add": "Add song",
     "cancel": "Cancel",
     "delete": "Delete",
     "save": "Save",

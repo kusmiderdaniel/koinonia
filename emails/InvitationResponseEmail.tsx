@@ -39,6 +39,16 @@ export interface InvitationResponseEmailProps {
   translations?: InvitationResponseEmailTranslations
 }
 
+// Escape HTML entities to prevent XSS in email templates
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 export function InvitationResponseEmail({
   leaderName,
   volunteerName,
@@ -55,9 +65,9 @@ export function InvitationResponseEmail({
   const isAccepted = response === 'accepted'
   const emoji = isAccepted ? '✅' : '❌'
 
-  // Helper to interpolate values
+  // Helper to interpolate values with HTML escaping for safety
   const i = (template: string, params: Record<string, string>) =>
-    template.replace(/\{(\w+)\}/g, (_, key) => params[key] ?? '')
+    template.replace(/\{(\w+)\}/g, (_, key) => escapeHtml(params[key] ?? ''))
 
   const heading = isAccepted ? t.acceptedHeading : t.declinedHeading
   const previewText = i(isAccepted ? t.acceptedPreview : t.declinedPreview, {

@@ -2,6 +2,7 @@
   "title": "Ministries",
   "subtitle": "Manage your church's ministry teams",
   "newMinistry": "New Ministry",
+  "addMinistry": "Add ministry",
   "searchPlaceholder": "Search ministries...",
   "noMinistries": "No ministries yet",
   "noMinistriesFound": "No ministries found",
