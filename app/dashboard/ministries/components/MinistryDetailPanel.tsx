@@ -69,7 +69,7 @@ export function MinistryDetailPanel({
 
   if (!ministry) {
     return (
-      <Card className="border border-black dark:border-zinc-700">
+      <Card className="border border-black dark:border-white">
         <div className={`flex flex-col items-center justify-center ${isMobile ? 'py-8' : 'py-12'}`}>
           <Users className={`text-muted-foreground mb-4 opacity-50 ${isMobile ? 'w-10 h-10' : 'w-12 h-12'}`} />
           <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>{t('selectMinistryDescription')}</p>
@@ -79,7 +79,7 @@ export function MinistryDetailPanel({
   }
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-zinc-700 !gap-0">
+    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-white !gap-0">
       {/* Ministry Header */}
       <div className={`border-b ${isMobile ? 'px-3 pt-2 pb-2' : 'px-6 pt-2 pb-3'}`}>
         <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-3'}`}>

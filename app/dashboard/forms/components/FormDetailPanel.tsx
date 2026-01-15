@@ -146,7 +146,7 @@ export const FormDetailPanel = memo(function FormDetailPanel({
   const fields = formDetail?.fields || []
 
   return (
-    <Card className="h-full flex flex-col border border-black dark:border-zinc-700 overflow-hidden">
+    <Card className="h-full flex flex-col border border-black dark:border-white overflow-hidden">
       {/* Header */}
       <CardHeader className="flex-shrink-0 border-b p-4">
         <div className="flex items-start justify-between gap-4">
@@ -308,7 +308,7 @@ const FormFieldPreview = memo(function FormFieldPreview({ field }: FormFieldPrev
   const icon = fieldTypeIcons[field.type] || <Type className="h-4 w-4" />
 
   return (
-    <div className="border border-zinc-200 dark:border-zinc-700 rounded-lg p-3">
+    <div className="border border-zinc-200 dark:border-white rounded-lg p-3">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-muted-foreground">{icon}</span>
         <span className="text-sm font-medium">{field.label}</span>
@@ -322,7 +322,7 @@ const FormFieldPreview = memo(function FormFieldPreview({ field }: FormFieldPrev
 
       {/* Field type specific preview */}
       {field.type === 'text' && (
-        <div className="h-9 bg-muted/50 rounded border border-zinc-200 dark:border-zinc-700 px-3 flex items-center">
+        <div className="h-9 bg-muted/50 rounded border border-zinc-200 dark:border-white px-3 flex items-center">
           <span className="text-sm text-muted-foreground">
             {field.placeholder || 'Text input'}
           </span>
@@ -330,7 +330,7 @@ const FormFieldPreview = memo(function FormFieldPreview({ field }: FormFieldPrev
       )}
 
       {field.type === 'textarea' && (
-        <div className="h-20 bg-muted/50 rounded border border-zinc-200 dark:border-zinc-700 p-3">
+        <div className="h-20 bg-muted/50 rounded border border-zinc-200 dark:border-white p-3">
           <span className="text-sm text-muted-foreground">
             {field.placeholder || 'Long text input'}
           </span>
@@ -338,7 +338,7 @@ const FormFieldPreview = memo(function FormFieldPreview({ field }: FormFieldPrev
       )}
 
       {field.type === 'number' && (
-        <div className="h-9 bg-muted/50 rounded border border-zinc-200 dark:border-zinc-700 px-3 flex items-center">
+        <div className="h-9 bg-muted/50 rounded border border-zinc-200 dark:border-white px-3 flex items-center">
           <span className="text-sm text-muted-foreground">
             {field.placeholder || '0'}
           </span>
@@ -346,7 +346,7 @@ const FormFieldPreview = memo(function FormFieldPreview({ field }: FormFieldPrev
       )}
 
       {field.type === 'email' && (
-        <div className="h-9 bg-muted/50 rounded border border-zinc-200 dark:border-zinc-700 px-3 flex items-center">
+        <div className="h-9 bg-muted/50 rounded border border-zinc-200 dark:border-white px-3 flex items-center">
           <span className="text-sm text-muted-foreground">
             {field.placeholder || 'email@example.com'}
           </span>
@@ -354,14 +354,14 @@ const FormFieldPreview = memo(function FormFieldPreview({ field }: FormFieldPrev
       )}
 
       {field.type === 'date' && (
-        <div className="h-9 bg-muted/50 rounded border border-zinc-200 dark:border-zinc-700 px-3 flex items-center justify-between">
+        <div className="h-9 bg-muted/50 rounded border border-zinc-200 dark:border-white px-3 flex items-center justify-between">
           <span className="text-sm text-muted-foreground">Select date</span>
           <Calendar className="h-4 w-4 text-muted-foreground" />
         </div>
       )}
 
       {field.type === 'single_select' && field.options && (
-        <div className="h-9 bg-muted/50 rounded border border-zinc-200 dark:border-zinc-700 px-3 flex items-center justify-between">
+        <div className="h-9 bg-muted/50 rounded border border-zinc-200 dark:border-white px-3 flex items-center justify-between">
           <span className="text-sm text-muted-foreground">
             {field.options.length > 0 ? `${field.options.length} options` : 'No options'}
           </span>

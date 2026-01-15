@@ -261,7 +261,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
           <div className="flex-1 overflow-auto px-4 pb-4">
             {mobileSelectedTab ? (
               // Detail View - Show selected tab content
-              <div className="border border-black dark:border-zinc-700 rounded-lg p-3">
+              <div className="border border-black dark:border-white rounded-lg p-3">
                 {renderTabContent(mobileSelectedTab)}
               </div>
             ) : (
@@ -271,7 +271,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
                   <button
                     key={tab.key}
                     onClick={() => setMobileSelectedTab(tab.key)}
-                    className="w-full flex items-center justify-between p-4 border border-black dark:border-zinc-700 rounded-lg bg-card hover:bg-muted/50 transition-colors text-left"
+                    className="w-full flex items-center justify-between p-4 border border-black dark:border-white rounded-lg bg-card hover:bg-muted/50 transition-colors text-left"
                   >
                     <div>
                       <div className="font-medium">{t(tab.labelKey)}</div>
@@ -325,7 +325,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
           <Tabs defaultValue={defaultTab} orientation="vertical" className="h-full flex flex-row gap-6">
             {/* Tab navigation - vertical sidebar */}
             <div className="shrink-0 w-56">
-              <TabsList className="flex flex-col w-full h-auto gap-1 p-1 border border-black dark:border-zinc-700 rounded-lg bg-muted/50">
+              <TabsList className="flex flex-col w-full h-auto gap-1 p-1 border border-black dark:border-white rounded-lg bg-muted/50">
                 <TabsTrigger
                   value="details"
                   className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
@@ -383,7 +383,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
 
             {/* Tab content */}
             <div className="flex-1 min-w-0 min-h-0 overflow-auto">
-              <div className="border border-black dark:border-zinc-700 rounded-lg p-4 w-fit">
+              <div className="border border-black dark:border-white rounded-lg p-4 w-fit">
               {/* Church Details Tab */}
               <TabsContent value="details" className="mt-0 h-full">
                 <ChurchDetailsTab

@@ -50,7 +50,7 @@ export const FormsListView = memo(function FormsListView({
   })
 
   return (
-    <div className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card overflow-hidden ${className ?? ''}`}>
+    <div className={`flex flex-col border border-black dark:border-white rounded-lg bg-card overflow-hidden ${className ?? ''}`}>
       {/* Search + Add Button */}
       <div className="p-3 border-b flex gap-2">
         <div className="relative flex-1">

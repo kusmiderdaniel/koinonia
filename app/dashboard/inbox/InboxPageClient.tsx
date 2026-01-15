@@ -143,10 +143,10 @@ export function InboxPageClient({
 
         {/* Content */}
         <div className="flex-1 min-h-0 overflow-auto">
-          <div className="md:border md:border-black md:dark:border-zinc-700 rounded-lg md:p-4 max-w-2xl">
+          <div className="md:border md:border-black md:dark:border-white rounded-lg md:p-4 max-w-2xl">
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-              <TabsList className="mb-4 w-full border border-black dark:border-zinc-700">
+              <TabsList className="mb-4 w-full border border-black dark:border-white">
                 <TabsTrigger value="all" className="flex-1 text-xs md:text-sm py-2 md:py-1.5 data-[state=active]:bg-brand data-[state=active]:text-white">
                   {t('tabs.all')}
                 </TabsTrigger>

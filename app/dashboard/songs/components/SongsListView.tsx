@@ -43,7 +43,7 @@ export function SongsListView({
   const t = useTranslations('songs')
 
   return (
-    <div className={`flex flex-col border border-black dark:border-zinc-700 rounded-lg bg-card overflow-hidden ${className ?? 'w-full md:w-80 md:flex-shrink-0'}`}>
+    <div className={`flex flex-col border border-black dark:border-white rounded-lg bg-card overflow-hidden ${className ?? 'w-full md:w-80 md:flex-shrink-0'}`}>
       {/* Search and Add Button */}
       <div className="p-3 border-b">
         <div className="flex items-center gap-2">

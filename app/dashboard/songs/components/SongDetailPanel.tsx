@@ -58,7 +58,7 @@ export function SongDetailPanel({
 
   if (!song) {
     return (
-      <Card className="h-full flex items-center justify-center border border-black dark:border-zinc-700">
+      <Card className="h-full flex items-center justify-center border border-black dark:border-white">
         <EmptyState
           icon={Music}
           title={t('selectSong')}
@@ -70,7 +70,7 @@ export function SongDetailPanel({
   }
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-zinc-700 !gap-0">
+    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-white !gap-0">
       <DetailPanelHeader
         title={song.title}
         subtitle={

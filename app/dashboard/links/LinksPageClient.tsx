@@ -118,7 +118,7 @@ export function LinksPageClient({
 
             {/* URL Display */}
             {displayUrl && (
-              <div className="flex items-center gap-1 md:gap-2 bg-muted/50 border border-black dark:border-zinc-700 rounded-lg px-2 md:px-3 py-1.5 md:py-2">
+              <div className="flex items-center gap-1 md:gap-2 bg-muted/50 border border-black dark:border-white rounded-lg px-2 md:px-3 py-1.5 md:py-2">
                 <Link2 className="h-3.5 md:h-4 w-3.5 md:w-4 text-muted-foreground flex-shrink-0" />
                 <span className="text-xs md:text-sm font-medium truncate max-w-[180px] md:max-w-none">{displayUrl}</span>
                 <div className="flex items-center flex-shrink-0">
@@ -154,7 +154,7 @@ export function LinksPageClient({
         <div className="hidden lg:flex flex-1 min-h-0 overflow-hidden flex-col">
           <Tabs value={desktopTab} onValueChange={setDesktopTab} className="flex flex-col h-full">
             <div className="flex items-center gap-4 mb-4 shrink-0">
-              <TabsList className="w-auto border border-black dark:border-zinc-700">
+              <TabsList className="w-auto border border-black dark:border-white">
                 <TabsTrigger
                   value="links"
                   className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
@@ -182,7 +182,7 @@ export function LinksPageClient({
             <TabsContent value="links" className="flex-1 min-h-0 mt-0">
               <div className="flex gap-4 h-full">
                 {/* Links List - 70% */}
-                <div className="w-[70%] overflow-auto border border-black dark:border-zinc-700 rounded-lg p-4">
+                <div className="w-[70%] overflow-auto border border-black dark:border-white rounded-lg p-4">
                   <LinksListPanel
                     links={links}
                     setLinks={setLinks}
@@ -203,7 +203,7 @@ export function LinksPageClient({
             </TabsContent>
 
             <TabsContent value="settings" className="flex-1 min-h-0 mt-0 overflow-auto">
-              <div className="border border-black dark:border-zinc-700 rounded-lg p-4 max-w-2xl">
+              <div className="border border-black dark:border-white rounded-lg p-4 max-w-2xl">
                 <SettingsPanel
                   settings={settings}
                   setSettings={setSettings}
@@ -214,7 +214,7 @@ export function LinksPageClient({
             </TabsContent>
 
             <TabsContent value="analytics" className="flex-1 min-h-0 mt-0 overflow-auto">
-              <div className="border border-black dark:border-zinc-700 rounded-lg p-4">
+              <div className="border border-black dark:border-white rounded-lg p-4">
                 <AnalyticsTab
                   analytics={initialAnalytics}
                   links={links}
@@ -226,9 +226,9 @@ export function LinksPageClient({
 
         {/* Mobile Layout (< lg) - Three tabs */}
         <div className="flex lg:hidden flex-1 min-h-0 overflow-hidden">
-          <div className="border border-black dark:border-zinc-700 rounded-lg h-full flex flex-col w-full">
+          <div className="border border-black dark:border-white rounded-lg h-full flex flex-col w-full">
             <Tabs value={mobileTab} onValueChange={setMobileTab} className="flex flex-col h-full">
-              <TabsList className="w-full bg-muted/50 border-b border-black dark:border-zinc-700 rounded-t-lg rounded-b-none p-1 gap-1 shrink-0">
+              <TabsList className="w-full bg-muted/50 border-b border-black dark:border-white rounded-t-lg rounded-b-none p-1 gap-1 shrink-0">
                 <TabsTrigger
                   value="links"
                   className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground rounded-md"
