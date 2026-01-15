@@ -534,8 +534,9 @@ export function ChurchDisagreementClient({
                     {t.warning.goBack}
                   </Button>
                   <Button
+                    variant="destructive"
                     onClick={() => setStep('options')}
-                    className="flex-1 h-11 bg-red-600 hover:bg-red-700 text-white font-medium"
+                    className="flex-1 h-11 !bg-red-600 hover:!bg-red-700 !text-white font-medium"
                   >
                     {t.warning.continueButton}
                   </Button>
@@ -615,11 +616,12 @@ export function ChurchDisagreementClient({
                     </div>
                   </div>
                   <Button
+                    variant="destructive"
                     onClick={() => {
                       setSelectedAction('disagree')
                       setStep('confirm')
                     }}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white font-medium"
+                    className="w-full !bg-red-600 hover:!bg-red-700 !text-white font-medium"
                   >
                     <AlertTriangle className="mr-2 h-4 w-4" />
                     {t.options.proceedButton}
@@ -681,9 +683,10 @@ export function ChurchDisagreementClient({
                     {t.confirm.goBack}
                   </Button>
                   <Button
+                    variant="destructive"
                     onClick={handleConfirmDisagreement}
                     disabled={!understood || !password || isSubmitting}
-                    className="flex-1 h-11 bg-red-600 hover:bg-red-700 text-white font-medium disabled:bg-red-400 disabled:opacity-50"
+                    className="flex-1 h-11 !bg-red-600 hover:!bg-red-700 !text-white font-medium disabled:!bg-red-300"
                   >
                     {isSubmitting ? t.confirm.processing : t.confirm.confirmButton}
                   </Button>
