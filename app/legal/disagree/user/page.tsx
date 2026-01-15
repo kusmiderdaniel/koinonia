@@ -26,12 +26,22 @@ export default async function UserDisagreePage({ searchParams }: UserDisagreePag
     redirect('/auth/signin?redirect=/legal/disagree/user')
   }
 
+  // Get user's language preference
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('language')
+    .eq('user_id', user.id)
+    .single()
+
+  const language = (profile?.language === 'pl' ? 'pl' : 'en') as 'en' | 'pl'
+
   // If error was passed from the parent page, show it
   if (params.error) {
     return (
       <UserDisagreementClient
         mode="error"
         error={params.error}
+        language={language}
       />
     )
   }
@@ -46,6 +56,7 @@ export default async function UserDisagreePage({ searchParams }: UserDisagreePag
         <UserDisagreementClient
           mode="pending"
           pendingDisagreements={pending}
+          language={language}
         />
       )
     }
@@ -54,7 +65,10 @@ export default async function UserDisagreePage({ searchParams }: UserDisagreePag
     return (
       <UserDisagreementClient
         mode="error"
-        error="No document specified. If you followed a link from an email, please try again or contact support."
+        error={language === 'pl'
+          ? "Nie określono dokumentu. Jeśli kliknąłeś link z e-maila, spróbuj ponownie lub skontaktuj się z pomocą techniczną."
+          : "No document specified. If you followed a link from an email, please try again or contact support."}
+        language={language}
       />
     )
   }
@@ -74,6 +88,7 @@ export default async function UserDisagreePage({ searchParams }: UserDisagreePag
       <UserDisagreementClient
         mode="error"
         error={error}
+        language={language}
       />
     )
   }
@@ -86,6 +101,7 @@ export default async function UserDisagreePage({ searchParams }: UserDisagreePag
     <UserDisagreementClient
       mode="disagree"
       disagreementInfo={data}
+      language={language}
     />
   )
 }
