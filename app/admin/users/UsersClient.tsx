@@ -17,7 +17,15 @@ import {
   FileText,
   MapPin,
   Globe,
+  TrendingUp,
 } from 'lucide-react'
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -32,17 +40,35 @@ import {
 } from '@/components/ui/table'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import type { UserWithChurch } from './actions'
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart'
+import type { UserWithChurch, GrowthDataPoint } from './actions'
 import { getUserDetails, toggleSuperAdmin } from './actions'
 
 interface UsersClientProps {
   initialUsers: UserWithChurch[]
+  growthData: GrowthDataPoint[]
 }
+
+const chartConfig = {
+  cumulative: {
+    label: 'Total Users',
+    color: '#f49f1e',
+  },
+  count: {
+    label: 'New Users',
+    color: '#f49f1e',
+  },
+} satisfies ChartConfig
 
 interface UserDetails {
   user: UserWithChurch & {
@@ -64,7 +90,7 @@ interface UserDetails {
   }[]
 }
 
-export function UsersClient({ initialUsers }: UsersClientProps) {
+export function UsersClient({ initialUsers, growthData }: UsersClientProps) {
   const router = useRouter()
   const [users, setUsers] = useState<UserWithChurch[]>(initialUsers)
   const [searchQuery, setSearchQuery] = useState('')
@@ -139,6 +165,69 @@ export function UsersClient({ initialUsers }: UsersClientProps) {
           </p>
         </div>
       </div>
+
+      {/* Growth Chart */}
+      {growthData.length > 0 && (
+        <Card className="border">
+          <CardHeader className="pt-6 pb-4">
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-brand" />
+              User Growth
+            </CardTitle>
+            <CardDescription>
+              Total users over the last 12 months
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-4 pb-6">
+            <ChartContainer config={chartConfig} className="h-[280px] w-full">
+              <AreaChart
+                data={growthData}
+                margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="fillUsersCumulative" x1="0" y1="0" x2="0" y2="1">
+                    <stop
+                      offset="5%"
+                      stopColor="var(--color-cumulative)"
+                      stopOpacity={0.8}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="var(--color-cumulative)"
+                      stopOpacity={0.1}
+                    />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis
+                  dataKey="month"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tickFormatter={(value) => value.slice(0, 3)}
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  allowDecimals={false}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent indicator="line" />}
+                />
+                <Area
+                  dataKey="cumulative"
+                  type="monotone"
+                  fill="url(#fillUsersCumulative)"
+                  stroke="var(--color-cumulative)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Search */}
       <div className="relative max-w-md">

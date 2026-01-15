@@ -1,8 +1,11 @@
-import { getChurches } from './actions'
+import { getChurches, getChurchesGrowthData } from './actions'
 import { ChurchesClient } from './ChurchesClient'
 
 export default async function ChurchesPage() {
-  const { data: churches, error } = await getChurches()
+  const [{ data: churches, error }, { data: growthData }] = await Promise.all([
+    getChurches(),
+    getChurchesGrowthData(),
+  ])
 
   if (error) {
     return (
@@ -12,5 +15,10 @@ export default async function ChurchesPage() {
     )
   }
 
-  return <ChurchesClient initialChurches={churches || []} />
+  return (
+    <ChurchesClient
+      initialChurches={churches || []}
+      growthData={growthData || []}
+    />
+  )
 }

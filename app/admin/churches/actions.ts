@@ -1,6 +1,7 @@
 'use server'
 
 import { createServiceRoleClient } from '@/lib/supabase/server'
+import { subMonths, startOfMonth, format } from 'date-fns'
 
 export interface ChurchWithStats {
   id: string
@@ -163,4 +164,63 @@ export async function getChurchDetails(churchId: string): Promise<{
       },
     },
   }
+}
+
+export interface GrowthDataPoint {
+  month: string
+  count: number
+  cumulative: number
+}
+
+export async function getChurchesGrowthData(): Promise<{
+  data?: GrowthDataPoint[]
+  error?: string
+}> {
+  const adminClient = createServiceRoleClient()
+
+  // Get all churches with their created_at dates
+  const { data: churches, error } = await adminClient
+    .from('churches')
+    .select('created_at')
+    .order('created_at', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching churches growth data:', error)
+    return { error: 'Failed to fetch growth data' }
+  }
+
+  if (!churches || churches.length === 0) {
+    return { data: [] }
+  }
+
+  // Generate last 12 months
+  const months: GrowthDataPoint[] = []
+  const now = new Date()
+
+  for (let i = 11; i >= 0; i--) {
+    const monthDate = startOfMonth(subMonths(now, i))
+    const monthKey = format(monthDate, 'yyyy-MM')
+    const monthLabel = format(monthDate, 'MMM yyyy')
+
+    // Count churches created in this month
+    const count = churches.filter((c) => {
+      const createdMonth = format(new Date(c.created_at), 'yyyy-MM')
+      return createdMonth === monthKey
+    }).length
+
+    // Calculate cumulative (total up to and including this month)
+    const endOfMonth = new Date(monthDate)
+    endOfMonth.setMonth(endOfMonth.getMonth() + 1)
+    const cumulative = churches.filter(
+      (c) => new Date(c.created_at) < endOfMonth
+    ).length
+
+    months.push({
+      month: monthLabel,
+      count,
+      cumulative,
+    })
+  }
+
+  return { data: months }
 }

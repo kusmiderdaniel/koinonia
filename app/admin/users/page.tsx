@@ -1,8 +1,11 @@
-import { getUsers } from './actions'
+import { getUsers, getUsersGrowthData } from './actions'
 import { UsersClient } from './UsersClient'
 
 export default async function UsersPage() {
-  const { data: users, error } = await getUsers()
+  const [{ data: users, error }, { data: growthData }] = await Promise.all([
+    getUsers(),
+    getUsersGrowthData(),
+  ])
 
   if (error) {
     return (
@@ -12,5 +15,10 @@ export default async function UsersPage() {
     )
   }
 
-  return <UsersClient initialUsers={users || []} />
+  return (
+    <UsersClient
+      initialUsers={users || []}
+      growthData={growthData || []}
+    />
+  )
 }
