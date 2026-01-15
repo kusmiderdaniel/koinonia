@@ -248,68 +248,70 @@ export function UsersClient({ initialUsers }: UsersClientProps) {
 
       {/* User Details Dialog */}
       <Dialog open={!!selectedUser} onOpenChange={(open) => !open && setSelectedUser(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] p-0 gap-0 overflow-hidden">
+        <DialogContent className="sm:max-w-xl max-h-[90vh] p-0 gap-0 overflow-hidden">
           <VisuallyHidden>
             <DialogTitle>User Details</DialogTitle>
           </VisuallyHidden>
           {selectedUser && (
             <>
               {/* Header with gradient background */}
-              <div className="bg-gradient-to-br from-brand/10 via-brand/5 to-background p-6 border-b">
+              <div className="bg-gradient-to-br from-brand/10 via-brand/5 to-background p-5">
                 <div className="flex items-start gap-4">
-                  <Avatar className="h-16 w-16 border-2 border-background shadow-lg">
+                  <Avatar className="h-14 w-14 border-2 border-background shadow-lg shrink-0">
                     <AvatarImage src={selectedUser.user.avatar_url || undefined} />
                     <AvatarFallback className="bg-brand/10 text-brand text-lg">
                       {selectedUser.user.first_name[0]}{selectedUser.user.last_name[0]}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-xl font-bold truncate">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h2 className="text-lg font-bold truncate">
                         {selectedUser.user.first_name} {selectedUser.user.last_name}
                       </h2>
                       {selectedUser.user.is_super_admin && (
-                        <Badge className="bg-amber-500 text-white">
+                        <Badge className="bg-amber-500 text-white text-xs">
                           <Shield className="h-3 w-3 mr-1" />
                           Super Admin
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground truncate">
                       {selectedUser.user.email}
                     </p>
                     {selectedUser.user.church && (
-                      <div className="flex items-center gap-1.5 mt-2 text-sm text-muted-foreground">
-                        <Church className="h-3.5 w-3.5" />
-                        {selectedUser.user.church.name}
-                        <span className="text-xs">({selectedUser.user.role})</span>
+                      <div className="flex items-center gap-1.5 mt-1.5 text-sm text-muted-foreground">
+                        <Church className="h-3.5 w-3.5 shrink-0" />
+                        <span className="truncate">{selectedUser.user.church.name}</span>
+                        <Badge variant="outline" className="text-xs capitalize shrink-0">
+                          {selectedUser.user.role}
+                        </Badge>
                       </div>
                     )}
                   </div>
                 </div>
 
                 {/* Stats Row */}
-                <div className="grid grid-cols-3 gap-3 mt-5">
-                  <div className="bg-background/80 backdrop-blur rounded-xl px-2 py-4 text-center border shadow-sm">
-                    <Calendar className="h-4 w-4 mx-auto text-green-500 mb-1.5" />
-                    <div className="text-2xl font-bold">{selectedUser.stats.eventsAttended}</div>
-                    <div className="text-xs text-muted-foreground mt-1">Events</div>
+                <div className="grid grid-cols-3 gap-2 mt-4">
+                  <div className="bg-background/80 backdrop-blur rounded-lg p-3 text-center border shadow-sm">
+                    <Calendar className="h-4 w-4 mx-auto text-green-500 mb-1" />
+                    <div className="text-xl font-bold">{selectedUser.stats.eventsAttended}</div>
+                    <div className="text-xs text-muted-foreground">Events</div>
                   </div>
-                  <div className="bg-background/80 backdrop-blur rounded-xl px-2 py-4 text-center border shadow-sm">
-                    <Heart className="h-4 w-4 mx-auto text-purple-500 mb-1.5" />
-                    <div className="text-2xl font-bold">{selectedUser.stats.ministriesJoined}</div>
-                    <div className="text-xs text-muted-foreground mt-1">Ministries</div>
+                  <div className="bg-background/80 backdrop-blur rounded-lg p-3 text-center border shadow-sm">
+                    <Heart className="h-4 w-4 mx-auto text-purple-500 mb-1" />
+                    <div className="text-xl font-bold">{selectedUser.stats.ministriesJoined}</div>
+                    <div className="text-xs text-muted-foreground">Ministries</div>
                   </div>
-                  <div className="bg-background/80 backdrop-blur rounded-xl px-2 py-4 text-center border shadow-sm">
-                    <FileText className="h-4 w-4 mx-auto text-orange-500 mb-1.5" />
-                    <div className="text-2xl font-bold">{selectedUser.stats.formsSubmitted}</div>
-                    <div className="text-xs text-muted-foreground mt-1">Forms</div>
+                  <div className="bg-background/80 backdrop-blur rounded-lg p-3 text-center border shadow-sm">
+                    <FileText className="h-4 w-4 mx-auto text-orange-500 mb-1" />
+                    <div className="text-xl font-bold">{selectedUser.stats.formsSubmitted}</div>
+                    <div className="text-xs text-muted-foreground">Forms</div>
                   </div>
                 </div>
               </div>
 
-              <ScrollArea className="max-h-[50vh]">
-                <div className="p-6 space-y-6">
+              <ScrollArea className="max-h-[45vh]">
+                <div className="p-5 space-y-5">
                   {/* Contact Info */}
                   {(selectedUser.user.email || selectedUser.user.phone) && (
                     <div>
