@@ -254,7 +254,7 @@ export function AddUnavailabilityDialog({
                       {selectedStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </span>
                   </div>
-                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleClearSelection}>
+                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleClearSelection} aria-label="Clear selection">
                     <X className="h-4 w-4" />
                   </Button>
                 </div>

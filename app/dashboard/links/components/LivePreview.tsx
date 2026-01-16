@@ -80,7 +80,7 @@ export const LivePreview = memo(function LivePreview({
             <div className="w-12 h-12 rounded-full bg-muted border-2 border-white shadow mb-3 overflow-hidden relative">
               <Image
                 src={settings?.avatar_url || churchLogo!}
-                alt=""
+                alt={displayTitle || 'Profile avatar'}
                 fill
                 className="object-cover"
                 sizes="48px"
@@ -157,7 +157,7 @@ export const LivePreview = memo(function LivePreview({
                   >
                     <Image
                       src={link.image_url!}
-                      alt=""
+                      alt={`Background for ${link.title}`}
                       fill
                       className="object-cover"
                       sizes="300px"

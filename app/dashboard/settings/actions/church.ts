@@ -8,6 +8,7 @@ import {
   updateChurchSchema,
   type UpdateChurchInput,
 } from './helpers'
+import { validateImageFile } from '@/lib/validations/upload'
 
 export async function getChurchSettings() {
   const auth = await getAuthenticatedUserWithProfile()
@@ -205,15 +206,10 @@ export async function uploadChurchLogo(formData: FormData) {
     return { error: 'No file provided' }
   }
 
-  // Validate file type
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-  if (!allowedTypes.includes(file.type)) {
-    return { error: 'Only JPEG, PNG, WebP, and GIF images are allowed' }
-  }
-
-  // Validate file size (max 5MB)
-  if (file.size > 5 * 1024 * 1024) {
-    return { error: 'Image size must be less than 5MB' }
+  // Validate file type and size, get safe extension from MIME type
+  const validation = validateImageFile(file)
+  if (!validation.isValid) {
+    return { error: validation.error }
   }
 
   // Get current logo to delete later
@@ -223,9 +219,8 @@ export async function uploadChurchLogo(formData: FormData) {
     .eq('id', profile.church_id)
     .single()
 
-  // Generate unique file path
-  const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-  const fileName = `${profile.church_id}/${Date.now()}.${fileExt}`
+  // Generate unique file path using MIME-derived extension (not user-provided filename)
+  const fileName = `${profile.church_id}/${Date.now()}.${validation.extension}`
 
   // Upload to storage
   const { error: uploadError } = await adminClient.storage

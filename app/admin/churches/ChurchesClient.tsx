@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { format } from 'date-fns'
 import {
   Church,
@@ -17,14 +18,6 @@ import {
   FileText,
   TrendingUp,
 } from 'lucide-react'
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-} from 'recharts'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -41,30 +34,22 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart'
+import { Skeleton } from '@/components/ui/skeleton'
 import type { ChurchWithStats, GrowthDataPoint } from './actions'
 import { getChurchDetails } from './actions'
+
+const ChurchGrowthChart = dynamic(
+  () => import('./ChurchGrowthChart').then((mod) => ({ default: mod.ChurchGrowthChart })),
+  {
+    loading: () => <Skeleton className="h-[280px] w-full" />,
+    ssr: false,
+  }
+)
 
 interface ChurchesClientProps {
   initialChurches: ChurchWithStats[]
   growthData: GrowthDataPoint[]
 }
-
-const chartConfig = {
-  cumulative: {
-    label: 'Total Churches',
-    color: '#f49f1e',
-  },
-  count: {
-    label: 'New Churches',
-    color: '#f49f1e',
-  },
-} satisfies ChartConfig
 
 interface ChurchDetails {
   church: ChurchWithStats
@@ -149,52 +134,7 @@ export function ChurchesClient({ initialChurches, growthData }: ChurchesClientPr
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-4 pb-6">
-            <ChartContainer config={chartConfig} className="h-[280px] w-full">
-              <AreaChart
-                data={growthData}
-                margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="fillCumulative" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="5%"
-                      stopColor="var(--color-cumulative)"
-                      stopOpacity={0.8}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor="var(--color-cumulative)"
-                      stopOpacity={0.1}
-                    />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis
-                  dataKey="month"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  allowDecimals={false}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent indicator="line" />}
-                />
-                <Area
-                  dataKey="cumulative"
-                  type="monotone"
-                  fill="url(#fillCumulative)"
-                  stroke="var(--color-cumulative)"
-                  strokeWidth={2}
-                />
-              </AreaChart>
-            </ChartContainer>
+            <ChurchGrowthChart data={growthData} />
           </CardContent>
         </Card>
       )}

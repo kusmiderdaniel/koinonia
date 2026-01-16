@@ -30,7 +30,7 @@ export function KeyPicker({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="w-full justify-between !border !border-black dark:!border-zinc-700"
+          className="w-full justify-between !border !border-black dark:!border-white"
         >
           {value || <span className="text-muted-foreground">{t('selectKey')}</span>}
           <ChevronDown className="ml-2 h-4 w-4 opacity-50" />

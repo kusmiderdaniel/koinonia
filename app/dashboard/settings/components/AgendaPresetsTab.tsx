@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -19,6 +18,7 @@ import { toast } from 'sonner'
 import { deleteAgendaPreset } from '../agenda-presets/actions'
 import { AgendaPresetDialog } from '../agenda-presets/AgendaPresetDialog'
 import { formatDuration } from '@/lib/utils/format'
+import { useDialogState, useConfirmDialog } from '@/lib/hooks'
 
 interface Ministry {
   id: string
@@ -51,43 +51,23 @@ export function AgendaPresetsTab({
   setSuccess,
 }: AgendaPresetsTabProps) {
   const t = useTranslations('settings.presets')
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [editingPreset, setEditingPreset] = useState<Preset | null>(null)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [presetToDelete, setPresetToDelete] = useState<Preset | null>(null)
-  const [isDeleting, setIsDeleting] = useState(false)
-
-  const handleAddPreset = () => {
-    setEditingPreset(null)
-    setDialogOpen(true)
-  }
-
-  const handleEditPreset = (preset: Preset) => {
-    setEditingPreset(preset)
-    setDialogOpen(true)
-  }
-
-  const handleDeleteClick = (preset: Preset) => {
-    setPresetToDelete(preset)
-    setDeleteDialogOpen(true)
-  }
+  const editDialog = useDialogState<Preset>()
+  const deleteDialog = useConfirmDialog<Preset>()
 
   const handleDeleteConfirm = async () => {
-    if (!presetToDelete) return
+    if (!deleteDialog.item) return
 
-    setIsDeleting(true)
-    const result = await deleteAgendaPreset(presetToDelete.id)
-    setIsDeleting(false)
+    deleteDialog.setLoading(true)
+    const result = await deleteAgendaPreset(deleteDialog.item.id)
 
     if (result.error) {
       toast.error(result.error)
+      deleteDialog.setLoading(false)
     } else {
       toast.success(t('deleteDialog.deletedSuccess'))
-      setPresets(presets.filter(p => p.id !== presetToDelete.id))
+      setPresets(presets.filter(p => p.id !== deleteDialog.item!.id))
+      deleteDialog.close()
     }
-
-    setDeleteDialogOpen(false)
-    setPresetToDelete(null)
   }
 
   const handleSuccess = (preset: Preset, isNew: boolean) => {
@@ -96,8 +76,7 @@ export function AgendaPresetsTab({
     } else {
       setPresets(presets.map(p => p.id === preset.id ? preset : p))
     }
-    setDialogOpen(false)
-    setEditingPreset(null)
+    editDialog.close()
   }
 
   return (
@@ -111,7 +90,7 @@ export function AgendaPresetsTab({
                 {t('description')}
               </CardDescription>
             </div>
-            <Button onClick={handleAddPreset} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0 w-full sm:w-auto">
+            <Button onClick={() => editDialog.open()} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               {t('addItem')}
             </Button>
@@ -156,7 +135,7 @@ export function AgendaPresetsTab({
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 md:h-8 md:w-8"
-                      onClick={() => handleEditPreset(preset)}
+                      onClick={() => editDialog.open(preset)}
                     >
                       <Pencil className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     </Button>
@@ -164,7 +143,7 @@ export function AgendaPresetsTab({
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 md:h-8 md:w-8"
-                      onClick={() => handleDeleteClick(preset)}
+                      onClick={() => deleteDialog.open(preset)}
                     >
                       <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4 text-red-500" />
                     </Button>
@@ -178,30 +157,30 @@ export function AgendaPresetsTab({
 
       {/* Add/Edit Dialog */}
       <AgendaPresetDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        preset={editingPreset}
+        open={editDialog.isOpen}
+        onOpenChange={editDialog.setOpen}
+        preset={editDialog.item}
         ministries={ministries}
         onSuccess={handleSuccess}
       />
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <AlertDialog open={deleteDialog.isOpen} onOpenChange={deleteDialog.setOpen}>
         <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-[90vw] md:max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('deleteDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('deleteDialog.description', { title: presetToDelete?.title ?? '' })}
+              {t('deleteDialog.description', { title: deleteDialog.item?.title ?? '' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
             <AlertDialogCancel className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">{t('deleteDialog.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
-              disabled={isDeleting}
+              disabled={deleteDialog.isLoading}
               className="rounded-full !border !border-red-600 !bg-red-600 hover:!bg-red-700 !text-white px-4 py-2"
             >
-              {isDeleting ? t('deleteDialog.deleting') : t('deleteDialog.confirm')}
+              {deleteDialog.isLoading ? t('deleteDialog.deleting') : t('deleteDialog.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

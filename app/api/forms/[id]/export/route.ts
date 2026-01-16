@@ -55,18 +55,24 @@ export async function GET(request: Request, context: RouteContext) {
       return NextResponse.json({ error: 'Form not found' }, { status: 404 })
     }
 
-    // Get fields
+    // Get fields - inner join with forms to verify church ownership (defense in depth)
     const { data: fields } = await adminClient
       .from('form_fields')
-      .select('id, label, type')
+      .select(`
+        id,
+        label,
+        type,
+        form:forms!inner (church_id)
+      `)
       .eq('form_id', formId)
+      .eq('form.church_id', profile.church_id)
       .order('sort_order')
 
     if (!fields || fields.length === 0) {
       return NextResponse.json({ error: 'No fields found' }, { status: 400 })
     }
 
-    // Get submissions
+    // Get submissions - inner join with forms to verify church ownership (defense in depth)
     const { data: submissions } = await adminClient
       .from('form_submissions')
       .select(`
@@ -78,9 +84,11 @@ export async function GET(request: Request, context: RouteContext) {
           first_name,
           last_name,
           email
-        )
+        ),
+        form:forms!inner (church_id)
       `)
       .eq('form_id', formId)
+      .eq('form.church_id', profile.church_id)
       .order('submitted_at', { ascending: false })
 
     // Build CSV

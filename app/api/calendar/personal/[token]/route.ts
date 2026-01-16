@@ -1,6 +1,7 @@
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import icalGenerator from 'ical-generator'
 import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
+import { isValidToken } from '@/lib/validations/token'
 
 interface EventData {
   id: string
@@ -51,7 +52,7 @@ export async function GET(
 
   const { token } = await params
 
-  if (!token || token.length < 20) {
+  if (!isValidToken(token)) {
     return new Response('Invalid token', { status: 400 })
   }
 

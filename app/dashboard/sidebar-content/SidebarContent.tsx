@@ -75,6 +75,7 @@ export function SidebarContent({
                     onPrefetch={() => prefetchRoute(item.href)}
                   />
                   <InboxNavItem
+                    profileId={user.id}
                     collapsed={collapsed}
                     isMobile={isMobile}
                     onNavigate={handleNavClick}

@@ -18,7 +18,7 @@ export function MobileHeader({ churchName, churchLogoUrl }: MobileHeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-14 border-b bg-white dark:bg-zinc-950 flex items-center justify-between px-4 md:hidden">
       <div className="flex items-center gap-3 min-w-0">
-        <Button variant="ghost" size="icon" onClick={open} className="min-h-11 min-w-11 flex-shrink-0">
+        <Button variant="ghost" size="icon" onClick={open} className="min-h-11 min-w-11 flex-shrink-0" aria-label="Open menu">
           <Menu className="w-5 h-5" />
         </Button>
         {churchLogoUrl ? (

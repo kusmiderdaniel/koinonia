@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
 import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
+import { z } from 'zod'
+
+const clickTrackingSchema = z.object({
+  linkId: z.string().uuid('Invalid link ID format'),
+})
 
 export async function POST(request: Request) {
   // Rate limit - relaxed for click tracking
@@ -13,14 +18,17 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { linkId, churchId } = body
 
-    if (!linkId || !churchId) {
+    // Validate request body with Zod
+    const parseResult = clickTrackingSchema.safeParse(body)
+    if (!parseResult.success) {
       return NextResponse.json(
-        { error: 'Missing required fields: linkId and churchId' },
+        { error: 'Invalid request data', details: parseResult.error.flatten() },
         { status: 400 }
       )
     }
+
+    const { linkId } = parseResult.data
 
     // Get request metadata
     const headersList = await headers()
@@ -31,12 +39,11 @@ export async function POST(request: Request) {
 
     const adminClient = createServiceRoleClient()
 
-    // Verify link exists and belongs to the church
+    // Verify link exists and get its church_id from database (don't trust client input)
     const { data: link, error: linkError } = await adminClient
       .from('link_tree_links')
-      .select('id')
+      .select('id, church_id')
       .eq('id', linkId)
-      .eq('church_id', churchId)
       .single()
 
     if (linkError || !link) {
@@ -46,12 +53,12 @@ export async function POST(request: Request) {
       )
     }
 
-    // Record the click
+    // Record the click using the database-sourced church_id
     const { error: insertError } = await adminClient
       .from('link_tree_clicks')
       .insert({
         link_id: linkId,
-        church_id: churchId,
+        church_id: link.church_id,
         ip_address: ipAddress,
         user_agent: userAgent,
         referrer: referrer,

@@ -12,14 +12,17 @@ import { getNotifications, markAllAsRead, getUnreadCount, getActionableCount } f
 import type { Notification } from '@/types/notifications'
 import { toast } from 'sonner'
 import { onNotificationRefresh } from '@/lib/events/notifications'
+import { useNotificationSubscription } from '@/lib/hooks/useNotificationSubscription'
 
 interface InboxPageClientProps {
+  profileId: string
   initialNotifications: Notification[]
   initialUnreadCount: number
   initialActionableCount: number
 }
 
 export function InboxPageClient({
+  profileId,
   initialNotifications,
   initialUnreadCount,
   initialActionableCount,
@@ -56,11 +59,11 @@ export function InboxPageClient({
     }
   }, [])
 
-  // Poll for new notifications every 30 seconds
-  useEffect(() => {
-    const interval = setInterval(refreshNotifications, 30000)
-    return () => clearInterval(interval)
-  }, [refreshNotifications])
+  // Subscribe to real-time notification changes via Supabase Realtime
+  useNotificationSubscription({
+    profileId,
+    onNotificationChange: refreshNotifications,
+  })
 
   // Listen for notification refresh events (e.g., when invitation is responded to from home page)
   useEffect(() => {

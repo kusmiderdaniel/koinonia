@@ -1,6 +1,14 @@
 import { NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
+import { isValidToken } from '@/lib/validations/token'
+import { z } from 'zod'
+
+const analyticsEventSchema = z.object({
+  eventType: z.enum(['view', 'start', 'submit']),
+  sessionId: z.string().min(1, 'Session ID is required'),
+  deviceType: z.enum(['desktop', 'mobile', 'tablet']).optional().nullable(),
+})
 
 interface RouteContext {
   params: Promise<{ token: string }>
@@ -17,17 +25,24 @@ export async function POST(request: Request, context: RouteContext) {
 
   try {
     const { token } = await context.params
+
+    // Validate token format
+    if (!isValidToken(token)) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 400 })
+    }
+
     const body = await request.json()
-    const { eventType, sessionId, deviceType } = body
 
-    // Validate event type
-    if (!['view', 'start', 'submit'].includes(eventType)) {
-      return NextResponse.json({ error: 'Invalid event type' }, { status: 400 })
+    // Validate request body with Zod
+    const parseResult = analyticsEventSchema.safeParse(body)
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid request data', details: parseResult.error.flatten() },
+        { status: 400 }
+      )
     }
 
-    if (!sessionId) {
-      return NextResponse.json({ error: 'Session ID required' }, { status: 400 })
-    }
+    const { eventType, sessionId, deviceType } = parseResult.data
 
     const adminClient = createServiceRoleClient()
 

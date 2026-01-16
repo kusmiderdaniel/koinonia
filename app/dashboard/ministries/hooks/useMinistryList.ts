@@ -44,6 +44,21 @@ export function useMinistryList(initialData?: MinistriesInitialData): UseMinistr
   const [hasAutoSelected, setHasAutoSelected] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Sync server-provided initialData to React Query cache when it changes
+  // This ensures client-side navigation gets fresh data from the server
+  // The effect only runs when initialData changes (tracked by React's dependency comparison)
+  useEffect(() => {
+    if (!initialData) return
+
+    // Always sync when initialData is provided
+    queryClient.setQueryData(queryKeys.ministries, {
+      data: initialData.ministries,
+      role: initialData.role,
+    })
+    // Reset auto-selection when data changes from navigation
+    setHasAutoSelected(false)
+  }, [initialData, queryClient])
+
   // React Query with initialData for instant render
   const ministriesQuery = useQuery({
     queryKey: queryKeys.ministries,
@@ -61,10 +76,8 @@ export function useMinistryList(initialData?: MinistriesInitialData): UseMinistr
       data: initialData.ministries,
       role: initialData.role,
     } : undefined,
-    initialDataUpdatedAt: initialData ? Date.now() : undefined, // Mark initial data as fresh
     staleTime: 60000, // 1 minute - data considered fresh
     gcTime: 300000, // 5 minutes - keep in cache
-    refetchOnMount: true, // Only refetch if stale
     refetchOnWindowFocus: false,
   })
 

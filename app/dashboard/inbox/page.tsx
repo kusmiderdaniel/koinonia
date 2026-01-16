@@ -14,11 +14,11 @@ export default async function InboxPage() {
     redirect('/auth/signin')
   }
 
-  // Check page access
+  // Check page access and get profile ID
   const adminClient = createServiceRoleClient()
   const { data: profile } = await adminClient
     .from('profiles')
-    .select('role')
+    .select('id, role')
     .eq('user_id', user.id)
     .single()
 
@@ -39,6 +39,7 @@ export default async function InboxPage() {
 
   return (
     <InboxPageClient
+      profileId={profile.id}
       initialNotifications={notifications}
       initialUnreadCount={unreadCount}
       initialActionableCount={actionableCount}

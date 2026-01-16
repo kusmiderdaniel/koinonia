@@ -30,7 +30,7 @@ export async function GET(
       .single()
 
     if (churchError || !church) {
-      return new Response(`Church not found: ${churchSubdomain}`, { status: 404 })
+      return new Response('Calendar not found', { status: 404 })
     }
 
     // Verify campus belongs to this church and is active
@@ -43,7 +43,7 @@ export async function GET(
       .single()
 
     if (campusError || !campus) {
-      return new Response(`Campus not found: ${campusId}`, { status: 404 })
+      return new Response('Calendar not found', { status: 404 })
     }
 
     // Get event IDs for this campus
@@ -143,9 +143,6 @@ export async function GET(
     })
   } catch (error) {
     console.error('Calendar API error:', error)
-    return new Response(
-      `Internal server error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      { status: 500 }
-    )
+    return new Response('An error occurred while generating the calendar', { status: 500 })
   }
 }

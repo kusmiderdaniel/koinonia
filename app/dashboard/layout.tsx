@@ -34,6 +34,7 @@ export default async function DashboardLayout({
   }
 
   const userProps = {
+    id: profile.id,
     firstName: profile.first_name,
     lastName: profile.last_name,
     email: profile.email,

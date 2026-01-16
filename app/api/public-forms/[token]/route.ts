@@ -2,6 +2,14 @@ import { NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
 import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
+import { isValidToken } from '@/lib/validations/token'
+import { z } from 'zod'
+
+// Schema for public form submission body
+const publicFormSubmissionBodySchema = z.object({
+  responses: z.record(z.string(), z.unknown()),
+  email: z.string().email().optional().nullable(),
+})
 
 interface RouteContext {
   params: Promise<{ token: string }>
@@ -18,6 +26,12 @@ export async function GET(request: Request, context: RouteContext) {
 
   try {
     const { token } = await context.params
+
+    // Validate token format
+    if (!isValidToken(token)) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 400 })
+    }
+
     const adminClient = createServiceRoleClient()
 
     // Get form by public token
@@ -78,12 +92,24 @@ export async function POST(request: Request, context: RouteContext) {
 
   try {
     const { token } = await context.params
-    const body = await request.json()
-    const { responses, email } = body
 
-    if (!responses || typeof responses !== 'object') {
-      return NextResponse.json({ error: 'Invalid submission data' }, { status: 400 })
+    // Validate token format
+    if (!isValidToken(token)) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 400 })
     }
+
+    const body = await request.json()
+
+    // Validate request body with Zod
+    const parseResult = publicFormSubmissionBodySchema.safeParse(body)
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: 'Invalid submission data', details: parseResult.error.flatten() },
+        { status: 400 }
+      )
+    }
+
+    const { responses, email } = parseResult.data
 
     const adminClient = createServiceRoleClient()
 

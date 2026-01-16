@@ -1,7 +1,7 @@
 'use server'
 
-import { createServiceRoleClient } from '@/lib/supabase/server'
 import { subMonths, startOfMonth, format } from 'date-fns'
+import { requireSuperAdmin, isAdminAuthError } from '@/lib/utils/admin-auth'
 
 export interface UserWithChurch {
   id: string
@@ -25,7 +25,10 @@ export async function getUsers(): Promise<{
   data?: UserWithChurch[]
   error?: string
 }> {
-  const adminClient = createServiceRoleClient()
+  const auth = await requireSuperAdmin()
+  if (isAdminAuthError(auth)) return { error: auth.error }
+
+  const { adminClient } = auth
 
   const { data: users, error } = await adminClient
     .from('profiles')
@@ -84,7 +87,10 @@ export async function getUserDetails(userId: string): Promise<{
   }
   error?: string
 }> {
-  const adminClient = createServiceRoleClient()
+  const auth = await requireSuperAdmin()
+  if (isAdminAuthError(auth)) return { error: auth.error }
+
+  const { adminClient } = auth
 
   // Get user details
   const { data: user, error: userError } = await adminClient
@@ -176,7 +182,10 @@ export async function toggleSuperAdmin(userId: string, isSuperAdmin: boolean): P
   success?: boolean
   error?: string
 }> {
-  const adminClient = createServiceRoleClient()
+  const auth = await requireSuperAdmin()
+  if (isAdminAuthError(auth)) return { error: auth.error }
+
+  const { adminClient } = auth
 
   const { error } = await adminClient
     .from('profiles')
@@ -201,7 +210,10 @@ export async function getUsersGrowthData(): Promise<{
   data?: GrowthDataPoint[]
   error?: string
 }> {
-  const adminClient = createServiceRoleClient()
+  const auth = await requireSuperAdmin()
+  if (isAdminAuthError(auth)) return { error: auth.error }
+
+  const { adminClient } = auth
 
   // Get all users with their created_at dates
   const { data: users, error } = await adminClient

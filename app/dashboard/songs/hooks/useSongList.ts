@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useDebouncedValue, queryKeys, useCacheInvalidation } from '@/lib/hooks'
 import { getSongs } from '../actions'
 import type { Song, Tag } from '../types'
@@ -37,12 +37,26 @@ interface UseSongListReturn {
 
 export function useSongList(initialData?: SongsInitialData): UseSongListReturn {
   const { invalidateSongs } = useCacheInvalidation()
+  const queryClient = useQueryClient()
 
   // Local UI state
   const [selectedSongId, setSelectedSongId] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebouncedValue(search, 300)
   const [filterTagIds, setFilterTagIds] = useState<string[]>([])
+
+  // Sync server-provided initialData to React Query cache when it changes
+  // This ensures client-side navigation gets fresh data from the server
+  // The effect only runs when initialData changes (tracked by React's dependency comparison)
+  useEffect(() => {
+    if (!initialData) return
+
+    // Always sync when initialData is provided
+    queryClient.setQueryData(queryKeys.songs, {
+      songs: initialData.songs,
+      canManage: initialData.canManage,
+    })
+  }, [initialData, queryClient])
 
   // React Query with initialData for instant render
   const songsQuery = useQuery({
@@ -61,10 +75,8 @@ export function useSongList(initialData?: SongsInitialData): UseSongListReturn {
       songs: initialData.songs,
       canManage: initialData.canManage,
     } : undefined,
-    initialDataUpdatedAt: initialData ? Date.now() : undefined, // Mark initial data as fresh
     staleTime: 60000, // 1 minute - data considered fresh
     gcTime: 300000, // 5 minutes - keep in cache
-    refetchOnMount: true, // Only refetch if stale
     refetchOnWindowFocus: false,
   })
 

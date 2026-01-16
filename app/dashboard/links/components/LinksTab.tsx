@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import {
   DndContext,
   closestCenter,
@@ -23,6 +22,7 @@ import { SortableLinkItem } from './SortableLinkItem'
 import { LinkDialog } from './LinkDialog'
 import { LivePreview } from './LivePreview'
 import { reorderLinks, deleteLink as deleteLinkAction } from '../actions'
+import { useDialogState } from '@/lib/hooks'
 import type { LinkTreeLinkRow, LinkTreeSettingsRow, AnalyticsSummary } from '../types'
 
 interface LinksTabProps {
@@ -35,8 +35,7 @@ interface LinksTabProps {
 }
 
 export function LinksTab({ links, setLinks, settings, churchName, churchLogo, analytics }: LinksTabProps) {
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [editingLink, setEditingLink] = useState<LinkTreeLinkRow | null>(null)
+  const linkDialog = useDialogState<LinkTreeLinkRow>()
 
   // Create a map of link IDs to click counts
   const clickCountMap = new Map<string, number>()
@@ -74,13 +73,11 @@ export function LinksTab({ links, setLinks, settings, churchName, churchLogo, an
   }
 
   const handleAddLink = () => {
-    setEditingLink(null)
-    setDialogOpen(true)
+    linkDialog.open()
   }
 
   const handleEditLink = (link: LinkTreeLinkRow) => {
-    setEditingLink(link)
-    setDialogOpen(true)
+    linkDialog.open(link)
   }
 
   const handleDeleteLink = async (id: string) => {
@@ -98,11 +95,11 @@ export function LinksTab({ links, setLinks, settings, churchName, churchLogo, an
   }
 
   const handleDialogClose = (updatedLink?: LinkTreeLinkRow) => {
-    setDialogOpen(false)
-    setEditingLink(null)
+    const wasEditing = linkDialog.item !== null
+    linkDialog.close()
 
     if (updatedLink) {
-      if (editingLink) {
+      if (wasEditing) {
         // Update existing
         setLinks(links.map(l => l.id === updatedLink.id ? updatedLink : l))
       } else {
@@ -174,12 +171,12 @@ export function LinksTab({ links, setLinks, settings, churchName, churchLogo, an
 
         {/* Link Dialog */}
         <LinkDialog
-          open={dialogOpen}
+          open={linkDialog.isOpen}
           onOpenChange={(open) => {
             if (!open) handleDialogClose()
-            else setDialogOpen(open)
+            else linkDialog.setOpen(open)
           }}
-          link={editingLink}
+          link={linkDialog.item}
           onSave={handleDialogClose}
         />
       </div>

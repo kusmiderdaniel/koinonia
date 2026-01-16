@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { processUserDeletions } from '@/lib/cron/process-user-deletions'
 import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
+import { verifyCronSecret } from '@/lib/validations/cron-auth'
 
 /**
  * Cron job endpoint for processing user account deletions.
@@ -18,25 +19,10 @@ export async function GET(request: Request) {
     return rateLimitedResponse(rateLimit)
   }
 
-  // Verify cron secret for security
-  const authHeader = request.headers.get('authorization')
-  const cronSecret = process.env.CRON_SECRET
-
-  // CRITICAL: Fail closed - if CRON_SECRET is not configured, deny all access
-  if (!cronSecret) {
-    console.error('[Cron] CRON_SECRET environment variable is not configured')
-    return NextResponse.json(
-      { error: 'Server configuration error' },
-      { status: 500 }
-    )
-  }
-
-  // Verify the authorization header matches the secret
-  if (authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    )
+  // Verify cron secret using timing-safe comparison
+  const authResult = verifyCronSecret(request.headers.get('authorization'))
+  if (!authResult.authorized) {
+    return authResult.error
   }
 
   try {

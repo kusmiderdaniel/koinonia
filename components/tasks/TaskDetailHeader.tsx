@@ -80,11 +80,12 @@ export function TaskDetailHeader({
               size="icon"
               onClick={onDelete}
               className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+              aria-label="Delete task"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
           )}
-          <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
+          <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8" aria-label="Close task details">
             <X className="h-4 w-4" />
           </Button>
         </div>

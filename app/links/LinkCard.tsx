@@ -131,7 +131,7 @@ export const LinkCard = memo(function LinkCard({
         {/* Background image */}
         <Image
           src={imageUrl}
-          alt=""
+          alt={`Background for ${title}`}
           fill
           className="object-cover"
           sizes="(max-width: 640px) 100vw, 400px"

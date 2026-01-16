@@ -20,3 +20,10 @@ export { useMobileNav } from './useMobileNav'
 export { useMobileHeaderContent } from './useMobileHeaderContent'
 export { useMediaQuery, useIsMobile } from './useMediaQuery'
 export { useSidebarCollapse } from './useSidebarCollapse'
+export {
+  useMinistryMembersWithUnavailability,
+  type BaseMember,
+  type UnavailabilityInfo,
+  type UseMinistryMembersWithUnavailabilityOptions,
+  type UseMinistryMembersWithUnavailabilityResult,
+} from './useMinistryMembersWithUnavailability'

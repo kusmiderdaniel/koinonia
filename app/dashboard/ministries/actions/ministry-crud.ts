@@ -8,6 +8,7 @@ import {
   requireAdminPermission,
 } from './helpers'
 import { isAdminOrOwner } from '@/lib/permissions'
+import { MINISTRY_ERRORS, CRUD_ERRORS } from '@/lib/constants/error-messages'
 import type { MinistryInput } from './helpers'
 
 export async function getMinistries() {
@@ -37,7 +38,7 @@ export async function getMinistries() {
 
   if (error) {
     console.error('Error fetching ministries:', error)
-    return { error: 'Failed to load ministries' }
+    return { error: MINISTRY_ERRORS.FAILED_TO_LOAD }
   }
 
   return { data: ministries, role: profile.role }
@@ -46,11 +47,11 @@ export async function getMinistries() {
 export async function createMinistry(data: MinistryInput) {
   const validated = ministrySchema.safeParse(data)
   if (!validated.success) {
-    return { error: 'Invalid data provided' }
+    return { error: CRUD_ERRORS.INVALID_DATA }
   }
 
   if (!validated.data.leaderId) {
-    return { error: 'A ministry leader must be assigned' }
+    return { error: MINISTRY_ERRORS.LEADER_REQUIRED }
   }
 
   const auth = await getAuthenticatedUserWithProfile()
@@ -76,10 +77,10 @@ export async function createMinistry(data: MinistryInput) {
 
   if (error) {
     if (error.code === '23505') {
-      return { error: 'A ministry with this name already exists' }
+      return { error: MINISTRY_ERRORS.NAME_ALREADY_EXISTS }
     }
     console.error('Error creating ministry:', error)
-    return { error: 'Failed to create ministry' }
+    return { error: MINISTRY_ERRORS.FAILED_TO_CREATE }
   }
 
   revalidatePath('/dashboard/ministries')
@@ -89,7 +90,7 @@ export async function createMinistry(data: MinistryInput) {
 export async function updateMinistry(id: string, data: MinistryInput) {
   const validated = ministrySchema.safeParse(data)
   if (!validated.success) {
-    return { error: 'Invalid data provided' }
+    return { error: CRUD_ERRORS.INVALID_DATA }
   }
 
   const auth = await getAuthenticatedUserWithProfile()
@@ -105,14 +106,14 @@ export async function updateMinistry(id: string, data: MinistryInput) {
     .single()
 
   if (!ministry) {
-    return { error: 'Ministry not found' }
+    return { error: MINISTRY_ERRORS.NOT_FOUND }
   }
 
   // Check permissions: admin/owner or ministry leader
   const isMinistryLeader = ministry.leader_id === user.id
 
   if (!isAdminOrOwner(profile.role) && !isMinistryLeader) {
-    return { error: 'You do not have permission to edit this ministry' }
+    return { error: MINISTRY_ERRORS.PERMISSION_DENIED }
   }
 
   const updateData: Record<string, unknown> = {
@@ -132,10 +133,10 @@ export async function updateMinistry(id: string, data: MinistryInput) {
 
   if (error) {
     if (error.code === '23505') {
-      return { error: 'A ministry with this name already exists' }
+      return { error: MINISTRY_ERRORS.NAME_ALREADY_EXISTS }
     }
     console.error('Error updating ministry:', error)
-    return { error: 'Failed to update ministry' }
+    return { error: MINISTRY_ERRORS.FAILED_TO_UPDATE }
   }
 
   revalidatePath('/dashboard/ministries')
@@ -159,7 +160,7 @@ export async function deleteMinistry(id: string) {
     .single()
 
   if (ministry?.is_system) {
-    return { error: 'System ministries cannot be deleted. You can modify its roles and members instead.' }
+    return { error: MINISTRY_ERRORS.SYSTEM_MINISTRY_DELETE }
   }
 
   const { error } = await adminClient
@@ -169,7 +170,7 @@ export async function deleteMinistry(id: string) {
 
   if (error) {
     console.error('Error deleting ministry:', error)
-    return { error: 'Failed to delete ministry' }
+    return { error: MINISTRY_ERRORS.FAILED_TO_DELETE }
   }
 
   revalidatePath('/dashboard/ministries')

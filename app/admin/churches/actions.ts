@@ -1,7 +1,7 @@
 'use server'
 
-import { createServiceRoleClient } from '@/lib/supabase/server'
 import { subMonths, startOfMonth, format } from 'date-fns'
+import { requireSuperAdmin, isAdminAuthError } from '@/lib/utils/admin-auth'
 
 export interface ChurchWithStats {
   id: string
@@ -28,7 +28,10 @@ export async function getChurches(): Promise<{
   data?: ChurchWithStats[]
   error?: string
 }> {
-  const adminClient = createServiceRoleClient()
+  const auth = await requireSuperAdmin()
+  if (isAdminAuthError(auth)) return { error: auth.error }
+
+  const { adminClient } = auth
 
   // Get all churches
   const { data: churches, error: churchesError } = await adminClient
@@ -94,7 +97,10 @@ export async function getChurchDetails(churchId: string): Promise<{
   }
   error?: string
 }> {
-  const adminClient = createServiceRoleClient()
+  const auth = await requireSuperAdmin()
+  if (isAdminAuthError(auth)) return { error: auth.error }
+
+  const { adminClient } = auth
 
   // Get church details
   const { data: church, error: churchError } = await adminClient
@@ -176,7 +182,10 @@ export async function getChurchesGrowthData(): Promise<{
   data?: GrowthDataPoint[]
   error?: string
 }> {
-  const adminClient = createServiceRoleClient()
+  const auth = await requireSuperAdmin()
+  if (isAdminAuthError(auth)) return { error: auth.error }
+
+  const { adminClient } = auth
 
   // Get all churches with their created_at dates
   const { data: churches, error } = await adminClient

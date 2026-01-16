@@ -55,6 +55,7 @@ export const CalendarSection = memo(function CalendarSection({
               className="h-8 w-8 !border !border-black dark:!border-white"
               onClick={onPrevMonth}
               disabled={!canGoPrevious}
+              aria-label="Previous month"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -64,6 +65,7 @@ export const CalendarSection = memo(function CalendarSection({
               size="icon"
               className="h-8 w-8 !border !border-black dark:!border-white"
               onClick={onNextMonth}
+              aria-label="Next month"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -112,7 +114,7 @@ export const CalendarSection = memo(function CalendarSection({
                     <span>{formatDateShort(selectedStart)}</span>
                   )}
                 </div>
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onClearSelection}>
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onClearSelection} aria-label="Clear selection">
                   <X className="h-4 w-4" />
                 </Button>
               </div>

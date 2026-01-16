@@ -305,7 +305,7 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
       <ListDetailLayout
         header={headerContent}
         listView={
-          <div className="h-full flex items-center justify-center border border-black dark:border-zinc-700 rounded-lg bg-card">
+          <div className="h-full flex items-center justify-center border border-black dark:border-white rounded-lg bg-card">
             <EmptyState
               icon={FileText}
               title={t('empty.title')}

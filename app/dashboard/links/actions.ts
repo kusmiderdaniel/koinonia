@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { isLeaderOrAbove } from '@/lib/permissions'
+import { validateImageFile, extractAndValidateStoragePath } from '@/lib/validations/upload'
 import type {
   LinkTreeSettingsInsert,
   LinkTreeSettingsUpdate,
@@ -389,20 +390,14 @@ export async function uploadLinkImage(formData: FormData): Promise<{ url: string
     return { url: null, error: 'No file provided' }
   }
 
-  // Validate file type
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-  if (!allowedTypes.includes(file.type)) {
-    return { url: null, error: 'Only JPEG, PNG, WebP, and GIF images are allowed' }
+  // Validate file type and size, get safe extension from MIME type
+  const validation = validateImageFile(file)
+  if (!validation.isValid) {
+    return { url: null, error: validation.error || 'Invalid file' }
   }
 
-  // Validate file size (max 5MB)
-  if (file.size > 5 * 1024 * 1024) {
-    return { url: null, error: 'Image size must be less than 5MB' }
-  }
-
-  // Generate unique file path
-  const fileExt = file.name.split('.').pop() || 'jpg'
-  const fileName = `${profile.church_id}/${Date.now()}.${fileExt}`
+  // Generate unique file path using MIME-derived extension (not user-provided filename)
+  const fileName = `${profile.church_id}/${Date.now()}.${validation.extension}`
 
   // Convert File to ArrayBuffer for server action compatibility
   const arrayBuffer = await file.arrayBuffer()
@@ -433,17 +428,15 @@ export async function deleteLinkImage(imageUrl: string): Promise<{ success: bool
   const profile = await getCurrentProfile()
   const adminClient = createServiceRoleClient()
 
-  // Extract file path from URL
-  const urlParts = imageUrl.split('/link-images/')
-  if (urlParts.length !== 2) {
-    return { success: false, error: 'Invalid image URL' }
-  }
+  // Securely extract and validate file path (prevents path traversal attacks)
+  const { path: filePath, error: pathError } = extractAndValidateStoragePath(
+    imageUrl,
+    'link-images',
+    profile.church_id
+  )
 
-  const filePath = urlParts[1]
-
-  // Verify the file belongs to this church
-  if (!filePath.startsWith(profile.church_id)) {
-    return { success: false, error: 'Access denied' }
+  if (pathError || !filePath) {
+    return { success: false, error: pathError || 'Invalid image URL' }
   }
 
   // Delete from storage

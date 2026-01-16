@@ -138,11 +138,11 @@ const UnavailabilityItem = memo(function UnavailabilityItem({ item, isPast, onEd
       </div>
       <div className="flex items-center gap-0.5 ml-2">
         {!isPast && (
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onEdit(item)}>
+          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onEdit(item)} aria-label="Edit unavailability">
             <Pencil className="h-3 w-3" />
           </Button>
         )}
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onDelete(item.id)}>
+        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onDelete(item.id)} aria-label="Delete unavailability">
           <Trash2 className="h-3 w-3 text-destructive" />
         </Button>
       </div>

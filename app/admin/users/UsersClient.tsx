@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
 import {
@@ -12,20 +13,11 @@ import {
   Calendar,
   Church,
   Shield,
-  ShieldOff,
   Heart,
   FileText,
-  MapPin,
   Globe,
   TrendingUp,
 } from 'lucide-react'
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-} from 'recharts'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -44,31 +36,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart'
 import type { UserWithChurch, GrowthDataPoint } from './actions'
 import { getUserDetails, toggleSuperAdmin } from './actions'
+
+const UserGrowthChart = dynamic(
+  () => import('./UserGrowthChart').then((mod) => ({ default: mod.UserGrowthChart })),
+  {
+    loading: () => <Skeleton className="h-[280px] w-full" />,
+    ssr: false,
+  }
+)
 
 interface UsersClientProps {
   initialUsers: UserWithChurch[]
   growthData: GrowthDataPoint[]
 }
-
-const chartConfig = {
-  cumulative: {
-    label: 'Total Users',
-    color: '#f49f1e',
-  },
-  count: {
-    label: 'New Users',
-    color: '#f49f1e',
-  },
-} satisfies ChartConfig
 
 interface UserDetails {
   user: UserWithChurch & {
@@ -179,52 +163,7 @@ export function UsersClient({ initialUsers, growthData }: UsersClientProps) {
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-4 pb-6">
-            <ChartContainer config={chartConfig} className="h-[280px] w-full">
-              <AreaChart
-                data={growthData}
-                margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="fillUsersCumulative" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="5%"
-                      stopColor="var(--color-cumulative)"
-                      stopOpacity={0.8}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor="var(--color-cumulative)"
-                      stopOpacity={0.1}
-                    />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis
-                  dataKey="month"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  allowDecimals={false}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent indicator="line" />}
-                />
-                <Area
-                  dataKey="cumulative"
-                  type="monotone"
-                  fill="url(#fillUsersCumulative)"
-                  stroke="var(--color-cumulative)"
-                  strokeWidth={2}
-                />
-              </AreaChart>
-            </ChartContainer>
+            <UserGrowthChart data={growthData} />
           </CardContent>
         </Card>
       )}

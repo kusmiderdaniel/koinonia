@@ -13,15 +13,17 @@ import { Inbox } from 'lucide-react'
 import { ProgressLink } from '@/components/ProgressLink'
 import { getUnreadCount } from '@/app/dashboard/notifications/actions'
 import { onNotificationRefresh } from '@/lib/events/notifications'
+import { useNotificationSubscription } from '@/lib/hooks/useNotificationSubscription'
 
 interface InboxNavItemProps {
+  profileId: string
   collapsed: boolean
   isMobile?: boolean
   onNavigate?: () => void
   onPrefetch?: () => void
 }
 
-export function InboxNavItem({ collapsed, isMobile = false, onNavigate, onPrefetch }: InboxNavItemProps) {
+export function InboxNavItem({ profileId, collapsed, isMobile = false, onNavigate, onPrefetch }: InboxNavItemProps) {
   const t = useTranslations('dashboard.navigation')
   const pathname = usePathname()
   const [unreadCount, setUnreadCount] = useState(0)
@@ -34,12 +36,16 @@ export function InboxNavItem({ collapsed, isMobile = false, onNavigate, onPrefet
     }
   }, [])
 
-  // Fetch on mount and poll every 30 seconds
+  // Fetch on mount
   useEffect(() => {
     fetchUnreadCount()
-    const interval = setInterval(fetchUnreadCount, 30000)
-    return () => clearInterval(interval)
   }, [fetchUnreadCount])
+
+  // Subscribe to real-time notification changes via Supabase Realtime
+  useNotificationSubscription({
+    profileId,
+    onNotificationChange: fetchUnreadCount,
+  })
 
   // Refetch when navigating away from inbox (user may have read notifications)
   useEffect(() => {

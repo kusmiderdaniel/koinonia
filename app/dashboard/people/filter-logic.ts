@@ -1,5 +1,14 @@
 import { FilterRule, FilterGroup, FilterState, FILTER_FIELDS } from './filter-types'
 import { type Member } from './components/member-table-types'
+import {
+  evaluateTextRule,
+  evaluateSelectRule,
+  evaluateBooleanRule,
+  evaluateDateRule,
+  evaluateNumberRule,
+  evaluateMultiSelectRule,
+  inferTypeFromValue,
+} from '@/lib/filters'
 
 // Calculate age from date of birth
 function calculateAge(dateOfBirth: string | null): number | null {
@@ -64,20 +73,6 @@ function getFieldValue(member: Member, fieldId: string): string | boolean | numb
   }
 }
 
-// Infer filter type for custom fields based on value type
-function inferTypeFromValue(value: string | boolean | number | null | string[]): string {
-  if (value === null || value === undefined) return 'text'
-  if (typeof value === 'boolean') return 'boolean'
-  if (typeof value === 'number') return 'number'
-  if (Array.isArray(value)) return 'multiSelect'
-  if (typeof value === 'string') {
-    // Check if it looks like a date (YYYY-MM-DD format)
-    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return 'date'
-    return 'text' // Could be text or select, but they evaluate similarly
-  }
-  return 'text'
-}
-
 // Evaluate a single rule against a member
 function evaluateRule(member: Member, rule: FilterRule): boolean {
   const fieldValue = getFieldValue(member, rule.field)
@@ -115,119 +110,6 @@ function evaluateRule(member: Member, rule: FilterRule): boolean {
       return evaluateNumberRule(fieldValue as number | null, rule.operator, rule.value as string)
     case 'multiSelect':
       return evaluateMultiSelectRule(fieldValue as string[], rule.operator, rule.value as string)
-    default:
-      return true
-  }
-}
-
-function evaluateTextRule(value: string | null, operator: string, filterValue: string): boolean {
-  const normalizedValue = (value || '').toLowerCase()
-  const normalizedFilter = (filterValue || '').toLowerCase()
-
-  switch (operator) {
-    case 'contains':
-      return normalizedValue.includes(normalizedFilter)
-    case 'not_contains':
-      return !normalizedValue.includes(normalizedFilter)
-    case 'equals':
-      return normalizedValue === normalizedFilter
-    case 'not_equals':
-      return normalizedValue !== normalizedFilter
-    case 'starts_with':
-      return normalizedValue.startsWith(normalizedFilter)
-    case 'ends_with':
-      return normalizedValue.endsWith(normalizedFilter)
-    case 'is_empty':
-      return !value || value.trim() === ''
-    case 'is_not_empty':
-      return !!value && value.trim() !== ''
-    default:
-      return true
-  }
-}
-
-function evaluateSelectRule(value: string | null, operator: string, filterValue: string): boolean {
-  switch (operator) {
-    case 'is':
-      return value === filterValue
-    case 'is_not':
-      return value !== filterValue
-    case 'is_empty':
-      return !value
-    case 'is_not_empty':
-      return !!value
-    default:
-      return true
-  }
-}
-
-function evaluateBooleanRule(value: boolean, operator: string, filterValue: boolean): boolean {
-  switch (operator) {
-    case 'is':
-      return value === filterValue
-    default:
-      return true
-  }
-}
-
-function evaluateDateRule(value: string | null, operator: string, filterValue: string): boolean {
-  switch (operator) {
-    case 'is_empty':
-      return !value
-    case 'is_not_empty':
-      return !!value
-    case 'is':
-      if (!value || !filterValue) return false
-      return new Date(value).toDateString() === new Date(filterValue).toDateString()
-    case 'is_before':
-      if (!value || !filterValue) return false
-      return new Date(value) < new Date(filterValue)
-    case 'is_after':
-      if (!value || !filterValue) return false
-      return new Date(value) > new Date(filterValue)
-    default:
-      return true
-  }
-}
-
-function evaluateNumberRule(value: number | null, operator: string, filterValue: string): boolean {
-  const numFilter = parseFloat(filterValue)
-
-  switch (operator) {
-    case 'is_empty':
-      return value === null
-    case 'is_not_empty':
-      return value !== null
-    case 'eq':
-      return value === numFilter
-    case 'neq':
-      return value !== numFilter
-    case 'lt':
-      return value !== null && value < numFilter
-    case 'gt':
-      return value !== null && value > numFilter
-    case 'lte':
-      return value !== null && value <= numFilter
-    case 'gte':
-      return value !== null && value >= numFilter
-    default:
-      return true
-  }
-}
-
-function evaluateMultiSelectRule(values: string[], operator: string, filterValue: string): boolean {
-  const normalizedValues = values.map(v => v.toLowerCase())
-  const normalizedFilter = (filterValue || '').toLowerCase()
-
-  switch (operator) {
-    case 'contains':
-      return normalizedValues.some(v => v.includes(normalizedFilter))
-    case 'not_contains':
-      return !normalizedValues.some(v => v.includes(normalizedFilter))
-    case 'is_empty':
-      return values.length === 0
-    case 'is_not_empty':
-      return values.length > 0
     default:
       return true
   }

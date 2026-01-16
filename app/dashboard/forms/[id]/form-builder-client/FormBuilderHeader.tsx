@@ -74,7 +74,7 @@ export function FormBuilderHeader({
     return (
       <div className="flex items-center justify-between shrink-0 border-b bg-background px-2 h-12">
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          <Button variant="ghost" size="icon" asChild className="h-8 w-8 shrink-0">
+          <Button variant="ghost" size="icon" asChild className="h-8 w-8 shrink-0" aria-label="Back to forms">
             <Link href="/dashboard/forms">
               <ArrowLeft className="h-4 w-4" />
             </Link>
@@ -110,6 +110,7 @@ export function FormBuilderHeader({
             onClick={onSave}
             disabled={!isDirty || isSaving}
             className="h-8 w-8 relative"
+            aria-label="Save form"
           >
             <Save className="h-4 w-4" />
             {isDirty && (
@@ -139,7 +140,7 @@ export function FormBuilderHeader({
           {/* More menu with all other actions */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="More options">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -199,7 +200,7 @@ export function FormBuilderHeader({
   return (
     <div className="flex items-center justify-between shrink-0 border-b bg-background px-4 h-[72px]">
       <div className="flex items-center gap-2 min-w-0 flex-1">
-        <Button variant="ghost" size="icon" asChild>
+        <Button variant="ghost" size="icon" asChild aria-label="Back to forms">
           <Link href="/dashboard/forms">
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -303,7 +304,7 @@ export function FormBuilderHeader({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" aria-label="More options">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>

@@ -268,5 +268,9 @@
     "exporting": "Eksportowanie...",
     "yes": "Tak",
     "no": "Nie"
+  },
+  "pagination": {
+    "showing": "Wyświetlono {start}-{end} z {total}",
+    "rowsPerPage": "Wierszy na stronę:"
   }
 }

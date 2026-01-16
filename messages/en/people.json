@@ -268,5 +268,9 @@
     "exporting": "Exporting...",
     "yes": "Yes",
     "no": "No"
+  },
+  "pagination": {
+    "showing": "Showing {start}-{end} of {total}",
+    "rowsPerPage": "Rows per page:"
   }
 }

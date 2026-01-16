@@ -1,5 +1,6 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -8,15 +9,33 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { Skeleton } from '@/components/ui/skeleton'
 import { FormBuilder } from '../builder/FormBuilder'
 import { PreviewPanel } from '../builder/preview-panel'
 import { ResponsesTable } from '../responses/ResponsesTable'
 import { FormSettings } from '../settings/FormSettings'
-import { AnalyticsDashboard } from '../analytics'
 import { useFormBuilderClientState } from './useFormBuilderClientState'
 import { FormBuilderHeader } from './FormBuilderHeader'
 import { useIsMobile } from '@/lib/hooks'
 import type { FormBuilderClientProps } from './types'
+
+const AnalyticsDashboard = dynamic(
+  () => import('../analytics').then((mod) => ({ default: mod.AnalyticsDashboard })),
+  {
+    loading: () => (
+      <div className="p-6 space-y-6">
+        <Skeleton className="h-8 w-48" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Skeleton className="h-24" />
+          <Skeleton className="h-24" />
+          <Skeleton className="h-24" />
+        </div>
+        <Skeleton className="h-[300px]" />
+      </div>
+    ),
+    ssr: false,
+  }
+)
 
 export function FormBuilderClient({ initialData }: FormBuilderClientProps) {
   const t = useTranslations('forms')

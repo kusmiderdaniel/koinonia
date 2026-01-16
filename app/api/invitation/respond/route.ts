@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { notifyMinistryLeaderOfResponse } from '@/app/dashboard/events/actions/invitation-notifications'
 import { checkRateLimit, getClientIdentifier, rateLimitedResponse } from '@/lib/rate-limit'
+import { isValidToken } from '@/lib/validations/token'
 
 // Helper to create redirect URL
 function getRedirectUrl(request: Request, path: string) {
@@ -23,7 +24,7 @@ export async function GET(request: Request) {
     const action = searchParams.get('action') as 'accept' | 'decline' | null
 
     // Validate parameters
-    if (!token || token.length < 20) {
+    if (!isValidToken(token)) {
       return NextResponse.redirect(getRedirectUrl(request, '/invitation/error?reason=invalid_token'))
     }
 

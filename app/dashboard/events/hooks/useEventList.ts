@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useDebouncedValue, queryKeys, useCacheInvalidation } from '@/lib/hooks'
 import { isLeaderOrAbove, isAdminOrOwner } from '@/lib/permissions'
 import { getEvents, getChurchMembers } from '../actions'
@@ -51,6 +51,7 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
+  const queryClient = useQueryClient()
   const { invalidateEvents, invalidateChurchMembers } = useCacheInvalidation()
 
   // Initialize viewMode from URL param (survives page revalidation)
@@ -67,6 +68,22 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 300)
   const [viewMode, setViewModeState] = useState<ViewMode>(initialViewMode)
   const [error, setError] = useState<string | null>(null)
+
+  // Sync server-provided initialData to React Query cache when it changes
+  // This ensures client-side navigation gets fresh data from the server
+  // The effect only runs when initialData changes (tracked by React's dependency comparison)
+  useEffect(() => {
+    if (!initialData) return
+
+    // Always sync when initialData is provided - React's dependency tracking
+    // ensures this only runs when initialData actually changes
+    queryClient.setQueryData(queryKeys.events, {
+      data: initialData.events,
+      role: initialData.role,
+      firstDayOfWeek: initialData.firstDayOfWeek,
+    })
+    queryClient.setQueryData(queryKeys.churchMembers, initialData.churchMembers)
+  }, [initialData, queryClient])
 
   // setViewMode that also updates the URL to persist across revalidation
   const setViewMode = useCallback((mode: ViewMode) => {
@@ -101,10 +118,8 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
       role: initialData.role,
       firstDayOfWeek: initialData.firstDayOfWeek,
     } : undefined,
-    initialDataUpdatedAt: initialData ? Date.now() : undefined, // Mark initial data as fresh
     staleTime: 60000, // 1 minute - data considered fresh
     gcTime: 300000, // 5 minutes - keep in cache
-    refetchOnMount: true, // Only refetch if stale
     refetchOnWindowFocus: false,
   })
 
@@ -116,10 +131,8 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
       return result.data || []
     },
     initialData: initialData?.churchMembers,
-    initialDataUpdatedAt: initialData?.churchMembers ? Date.now() : undefined, // Mark initial data as fresh
     staleTime: 60000, // 1 minute - data considered fresh
     gcTime: 300000, // 5 minutes - keep in cache
-    refetchOnMount: true, // Only refetch if stale
     refetchOnWindowFocus: false,
   })
 

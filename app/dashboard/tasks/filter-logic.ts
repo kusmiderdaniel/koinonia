@@ -2,6 +2,16 @@
 
 import type { FilterState, FilterRule, FilterGroup } from './filter-types'
 import type { Task } from './types'
+import {
+  evaluateTextRule,
+  evaluateSelectRule,
+  evaluateDateRule,
+} from '@/lib/filters'
+
+// Task-specific field types
+const DATE_FIELDS = ['due_date']
+const TEXT_FIELDS = ['title']
+const SELECT_FIELDS = ['status', 'priority', 'assignee_id', 'ministry_id', 'campus_id', 'event_id']
 
 export function applyFilters(tasks: Task[], filterState: FilterState): Task[] {
   const { conjunction, rules, groups } = filterState
@@ -38,47 +48,21 @@ function evaluateRule(task: Task, rule: FilterRule): boolean {
   const { field, operator, value } = rule
   const fieldValue = getFieldValue(task, field)
 
-  switch (operator) {
-    case 'is_empty':
-      return fieldValue === null || fieldValue === undefined || fieldValue === ''
-
-    case 'is_not_empty':
-      return fieldValue !== null && fieldValue !== undefined && fieldValue !== ''
-
-    case 'equals':
-      if (field === 'due_date') {
-        if (!fieldValue || !value) return false
-        return new Date(fieldValue as string).toDateString() === new Date(value as string).toDateString()
-      }
-      return String(fieldValue).toLowerCase() === String(value).toLowerCase()
-
-    case 'not_equals':
-      if (field === 'due_date') {
-        if (!fieldValue && !value) return false
-        if (!fieldValue || !value) return true
-        return new Date(fieldValue as string).toDateString() !== new Date(value as string).toDateString()
-      }
-      return String(fieldValue).toLowerCase() !== String(value).toLowerCase()
-
-    case 'contains':
-      if (typeof fieldValue !== 'string') return false
-      return fieldValue.toLowerCase().includes(String(value).toLowerCase())
-
-    case 'not_contains':
-      if (typeof fieldValue !== 'string') return true
-      return !fieldValue.toLowerCase().includes(String(value).toLowerCase())
-
-    case 'before':
-      if (!fieldValue || !value) return false
-      return new Date(fieldValue as string) < new Date(value as string)
-
-    case 'after':
-      if (!fieldValue || !value) return false
-      return new Date(fieldValue as string) > new Date(value as string)
-
-    default:
-      return true
+  // Use shared evaluators based on field type
+  if (DATE_FIELDS.includes(field)) {
+    return evaluateDateRule(fieldValue as string | null, operator, value as string)
   }
+
+  if (TEXT_FIELDS.includes(field)) {
+    return evaluateTextRule(fieldValue as string | null, operator, value as string)
+  }
+
+  if (SELECT_FIELDS.includes(field)) {
+    return evaluateSelectRule(fieldValue as string | null, operator, value as string)
+  }
+
+  // Fallback to text evaluation
+  return evaluateTextRule(fieldValue as string | null, operator, value as string)
 }
 
 function getFieldValue(task: Task, field: string): string | boolean | null {

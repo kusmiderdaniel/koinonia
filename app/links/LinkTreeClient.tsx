@@ -66,7 +66,7 @@ export function LinkTreeClient({ church, settings, links, userRole }: LinkTreeCl
       fetch('/api/links/click', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ linkId, churchId: church.id }),
+        body: JSON.stringify({ linkId }),
       }).catch(() => {
         // Ignore tracking errors
       })

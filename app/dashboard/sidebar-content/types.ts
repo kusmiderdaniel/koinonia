@@ -13,6 +13,7 @@ import type { PageKey } from '@/lib/permissions'
 import type { LucideIcon } from 'lucide-react'
 
 export interface SidebarUser {
+  id: string
   firstName: string
   lastName: string
   email: string

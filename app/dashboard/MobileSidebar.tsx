@@ -7,6 +7,7 @@ import { SidebarContent } from './SidebarContent'
 
 interface MobileSidebarProps {
   user: {
+    id: string
     firstName: string
     lastName: string
     email: string

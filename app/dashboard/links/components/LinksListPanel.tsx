@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import {
   DndContext,
@@ -23,7 +22,7 @@ import { toast } from 'sonner'
 import { SortableLinkItem } from './SortableLinkItem'
 import { LinkDialog } from './LinkDialog'
 import { reorderLinks, deleteLink as deleteLinkAction } from '../actions'
-import { useIsMobile } from '@/lib/hooks'
+import { useIsMobile, useDialogState } from '@/lib/hooks'
 import type { LinkTreeLinkRow, AnalyticsSummary } from '../types'
 
 interface LinksListPanelProps {
@@ -35,8 +34,7 @@ interface LinksListPanelProps {
 export function LinksListPanel({ links, setLinks, analytics }: LinksListPanelProps) {
   const t = useTranslations('links')
   const isMobile = useIsMobile()
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [editingLink, setEditingLink] = useState<LinkTreeLinkRow | null>(null)
+  const linkDialog = useDialogState<LinkTreeLinkRow>()
 
   // Create a map of link IDs to click counts
   const clickCountMap = new Map<string, number>()
@@ -74,13 +72,11 @@ export function LinksListPanel({ links, setLinks, analytics }: LinksListPanelPro
   }
 
   const handleAddLink = () => {
-    setEditingLink(null)
-    setDialogOpen(true)
+    linkDialog.open()
   }
 
   const handleEditLink = (link: LinkTreeLinkRow) => {
-    setEditingLink(link)
-    setDialogOpen(true)
+    linkDialog.open(link)
   }
 
   const handleDeleteLink = async (id: string) => {
@@ -98,11 +94,11 @@ export function LinksListPanel({ links, setLinks, analytics }: LinksListPanelPro
   }
 
   const handleDialogClose = (updatedLink?: LinkTreeLinkRow) => {
-    setDialogOpen(false)
-    setEditingLink(null)
+    const wasEditing = linkDialog.item !== null
+    linkDialog.close()
 
     if (updatedLink) {
-      if (editingLink) {
+      if (wasEditing) {
         // Update existing
         setLinks(links.map(l => l.id === updatedLink.id ? updatedLink : l))
       } else {
@@ -227,12 +223,12 @@ export function LinksListPanel({ links, setLinks, analytics }: LinksListPanelPro
 
       {/* Link Dialog */}
       <LinkDialog
-        open={dialogOpen}
+        open={linkDialog.isOpen}
         onOpenChange={(open) => {
           if (!open) handleDialogClose()
-          else setDialogOpen(open)
+          else linkDialog.setOpen(open)
         }}
-        link={editingLink}
+        link={linkDialog.item}
         onSave={handleDialogClose}
       />
     </div>

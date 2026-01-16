@@ -25,9 +25,11 @@ import { useOptimisticMembers } from './useOptimisticMembers'
 import { useSavedViewsManager } from './useSavedViewsManager'
 import { useMemberPermissions } from './useMemberPermissions'
 import { useColumnConfig } from './useColumnConfig'
+import { usePagination } from './usePagination'
 import { MembersTableHeader } from './MembersTableHeader'
 import { ColumnSelector } from './ColumnSelector'
 import { ExportDialog } from './ExportDialog'
+import { PaginationControls } from './PaginationControls'
 import { type PeopleColumnKey } from './columns'
 import type { MembersTableProps } from './types'
 import type { ColumnConfig } from '@/types/saved-views'
@@ -127,6 +129,21 @@ export const MembersTable = memo(function MembersTable({
     return applySorts(filtered, sortState)
   }, [optimisticMembers, filterState, sortState])
 
+  // Pagination - applied after filtering and sorting
+  const {
+    page,
+    pageSize,
+    totalPages,
+    totalItems,
+    paginatedItems: paginatedMembers,
+    setPage,
+    setPageSize,
+    canGoNext,
+    canGoPrevious,
+    startIndex,
+    endIndex,
+  } = usePagination(filteredAndSortedMembers)
+
   // DnD sensors with distance activation to distinguish clicks from drags
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -195,7 +212,7 @@ export const MembersTable = memo(function MembersTable({
       {/* Mobile: Card view */}
       {isMobile ? (
         <div className="space-y-3">
-          {filteredAndSortedMembers.map((member) => (
+          {paginatedMembers.map((member) => (
             <MemberCard
               key={member.id}
               member={member}
@@ -238,11 +255,11 @@ export const MembersTable = memo(function MembersTable({
                   frozenColumnOffsets={frozenColumnOffsets}
                 />
               <TableBody>
-                {filteredAndSortedMembers.map((member, index) => (
+                {paginatedMembers.map((member, index) => (
                   <MemberRow
                     key={member.id}
                     member={member}
-                    index={index}
+                    index={(page - 1) * pageSize + index}
                     currentUserId={currentUserId}
                     visibleColumns={visibleColumns}
                     customFields={customFields}
@@ -279,6 +296,20 @@ export const MembersTable = memo(function MembersTable({
           </DndContext>
         </TooltipProvider>
       )}
+
+      {/* Pagination Controls */}
+      <PaginationControls
+        page={page}
+        pageSize={pageSize}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        startIndex={startIndex}
+        endIndex={endIndex}
+        canGoPrevious={canGoPrevious}
+        canGoNext={canGoNext}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
+      />
 
       {/* Saved Views Dialogs */}
       <SaveViewDialog

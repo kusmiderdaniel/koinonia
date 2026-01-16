@@ -9,6 +9,7 @@ import {
   verifyChurchOwnership,
 } from '@/lib/utils/server-auth'
 import { formSchema, type FormInput } from '@/lib/validations/forms'
+import { FORM_ERRORS, CRUD_ERRORS } from '@/lib/constants/error-messages'
 import type { FormStatus, FormAccessType } from '@/lib/validations/forms'
 
 export async function getForms() {
@@ -36,7 +37,7 @@ export async function getForms() {
 
   if (error) {
     console.error('Error fetching forms:', error)
-    return { error: 'Failed to load forms' }
+    return { error: FORM_ERRORS.FAILED_TO_LOAD }
   }
 
   // Get submission counts for each form
@@ -85,7 +86,7 @@ export async function getForm(id: string) {
 
   if (error || !form) {
     console.error('Error fetching form:', error)
-    return { error: 'Form not found' }
+    return { error: FORM_ERRORS.NOT_FOUND }
   }
 
   // Get fields
@@ -121,7 +122,7 @@ export async function getForm(id: string) {
 export async function createForm(data: FormInput) {
   const validated = formSchema.safeParse(data)
   if (!validated.success) {
-    return { error: 'Invalid data provided' }
+    return { error: CRUD_ERRORS.INVALID_DATA }
   }
 
   const auth = await getAuthenticatedUserWithProfile()
@@ -150,7 +151,7 @@ export async function createForm(data: FormInput) {
 
   if (error) {
     console.error('Error creating form:', error)
-    return { error: 'Failed to create form' }
+    return { error: FORM_ERRORS.FAILED_TO_CREATE }
   }
 
   revalidatePath('/dashboard/forms')
@@ -171,7 +172,7 @@ export async function updateForm(id: string, data: Partial<FormInput>) {
   const { data: currentForm, error: ownershipError } = await verifyChurchOwnership<{
     church_id: string; access_type: string; public_token: string | null
   }>(adminClient, 'forms', id, profile.church_id, 'church_id, access_type, public_token', 'Form not found')
-  if (ownershipError || !currentForm) return { error: ownershipError || 'Form not found' }
+  if (ownershipError || !currentForm) return { error: ownershipError || FORM_ERRORS.NOT_FOUND }
 
   const updateData: Record<string, unknown> = {}
   if (data.title !== undefined) updateData.title = data.title
@@ -194,7 +195,7 @@ export async function updateForm(id: string, data: Partial<FormInput>) {
 
   if (error) {
     console.error('Error updating form:', error)
-    return { error: 'Failed to update form' }
+    return { error: FORM_ERRORS.FAILED_TO_UPDATE }
   }
 
   revalidatePath('/dashboard/forms')
@@ -222,7 +223,7 @@ export async function deleteForm(id: string) {
 
   if (error) {
     console.error('Error deleting form:', error)
-    return { error: 'Failed to delete form' }
+    return { error: FORM_ERRORS.FAILED_TO_DELETE }
   }
 
   revalidatePath('/dashboard/forms')
@@ -243,7 +244,7 @@ export async function publishForm(id: string) {
   const { data: form, error: ownershipError } = await verifyChurchOwnership<{
     church_id: string; status: string; access_type: string; public_token: string | null
   }>(adminClient, 'forms', id, profile.church_id, 'church_id, status, access_type, public_token', 'Form not found')
-  if (ownershipError || !form) return { error: ownershipError || 'Form not found' }
+  if (ownershipError || !form) return { error: ownershipError || FORM_ERRORS.NOT_FOUND }
 
   // Check if form has at least one field
   const { count } = await adminClient
@@ -272,7 +273,7 @@ export async function publishForm(id: string) {
 
   if (error) {
     console.error('Error publishing form:', error)
-    return { error: 'Failed to publish form' }
+    return { error: 'Failed to publish form' }  // Keep specific message for clarity
   }
 
   revalidatePath('/dashboard/forms')
@@ -304,7 +305,7 @@ export async function unpublishForm(id: string) {
 
   if (error) {
     console.error('Error unpublishing form:', error)
-    return { error: 'Failed to unpublish form' }
+    return { error: 'Failed to unpublish form' }  // Keep specific message for clarity
   }
 
   revalidatePath('/dashboard/forms')
@@ -337,7 +338,7 @@ export async function closeForm(id: string) {
 
   if (error) {
     console.error('Error closing form:', error)
-    return { error: 'Failed to close form' }
+    return { error: 'Failed to close form' }  // Keep specific message for clarity
   }
 
   revalidatePath('/dashboard/forms')
@@ -364,7 +365,7 @@ export async function duplicateForm(id: string) {
     .single()
 
   if (!originalForm) {
-    return { error: 'Form not found' }
+    return { error: FORM_ERRORS.NOT_FOUND }
   }
 
   // Create new form
@@ -388,7 +389,7 @@ export async function duplicateForm(id: string) {
 
   if (formError || !newForm) {
     console.error('Error duplicating form:', formError)
-    return { error: 'Failed to duplicate form' }
+    return { error: 'Failed to duplicate form' }  // Keep specific message for clarity
   }
 
   // Get original fields
