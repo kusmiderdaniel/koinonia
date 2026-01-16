@@ -6,6 +6,7 @@ import {
   isAuthError,
   requireManagePermission,
 } from './helpers'
+import { syncEventToGoogle } from '@/lib/google-calendar/sync-service'
 
 export async function assignVolunteer(positionId: string, profileId: string, notes?: string) {
   const auth = await getAuthenticatedUserWithProfile()
@@ -33,6 +34,21 @@ export async function assignVolunteer(positionId: string, profileId: string, not
     return { error: 'Failed to assign volunteer' }
   }
 
+  // Sync to Google Calendar for the assigned user's personal calendar
+  // Get event_id from position to trigger sync
+  adminClient
+    .from('event_positions')
+    .select('event_id')
+    .eq('id', positionId)
+    .single()
+    .then(({ data: position }) => {
+      if (position?.event_id) {
+        syncEventToGoogle(position.event_id).catch((err) => {
+          console.error('Failed to sync assignment to Google Calendar:', err)
+        })
+      }
+    })
+
   revalidatePath('/dashboard/events')
   return { data: assignment }
 }
@@ -46,6 +62,13 @@ export async function unassignVolunteer(assignmentId: string) {
   const permError = requireManagePermission(profile.role, 'remove assignments')
   if (permError) return { error: permError }
 
+  // Get event_id BEFORE deleting the assignment (for Google Calendar sync)
+  const { data: assignment } = await adminClient
+    .from('event_assignments')
+    .select('position:event_positions (event_id)')
+    .eq('id', assignmentId)
+    .single()
+
   const { error } = await adminClient
     .from('event_assignments')
     .delete()
@@ -54,6 +77,18 @@ export async function unassignVolunteer(assignmentId: string) {
   if (error) {
     console.error('Error removing assignment:', error)
     return { error: 'Failed to remove assignment' }
+  }
+
+  // Sync to Google Calendar to update personal calendar
+  if (assignment?.position) {
+    const position = Array.isArray(assignment.position)
+      ? assignment.position[0]
+      : assignment.position
+    if (position?.event_id) {
+      syncEventToGoogle(position.event_id).catch((err) => {
+        console.error('Failed to sync unassignment to Google Calendar:', err)
+      })
+    }
   }
 
   revalidatePath('/dashboard/events')

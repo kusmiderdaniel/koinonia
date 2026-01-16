@@ -119,6 +119,8 @@
     "title": "Campuses",
     "description": "Manage your church's campus locations",
     "addCampus": "Add Campus",
+    "editCampus": "Edit campus",
+    "deleteCampus": "Delete campus",
     "default": "Default",
     "setDefault": "Set Default",
     "createdSuccess": "Campus created!",

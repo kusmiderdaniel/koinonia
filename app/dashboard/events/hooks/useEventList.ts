@@ -190,7 +190,7 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
     )
   }, [events, debouncedSearchQuery])
 
-  // Separate into upcoming and past (using timestamp comparison for performance)
+  // Separate into upcoming and past (using end_time to determine if event has passed)
   // eslint-disable-next-line react-hooks/purity -- Date.now() is intentionally called to get current time for comparison
   const { upcomingEvents, pastEvents } = useMemo(() => {
     const nowTimestamp = Date.now()
@@ -198,7 +198,9 @@ export function useEventList(initialData?: EventsInitialData): UseEventListRetur
     const past: typeof filteredEvents = []
 
     for (const event of filteredEvents) {
-      if (new Date(event.start_time).getTime() >= nowTimestamp) {
+      // Use end_time if available, otherwise fall back to start_time
+      const eventEndTime = event.end_time || event.start_time
+      if (new Date(eventEndTime).getTime() >= nowTimestamp) {
         upcoming.push(event)
       } else {
         past.push(event)

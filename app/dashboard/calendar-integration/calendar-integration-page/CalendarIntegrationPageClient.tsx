@@ -2,11 +2,13 @@
 
 import { useTranslations } from 'next-intl'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { LoadingState } from '@/components/LoadingState'
 import { useCalendarIntegrationState } from './useCalendarIntegrationState'
 import { PersonalCalendarCard } from './PersonalCalendarCard'
 import { PublicCalendarsCard } from './PublicCalendarsCard'
 import { HelpCard } from './HelpCard'
+import { GoogleCalendarCard } from '../components/GoogleCalendarCard'
 
 export function CalendarIntegrationPageClient() {
   const t = useTranslations('calendar-integration')
@@ -52,35 +54,67 @@ export function CalendarIntegrationPageClient() {
         )}
 
         <div className="flex-1 min-h-0 overflow-auto">
-          <div className="border border-black dark:border-zinc-700 rounded-lg px-3 md:px-4 py-4 md:py-6 w-fit">
-            <PersonalCalendarCard
-              calendarUrl={personalCalendarUrl}
-              webcalUrl={personalWebcalUrl}
-              copied={copiedPersonal}
-              isRegenerating={isRegenerating}
-              onCopy={() =>
-                personalCalendarUrl &&
-                copyToClipboard(personalCalendarUrl, 'personal')
-              }
-              onRegenerate={handleRegenerate}
-            />
+          <Tabs defaultValue="google" className="w-full">
+            <TabsList className="mb-4 border bg-transparent p-1">
+              <TabsTrigger
+                value="google"
+                className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+              >
+                {t('tabs.google')}
+              </TabsTrigger>
+              <TabsTrigger
+                value="other"
+                className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+              >
+                {t('tabs.other')}
+              </TabsTrigger>
+            </TabsList>
 
-            {campuses.length > 0 && (
-              <>
-                <div className="border-t border-black dark:border-zinc-700 my-6" />
-                <PublicCalendarsCard
-                  campuses={campuses}
-                  copiedCampusId={copiedCampusId}
-                  getPublicCalendarUrl={getPublicCalendarUrl}
-                  getPublicWebcalUrl={getPublicWebcalUrl}
-                  onCopy={copyToClipboard}
+            <TabsContent value="google" className="mt-0">
+              <div className="space-y-6">
+                <GoogleCalendarCard />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="other" className="mt-0">
+              <div className="space-y-6">
+                <div className="mb-4">
+                  <h3 className="font-semibold">{t('ics.title')}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {t('ics.description')}
+                  </p>
+                </div>
+
+                <PersonalCalendarCard
+                  calendarUrl={personalCalendarUrl}
+                  webcalUrl={personalWebcalUrl}
+                  copied={copiedPersonal}
+                  isRegenerating={isRegenerating}
+                  onCopy={() =>
+                    personalCalendarUrl &&
+                    copyToClipboard(personalCalendarUrl, 'personal')
+                  }
+                  onRegenerate={handleRegenerate}
                 />
-              </>
-            )}
 
-            <div className="border-t border-black dark:border-zinc-700 my-6" />
-            <HelpCard />
-          </div>
+                {campuses.length > 0 && (
+                  <>
+                    <div className="border-t pt-6" />
+                    <PublicCalendarsCard
+                      campuses={campuses}
+                      copiedCampusId={copiedCampusId}
+                      getPublicCalendarUrl={getPublicCalendarUrl}
+                      getPublicWebcalUrl={getPublicWebcalUrl}
+                      onCopy={copyToClipboard}
+                    />
+                  </>
+                )}
+
+                <div className="border-t pt-6" />
+                <HelpCard />
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

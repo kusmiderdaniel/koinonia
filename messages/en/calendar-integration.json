@@ -3,6 +3,51 @@
   "description": "Subscribe to church calendars in Google Calendar, Apple Calendar, or any other calendar app",
   "loading": "Loading calendar settings...",
 
+  "tabs": {
+    "google": "Google Calendar",
+    "other": "Other Calendars"
+  },
+
+  "google": {
+    "title": "Google Calendar",
+    "recommended": "Recommended",
+    "description": "Connect your Google account for real-time, two-way sync. Events are instantly added to your Google Calendar.",
+    "notConnected": "Not connected",
+    "connectedAs": "Connected as {email}",
+    "connect": "Connect Google Calendar",
+    "disconnect": "Disconnect",
+    "reconnect": "Reconnect",
+    "requiresReauth": "Connection expired. Please reconnect.",
+    "lastSync": "Last sync: {time}",
+    "neverSynced": "Never synced",
+    "sync": "Sync Now",
+    "syncing": "Syncing...",
+    "syncSuccess": "Synced {count} events",
+    "calendars": {
+      "title": "Calendars",
+      "description": "Choose which calendars to sync to your Google account",
+      "church": "Public Calendar",
+      "churchDescription": "Public events visible to all members",
+      "personal": "Personal Calendar",
+      "personalDescription": "Events where you have assignments",
+      "campus": "Campus Calendars",
+      "campusDescription": "Select which campus calendars to sync"
+    },
+    "disconnectDialog": {
+      "title": "Disconnect Google Calendar?",
+      "description": "This will stop syncing events to your Google Calendar.",
+      "deleteCalendars": "Also delete calendars from my Google account",
+      "deleteCalendarsDescription": "Remove the calendars created by Koinonia from your Google account",
+      "cancel": "Cancel",
+      "confirm": "Disconnect"
+    }
+  },
+
+  "ics": {
+    "title": "Other Calendar Apps (ICS)",
+    "description": "For Apple Calendar, Outlook, and other apps. Updates may take up to 24 hours."
+  },
+
   "personal": {
     "title": "My Calendar",
     "description": "Events where you have assignments (invited or accepted) and hidden events you're invited to. Your role in each event is shown in the description.",

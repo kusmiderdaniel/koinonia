@@ -18,7 +18,7 @@ export const PAGE_ACCESS = {
   home: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[],
   dashboard: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[], // alias for home
   inbox: ['owner', 'admin', 'leader', 'volunteer'] as UserRole[],
-  events: ['owner', 'admin', 'leader', 'volunteer'] as UserRole[],
+  events: ['owner', 'admin', 'leader', 'volunteer', 'member'] as UserRole[],
   tasks: ['owner', 'admin', 'leader', 'volunteer'] as UserRole[],
   people: ['owner', 'admin', 'leader'] as UserRole[],
   ministries: ['owner', 'admin', 'leader'] as UserRole[],

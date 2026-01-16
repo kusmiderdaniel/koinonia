@@ -142,7 +142,9 @@ export async function getUpcomingBirthdays(): Promise<{ data?: Birthday[]; error
 
 /**
  * Get birthdays for a specific month (for calendar display)
- * Leaders, admins, and owners can see ALL church members' birthdays on the calendar
+ * - Admin/Owner: See ALL church members' birthdays
+ * - Leader: See birthdays only of people in their campuses
+ * - Volunteer/Member: No birthdays
  */
 export async function getCalendarBirthdays(
   month: number,
@@ -159,7 +161,34 @@ export async function getCalendarBirthdays(
     return { data: [] }
   }
 
-  // Get ALL active church members with birthdays in this month
+  const isLeaderOnly = role === 'leader'
+
+  // For leaders, get their campus IDs first
+  let leaderCampusProfileIds: Set<string> | null = null
+  if (isLeaderOnly) {
+    // Get leader's campuses
+    const { data: leaderCampuses } = await adminClient
+      .from('profile_campuses')
+      .select('campus_id')
+      .eq('profile_id', profile.id)
+
+    if (leaderCampuses && leaderCampuses.length > 0) {
+      const campusIds = leaderCampuses.map((c) => c.campus_id)
+
+      // Get all profile IDs in those campuses
+      const { data: campusProfiles } = await adminClient
+        .from('profile_campuses')
+        .select('profile_id')
+        .in('campus_id', campusIds)
+
+      leaderCampusProfileIds = new Set(campusProfiles?.map((p) => p.profile_id) || [])
+    } else {
+      // Leader has no campuses, show no birthdays
+      return { data: [] }
+    }
+  }
+
+  // Get active church members with birthdays
   const { data: members, error } = await adminClient
     .from('profiles')
     .select('id, first_name, last_name, avatar_url, date_of_birth')
@@ -176,6 +205,11 @@ export async function getCalendarBirthdays(
 
   for (const member of members || []) {
     if (!member.date_of_birth) continue
+
+    // For leaders, filter by campus membership
+    if (isLeaderOnly && leaderCampusProfileIds && !leaderCampusProfileIds.has(member.id)) {
+      continue
+    }
 
     // Check if birthday is in this month
     const dob = new Date(member.date_of_birth)

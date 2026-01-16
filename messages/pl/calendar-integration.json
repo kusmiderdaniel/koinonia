@@ -3,6 +3,51 @@
   "description": "Subskrybuj kalendarze kościoła w Kalendarzu Google, Kalendarzu Apple lub innej aplikacji kalendarzowej",
   "loading": "Ładowanie ustawień kalendarza...",
 
+  "tabs": {
+    "google": "Kalendarz Google",
+    "other": "Inne kalendarze"
+  },
+
+  "google": {
+    "title": "Kalendarz Google",
+    "recommended": "Zalecane",
+    "description": "Połącz swoje konto Google dla synchronizacji w czasie rzeczywistym. Wydarzenia są natychmiast dodawane do Twojego Kalendarza Google.",
+    "notConnected": "Nie połączono",
+    "connectedAs": "Połączono jako {email}",
+    "connect": "Połącz Kalendarz Google",
+    "disconnect": "Rozłącz",
+    "reconnect": "Połącz ponownie",
+    "requiresReauth": "Połączenie wygasło. Połącz ponownie.",
+    "lastSync": "Ostatnia synchronizacja: {time}",
+    "neverSynced": "Nigdy nie synchronizowano",
+    "sync": "Synchronizuj teraz",
+    "syncing": "Synchronizacja...",
+    "syncSuccess": "Zsynchronizowano {count} wydarzeń",
+    "calendars": {
+      "title": "Kalendarze",
+      "description": "Wybierz, które kalendarze synchronizować z Twoim kontem Google",
+      "church": "Kalendarz publiczny",
+      "churchDescription": "Publiczne wydarzenia widoczne dla wszystkich członków",
+      "personal": "Kalendarz osobisty",
+      "personalDescription": "Wydarzenia, do których masz przypisania",
+      "campus": "Kalendarze kampusów",
+      "campusDescription": "Wybierz, które kalendarze kampusów synchronizować"
+    },
+    "disconnectDialog": {
+      "title": "Rozłączyć Kalendarz Google?",
+      "description": "Spowoduje to zatrzymanie synchronizacji wydarzeń z Twoim Kalendarzem Google.",
+      "deleteCalendars": "Usuń również kalendarze z mojego konta Google",
+      "deleteCalendarsDescription": "Usuń kalendarze utworzone przez Koinonię z Twojego konta Google",
+      "cancel": "Anuluj",
+      "confirm": "Rozłącz"
+    }
+  },
+
+  "ics": {
+    "title": "Inne aplikacje kalendarza (ICS)",
+    "description": "Dla Kalendarza Apple, Outlook i innych aplikacji. Aktualizacje mogą potrwać do 24 godzin."
+  },
+
   "personal": {
     "title": "Mój kalendarz",
     "description": "Wydarzenia, do których masz przypisania (zaproszone lub zaakceptowane) oraz prywatne wydarzenia, na które jesteś zaproszony. Twoja rola w każdym wydarzeniu jest pokazana w opisie.",

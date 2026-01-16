@@ -1521,6 +1521,187 @@ export type Database = {
           },
         ]
       }
+      google_calendar_campus_calendars: {
+        Row: {
+          campus_id: string
+          connection_id: string
+          created_at: string | null
+          google_calendar_id: string
+          id: string
+          sync_enabled: boolean | null
+        }
+        Insert: {
+          campus_id: string
+          connection_id: string
+          created_at?: string | null
+          google_calendar_id: string
+          id?: string
+          sync_enabled?: boolean | null
+        }
+        Update: {
+          campus_id?: string
+          connection_id?: string
+          created_at?: string | null
+          google_calendar_id?: string
+          id?: string
+          sync_enabled?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "google_calendar_campus_calendars_campus_id_fkey"
+            columns: ["campus_id"]
+            isOneToOne: false
+            referencedRelation: "campuses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "google_calendar_campus_calendars_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "google_calendar_connections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      google_calendar_connections: {
+        Row: {
+          access_token_encrypted: string
+          church_calendar_google_id: string | null
+          church_id: string
+          created_at: string | null
+          google_email: string
+          google_user_id: string | null
+          id: string
+          is_active: boolean | null
+          last_sync_at: string | null
+          last_sync_error: string | null
+          personal_calendar_google_id: string | null
+          profile_id: string
+          refresh_token_encrypted: string
+          requires_reauth: boolean | null
+          sync_church_calendar: boolean | null
+          sync_personal_calendar: boolean | null
+          token_expires_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          access_token_encrypted: string
+          church_calendar_google_id?: string | null
+          church_id: string
+          created_at?: string | null
+          google_email: string
+          google_user_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          last_sync_error?: string | null
+          personal_calendar_google_id?: string | null
+          profile_id: string
+          refresh_token_encrypted: string
+          requires_reauth?: boolean | null
+          sync_church_calendar?: boolean | null
+          sync_personal_calendar?: boolean | null
+          token_expires_at: string
+          updated_at?: string | null
+        }
+        Update: {
+          access_token_encrypted?: string
+          church_calendar_google_id?: string | null
+          church_id?: string
+          created_at?: string | null
+          google_email?: string
+          google_user_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          last_sync_error?: string | null
+          personal_calendar_google_id?: string | null
+          profile_id?: string
+          refresh_token_encrypted?: string
+          requires_reauth?: boolean | null
+          sync_church_calendar?: boolean | null
+          sync_personal_calendar?: boolean | null
+          token_expires_at?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "google_calendar_connections_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "google_calendar_connections_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      google_calendar_synced_events: {
+        Row: {
+          calendar_type: string
+          campus_id: string | null
+          connection_id: string
+          created_at: string | null
+          event_hash: string | null
+          event_id: string
+          google_calendar_id: string
+          google_event_id: string
+          id: string
+          last_synced_at: string | null
+        }
+        Insert: {
+          calendar_type: string
+          campus_id?: string | null
+          connection_id: string
+          created_at?: string | null
+          event_hash?: string | null
+          event_id: string
+          google_calendar_id: string
+          google_event_id: string
+          id?: string
+          last_synced_at?: string | null
+        }
+        Update: {
+          calendar_type?: string
+          campus_id?: string | null
+          connection_id?: string
+          created_at?: string | null
+          event_hash?: string | null
+          event_id?: string
+          google_calendar_id?: string
+          google_event_id?: string
+          id?: string
+          last_synced_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "google_calendar_synced_events_campus_id_fkey"
+            columns: ["campus_id"]
+            isOneToOne: false
+            referencedRelation: "campuses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "google_calendar_synced_events_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "google_calendar_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "google_calendar_synced_events_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       legal_disagreements: {
         Row: {
           church_id: string | null
@@ -3286,4 +3467,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-

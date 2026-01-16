@@ -6,6 +6,7 @@ import {
   isAuthError,
 } from './helpers'
 import { notifyMinistryLeaderOfResponse } from './invitation-notifications'
+import { syncEventToGoogle } from '@/lib/google-calendar/sync-service'
 
 /**
  * Respond to an invitation (accept or decline).
@@ -81,6 +82,24 @@ export async function respondToInvitation(
 
   // Notify ministry leader about the response
   await notifyMinistryLeaderOfResponse(adminClient, assignmentId, response)
+
+  // Sync to Google Calendar (personal calendar changes based on accepted/declined status)
+  // Get event_id from assignment's position
+  adminClient
+    .from('event_assignments')
+    .select('position:event_positions (event_id)')
+    .eq('id', assignmentId)
+    .single()
+    .then(({ data }) => {
+      const position = Array.isArray(data?.position)
+        ? data.position[0]
+        : data?.position
+      if (position?.event_id) {
+        syncEventToGoogle(position.event_id).catch((err) => {
+          console.error('Failed to sync invitation response to Google Calendar:', err)
+        })
+      }
+    })
 
   return { success: true, response }
 }

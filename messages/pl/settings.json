@@ -119,6 +119,8 @@
     "title": "Kampusy",
     "description": "Zarządzaj kampusami kościoła",
     "addCampus": "Dodaj kampus",
+    "editCampus": "Edytuj kampus",
+    "deleteCampus": "Usuń kampus",
     "default": "Domyślny",
     "setDefault": "Ustaw jako domyślny",
     "createdSuccess": "Kampus został utworzony!",

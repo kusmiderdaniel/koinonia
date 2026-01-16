@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { EventsPageClient } from './EventsPageClient'
 import { canUserSeeEvent } from './actions/helpers'
-import { hasPageAccess, isVolunteer, isLeader } from '@/lib/permissions'
+import { hasPageAccess, isVolunteer, isLeader, isMember } from '@/lib/permissions'
 import { getUserCampusIds } from '@/lib/utils/campus'
 import type { Event, Member } from './types'
 
@@ -81,6 +81,7 @@ export default async function EventsPage() {
 
   const userIsVolunteer = isVolunteer(profile.role)
   const userIsLeader = isLeader(profile.role)
+  const userIsMember = isMember(profile.role)
   const needsCampusFilter = userIsVolunteer || userIsLeader
 
   // For volunteers and leaders, get their campus IDs for filtering
@@ -89,12 +90,40 @@ export default async function EventsPage() {
     userCampusIds = await getUserCampusIds(profile.id, adminClient)
   }
 
-  // Filter events based on visibility and campus (for volunteers and leaders)
+  // For volunteers, get their event assignments to check if they can see leader+ events
+  let userAssignmentEventIds: Set<string> = new Set()
+  if (userIsVolunteer) {
+    const { data: assignments } = await adminClient
+      .from('event_assignments')
+      .select('position:event_positions!inner(event_id)')
+      .eq('profile_id', profile.id)
+      .in('status', ['invited', 'accepted'])
+
+    if (assignments) {
+      for (const assignment of assignments) {
+        const position = Array.isArray(assignment.position) ? assignment.position[0] : assignment.position
+        if (position?.event_id) {
+          userAssignmentEventIds.add(position.event_id)
+        }
+      }
+    }
+  }
+
+  // Filter events based on visibility and campus
   const filteredEvents = events.filter((event) => {
     const invitedProfileIds = event.event_invitations?.map((inv: { profile_id: string }) => inv.profile_id) || []
+    const hasAssignment = userAssignmentEventIds.has(event.id)
+
+    // Members can only see 'members' visibility events and hidden events they're invited to
+    if (userIsMember) {
+      if (event.visibility === 'hidden') {
+        return invitedProfileIds.includes(profile.id)
+      }
+      return event.visibility === 'members'
+    }
 
     // First check visibility permissions (use profile.id since invitations use profile_id)
-    if (!canUserSeeEvent(profile.role, event.visibility, profile.id, invitedProfileIds)) {
+    if (!canUserSeeEvent(profile.role, event.visibility, profile.id, invitedProfileIds, hasAssignment)) {
       return false
     }
 
@@ -107,6 +136,11 @@ export default async function EventsPage() {
         if (campus?.id) {
           eventCampusIds.push(campus.id)
         }
+      }
+
+      // Hidden events the user is invited to bypass campus filter
+      if (event.visibility === 'hidden' && invitedProfileIds.includes(profile.id)) {
+        return true
       }
 
       // If event has no campus, they can see it (church-wide event)

@@ -43,18 +43,38 @@ export function EventCalendar({
     [firstDayOffset, daysInMonth]
   )
 
-  // Group events by day
+  // Group events by day (multi-day events appear on all days they span)
   const eventsByDay = useMemo(() => {
     const map = new Map<number, CalendarEvent[]>()
 
     events.forEach((event) => {
-      const date = new Date(event.start_time)
-      if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
-        const day = date.getDate()
-        if (!map.has(day)) {
-          map.set(day, [])
+      const startDate = new Date(event.start_time)
+      const endDate = event.end_time ? new Date(event.end_time) : startDate
+
+      // Get the range of days this event spans within the current month
+      const monthStart = new Date(currentYear, currentMonth, 1)
+      const monthEnd = new Date(currentYear, currentMonth + 1, 0) // Last day of month
+
+      // Clamp the event's date range to the current month
+      const effectiveStart = startDate < monthStart ? monthStart : startDate
+      const effectiveEnd = endDate > monthEnd ? monthEnd : endDate
+
+      // Only process if the event overlaps with the current month
+      if (effectiveStart <= monthEnd && effectiveEnd >= monthStart) {
+        const startDay = effectiveStart.getMonth() === currentMonth && effectiveStart.getFullYear() === currentYear
+          ? effectiveStart.getDate()
+          : 1
+        const endDay = effectiveEnd.getMonth() === currentMonth && effectiveEnd.getFullYear() === currentYear
+          ? effectiveEnd.getDate()
+          : daysInMonth
+
+        // Add the event to each day it spans
+        for (let day = startDay; day <= endDay; day++) {
+          if (!map.has(day)) {
+            map.set(day, [])
+          }
+          map.get(day)!.push(event)
         }
-        map.get(day)!.push(event)
       }
     })
 
@@ -66,7 +86,7 @@ export function EventCalendar({
     })
 
     return map
-  }, [events, currentMonth, currentYear])
+  }, [events, currentMonth, currentYear, daysInMonth])
 
   const getEventsForDay = useCallback(
     (day: number) => eventsByDay.get(day) || [],

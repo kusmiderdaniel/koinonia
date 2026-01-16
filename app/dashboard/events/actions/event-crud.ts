@@ -12,6 +12,7 @@ import {
 import type { EventInput } from './helpers'
 import { getUserCampusIds } from '@/lib/utils/campus'
 import { isVolunteer, isLeader } from '@/lib/permissions'
+import { syncEventToGoogle, deleteEventFromGoogle } from '@/lib/google-calendar/sync-service'
 
 export async function getEvents(filters?: { status?: string; eventType?: string }) {
   const auth = await getAuthenticatedUserWithProfile()
@@ -262,6 +263,11 @@ export async function createEvent(data: EventInput) {
     await adminClient.from('event_campuses').insert(eventCampuses)
   }
 
+  // Sync to Google Calendar (non-blocking)
+  syncEventToGoogle(event.id).catch((err) => {
+    console.error('Failed to sync event to Google Calendar:', err)
+  })
+
   revalidatePath('/dashboard/events')
   return { data: event }
 }
@@ -324,6 +330,11 @@ export async function updateEvent(eventId: string, data: Partial<EventInput>) {
     }
   }
 
+  // Sync to Google Calendar (non-blocking)
+  syncEventToGoogle(eventId).catch((err) => {
+    console.error('Failed to sync event to Google Calendar:', err)
+  })
+
   revalidatePath('/dashboard/events')
   return { success: true }
 }
@@ -336,6 +347,15 @@ export async function deleteEvent(eventId: string) {
 
   const permError = requireAdminPermission(profile.role, 'delete events')
   if (permError) return { error: permError }
+
+  // Delete from Google Calendar BEFORE deleting from database
+  // This is blocking because we need the event data to find synced events
+  try {
+    await deleteEventFromGoogle(eventId)
+  } catch (err) {
+    console.error('Failed to delete event from Google Calendar:', err)
+    // Continue with database deletion even if Google Calendar deletion fails
+  }
 
   const { error } = await adminClient
     .from('events')
@@ -453,6 +473,11 @@ export async function duplicateEvent(eventId: string) {
     }))
     await adminClient.from('event_positions').insert(positions)
   }
+
+  // Sync to Google Calendar (non-blocking)
+  syncEventToGoogle(newEvent.id).catch((err) => {
+    console.error('Failed to sync duplicated event to Google Calendar:', err)
+  })
 
   revalidatePath('/dashboard/events')
   return { data: { eventId: newEvent.id } }

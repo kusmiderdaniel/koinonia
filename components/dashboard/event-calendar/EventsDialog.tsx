@@ -53,26 +53,31 @@ export function EventsDialog({
               </p>
             </div>
           ) : (
-            events.map((event) => (
-              <div key={event.id} className="rounded-lg border bg-card p-4">
-                <div className="flex items-start gap-3">
-                  <div
-                    className={cn(
-                      'w-1 min-h-[3rem] rounded-full flex-shrink-0 self-stretch',
-                      EVENT_TYPE_COLORS[event.event_type] || 'bg-gray-500'
-                    )}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold">{event.title}</h4>
+            events.map((event) => {
+              const isAllDayEvent = event.event_type === 'birthday' || event.event_type === 'holiday'
 
-                    <div className="mt-2 space-y-1 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 flex-shrink-0" />
-                        <span>
-                          {formatTime(event.start_time, timeFormat)}
-                          {event.end_time && ` - ${formatTime(event.end_time, timeFormat)}`}
-                        </span>
-                      </div>
+              return (
+                <div key={event.id} className="rounded-lg border bg-card p-4">
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={cn(
+                        'w-1 min-h-[3rem] rounded-full flex-shrink-0 self-stretch',
+                        EVENT_TYPE_COLORS[event.event_type] || 'bg-gray-500'
+                      )}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold">{event.title}</h4>
+
+                      <div className="mt-2 space-y-1 text-sm text-muted-foreground">
+                        {!isAllDayEvent && (
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 flex-shrink-0" />
+                            <span>
+                              {formatTime(event.start_time, timeFormat)}
+                              {event.end_time && ` - ${formatTime(event.end_time, timeFormat)}`}
+                            </span>
+                          </div>
+                        )}
 
                       {event.location && (
                         <div className="flex items-start gap-2">
@@ -115,7 +120,8 @@ export function EventsDialog({
                   </div>
                 </div>
               </div>
-            ))
+              )
+            })
           )}
         </div>
       </DialogContent>
