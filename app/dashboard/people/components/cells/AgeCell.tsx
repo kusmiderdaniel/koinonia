@@ -17,7 +17,9 @@ export const AgeCell = memo(function AgeCell({
       className={cn('text-muted-foreground', getFrozenClasses(columnKey))}
       style={getColumnStyle(columnKey)}
     >
-      {calculateAge(member.date_of_birth)}
+      <div className="flex justify-center">
+        {calculateAge(member.date_of_birth)}
+      </div>
     </TableCell>
   )
 })

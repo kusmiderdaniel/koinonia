@@ -64,7 +64,7 @@ export const CampusPicker = memo(function CampusPicker({
           aria-expanded={open}
           disabled={disabled}
           className={cn(
-            'w-full justify-start text-left h-auto min-h-10 py-2 px-3 rounded-lg !border !border-black dark:!border-white',
+            'w-full justify-start text-left h-auto min-h-10 py-2 px-3 rounded-lg !border !border-black/20 dark:!border-white/20',
             !selectedCampuses.length && 'text-muted-foreground',
             className
           )}
@@ -81,7 +81,7 @@ export const CampusPicker = memo(function CampusPicker({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[250px] p-2 bg-white dark:bg-zinc-950 border" align="start">
+      <PopoverContent className="w-[250px] p-2 bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20" align="start">
         <div className="space-y-1">
           {/* "All campuses" option for single-select mode */}
           {!multiple && (

@@ -38,6 +38,9 @@ interface FieldEditorContextValue {
     value: string | number | null
   ) => void
 
+  // Divider settings handler
+  handleDividerSettingChange: (key: 'showTitle', value: boolean) => void
+
   // Close handler
   handleClose: () => void
 
@@ -96,6 +99,7 @@ export function FieldEditorProvider({ children }: FieldEditorProviderProps) {
       handleDeleteOption: handlers.handleDeleteOption,
       handleUpdateOptionColor: handlers.handleUpdateOptionColor,
       handleNumberSettingChange: handlers.handleNumberSettingChange,
+      handleDividerSettingChange: handlers.handleDividerSettingChange,
       handleClose: handlers.handleClose,
       handleLabelI18nChange: handlers.handleLabelI18nChange,
       handleDescriptionI18nChange: handlers.handleDescriptionI18nChange,
@@ -118,6 +122,7 @@ export function FieldEditorProvider({ children }: FieldEditorProviderProps) {
       handlers.handleDeleteOption,
       handlers.handleUpdateOptionColor,
       handlers.handleNumberSettingChange,
+      handlers.handleDividerSettingChange,
       handlers.handleClose,
       handlers.handleLabelI18nChange,
       handlers.handleDescriptionI18nChange,

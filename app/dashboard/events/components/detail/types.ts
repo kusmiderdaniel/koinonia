@@ -54,7 +54,6 @@ export interface EventDetailPanelProps {
   onMoveAgendaItemUp: (itemId: string) => void
   onMoveAgendaItemDown: (itemId: string) => void
   onAddPosition: () => void
-  onEditPosition: (position: Position) => void
   onDeletePosition: (position: Position) => void
   onAssignVolunteer: (position: Position) => void
   onUnassign: (assignment: Assignment, positionTitle: string) => void
@@ -98,7 +97,6 @@ export interface PositionsTabProps {
   pendingInvitationsCount: number
   multiAssignedProfiles: Map<string, string[]>
   onAddPosition: () => void
-  onEditPosition: (position: Position) => void
   onDeletePosition: (position: Position) => void
   onAssignVolunteer: (position: Position) => void
   onUnassign: (assignment: Assignment, positionTitle: string) => void

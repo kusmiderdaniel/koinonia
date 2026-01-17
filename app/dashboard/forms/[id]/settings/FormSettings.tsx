@@ -77,6 +77,7 @@ export function FormSettings() {
               }
               onChange={(e) => updateFormTitleI18n(activeLocale, e.target.value)}
               placeholder={activeLocale !== 'en' ? form.title : t('createDialog.titlePlaceholder')}
+              className="!border !border-black/20 dark:!border-white/20"
             />
           ) : (
             <Input
@@ -84,6 +85,7 @@ export function FormSettings() {
               value={form.title}
               onChange={(e) => updateFormTitle(e.target.value)}
               placeholder={t('createDialog.titlePlaceholder')}
+              className="!border !border-black/20 dark:!border-white/20"
             />
           )}
         </div>
@@ -102,6 +104,7 @@ export function FormSettings() {
               onChange={(e) => updateFormDescriptionI18n(activeLocale, e.target.value)}
               placeholder={activeLocale !== 'en' ? (form.description || '') : t('createDialog.descriptionPlaceholder')}
               rows={4}
+              className="!border !border-black/20 dark:!border-white/20"
             />
           ) : (
             <Textarea
@@ -110,6 +113,7 @@ export function FormSettings() {
               onChange={(e) => updateFormDescription(e.target.value || null)}
               placeholder={t('createDialog.descriptionPlaceholder')}
               rows={4}
+              className="!border !border-black/20 dark:!border-white/20"
             />
           )}
           <p className="text-xs text-muted-foreground">
@@ -135,13 +139,13 @@ export function FormSettings() {
                 className={`flex items-start gap-3 rounded-lg border p-4 cursor-pointer transition-colors ${
                   form.access_type === option.value
                     ? 'border-brand bg-brand/5'
-                    : 'border-input hover:bg-accent/50'
+                    : 'border-black/20 dark:border-white/20 hover:bg-accent/50'
                 }`}
               >
                 <RadioGroupItem
                   value={option.value}
                   id={`access-${option.value}`}
-                  className="mt-0.5"
+                  className="mt-0.5 border-black/20 dark:border-white/20"
                 />
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
@@ -198,7 +202,7 @@ export function FormSettings() {
       </div>
 
       {/* Status Info */}
-      <div className="pt-4 border-t">
+      <div className="pt-4 border-t border-black/20 dark:border-white/20">
         <h3 className="text-sm font-medium mb-2">{t('settings.formStatus')}</h3>
         <div className="flex items-center gap-2">
           <span

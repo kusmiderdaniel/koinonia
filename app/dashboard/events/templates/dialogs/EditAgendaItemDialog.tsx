@@ -59,7 +59,7 @@ export function EditAgendaItemDialog({
 }: EditAgendaItemDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>
             {isSongPlaceholder ? 'Edit Song Placeholder' : 'Edit Agenda Item'}
@@ -160,8 +160,8 @@ export function EditAgendaItemDialog({
         <DialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
           <Button
             type="button"
-            variant="outline-pill"
-            className="!border !border-black dark:!border-white"
+            variant="ghost"
+            className="rounded-full"
             onClick={() => onOpenChange(false)}
             disabled={isAdding}
           >
@@ -171,7 +171,7 @@ export function EditAgendaItemDialog({
             variant="outline-pill"
             onClick={onUpdate}
             disabled={isAdding || (!isSongPlaceholder && !editTitle.trim())}
-            className="!border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
+            className="!border !bg-brand hover:!bg-brand/90 !text-brand-foreground !border-brand disabled:!opacity-50"
           >
             {isAdding ? 'Saving...' : 'Save Changes'}
           </Button>

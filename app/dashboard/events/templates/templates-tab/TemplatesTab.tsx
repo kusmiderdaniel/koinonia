@@ -118,7 +118,7 @@ export const TemplatesTab = memo(function TemplatesTab({ timeFormat }: Templates
         {state.selectedTemplate ? (
           detailContent
         ) : (
-          <Card className="h-full flex items-center justify-center">
+          <Card className="h-full flex items-center justify-center outline-none !ring-0 border border-border">
             <div className="text-center">
               <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
               <p className="text-muted-foreground">

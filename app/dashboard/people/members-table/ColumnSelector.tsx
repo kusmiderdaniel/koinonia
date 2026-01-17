@@ -153,7 +153,7 @@ export function ColumnSelector({
         <Button
           variant="outline"
           size="sm"
-          className={`gap-2 w-full sm:w-auto justify-center !border !border-black dark:!border-zinc-700 ${hiddenCount > 0 ? '!border-brand text-brand' : ''}`}
+          className={`gap-2 w-full sm:w-auto justify-center !border !border-black/20 dark:!border-white/20 ${hiddenCount > 0 ? '!border-brand text-brand' : ''}`}
         >
           <Columns3 className="h-4 w-4" />
           {tColumns('title')}

@@ -43,7 +43,7 @@ export function AgendaItemPickerList({
           placeholder={t('searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-9"
+          className="pl-9 !border-black/20 dark:!border-white/20"
         />
       </div>
 
@@ -57,7 +57,7 @@ export function AgendaItemPickerList({
                 key={preset.id}
                 onClick={() => onSelectPreset(preset)}
                 disabled={isAdding || !preset.ministry_id}
-                className="w-full flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-muted/50 transition-colors text-left disabled:opacity-50"
+                className="w-full flex items-center justify-between p-3 rounded-lg border border-black/20 dark:border-white/20 hover:bg-muted/50 transition-colors text-left disabled:opacity-50"
               >
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{preset.title}</span>
@@ -107,7 +107,7 @@ export function AgendaItemPickerList({
       <DialogFooter className="!bg-transparent !border-0 flex justify-between items-center pt-4">
         <Button
           variant="outline-pill"
-          className="!border !border-black dark:!border-white"
+          className="!border !border-black/20 dark:!border-white/20"
           asChild
         >
           <Link
@@ -119,8 +119,8 @@ export function AgendaItemPickerList({
           </Link>
         </Button>
         <Button
-          variant="outline-pill"
-          className="!border !border-black dark:!border-white"
+          variant="ghost"
+          className="rounded-full"
           onClick={onClose}
         >
           {tCommon('cancel')}

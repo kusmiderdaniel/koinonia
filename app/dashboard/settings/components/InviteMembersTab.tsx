@@ -55,7 +55,7 @@ export const InviteMembersTab = memo(function InviteMembersTab({
           <div className="text-sm font-medium">{t('joinCodeLabel')}</div>
 
           {/* Join code display */}
-          <div className="flex items-center justify-center py-3 md:py-4 bg-muted rounded-lg border border-black dark:border-white">
+          <div className="flex items-center justify-center py-3 md:py-4 bg-muted rounded-lg border border-black/20 dark:border-white/20">
             <span className="text-xl md:text-3xl font-mono font-bold tracking-[0.15em] md:tracking-[0.3em] text-foreground">
               {joinCode || '------'}
             </span>
@@ -67,7 +67,7 @@ export const InviteMembersTab = memo(function InviteMembersTab({
               onClick={onCopyJoinCode}
               variant="outline-pill"
               size="sm"
-              className="flex-1 !border-black dark:!border-white text-xs md:text-sm"
+              className="flex-1 !border-black/20 dark:!border-white/20 text-xs md:text-sm"
             >
               <Copy className="h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5 md:mr-2" />
               {joinCodeCopied ? t('copied') : t('copy')}
@@ -79,7 +79,7 @@ export const InviteMembersTab = memo(function InviteMembersTab({
                     variant="outline-pill"
                     size="sm"
                     disabled={isRegeneratingCode}
-                    className="flex-1 !border-black dark:!border-white text-xs md:text-sm"
+                    className="flex-1 !border-black/20 dark:!border-white/20 text-xs md:text-sm"
                   >
                     <RefreshCw className={`h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5 md:mr-2 ${isRegeneratingCode ? 'animate-spin' : ''}`} />
                     {isRegeneratingCode ? t('regenerating') : t('regenerate')}
@@ -93,10 +93,10 @@ export const InviteMembersTab = memo(function InviteMembersTab({
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="rounded-full border-black dark:border-zinc-700">{t('regenerateDialog.cancel')}</AlertDialogCancel>
+                    <AlertDialogCancel className="rounded-full !border-0">{t('regenerateDialog.cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleRegenerate}
-                      className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white"
+                      className="!rounded-full !bg-brand hover:!bg-brand/90 !text-black"
                     >
                       {t('regenerateDialog.confirm')}
                     </AlertDialogAction>

@@ -50,7 +50,7 @@ export function PublishDialog({ document, onClose, onSuccess }: PublishDialogPro
 
   return (
     <Dialog open={!!document} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>Publish {document.title}?</DialogTitle>
           <DialogDescription>

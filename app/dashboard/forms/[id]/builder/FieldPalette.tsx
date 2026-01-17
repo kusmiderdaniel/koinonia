@@ -12,6 +12,7 @@ import {
   ChevronDown,
   CheckSquare,
   Square,
+  Minus,
 } from 'lucide-react'
 import type { FieldType } from '@/lib/validations/forms'
 import type { LucideIcon } from 'lucide-react'
@@ -34,6 +35,7 @@ const FIELD_TYPES: FieldTypeConfig[] = [
   { type: 'single_select', icon: ChevronDown },
   { type: 'multi_select', icon: CheckSquare },
   { type: 'checkbox', icon: Square },
+  { type: 'divider', icon: Minus },
 ]
 
 interface DraggableFieldTypeProps {
@@ -64,7 +66,7 @@ const DraggableFieldType = memo(function DraggableFieldType({
       {...listeners}
       {...attributes}
       onClick={() => onAddField(config.type, defaultLabel)}
-      className={`w-full flex items-center gap-3 p-3 rounded-lg border bg-white dark:bg-zinc-900 hover:border-brand hover:shadow-sm transition-all cursor-grab active:cursor-grabbing ${
+      className={`w-full flex items-center gap-3 p-3 rounded-lg border border-black/20 dark:border-white/20 bg-white dark:bg-zinc-900 hover:border-brand hover:shadow-sm transition-all cursor-grab active:cursor-grabbing ${
         isDragging ? 'opacity-50 shadow-lg' : ''
       }`}
     >

@@ -246,11 +246,17 @@ export async function bulkSaveFormFields(
   const toDelete: string[] = []
 
   for (const field of fields) {
-    if (field.isDeleted && field.id && !field.isNew) {
+    // Skip new fields that were deleted (shouldn't happen, but safety check)
+    if (field.isNew && field.isDeleted) continue
+
+    if (field.isDeleted && field.id) {
+      // Existing field marked for deletion
       toDelete.push(field.id)
-    } else if (field.isNew) {
+    } else if (field.isNew && !field.isDeleted) {
+      // New field to create
       toCreate.push(field)
-    } else if (field.id) {
+    } else if (field.id && !field.isDeleted) {
+      // Existing field to update
       toUpdate.push(field)
     }
   }
@@ -277,12 +283,16 @@ export async function bulkSaveFormFields(
       settings: field.settings || null,
       sort_order: field.sortOrder,
     }))
-    await adminClient.from('form_fields').insert(inserts)
+    const { error: insertError } = await adminClient.from('form_fields').insert(inserts)
+    if (insertError) {
+      console.error('Error inserting form fields:', insertError)
+      return { error: `Failed to create form fields: ${insertError.message}` }
+    }
   }
 
   // Update existing fields
   for (const field of toUpdate) {
-    await adminClient
+    const { error: updateError } = await adminClient
       .from('form_fields')
       .update({
         type: field.type,
@@ -299,6 +309,10 @@ export async function bulkSaveFormFields(
         sort_order: field.sortOrder,
       })
       .eq('id', field.id!)
+    if (updateError) {
+      console.error('Error updating form field:', updateError)
+      return { error: `Failed to update form field: ${updateError.message}` }
+    }
   }
 
   revalidatePath(`/dashboard/forms/${formId}`)

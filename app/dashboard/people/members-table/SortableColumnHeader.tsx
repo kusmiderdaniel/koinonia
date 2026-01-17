@@ -17,6 +17,8 @@ interface SortableColumnHeaderProps {
   isFrozen?: boolean
   leftOffset?: number
   isLastFrozen?: boolean
+  // Centering
+  centered?: boolean
 }
 
 export function SortableColumnHeader({
@@ -28,6 +30,7 @@ export function SortableColumnHeader({
   isFrozen = false,
   leftOffset = 0,
   isLastFrozen = false,
+  centered = false,
 }: SortableColumnHeaderProps) {
   const isPinned = isPinnedColumn(columnKey)
   const [isResizing, setIsResizing] = useState(false)
@@ -141,7 +144,7 @@ export function SortableColumnHeader({
       {...attributes}
       {...(isPinned ? {} : listeners)}
     >
-      <div className="pr-3 flex items-center">
+      <div className={cn('flex items-center', centered ? 'justify-center' : 'pr-3')}>
         {children}
       </div>
       {/* Resize handle */}

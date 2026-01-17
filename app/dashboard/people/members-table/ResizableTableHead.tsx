@@ -12,6 +12,7 @@ interface ResizableTableHeadProps {
   onResize?: (key: string, width: number) => void
   className?: string
   isPinned?: boolean
+  centered?: boolean
 }
 
 export function ResizableTableHead({
@@ -21,6 +22,7 @@ export function ResizableTableHead({
   onResize,
   className,
   isPinned = false,
+  centered = false,
 }: ResizableTableHeadProps) {
   const [isResizing, setIsResizing] = useState(false)
   const [currentWidth, setCurrentWidth] = useState<number | undefined>(width)
@@ -86,7 +88,7 @@ export function ResizableTableHead({
       className={cn('relative group', className)}
       style={{ width: currentWidth ? `${currentWidth}px` : undefined }}
     >
-      <div className="pr-3">
+      <div className={cn('flex items-center', centered ? 'justify-center' : 'pr-3')}>
         {children}
       </div>
       {/* Resize handle */}

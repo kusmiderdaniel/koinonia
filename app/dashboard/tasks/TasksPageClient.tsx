@@ -14,6 +14,7 @@ import { applyFilters } from './filter-logic'
 import { groupTasks } from './group-logic'
 import { useTaskPageHandlers, useTasksViewManager } from './hooks'
 import { useIsMobile } from '@/lib/hooks'
+import { PAGE_SIZE } from '@/lib/constants/pagination'
 import type { Task, TaskMinistry, TaskCampus, Person, TaskStatus, TaskPriority } from './types'
 import type { SavedView } from '@/types/saved-views'
 
@@ -41,6 +42,10 @@ export function TasksPageClient({ initialData }: TasksPageClientProps) {
   // Task state
   const [tasks, setTasks] = useState<Task[]>(initialData.tasks)
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
+
+  // Pagination state
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(PAGE_SIZE.DEFAULT)
 
   // Sync tasks when initialData changes
   useEffect(() => {
@@ -97,11 +102,35 @@ export function TasksPageClient({ initialData }: TasksPageClientProps) {
     return applySorts(result, viewManager.sortState)
   }, [tasks, viewManager.searchQuery, viewManager.filterState, viewManager.sortState])
 
-  // Group tasks
+  // Reset page when filters/search changes
+  useEffect(() => {
+    setPage(1)
+  }, [viewManager.searchQuery, viewManager.filterState, viewManager.sortState, viewManager.groupBy])
+
+  // Pagination calculations
+  const totalItems = filteredAndSortedTasks.length
+  const totalPages = Math.ceil(totalItems / pageSize)
+
+  // Paginated tasks
+  const paginatedTasks = useMemo(() => {
+    const startIndex = (page - 1) * pageSize
+    return filteredAndSortedTasks.slice(startIndex, startIndex + pageSize)
+  }, [filteredAndSortedTasks, page, pageSize])
+
+  // Group tasks (use paginated tasks for flat view, all for grouped view)
   const taskGroups = useMemo(
-    () => groupTasks(filteredAndSortedTasks, viewManager.groupBy),
-    [filteredAndSortedTasks, viewManager.groupBy]
+    () => groupTasks(viewManager.groupBy !== 'none' ? filteredAndSortedTasks : paginatedTasks, viewManager.groupBy),
+    [filteredAndSortedTasks, paginatedTasks, viewManager.groupBy]
   )
+
+  // For grouped view, we paginate the groups differently
+  const displayTasks = viewManager.groupBy !== 'none' ? filteredAndSortedTasks : paginatedTasks
+
+  // Handle page size change
+  const handlePageSizeChange = useCallback((newPageSize: number) => {
+    setPageSize(newPageSize)
+    setPage(1) // Reset to first page when changing page size
+  }, [])
 
   // Async handler wrappers for table
   const handleStatusChangeAsync = useCallback(
@@ -158,13 +187,13 @@ export function TasksPageClient({ initialData }: TasksPageClientProps) {
       <div className={`flex-1 flex flex-col overflow-hidden ${isMobile ? 'p-3' : 'p-4 md:p-6'}`}>
         <TasksHeader
           taskCount={filteredAndSortedTasks.length}
-          onCreateTask={handlers.handleCreateTask}
           currentViewName={currentViewName}
         />
 
         <TasksToolbar
           searchQuery={viewManager.searchQuery}
           onSearchChange={viewManager.setSearchQuery}
+          onCreateTask={handlers.handleCreateTask}
           groupBy={viewManager.groupBy}
           onGroupByChange={viewManager.setGroupBy}
           sortState={viewManager.sortState}
@@ -191,7 +220,7 @@ export function TasksPageClient({ initialData }: TasksPageClientProps) {
         />
 
         <TasksContent
-          tasks={filteredAndSortedTasks}
+          tasks={displayTasks}
           groups={taskGroups}
           showGroupHeaders={viewManager.groupBy !== 'none'}
           isMobile={isMobile}
@@ -200,6 +229,12 @@ export function TasksPageClient({ initialData }: TasksPageClientProps) {
           members={initialData.members}
           selectedTaskId={selectedTaskId}
           weekStartsOn={initialData.firstDayOfWeek}
+          page={page}
+          pageSize={pageSize}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          onPageChange={setPage}
+          onPageSizeChange={handlePageSizeChange}
           onTitleClick={handlers.handleSelectTask}
           onStatusChange={handleStatusChangeAsync}
           onPriorityChange={handlePriorityChangeAsync}

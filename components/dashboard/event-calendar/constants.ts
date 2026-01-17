@@ -18,5 +18,16 @@ export const EVENT_TYPE_COLORS: Record<string, string> = {
   birthday: 'bg-pink-400',
 }
 
+// Hex colors for gradient effects
+export const EVENT_TYPE_HEX_COLORS: Record<string, string> = {
+  service: '#3b82f6',
+  rehearsal: '#a855f7',
+  meeting: '#22c55e',
+  special_event: '#f59e0b',
+  other: '#6b7280',
+  holiday: '#fbbf24',
+  birthday: '#f472b6',
+}
+
 export type MonthKey = typeof MONTH_KEYS[number]
 export type DayKey = typeof DAYS_SUNDAY_START_KEYS[number]

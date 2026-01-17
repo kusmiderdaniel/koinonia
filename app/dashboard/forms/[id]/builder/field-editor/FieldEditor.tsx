@@ -27,6 +27,7 @@ function FieldEditorContent() {
     setActiveLocale,
     showOptions,
     handleRequiredChange,
+    handleDividerSettingChange,
     handleClose,
   } = useFieldEditorContext()
 
@@ -45,16 +46,16 @@ function FieldEditorContent() {
     <div className={isMobile ? 'p-3' : 'p-4'}>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className={`flex items-center justify-between ${isMobile ? 'mb-2' : 'mb-3'}`}>
-          <TabsList className={`bg-muted/50 border border-black dark:border-white ${isMobile ? 'h-8' : 'h-9'}`}>
+          <TabsList className={`bg-muted/50 border border-black/20 dark:border-white/20 ${isMobile ? 'h-8' : 'h-9'}`}>
             <TabsTrigger
               value="settings"
-              className={`${isMobile ? 'text-xs px-3 h-7' : 'text-sm px-4'} data-[state=active]:bg-brand data-[state=active]:text-white`}
+              className={`${isMobile ? 'text-xs px-3 h-7' : 'text-sm px-4'} data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground`}
             >
               {t('fieldEditor.tabs.settings')}
             </TabsTrigger>
             <TabsTrigger
               value="logic"
-              className={`${isMobile ? 'text-xs px-3 h-7' : 'text-sm px-4'} data-[state=active]:bg-brand data-[state=active]:text-white`}
+              className={`${isMobile ? 'text-xs px-3 h-7' : 'text-sm px-4'} data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground`}
             >
               {t('fieldEditor.tabs.logic')}
             </TabsTrigger>
@@ -72,44 +73,82 @@ function FieldEditorContent() {
         </div>
 
         <TabsContent value="settings" className={`mt-0 ${isMobile ? 'space-y-3' : 'space-y-4'}`}>
-          {/* Single language picker for the entire field */}
-          {isMultilingual && (
-            <LanguageTabs
-              activeLocale={activeLocale}
-              onLocaleChange={setActiveLocale}
-              missingLocales={!selectedField.label_i18n?.pl ? ['pl'] : []}
-            />
-          )}
+          {/* Divider-specific settings */}
+          {selectedField.type === 'divider' ? (
+            <>
+              {/* Show Title toggle */}
+              <div className={`flex items-center justify-between gap-4 border border-black/20 dark:border-white/20 rounded-lg bg-muted/30 ${isMobile ? 'p-2' : 'p-3'}`}>
+                <div className="space-y-0.5 min-w-0 flex-1">
+                  <Label htmlFor="showTitle" className={isMobile ? 'text-sm' : ''}>{t('fieldEditor.showTitle')}</Label>
+                  {!isMobile && (
+                    <p className="text-xs text-muted-foreground">
+                      {t('fieldEditor.showTitleHelp')}
+                    </p>
+                  )}
+                </div>
+                <Switch
+                  id="showTitle"
+                  checked={selectedField.settings?.divider?.showTitle ?? false}
+                  onCheckedChange={(checked) => handleDividerSettingChange('showTitle', checked)}
+                />
+              </div>
 
-          {/* Basic fields - now uses context internally */}
-          <FieldEditorBasicFields />
-
-          {/* Number settings - now uses context internally */}
-          {selectedField.type === 'number' && (
-            <FieldEditorNumberSettings />
-          )}
-
-          {/* Options for select fields - now uses context internally */}
-          {showOptions && (
-            <FieldEditorOptions />
-          )}
-
-          {/* Required toggle */}
-          <div className={`flex items-center justify-between gap-4 border rounded-lg bg-muted/30 ${isMobile ? 'p-2' : 'p-3'}`}>
-            <div className="space-y-0.5 min-w-0 flex-1">
-              <Label htmlFor="required" className={isMobile ? 'text-sm' : ''}>{t('fieldEditor.required')}</Label>
-              {!isMobile && (
-                <p className="text-xs text-muted-foreground">
-                  {t('fieldEditor.requiredHelp')}
-                </p>
+              {/* Show label field only when showTitle is enabled */}
+              {selectedField.settings?.divider?.showTitle && (
+                <>
+                  {isMultilingual && (
+                    <LanguageTabs
+                      activeLocale={activeLocale}
+                      onLocaleChange={setActiveLocale}
+                      missingLocales={!selectedField.label_i18n?.pl ? ['pl'] : []}
+                    />
+                  )}
+                  <FieldEditorBasicFields dividerMode />
+                </>
               )}
-            </div>
-            <Switch
-              id="required"
-              checked={selectedField.required ?? false}
-              onCheckedChange={handleRequiredChange}
-            />
-          </div>
+            </>
+          ) : (
+            <>
+              {/* Single language picker for the entire field */}
+              {isMultilingual && (
+                <LanguageTabs
+                  activeLocale={activeLocale}
+                  onLocaleChange={setActiveLocale}
+                  missingLocales={!selectedField.label_i18n?.pl ? ['pl'] : []}
+                />
+              )}
+
+              {/* Basic fields - now uses context internally */}
+              <FieldEditorBasicFields />
+
+              {/* Number settings - now uses context internally */}
+              {selectedField.type === 'number' && (
+                <FieldEditorNumberSettings />
+              )}
+
+              {/* Options for select fields - now uses context internally */}
+              {showOptions && (
+                <FieldEditorOptions />
+              )}
+
+              {/* Required toggle */}
+              <div className={`flex items-center justify-between gap-4 border border-black/20 dark:border-white/20 rounded-lg bg-muted/30 ${isMobile ? 'p-2' : 'p-3'}`}>
+                <div className="space-y-0.5 min-w-0 flex-1">
+                  <Label htmlFor="required" className={isMobile ? 'text-sm' : ''}>{t('fieldEditor.required')}</Label>
+                  {!isMobile && (
+                    <p className="text-xs text-muted-foreground">
+                      {t('fieldEditor.requiredHelp')}
+                    </p>
+                  )}
+                </div>
+                <Switch
+                  id="required"
+                  checked={selectedField.required ?? false}
+                  onCheckedChange={handleRequiredChange}
+                />
+              </div>
+            </>
+          )}
         </TabsContent>
 
         <TabsContent value="logic" className={`mt-0 ${isMobile ? 'space-y-2' : 'space-y-3'}`}>
@@ -122,7 +161,7 @@ function FieldEditorContent() {
                 variant="outline"
                 size="sm"
                 onClick={handleAddCondition}
-                className={`text-xs !border-black dark:!border-white ${isMobile ? 'h-6 px-2' : 'h-7'}`}
+                className={`text-xs !border !border-black/20 dark:!border-white/20 ${isMobile ? 'h-6 px-2' : 'h-7'}`}
               >
                 <Plus className="h-3 w-3 mr-1" />
                 {t('fieldEditor.add')}

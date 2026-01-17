@@ -21,16 +21,18 @@ export const DateOfBirthCell = memo(function DateOfBirthCell({
       className={cn('text-muted-foreground', getFrozenClasses(columnKey))}
       style={getColumnStyle(columnKey)}
     >
-      {canEditOfflineProfile ? (
-        <InlineDateEditor
-          value={member.date_of_birth}
-          onChange={(date) => onProfileChange(member.id, { dateOfBirth: date })}
-          disabled={isUpdatingProfile}
-          canEdit={true}
-        />
-      ) : (
-        formatDateOfBirth(member.date_of_birth)
-      )}
+      <div className="flex justify-center">
+        {canEditOfflineProfile ? (
+          <InlineDateEditor
+            value={member.date_of_birth}
+            onChange={(date) => onProfileChange(member.id, { dateOfBirth: date })}
+            disabled={isUpdatingProfile}
+            canEdit={true}
+          />
+        ) : (
+          formatDateOfBirth(member.date_of_birth)
+        )}
+      </div>
     </TableCell>
   )
 })

@@ -203,7 +203,7 @@ export function SchedulingMatrix({
         {hasEvents && (
           <Button
             variant="outline"
-            className="rounded-full !border !border-black dark:!border-white shrink-0"
+            className="rounded-full !border !border-black/20 dark:!border-white/20 shrink-0"
             onClick={() => setInvitationsDialogOpen(true)}
           >
             <Send className="w-4 h-4 mr-2" />
@@ -213,7 +213,7 @@ export function SchedulingMatrix({
       </div>
 
       {/* Matrix Grid + Legend */}
-      <div className="flex-1 flex flex-col overflow-hidden border rounded-lg">
+      <div className="flex-1 flex flex-col overflow-hidden border border-black dark:border-white rounded-lg">
         {hasEvents ? (
           <div className="flex-1 overflow-hidden">
             <MatrixGrid

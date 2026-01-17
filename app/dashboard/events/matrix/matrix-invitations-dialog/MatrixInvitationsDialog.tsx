@@ -32,7 +32,7 @@ export function MatrixInvitationsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950">
+      <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Send className="w-5 h-5" />
@@ -87,7 +87,7 @@ export function MatrixInvitationsDialog({
         <DialogFooter>
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             className="rounded-full"
             onClick={() => onOpenChange(false)}
             disabled={state.isSending}
@@ -97,7 +97,7 @@ export function MatrixInvitationsDialog({
           <Button
             onClick={state.handleSend}
             disabled={state.isSending || !state.canSend}
-            className="rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground"
+            className="rounded-full !bg-brand hover:!bg-brand/90 !text-white dark:!text-black"
           >
             {state.isSending ? (
               <>

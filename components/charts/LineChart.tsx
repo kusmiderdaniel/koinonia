@@ -11,6 +11,43 @@ import {
   Legend,
 } from 'recharts'
 
+// Custom tooltip component with proper dark mode support
+interface CustomTooltipProps {
+  active?: boolean
+  payload?: Array<{
+    name?: string
+    value?: number
+    color?: string
+  }>
+  label?: string
+}
+
+function CustomTooltip({
+  active,
+  payload,
+  label,
+}: CustomTooltipProps) {
+  if (!active || !payload || payload.length === 0) return null
+
+  // Format date label
+  let formattedLabel = label
+  if (typeof label === 'string' && label.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    const date = new Date(label)
+    formattedLabel = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`
+  }
+
+  return (
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 shadow-md">
+      <p className="text-sm font-medium text-foreground mb-1">{formattedLabel}</p>
+      {payload.map((entry, index) => (
+        <p key={index} className="text-sm text-muted-foreground">
+          <span style={{ color: entry.color }}>{entry.name}</span>: {entry.value ?? 0}
+        </p>
+      ))}
+    </div>
+  )
+}
+
 interface LineChartProps {
   data: Array<Record<string, unknown>>
   lines: Array<{
@@ -66,21 +103,7 @@ export function LineChart({
             axisLine={false}
             allowDecimals={false}
           />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: 'white',
-              border: '1px solid black',
-              borderRadius: '6px',
-              padding: '8px 12px',
-            }}
-            labelFormatter={(label) => {
-              if (typeof label === 'string' && label.match(/^\d{4}-\d{2}-\d{2}$/)) {
-                const date = new Date(label)
-                return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`
-              }
-              return label
-            }}
-          />
+          <Tooltip content={<CustomTooltip />} />
           {lines.length > 1 && (
             <Legend
               verticalAlign="top"

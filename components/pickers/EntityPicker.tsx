@@ -111,7 +111,7 @@ function EntityPickerInner<T extends EntityBase>({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className={cn('sm:max-w-md bg-white dark:bg-zinc-950', className)} onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent className={cn('sm:max-w-md bg-white dark:bg-zinc-950 !border !border-black dark:!border-white', className)} onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && (
@@ -126,7 +126,7 @@ function EntityPickerInner<T extends EntityBase>({
             placeholder={searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
+            className="pl-9 !border-black/20 dark:!border-white/20"
             autoFocus={false}
           />
         </div>
@@ -165,7 +165,7 @@ function EntityPickerInner<T extends EntityBase>({
                 'w-full text-left p-3 rounded-lg border transition-all',
                 item.id === selectedId
                   ? 'bg-brand/10 border-brand'
-                  : 'border-black dark:border-white hover:bg-gray-50 dark:hover:bg-zinc-900'
+                  : 'border-black/20 dark:border-white/20 hover:bg-gray-50 dark:hover:bg-zinc-900'
               )}
             >
               {renderItem(item, item.id === selectedId)}
@@ -178,7 +178,7 @@ function EntityPickerInner<T extends EntityBase>({
 
         {/* Actions */}
         <div className="flex justify-end pt-2">
-          <Button variant="outline-pill" className="!border !border-black dark:!border-white" onClick={() => handleOpenChange(false)}>
+          <Button variant="ghost" className="rounded-full" onClick={() => handleOpenChange(false)}>
             Cancel
           </Button>
         </div>

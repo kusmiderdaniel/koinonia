@@ -37,7 +37,7 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess, timeFo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950">
+      <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>{isEditing ? t('editTitle') : t('createTitle')}</DialogTitle>
           <DialogDescription>
@@ -82,8 +82,8 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess, timeFo
           <DialogFooter className="!flex-row gap-3 pt-4 !bg-transparent !border-0">
             <Button
               type="button"
-              variant="outline-pill"
-              className="flex-1 !border !border-black dark:!border-white"
+              variant="ghost"
+              className="flex-1 rounded-full"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
             >
@@ -93,7 +93,7 @@ export function TemplateDialog({ open, onOpenChange, template, onSuccess, timeFo
               type="submit"
               variant="outline-pill"
               disabled={isLoading || !formData.name.trim()}
-              className="flex-1 !border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
+              className="flex-1 !border !bg-brand hover:!bg-brand/90 !text-brand-foreground !border-brand disabled:!opacity-50"
             >
               {isLoading
                 ? isEditing

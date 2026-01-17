@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { formatDistanceToNow } from 'date-fns'
 import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
-import { Check, X, Calendar, Clock, Loader2, Eye } from 'lucide-react'
+import { Check, X, Calendar, Clock, Loader2, Eye, UserPlus } from 'lucide-react'
 import type { Notification, NotificationType } from '@/types/notifications'
 import { respondToInvitation } from '@/app/dashboard/events/actions/invitations'
 import { markAsRead } from '@/app/dashboard/notifications/actions'
@@ -21,8 +22,9 @@ interface NotificationItemProps {
 export function NotificationItem({ notification, onActionComplete, onNavigateToEvent }: NotificationItemProps) {
   const t = useTranslations('inbox.notification')
   const locale = useLocale()
+  const router = useRouter()
   const dateLocale = locale === 'pl' ? pl : enUS
-  const [isLoading, setIsLoading] = useState<'accept' | 'decline' | 'read' | null>(null)
+  const [isLoading, setIsLoading] = useState<'accept' | 'decline' | 'read' | 'review' | null>(null)
   const [isChangingResponse, setIsChangingResponse] = useState(false)
 
   // Get translated title and message based on notification type
@@ -167,7 +169,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
       return (
         <button
           onClick={handleBadgeClick}
-          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-600 text-white hover:bg-green-700 transition-colors cursor-pointer"
+          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-600 text-white dark:text-black hover:bg-green-700 transition-colors cursor-pointer"
         >
           <Check className="w-3 h-3 mr-1" />
           {t('status.accepted')}
@@ -179,7 +181,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
       return (
         <button
           onClick={handleBadgeClick}
-          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-600 text-white hover:bg-red-700 transition-colors cursor-pointer"
+          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-600 text-white dark:text-black hover:bg-red-700 transition-colors cursor-pointer"
         >
           <X className="w-3 h-3 mr-1" />
           {t('status.declined')}
@@ -200,7 +202,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
 
   return (
     <div
-      className={`p-3 md:p-4 border rounded-lg transition-colors ${
+      className={`p-3 md:p-4 border border-black/20 dark:border-white/20 rounded-lg transition-colors ${
         notification.is_read ? 'bg-white dark:bg-zinc-950' : 'bg-blue-50/50 dark:bg-blue-950/20'
       } ${onNavigateToEvent ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-900' : ''}`}
       onClick={handleClick}
@@ -270,7 +272,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
                 <Button
                   size="sm"
                   variant="destructive"
-                  className="h-9 md:h-7 px-4 md:px-3 text-sm md:text-xs rounded-full !bg-red-600 hover:!bg-red-700 !text-white flex-1 sm:flex-none"
+                  className="h-9 md:h-7 px-4 md:px-3 text-sm md:text-xs rounded-full !bg-red-600 hover:!bg-red-700 !text-brand-foreground flex-1 sm:flex-none"
                   onClick={(e) => handleRespond('declined', e)}
                   disabled={isLoading !== null}
                 >
@@ -286,7 +288,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
                 <Button
                   size="sm"
                   variant="default"
-                  className="h-9 md:h-7 px-4 md:px-3 text-sm md:text-xs rounded-full !bg-green-600 hover:!bg-green-700 !text-white flex-1 sm:flex-none"
+                  className="h-9 md:h-7 px-4 md:px-3 text-sm md:text-xs rounded-full !bg-green-600 hover:!bg-green-700 !text-brand-foreground flex-1 sm:flex-none"
                   onClick={(e) => handleRespond('accepted', e)}
                   disabled={isLoading !== null}
                 >
@@ -308,7 +310,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-9 md:h-7 px-4 md:px-3 text-sm md:text-xs rounded-full flex-1 sm:flex-none"
+                  className="h-9 md:h-7 px-4 md:px-3 text-sm md:text-xs rounded-full !border-0 flex-1 sm:flex-none"
                   onClick={handleCancelChange}
                   disabled={isLoading !== null}
                 >
@@ -318,7 +320,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
                   <Button
                     size="sm"
                     variant="destructive"
-                    className="h-9 md:h-7 px-4 md:px-3 text-sm md:text-xs rounded-full !bg-red-600 hover:!bg-red-700 !text-white flex-1 sm:flex-none"
+                    className="h-9 md:h-7 px-4 md:px-3 text-sm md:text-xs rounded-full !bg-red-600 hover:!bg-red-700 !text-brand-foreground flex-1 sm:flex-none"
                     onClick={(e) => handleRespond('declined', e)}
                     disabled={isLoading !== null}
                   >
@@ -336,7 +338,7 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
                   <Button
                     size="sm"
                     variant="default"
-                    className="h-9 md:h-7 px-4 md:px-3 text-sm md:text-xs rounded-full !bg-green-600 hover:!bg-green-700 !text-white flex-1 sm:flex-none"
+                    className="h-9 md:h-7 px-4 md:px-3 text-sm md:text-xs rounded-full !bg-green-600 hover:!bg-green-700 !text-brand-foreground flex-1 sm:flex-none"
                     onClick={(e) => handleRespond('accepted', e)}
                     disabled={isLoading !== null}
                   >
@@ -354,12 +356,44 @@ export function NotificationItem({ notification, onActionComplete, onNavigateToE
               </div>
             )}
 
-            {/* Mark as read button for non-invitation notifications */}
-            {showReadButton && (
+            {/* Pending member - Review button */}
+            {notification.type === 'pending_member' && (
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="default"
+                  className="h-9 md:h-7 px-4 md:px-3 text-sm md:text-xs rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground"
+                  onClick={async (e) => {
+                    e.stopPropagation()
+                    setIsLoading('review')
+                    // Mark as read if not already read
+                    if (!notification.is_read) {
+                      await markAsRead(notification.id)
+                      dispatchNotificationRefresh()
+                      onActionComplete?.()
+                    }
+                    router.push('/dashboard/people/pending')
+                  }}
+                  disabled={isLoading !== null}
+                >
+                  {isLoading === 'review' ? (
+                    <Loader2 className="w-4 h-4 md:w-3 md:h-3 animate-spin" />
+                  ) : (
+                    <>
+                      <UserPlus className="w-4 h-4 md:w-3 md:h-3 mr-1.5 md:mr-1" />
+                      {t('actions.review')}
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+
+            {/* Mark as read button for other non-actionable notifications */}
+            {showReadButton && notification.type !== 'pending_member' && (
               <Button
                 size="sm"
                 variant="outline"
-                className="h-9 md:h-7 px-4 md:px-3 text-sm md:text-xs rounded-full !border-black dark:!border-white"
+                className="h-9 md:h-7 px-4 md:px-3 text-sm md:text-xs rounded-full !border-black/20 dark:!border-white/20"
                 onClick={handleMarkAsRead}
                 disabled={isLoading !== null}
               >

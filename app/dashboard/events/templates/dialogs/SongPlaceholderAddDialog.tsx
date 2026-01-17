@@ -32,7 +32,7 @@ export function SongPlaceholderAddDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>
@@ -61,8 +61,8 @@ export function SongPlaceholderAddDialog({
         <DialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
           <Button
             type="button"
-            variant="outline-pill"
-            className="!border !border-black dark:!border-white"
+            variant="ghost"
+            className="rounded-full"
             onClick={() => onOpenChange(false)}
             disabled={isAdding}
           >
@@ -72,7 +72,7 @@ export function SongPlaceholderAddDialog({
             variant="outline-pill"
             onClick={onAdd}
             disabled={isAdding}
-            className="!border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
+            className="!border !bg-brand hover:!bg-brand/90 !text-black !border-brand disabled:!opacity-50"
           >
             {isAdding ? t('adding') : t('addSong')}
           </Button>

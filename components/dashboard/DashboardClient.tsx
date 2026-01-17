@@ -39,6 +39,7 @@ export interface QuickLinksData {
     labelBold: boolean
     labelItalic: boolean
     labelUnderline: boolean
+    labelAlign: 'left' | 'center' | 'right'
   }>
   church: {
     id: string
@@ -73,6 +74,7 @@ interface DashboardClientProps {
   linksData?: QuickLinksData | null
   pendingDisagreements?: PendingDisagreement[]
   language?: 'en' | 'pl'
+  joinCode?: string | null
 }
 
 export function DashboardClient({
@@ -99,6 +101,7 @@ export function DashboardClient({
   linksData,
   pendingDisagreements = [],
   language = 'en',
+  joinCode,
 }: DashboardClientProps) {
   const router = useRouter()
   const t = useTranslations('dashboard')
@@ -155,6 +158,7 @@ export function DashboardClient({
         pendingCount={pendingCount}
         tasksCount={tasksCount}
         weekCount={weekCount}
+        joinCode={joinCode}
       />
 
       {/* Main sections - side by side on desktop */}
@@ -191,7 +195,7 @@ export function DashboardClient({
               <Link2 className="h-5 w-5" />
               {t('quickLinks.title')}
             </h2>
-            <Card className="border border-black dark:border-zinc-700">
+            <Card className="border border-black dark:border-white !ring-0 outline-none">
               <CardContent className="p-4 pt-5">
                 <MemberLinksPanel
                   settings={{

@@ -29,8 +29,8 @@ function BirthdayCard({ birthday }: { birthday: Birthday }) {
   return (
     <div
       className={cn(
-        'flex items-center gap-3 p-3 rounded-lg border transition-colors',
-        isToday && 'bg-brand/10 border-brand',
+        'flex items-center gap-3 p-3 rounded-lg border-black/20 dark:border-white/20 transition-colors',
+        isToday && 'bg-brand/10 border-brand dark:border-brand',
         isSoon && !isToday && 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800',
         isPast && 'opacity-75'
       )}
@@ -103,7 +103,7 @@ export function BirthdaysSection({ birthdays }: BirthdaysSectionProps) {
   }).length
 
   return (
-    <Card className="mt-6">
+    <Card className="mt-6 border border-border">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">

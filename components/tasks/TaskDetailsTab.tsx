@@ -56,12 +56,12 @@ export function TaskDetailsTab({
         <div className="space-y-1.5">
           <label className="text-xs font-medium text-muted-foreground">Status</label>
           <Select value={task.status} onValueChange={handlers.handleStatusChange}>
-            <SelectTrigger centered className="w-full bg-white dark:bg-zinc-950 border border-input h-9">
+            <SelectTrigger centered className="w-full bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20 h-9">
               <SelectValue>
                 <TaskStatusBadge status={task.status} size="sm" />
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-zinc-950 border border-input">
+            <SelectContent className="bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20">
               <SelectItem value="pending" className="cursor-pointer hover:!bg-gray-50 dark:hover:!bg-zinc-800/50">
                 <TaskStatusBadge status="pending" />
               </SelectItem>
@@ -82,12 +82,12 @@ export function TaskDetailsTab({
         <div className="space-y-1.5">
           <label className="text-xs font-medium text-muted-foreground">Priority</label>
           <Select value={task.priority} onValueChange={handlers.handlePriorityChange}>
-            <SelectTrigger centered className="w-full bg-white dark:bg-zinc-950 border border-input h-9">
+            <SelectTrigger centered className="w-full bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20 h-9">
               <SelectValue>
                 <TaskPriorityBadge priority={task.priority} size="sm" />
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-zinc-950 border border-input">
+            <SelectContent className="bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20">
               <SelectItem value="low" className="cursor-pointer hover:!bg-gray-50 dark:hover:!bg-zinc-800/50">
                 <TaskPriorityBadge priority="low" />
               </SelectItem>
@@ -112,7 +112,7 @@ export function TaskDetailsTab({
               value={task.ministry_id || 'none'}
               onValueChange={(value) => handlers.handleMinistryChange(value === 'none' ? null : value)}
             >
-              <SelectTrigger centered className="w-full bg-white dark:bg-zinc-950 border border-input h-9">
+              <SelectTrigger centered className="w-full bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20 h-9">
                 <SelectValue>
                   {task.ministry ? (
                     <Badge
@@ -127,7 +127,7 @@ export function TaskDetailsTab({
                   )}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="bg-white dark:bg-zinc-950 border border-input">
+              <SelectContent className="bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20">
                 <SelectItem value="none" className="cursor-pointer hover:!bg-gray-50 dark:hover:!bg-zinc-800/50">
                   <span className="text-muted-foreground">No ministry</span>
                 </SelectItem>
@@ -152,7 +152,7 @@ export function TaskDetailsTab({
         ) : task.ministry && (
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground">Ministry</label>
-            <div className="flex items-center gap-2 h-9 px-3 border rounded-md bg-muted/30">
+            <div className="flex items-center gap-2 h-9 px-3 border border-black/20 dark:border-white/20 rounded-md bg-muted/30">
               <Badge
                 variant="outline"
                 className="rounded-full text-xs"
@@ -172,7 +172,7 @@ export function TaskDetailsTab({
               value={task.campus_id || 'none'}
               onValueChange={(value) => handlers.handleCampusChange(value === 'none' ? null : value)}
             >
-              <SelectTrigger centered className="w-full bg-white dark:bg-zinc-950 border border-input h-9">
+              <SelectTrigger centered className="w-full bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20 h-9">
                 <SelectValue>
                   {task.campus ? (
                     <Badge
@@ -187,7 +187,7 @@ export function TaskDetailsTab({
                   )}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="bg-white dark:bg-zinc-950 border border-input">
+              <SelectContent className="bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20">
                 <SelectItem value="none" className="cursor-pointer hover:!bg-gray-50 dark:hover:!bg-zinc-800/50">
                   <span className="text-muted-foreground">No campus</span>
                 </SelectItem>
@@ -214,7 +214,7 @@ export function TaskDetailsTab({
         ) : task.campus && (
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground">Campus</label>
-            <div className="flex items-center gap-2 h-9 px-3 border rounded-md bg-muted/30">
+            <div className="flex items-center gap-2 h-9 px-3 border border-black/20 dark:border-white/20 rounded-md bg-muted/30">
               <Badge
                 variant="outline"
                 className="rounded-full text-xs"
@@ -232,7 +232,7 @@ export function TaskDetailsTab({
             <label className="text-xs font-medium text-muted-foreground">Assigned to</label>
             <Button
               variant="outline"
-              className="w-full justify-center bg-white dark:bg-zinc-950 !border !border-input rounded-md h-9 px-2 font-normal text-sm"
+              className="w-full justify-center bg-white dark:bg-zinc-950 !border-[1px] !border-black/20 dark:!border-white/20 rounded-md h-9 px-2 font-normal text-sm"
               onClick={() => setShowMemberPicker(true)}
             >
               <User className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
@@ -251,7 +251,7 @@ export function TaskDetailsTab({
         ) : (
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground">Assigned to</label>
-            <div className="flex items-center gap-2 h-9 px-3 border rounded-md bg-muted/30">
+            <div className="flex items-center gap-2 h-9 px-3 border border-black/20 dark:border-white/20 rounded-md bg-muted/30">
               <User className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm">
                 {task.assignee
@@ -270,7 +270,7 @@ export function TaskDetailsTab({
             onChange={(value) => handlers.handleDueDateChange(value ? parseISO(value) : undefined)}
             placeholder="None"
             weekStartsOn={weekStartsOn}
-            className="h-9 !border-input text-sm"
+            className="h-9 !border-black/20 dark:!border-white/20 text-sm"
           />
         </div>
       </div>
@@ -280,7 +280,7 @@ export function TaskDetailsTab({
         <label className="text-sm font-medium text-muted-foreground">Linked event</label>
         <Button
           variant="outline"
-          className="w-full justify-start bg-white dark:bg-zinc-950 !border !border-input rounded-full h-10 px-3 font-normal"
+          className="w-full justify-start bg-white dark:bg-zinc-950 !border !border-black/20 dark:!border-white/20 rounded-full h-10 px-3 font-normal"
           onClick={() => setShowEventPicker(true)}
         >
           <CalendarDays className="h-4 w-4 mr-2 text-muted-foreground" />
@@ -306,12 +306,12 @@ export function TaskDetailsTab({
           onBlur={handlers.handleDescriptionBlur}
           placeholder="Add a description..."
           rows={3}
-          className="resize-none"
+          className="resize-none !border-black/20 dark:!border-white/20"
         />
       </div>
 
       {/* Created info */}
-      <div className="border-t -mx-6 mt-4" />
+      <div className="border-t border-black/20 dark:border-white/20 -mx-6 mt-4" />
       <div className="pt-4 text-xs text-muted-foreground">
         Created {task.created_by_profile
           ? `by ${task.created_by_profile.first_name} ${task.created_by_profile.last_name}`

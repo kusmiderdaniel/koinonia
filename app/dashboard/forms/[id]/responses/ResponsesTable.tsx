@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, memo } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -20,11 +20,17 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { Download, MoreHorizontal, Trash2, ChevronDown } from 'lucide-react'
 import { format } from 'date-fns'
+import { enUS, pl } from 'date-fns/locale'
 import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { EmptyState } from '@/components/EmptyState'
 import { getFormSubmissions, deleteSubmission } from '../../actions'
 import type { FormField, FormSubmission } from '../../types'
+
+const localeMap = {
+  en: enUS,
+  pl: pl,
+} as const
 
 interface ResponsesTableProps {
   formId: string
@@ -36,6 +42,8 @@ export const ResponsesTable = memo(function ResponsesTable({
   fields,
 }: ResponsesTableProps) {
   const t = useTranslations('forms')
+  const locale = useLocale()
+  const dateLocale = localeMap[locale as keyof typeof localeMap] || enUS
   const [submissions, setSubmissions] = useState<FormSubmission[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [hasMore, setHasMore] = useState(false)
@@ -132,7 +140,7 @@ export const ResponsesTable = memo(function ResponsesTable({
         return String(value)
       case 'date':
         try {
-          return format(new Date(value as string), 'dd/MM/yyyy')
+          return format(new Date(value as string), 'P', { locale: dateLocale })
         } catch {
           return String(value)
         }
@@ -161,20 +169,7 @@ export const ResponsesTable = memo(function ResponsesTable({
   }
 
   if (isLoading) {
-    return (
-      <div className="p-6 space-y-4">
-        <div className="flex justify-end">
-          <Skeleton className="h-9 w-32" />
-        </div>
-        <div className="border rounded-lg">
-          <div className="p-4 space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <Skeleton key={i} className="h-12 w-full" />
-            ))}
-          </div>
-        </div>
-      </div>
-    )
+    return null
   }
 
   if (submissions.length === 0) {
@@ -198,14 +193,14 @@ export const ResponsesTable = memo(function ResponsesTable({
         <p className="text-sm text-muted-foreground">
           {t('list.responseCount', { count: submissions.length })}
         </p>
-        <Button variant="outline" size="sm" onClick={handleExport} className="gap-2 !border !border-black dark:!border-white">
+        <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
           <Download className="h-4 w-4" />
           {t('responses.exportCsv')}
         </Button>
       </div>
 
       {/* Table */}
-      <div className="border rounded-lg overflow-hidden">
+      <div className="border border-black dark:border-white rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -225,7 +220,7 @@ export const ResponsesTable = memo(function ResponsesTable({
                 <TableRow key={submission.id}>
                   <TableCell className="text-sm whitespace-nowrap">
                     {submission.submitted_at
-                      ? format(new Date(submission.submitted_at), 'dd/MM/yyyy HH:mm')
+                      ? format(new Date(submission.submitted_at), 'Pp', { locale: dateLocale })
                       : '-'}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">

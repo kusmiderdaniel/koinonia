@@ -96,7 +96,7 @@ function SortableSocialLink({ id, link, index, onUpdate, onRemove }: SortableSoc
         value={link.platform}
         onValueChange={(value) => onUpdate(index, 'platform', value)}
       >
-        <SelectTrigger className="w-32 !border !border-black dark:!border-white text-xs h-8">
+        <SelectTrigger className="w-32 !border !border-black dark:!border-zinc-600 text-xs h-8">
           <SelectValue>
             {(() => {
               const platform = PLATFORMS.find(p => p.value === link.platform)
@@ -209,7 +209,7 @@ export const SocialLinksEditor = memo(function SocialLinksEditor({
         variant="outline"
         size="sm"
         onClick={addLink}
-        className="!border !border-black dark:!border-white text-xs h-8"
+        className="!border !border-black dark:!border-zinc-600 text-xs h-8"
       >
         <Plus className="h-3 w-3 mr-1" />
         {t('settings.socialLinks.addButton')}

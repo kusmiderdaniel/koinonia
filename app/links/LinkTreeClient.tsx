@@ -40,6 +40,7 @@ interface LinkTreeClientProps {
     labelBold: boolean
     labelItalic: boolean
     labelUnderline: boolean
+    labelAlign: 'left' | 'center' | 'right'
   }>
   userRole: string | null
 }
@@ -142,6 +143,7 @@ export function LinkTreeClient({ church, settings, links, userRole }: LinkTreeCl
               labelBold={link.labelBold}
               labelItalic={link.labelItalic}
               labelUnderline={link.labelUnderline}
+              labelAlign={link.labelAlign}
             />
           ))}
         </div>

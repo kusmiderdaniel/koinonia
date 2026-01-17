@@ -85,18 +85,18 @@ export function TaskDetailSheet({
           onClose={() => onOpenChange(false)}
           canDelete={canDelete}
         />
-        <div className="border-b -mx-6" />
+        <div className="border-b border-black/20 dark:border-white/20 -mx-6" />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="-mt-2">
-          <TabsList className="grid w-full grid-cols-2 my-2">
-            <TabsTrigger value="details" className="data-[state=active]:bg-brand data-[state=active]:text-white">
+          <TabsList className="grid w-full grid-cols-2 my-2 -mx-6 px-6" style={{ width: 'calc(100% + 3rem)' }}>
+            <TabsTrigger value="details" className="data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground">
               Details
             </TabsTrigger>
-            <TabsTrigger value="activity" className="data-[state=active]:bg-brand data-[state=active]:text-white">
+            <TabsTrigger value="activity" className="data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground">
               Activity
             </TabsTrigger>
           </TabsList>
-          <div className="border-b -mx-6" />
+          <div className="border-b border-black/20 dark:border-white/20 -mx-6" />
 
           <TabsContent value="details">
             <TaskDetailsTab

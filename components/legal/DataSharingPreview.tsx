@@ -1,11 +1,17 @@
 'use client'
 
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import { cn } from '@/lib/utils'
 import {
   User,
@@ -17,6 +23,7 @@ import {
   Settings,
   Shield,
   Info,
+  ChevronDown,
 } from 'lucide-react'
 
 interface DataCategory {
@@ -51,6 +58,7 @@ export function DataSharingPreview({
   className,
 }: DataSharingPreviewProps) {
   const t = useTranslations('legal.dataSharing')
+  const [isDataListOpen, setIsDataListOpen] = useState(false)
 
   return (
     <Card className={cn('', className)}>
@@ -64,35 +72,43 @@ export function DataSharingPreview({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Data Categories */}
-        <div className="space-y-3">
-          <h4 className="text-sm font-medium">{t('whatIsShared')}</h4>
-          <div className="grid gap-2">
-            {dataCategories.map((category) => (
-              <div
-                key={category.key}
-                className="flex items-start gap-3 p-2 rounded-lg bg-muted/50"
-              >
-                <div className="text-muted-foreground mt-0.5">
-                  {category.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">
-                      {t(category.key)}
-                    </span>
-                    <Badge variant={category.required ? 'default' : 'outline'} className="text-xs">
-                      {category.required ? t('required') : t('optional')}
-                    </Badge>
+        {/* Data Categories - Collapsible */}
+        <Collapsible open={isDataListOpen} onOpenChange={setIsDataListOpen}>
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+            <h4 className="text-sm font-medium">{t('whatIsShared')}</h4>
+            <ChevronDown className={cn(
+              "h-4 w-4 text-muted-foreground transition-transform duration-200",
+              isDataListOpen && "rotate-180"
+            )} />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-3">
+            <div className="grid gap-2">
+              {dataCategories.map((category) => (
+                <div
+                  key={category.key}
+                  className="flex items-start gap-3 p-2 rounded-lg bg-muted/50"
+                >
+                  <div className="text-muted-foreground mt-0.5">
+                    {category.icon}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {t(`${category.key}Description`)}
-                  </p>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium">
+                        {t(category.key)}
+                      </span>
+                      <Badge variant={category.required ? 'default' : 'outline'} className="text-xs">
+                        {category.required ? t('required') : t('optional')}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {t(`${category.key}Description`)}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
 
         {/* Who Can See */}
         <Alert>

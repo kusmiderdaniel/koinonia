@@ -5,7 +5,6 @@ import { useTranslations } from 'next-intl'
 import { useTheme } from 'next-themes'
 import { Sun, Moon, Monitor } from 'lucide-react'
 import { toast } from 'sonner'
-import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -72,10 +71,6 @@ export function AppearanceSettingsCard({ currentTheme }: AppearanceSettingsCardP
           <p className="text-sm text-muted-foreground">{t('description')}</p>
         </div>
         <div className="space-y-2">
-          <Label className="flex items-center gap-2">
-            <Monitor className="h-4 w-4" />
-            {t('label')}
-          </Label>
           <div className="w-48 h-10 bg-muted animate-pulse rounded-md" />
         </div>
       </div>
@@ -90,12 +85,6 @@ export function AppearanceSettingsCard({ currentTheme }: AppearanceSettingsCardP
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="theme" className="flex items-center gap-2">
-          {effectiveTheme === 'light' && <Sun className="h-4 w-4" />}
-          {effectiveTheme === 'dark' && <Moon className="h-4 w-4" />}
-          {effectiveTheme === 'system' && <Monitor className="h-4 w-4" />}
-          {t('label')}
-        </Label>
         <Select
           value={effectiveTheme}
           onValueChange={handleChange}

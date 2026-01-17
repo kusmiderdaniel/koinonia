@@ -44,7 +44,7 @@ export const EventCard = memo(function EventCard({
 
   return (
     <div
-      className={`flex rounded-lg border border-black dark:border-white transition-colors ${
+      className={`flex rounded-lg border border-black/20 dark:border-white/20 transition-colors ${
         isSelected
           ? 'bg-gray-100 dark:bg-zinc-800'
           : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'
@@ -88,7 +88,7 @@ export const EventCard = memo(function EventCard({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7"
+            className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
             onClick={(e) => {
               e.stopPropagation()
               onEdit?.(event)

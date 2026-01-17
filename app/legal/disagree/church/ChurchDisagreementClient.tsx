@@ -442,7 +442,7 @@ export function ChurchDisagreementClient({
                       size="sm"
                       onClick={() => handleWithdraw(d.id)}
                       disabled={isSubmitting}
-                      className="!bg-green-600 hover:!bg-green-700 !text-white"
+                      className="!bg-green-600 hover:!bg-green-700 !text-brand-foreground"
                     >
                       <Check className="mr-2 h-4 w-4" />
                       {t.pending.reAgree}
@@ -568,14 +568,14 @@ export function ChurchDisagreementClient({
                 </div>
 
                 <div className="flex gap-3 pt-2">
-                  <Button variant="outline" onClick={() => router.back()} className="flex-1 h-11">
+                  <Button variant="outline" onClick={() => router.back()} className="flex-1 h-11 !border-0">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     {t.warning.goBack}
                   </Button>
                   <Button
                     variant="destructive"
                     onClick={() => setStep('options')}
-                    className="flex-1 h-11 !bg-red-600 hover:!bg-red-700 !text-white font-medium"
+                    className="flex-1 h-11 !bg-red-600 hover:!bg-red-700 !text-brand-foreground font-medium"
                   >
                     {t.warning.continueButton}
                   </Button>
@@ -661,7 +661,7 @@ export function ChurchDisagreementClient({
                       setSelectedAction('disagree')
                       setStep('confirm')
                     }}
-                    className="w-full !bg-red-600 hover:!bg-red-700 !text-white font-medium"
+                    className="w-full !bg-red-600 hover:!bg-red-700 !text-brand-foreground font-medium"
                   >
                     <AlertTriangle className="mr-2 h-4 w-4" />
                     {t.options.proceedButton}
@@ -718,7 +718,7 @@ export function ChurchDisagreementClient({
                 </div>
 
                 <div className="flex gap-3 pt-2">
-                  <Button variant="outline" onClick={() => setStep('options')} className="flex-1 h-11">
+                  <Button variant="outline" onClick={() => setStep('options')} className="flex-1 h-11 !border-0">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     {t.confirm.goBack}
                   </Button>
@@ -726,7 +726,7 @@ export function ChurchDisagreementClient({
                     variant="destructive"
                     onClick={handleConfirmDisagreement}
                     disabled={!understood || !password || isSubmitting}
-                    className="flex-1 h-11 !bg-red-600 hover:!bg-red-700 !text-white font-medium disabled:!bg-red-300"
+                    className="flex-1 h-11 !bg-red-600 hover:!bg-red-700 !text-brand-foreground font-medium disabled:!bg-red-300"
                   >
                     {isSubmitting ? t.confirm.processing : t.confirm.confirmButton}
                   </Button>
@@ -738,7 +738,7 @@ export function ChurchDisagreementClient({
 
         {/* Transfer Ownership Dialog */}
         <Dialog open={showTransferDialog} onOpenChange={setShowTransferDialog}>
-          <DialogContent>
+          <DialogContent className="!border !border-black dark:!border-white">
             <DialogHeader>
               <DialogTitle>{t.transfer.title}</DialogTitle>
               <DialogDescription>{t.transfer.description}</DialogDescription>

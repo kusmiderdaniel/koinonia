@@ -29,7 +29,7 @@ export const SelectableCard = memo(
         type="button"
         className={cn(
           'w-full text-left p-3 rounded-lg transition-colors',
-          variant === 'bordered' && 'border border-black dark:border-white',
+          variant === 'bordered' && 'border border-black/20 dark:border-white/20',
           isSelected
             ? 'bg-gray-100 dark:bg-zinc-800'
             : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50',

@@ -54,7 +54,7 @@ export const MemberRow = memo(function MemberRow({
   }
 
   return (
-    <div className={`flex items-center justify-between rounded-lg border gap-2 ${isMobile ? 'p-2' : 'p-3'}`}>
+    <div className={`flex items-center justify-between rounded-lg border border-black/20 dark:border-white/20 gap-2 ${isMobile ? 'p-2' : 'p-3'}`}>
       <div className="flex items-center gap-2 min-w-0 flex-1">
         <div className="min-w-0">
           <p className={`font-medium truncate ${isMobile ? 'text-sm' : ''}`}>
@@ -71,7 +71,7 @@ export const MemberRow = memo(function MemberRow({
         {canManage && allRoles.length > 0 ? (
           <Popover open={isOpen} onOpenChange={setIsOpen}>
             <PopoverTrigger asChild>
-              <Button variant="ghost" className={`justify-between !border !border-black dark:!border-white ${isMobile ? 'min-w-[70px] text-xs h-8' : 'min-w-[140px] text-sm'}`}>
+              <Button variant="ghost" className={`justify-between !border !border-black/20 dark:!border-white/20 ${isMobile ? 'min-w-[70px] text-xs h-8' : 'min-w-[140px] text-sm'}`}>
                 {member.roles.length === 0 ? (
                   <span className="text-muted-foreground">{t('members.noRoles')}</span>
                 ) : member.roles.length === 1 ? (
@@ -90,6 +90,7 @@ export const MemberRow = memo(function MemberRow({
                       id={`member-role-${member.id}-${role.id}`}
                       checked={selectedRoleIds.includes(role.id)}
                       onCheckedChange={() => handleRoleToggle(role.id)}
+                      className="border-black/20 dark:border-white/20"
                     />
                     <label
                       htmlFor={`member-role-${member.id}-${role.id}`}
@@ -100,11 +101,11 @@ export const MemberRow = memo(function MemberRow({
                   </div>
                 ))}
               </div>
-              <div className="flex justify-end gap-2 mt-3 pt-3 border-t">
-                <Button variant="ghost" size="sm" onClick={handleCancel} className="!border !border-black dark:!border-white">
+              <div className="flex justify-end gap-2 mt-3 pt-3 border-t border-black/20 dark:border-white/20">
+                <Button variant="ghost" size="sm" onClick={handleCancel} className="rounded-full">
                   {t('actions.cancel')}
                 </Button>
-                <Button size="sm" onClick={handleSave} className="!bg-brand hover:!bg-brand/90 !text-white">
+                <Button size="sm" onClick={handleSave} className="!bg-brand hover:!bg-brand/90 !text-black">
                   {t('actions.save')}
                 </Button>
               </div>

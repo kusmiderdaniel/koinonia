@@ -16,15 +16,17 @@ export const BaptizedCell = memo(function BaptizedCell({
 }: BaptizedCellProps) {
   return (
     <TableCell className={getFrozenClasses(columnKey)} style={getColumnStyle(columnKey)}>
-      <Checkbox
-        checked={member.baptism}
-        onCheckedChange={(checked) => {
-          const newBaptism = checked as boolean
-          onBaptismChange(member.id, newBaptism, newBaptism ? member.baptism_date : null)
-        }}
-        disabled={!canEditFields || isUpdatingBaptism}
-        className={isUpdatingBaptism ? 'opacity-50' : ''}
-      />
+      <div className="flex justify-center">
+        <Checkbox
+          checked={member.baptism}
+          onCheckedChange={(checked) => {
+            const newBaptism = checked as boolean
+            onBaptismChange(member.id, newBaptism, newBaptism ? member.baptism_date : null)
+          }}
+          disabled={!canEditFields || isUpdatingBaptism}
+          className={isUpdatingBaptism ? 'opacity-50' : ''}
+        />
+      </div>
     </TableCell>
   )
 })

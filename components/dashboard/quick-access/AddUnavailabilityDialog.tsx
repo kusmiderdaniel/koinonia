@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -15,7 +16,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ChevronLeft, ChevronRight, X, CalendarOff, ArrowRight } from 'lucide-react'
 import { toast } from 'sonner'
-import { toDateString, parseDateString } from '@/lib/utils/format'
+import { toDateString } from '@/lib/utils/format'
 import { createUnavailability } from '@/app/dashboard/availability/actions'
 
 interface AddUnavailabilityDialogProps {
@@ -40,6 +41,7 @@ export function AddUnavailabilityDialog({
   onSuccess,
 }: AddUnavailabilityDialogProps) {
   const router = useRouter()
+  const t = useTranslations('dashboard.unavailabilityDialog')
   const [showReasonForm, setShowReasonForm] = useState(false)
   const [selectedStart, setSelectedStart] = useState<Date | null>(null)
   const [selectedEnd, setSelectedEnd] = useState<Date | null>(null)
@@ -157,7 +159,7 @@ export function AddUnavailabilityDialog({
     if ('error' in result && result.error) {
       toast.error(result.error)
     } else {
-      toast.success('Unavailability added')
+      toast.success(t('unavailabilityAdded'))
       onOpenChange(false)
       setSelectedStart(null)
       setSelectedEnd(null)
@@ -167,7 +169,7 @@ export function AddUnavailabilityDialog({
       router.refresh()
     }
     setIsSaving(false)
-  }, [selectedStart, selectedEnd, reason, router, onOpenChange, onSuccess])
+  }, [selectedStart, selectedEnd, reason, router, onOpenChange, onSuccess, t])
 
   const handleCancel = useCallback(() => {
     onOpenChange(false)
@@ -181,16 +183,16 @@ export function AddUnavailabilityDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent className="sm:max-w-md !border !border-black dark:!border-white" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Add Unavailability</DialogTitle>
+          <DialogTitle>{t('addTitle')}</DialogTitle>
         </DialogHeader>
 
         {!showReasonForm ? (
           // Calendar view
           <div className="py-2">
             <p className="text-sm text-muted-foreground mb-4">
-              Select dates when you are unavailable
+              {t('selectDatesDescription')}
             </p>
 
             {/* Month navigation */}
@@ -198,7 +200,7 @@ export function AddUnavailabilityDialog({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 !border !border-black dark:!border-white"
+                className="h-8 w-8 !border !border-black/20 dark:!border-white/20"
                 onClick={handlePrevMonth}
                 disabled={!canGoPrevious}
               >
@@ -208,7 +210,7 @@ export function AddUnavailabilityDialog({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 !border !border-black dark:!border-white"
+                className="h-8 w-8 !border !border-black/20 dark:!border-white/20"
                 onClick={handleNextMonth}
               >
                 <ChevronRight className="h-4 w-4" />
@@ -249,7 +251,7 @@ export function AddUnavailabilityDialog({
               <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
                 <div className="flex items-center justify-between">
                   <div className="text-sm">
-                    <span className="font-medium">Selected: </span>
+                    <span className="font-medium">{t('selected')} </span>
                     <span>
                       {selectedStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                     </span>
@@ -260,10 +262,10 @@ export function AddUnavailabilityDialog({
                 </div>
                 <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-2">
                   <span className="text-xs text-muted-foreground">
-                    Click another date for a range, or
+                    {t('clickAnotherDate')}
                   </span>
-                  <Button size="sm" className="w-full sm:w-auto text-xs h-7" onClick={handleAddSingleDay}>
-                    Add Single Day
+                  <Button size="sm" variant="outline" className="w-full sm:w-auto text-xs h-7 border-black/20 dark:border-white/20" onClick={handleAddSingleDay}>
+                    {t('addSingleDay')}
                   </Button>
                 </div>
               </div>
@@ -276,7 +278,7 @@ export function AddUnavailabilityDialog({
               <div className="mb-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg">
                 <div className="flex items-center gap-2 text-red-700 dark:text-red-300 mb-3">
                   <CalendarOff className="h-4 w-4" />
-                  <span className="text-sm font-medium">Marking as unavailable</span>
+                  <span className="text-sm font-medium">{t('markingAsUnavailable')}</span>
                 </div>
                 {toDateString(selectedStart) === toDateString(selectedEnd) ? (
                   <div className="flex justify-center">
@@ -317,14 +319,15 @@ export function AddUnavailabilityDialog({
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="reason">Reason (optional)</Label>
+              <Label htmlFor="reason">{t('reasonLabel')}</Label>
               <Textarea
                 id="reason"
-                placeholder="e.g., Vacation, Family event..."
+                placeholder={t('reasonPlaceholder')}
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 rows={2}
                 autoFocus={false}
+                className="border-black/20 dark:border-white/20"
               />
             </div>
           </div>
@@ -334,28 +337,28 @@ export function AddUnavailabilityDialog({
           {showReasonForm ? (
             <>
               <Button
-                variant="outline"
-                className="rounded-full !border !border-black dark:!border-white"
+                variant="ghost"
+                className="rounded-full"
                 onClick={() => setShowReasonForm(false)}
                 disabled={isSaving}
               >
-                Back
+                {t('back')}
               </Button>
               <Button
                 className="rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground"
                 onClick={handleSave}
                 disabled={isSaving}
               >
-                {isSaving ? 'Saving...' : 'Add'}
+                {isSaving ? t('saving') : t('add')}
               </Button>
             </>
           ) : (
             <Button
               variant="outline"
-              className="rounded-full !border !border-black dark:!border-white"
+              className="rounded-full !border-0"
               onClick={handleCancel}
             >
-              Cancel
+              {t('cancel')}
             </Button>
           )}
         </DialogFooter>

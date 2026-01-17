@@ -15,6 +15,11 @@ export function MultiSelectField({
 }: MultiSelectFieldProps) {
   const [mounted, setMounted] = useState(false)
 
+  // Deduplicate options by value
+  const uniqueOptions = field.options?.filter(
+    (option, index, self) => self.findIndex((o) => o.value === option.value) === index
+  )
+
   // Prevent hydration mismatch from Radix UI ID generation
   useEffect(() => {
     setMounted(true)
@@ -23,12 +28,15 @@ export function MultiSelectField({
   return (
     <FieldWrapper field={field} error={error}>
       <div className="space-y-2">
-        {field.options?.map((option) => {
+        {uniqueOptions?.map((option) => {
           const currentValues = (value as string[]) || []
           const isChecked = currentValues.includes(option.value)
           const optionColor = getOptionColorClasses(option.color)
           return (
-            <div key={option.value} className="flex items-center space-x-2">
+            <div
+              key={option.value}
+              className={`flex items-center space-x-2 px-2 py-1.5 rounded-md ${optionColor.bg} ${optionColor.text}`}
+            >
               {mounted ? (
                 <Checkbox
                   id={`${field.id}-${option.value}`}
@@ -42,7 +50,7 @@ export function MultiSelectField({
               )}
               <Label
                 htmlFor={`${field.id}-${option.value}`}
-                className={`px-2 py-0.5 rounded-full text-sm font-medium cursor-pointer ${optionColor.bg} ${optionColor.text}`}
+                className="text-sm font-medium cursor-pointer"
               >
                 {option.label}
               </Label>

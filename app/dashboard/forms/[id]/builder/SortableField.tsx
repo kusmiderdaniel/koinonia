@@ -18,6 +18,7 @@ import {
   CheckSquare,
   Square,
   ChevronUp,
+  Minus,
 } from 'lucide-react'
 import { useFormBuilder } from '../../hooks/useFormBuilder'
 import { useIsMobile } from '@/lib/hooks'
@@ -43,6 +44,7 @@ const FIELD_ICONS: Record<FieldType, LucideIcon> = {
   single_select: ChevronDown,
   multi_select: CheckSquare,
   checkbox: Square,
+  divider: Minus,
 }
 
 export const SortableField = memo(function SortableField({
@@ -108,7 +110,7 @@ export const SortableField = memo(function SortableField({
     <div
       ref={setNodeRef}
       style={style}
-      className={`group relative bg-white dark:bg-zinc-900 border rounded-lg cursor-pointer transition-all ${
+      className={`group relative bg-white dark:bg-zinc-900 border border-black/20 dark:border-white/20 rounded-lg cursor-pointer transition-all ${
         isMobile ? 'p-3' : 'p-4'
       } ${
         isDragging ? 'opacity-50 shadow-lg z-50' : ''
@@ -194,33 +196,33 @@ export const SortableField = memo(function SortableField({
         {/* Field Preview */}
         <div className="mt-2">
           {field.type === 'text' && (
-            <div className="h-9 rounded-md border bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
+            <div className="h-9 rounded-md border border-black/20 dark:border-white/20 bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
               {displayField.placeholder || t('fieldPlaceholders.text')}
             </div>
           )}
           {field.type === 'textarea' && (
-            <div className="h-20 rounded-md border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+            <div className="h-20 rounded-md border border-black/20 dark:border-white/20 bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
               {displayField.placeholder || t('fieldPlaceholders.textarea')}
             </div>
           )}
           {field.type === 'number' && (
-            <div className="h-9 rounded-md border bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
+            <div className="h-9 rounded-md border border-black/20 dark:border-white/20 bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
               {displayField.placeholder || t('fieldPlaceholders.number')}
             </div>
           )}
           {field.type === 'email' && (
-            <div className="h-9 rounded-md border bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
+            <div className="h-9 rounded-md border border-black/20 dark:border-white/20 bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
               {displayField.placeholder || t('fieldPlaceholders.email')}
             </div>
           )}
           {field.type === 'date' && (
-            <div className="h-9 rounded-md border bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
+            <div className="h-9 rounded-md border border-black/20 dark:border-white/20 bg-muted/50 px-3 flex items-center text-sm text-muted-foreground">
               <Calendar className="h-4 w-4 mr-2" />
               {t('fieldPlaceholders.date')}
             </div>
           )}
           {field.type === 'single_select' && (
-            <div className="h-9 rounded-md border bg-muted/50 px-3 flex items-center justify-between text-sm text-muted-foreground">
+            <div className="h-9 rounded-md border border-black/20 dark:border-white/20 bg-muted/50 px-3 flex items-center justify-between text-sm text-muted-foreground">
               <span>{t('fieldPlaceholders.single_select')}</span>
               <ChevronDown className="h-4 w-4" />
             </div>
@@ -229,7 +231,7 @@ export const SortableField = memo(function SortableField({
             <div className="space-y-2">
               {displayField.options.slice(0, 3).map((opt: { value: string; label: string }) => (
                 <div key={opt.value} className="flex items-center gap-2 text-sm">
-                  <div className="h-4 w-4 rounded border bg-muted/50" />
+                  <div className="h-4 w-4 rounded border border-black/20 dark:border-white/20 bg-muted/50" />
                   <span>{opt.label}</span>
                 </div>
               ))}
@@ -242,8 +244,21 @@ export const SortableField = memo(function SortableField({
           )}
           {field.type === 'checkbox' && (
             <div className="flex items-center gap-2 text-sm">
-              <div className="h-5 w-5 rounded border bg-muted/50" />
+              <div className="h-5 w-5 rounded border border-black/20 dark:border-white/20 bg-muted/50" />
               <span className="text-muted-foreground">{t('fieldPlaceholders.checkbox')}</span>
+            </div>
+          )}
+          {field.type === 'divider' && (
+            <div className="flex items-center gap-2">
+              {field.settings?.divider?.showTitle ? (
+                <>
+                  <div className="h-px bg-zinc-300 dark:bg-zinc-600 w-6" />
+                  <span className="text-xs text-muted-foreground">{displayField.label || t('fieldTypes.divider')}</span>
+                  <div className="h-px bg-zinc-300 dark:bg-zinc-600 flex-1" />
+                </>
+              ) : (
+                <div className="h-px bg-zinc-300 dark:bg-zinc-600 w-full" />
+              )}
             </div>
           )}
         </div>

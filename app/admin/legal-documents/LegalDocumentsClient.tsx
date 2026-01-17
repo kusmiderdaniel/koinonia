@@ -142,7 +142,7 @@ export function LegalDocumentsClient({ initialDocuments }: LegalDocumentsClientP
                 <TabsTrigger
                   key={type.key}
                   value={type.key}
-                  className="text-sm px-4 py-2 data-[state=active]:bg-brand data-[state=active]:text-white data-[state=active]:shadow-sm rounded-md"
+                  className="text-sm px-4 py-2 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground data-[state=active]:shadow-sm rounded-md"
                 >
                   {type.label}
                 </TabsTrigger>

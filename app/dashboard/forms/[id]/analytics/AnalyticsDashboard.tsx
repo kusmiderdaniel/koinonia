@@ -106,10 +106,10 @@ export function AnalyticsDashboard({ formId }: AnalyticsDashboardProps) {
       {/* Time Range Selector */}
       <div className="flex justify-end">
         <Select value={days} onValueChange={setDays}>
-          <SelectTrigger className="w-[150px] border border-black dark:border-white">
+          <SelectTrigger className="w-[150px] border border-black/20 dark:border-white/20">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="border border-black dark:border-white">
+          <SelectContent className="border border-black/20 dark:border-white/20">
             <SelectItem value="all">{t('analytics.allTime')}</SelectItem>
             <SelectItem value="7">{t('analytics.last7Days')}</SelectItem>
             <SelectItem value="30">{t('analytics.last30Days')}</SelectItem>
@@ -146,7 +146,7 @@ export function AnalyticsDashboard({ formId }: AnalyticsDashboardProps) {
       {analytics.timeline.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-base font-medium">{t('analytics.activityOverTime')}</h3>
-          <Card className="border border-black dark:border-white">
+          <Card className="border border-black/20 dark:border-white/20">
             <CardContent className="pt-4">
               <LineChart
                 data={analytics.timeline}
@@ -168,7 +168,7 @@ export function AnalyticsDashboard({ formId }: AnalyticsDashboardProps) {
         analytics.deviceBreakdown.tablet > 0) && (
         <div className="space-y-2">
           <h3 className="text-base font-medium">{t('analytics.deviceBreakdown')}</h3>
-          <Card className="border border-black dark:border-white">
+          <Card className="border border-black/20 dark:border-white/20">
             <CardContent className="pt-4">
               <PieChart data={deviceData} tooltipLabel={t('analytics.responses')} />
             </CardContent>
@@ -185,14 +185,24 @@ export function AnalyticsDashboard({ formId }: AnalyticsDashboardProps) {
       />
 
       {/* Field Summaries */}
-      {fieldSummaries.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">{t('analytics.responseSummary')}</h3>
-          {fieldSummaries.map((summary) => (
-            <FieldSummaryCard key={summary.fieldId} summary={summary} />
-          ))}
-        </div>
-      )}
+      {fieldSummaries.length > 0 && (() => {
+        // Filter out field types that don't have meaningful summaries
+        const excludedTypes = ['text', 'textarea', 'divider', 'email']
+        const filteredSummaries = fieldSummaries.filter(
+          (summary) => !excludedTypes.includes(summary.fieldType)
+        )
+
+        if (filteredSummaries.length === 0) return null
+
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">{t('analytics.responseSummary')}</h3>
+            {filteredSummaries.map((summary) => (
+              <FieldSummaryCard key={summary.fieldId} summary={summary} />
+            ))}
+          </div>
+        )
+      })()}
     </div>
   )
 }

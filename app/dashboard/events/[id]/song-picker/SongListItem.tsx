@@ -21,7 +21,7 @@ export const SongListItem = memo(function SongListItem({
     <button
       onClick={() => onSelect(song)}
       disabled={isDisabled}
-      className="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-muted/50 transition-colors text-left disabled:opacity-50"
+      className="w-full flex items-center gap-3 p-3 rounded-lg border border-black/20 dark:border-white/20 hover:bg-muted/50 transition-colors text-left disabled:opacity-50"
     >
       <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center flex-shrink-0">
         <Music className="w-4 h-4 text-purple-600 dark:text-purple-400" />

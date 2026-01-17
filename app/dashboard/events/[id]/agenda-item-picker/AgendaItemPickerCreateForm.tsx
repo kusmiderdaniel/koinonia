@@ -52,12 +52,12 @@ export function AgendaItemPickerCreateForm({
       <div className="space-y-1.5">
         <Label>Ministry *</Label>
         <Select value={formState.ministryId} onValueChange={onMinistryChange}>
-          <SelectTrigger className="bg-white dark:bg-zinc-950 border border-input">
+          <SelectTrigger className="bg-white dark:bg-zinc-950">
             <SelectValue placeholder="Select a ministry..." />
           </SelectTrigger>
           <SelectContent
             align="start"
-            className="bg-white dark:bg-zinc-950 border border-input"
+            className="bg-white dark:bg-zinc-950"
           >
             {ministries.map((ministry) => (
               <SelectItem key={ministry.id} value={ministry.id}>
@@ -99,10 +99,10 @@ export function AgendaItemPickerCreateForm({
 
       <DialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-2">
         <Button
-          variant="outline"
+          variant="ghost"
           onClick={onBack}
           disabled={isAdding}
-          className="rounded-full !border !border-black dark:!border-white"
+          className="rounded-full"
         >
           Back
         </Button>

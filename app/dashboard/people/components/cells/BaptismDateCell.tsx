@@ -20,12 +20,14 @@ export const BaptismDateCell = memo(function BaptismDateCell({
       className={cn('text-muted-foreground', getFrozenClasses(columnKey))}
       style={getColumnStyle(columnKey)}
     >
-      <InlineDateEditor
-        value={member.baptism_date}
-        onChange={(date) => onBaptismChange(member.id, date ? true : member.baptism, date)}
-        disabled={isUpdatingBaptism}
-        canEdit={canEditFields}
-      />
+      <div className="flex justify-center">
+        <InlineDateEditor
+          value={member.baptism_date}
+          onChange={(date) => onBaptismChange(member.id, date ? true : member.baptism, date)}
+          disabled={isUpdatingBaptism}
+          canEdit={canEditFields}
+        />
+      </div>
     </TableCell>
   )
 })

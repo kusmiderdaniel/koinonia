@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -41,6 +42,8 @@ export function CreateEventFromTemplateDialog({
   onOpenChange,
   template,
 }: CreateEventFromTemplateDialogProps) {
+  const t = useTranslations('events.createFromTemplate')
+  const tCommon = useTranslations('common')
   const [selectedDates, setSelectedDates] = useState<Date[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -100,11 +103,11 @@ export function CreateEventFromTemplateDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
         <DialogHeader>
-          <DialogTitle>Create Event from Template</DialogTitle>
+          <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>
-            Select one or more dates for the new events.
+            {t('description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -116,7 +119,7 @@ export function CreateEventFromTemplateDialog({
           )}
 
           {/* Template Summary - Compact */}
-          <div className="p-3 rounded-lg border bg-muted/30">
+          <div className="p-3 rounded-lg border border-black/20 dark:border-white/20 bg-muted/30">
             <div className="flex items-center gap-2">
               <EventTypeBadge type={template.event_type} />
               <h3 className="font-semibold text-sm truncate">{template.name}</h3>
@@ -138,7 +141,7 @@ export function CreateEventFromTemplateDialog({
           {/* Date Picker - Compact */}
           <div className="space-y-1">
             <label className="text-xs font-medium text-muted-foreground">
-              Tap to select/deselect dates
+              {t('tapToSelect')}
             </label>
             <div className="flex justify-center">
               <Calendar
@@ -147,7 +150,7 @@ export function CreateEventFromTemplateDialog({
                 onSelect={(dates) => setSelectedDates(dates || [])}
                 disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                 weekStartsOn={firstDayOfWeek}
-                className="rounded-md border !p-2"
+                className="rounded-md border border-black/20 dark:border-white/20 !p-2"
                 classNames={{
                   months: "flex flex-col",
                   month: "space-y-2",
@@ -168,7 +171,7 @@ export function CreateEventFromTemplateDialog({
             </div>
             {selectedDates.length > 0 && (
               <div className="text-xs text-center text-muted-foreground">
-                {selectedDates.length} date{selectedDates.length > 1 ? 's' : ''} selected
+                {t('datesSelected', { count: selectedDates.length })}
               </div>
             )}
           </div>
@@ -177,24 +180,24 @@ export function CreateEventFromTemplateDialog({
         <DialogFooter className="!flex-row gap-3 pt-4 !bg-transparent !border-0">
           <Button
             type="button"
-            variant="outline-pill"
-            className="flex-1 !border !border-black dark:!border-white"
+            variant="ghost"
+            className="flex-1 rounded-full"
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
           >
-            Cancel
+            {tCommon('buttons.cancel')}
           </Button>
           <Button
             variant="outline-pill"
             onClick={handleCreate}
             disabled={isLoading || selectedDates.length === 0}
-            className="flex-1 !border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
+            className="flex-1 !border !bg-brand hover:!bg-brand/90 !text-brand-foreground !border-brand disabled:!opacity-50"
           >
             {isLoading
-              ? 'Creating...'
+              ? tCommon('loading.processing')
               : selectedDates.length > 1
-              ? `Create ${selectedDates.length}`
-              : 'Create'}
+              ? t('createCount', { count: selectedDates.length })
+              : tCommon('buttons.create')}
           </Button>
         </DialogFooter>
       </DialogContent>

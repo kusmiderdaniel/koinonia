@@ -21,6 +21,7 @@ import {
   isColumnVisible,
   isColumnFrozen,
   isLastFrozenColumn,
+  isColumnCentered,
   type PeopleColumn,
   type PeopleColumnKey,
 } from './columns'
@@ -107,6 +108,7 @@ export function MembersTableHeader({
               const isFrozen = isColumnFrozen(column.key, orderedColumns, freezeColumnKey ?? null)
               const isLastFrozen = isLastFrozenColumn(column.key, freezeColumnKey ?? null)
               const leftOffset = frozenColumnOffsets[column.key] ?? 0
+              const centered = isColumnCentered(column.key, column)
 
               return (
                 <SortableColumnHeader
@@ -117,6 +119,7 @@ export function MembersTableHeader({
                   isFrozen={isFrozen}
                   leftOffset={leftOffset}
                   isLastFrozen={isLastFrozen}
+                  centered={centered}
                 >
                   {tooltip || description ? (
                     <HeaderWithTooltip label={label} tooltip={tooltip || description!} />
@@ -137,7 +140,7 @@ export function MembersTableHeader({
     <TableHeader>
       <TableRow>
         {show('active') && (
-          <ResizableTableHead columnKey="active" width={columnWidths['active']} onResize={onResizeColumn}>
+          <ResizableTableHead columnKey="active" width={columnWidths['active']} onResize={onResizeColumn} centered>
             {t('tableHeader.active')}
           </ResizableTableHead>
         )}
@@ -177,27 +180,27 @@ export function MembersTableHeader({
           </ResizableTableHead>
         )}
         {show('date_of_birth') && (
-          <ResizableTableHead columnKey="date_of_birth" width={columnWidths['date_of_birth']} onResize={onResizeColumn}>
+          <ResizableTableHead columnKey="date_of_birth" width={columnWidths['date_of_birth']} onResize={onResizeColumn} centered>
             <HeaderWithTooltip label={t('tableHeader.dateOfBirth')} tooltip={t('tableHeader.dateOfBirthTooltip')} />
           </ResizableTableHead>
         )}
         {show('age') && (
-          <ResizableTableHead columnKey="age" width={columnWidths['age']} onResize={onResizeColumn}>
+          <ResizableTableHead columnKey="age" width={columnWidths['age']} onResize={onResizeColumn} centered>
             {t('tableHeader.age')}
           </ResizableTableHead>
         )}
         {show('baptized') && (
-          <ResizableTableHead columnKey="baptized" width={columnWidths['baptized']} onResize={onResizeColumn}>
+          <ResizableTableHead columnKey="baptized" width={columnWidths['baptized']} onResize={onResizeColumn} centered>
             {t('tableHeader.baptized')}
           </ResizableTableHead>
         )}
         {show('baptism_date') && (
-          <ResizableTableHead columnKey="baptism_date" width={columnWidths['baptism_date']} onResize={onResizeColumn}>
+          <ResizableTableHead columnKey="baptism_date" width={columnWidths['baptism_date']} onResize={onResizeColumn} centered>
             {t('tableHeader.baptismDate')}
           </ResizableTableHead>
         )}
         {show('departure_date') && (
-          <ResizableTableHead columnKey="departure_date" width={columnWidths['departure_date']} onResize={onResizeColumn}>
+          <ResizableTableHead columnKey="departure_date" width={columnWidths['departure_date']} onResize={onResizeColumn} centered>
             {t('tableHeader.departureDate')}
           </ResizableTableHead>
         )}
@@ -207,7 +210,7 @@ export function MembersTableHeader({
           </ResizableTableHead>
         )}
         {show('joined') && (
-          <ResizableTableHead columnKey="joined" width={columnWidths['joined']} onResize={onResizeColumn}>
+          <ResizableTableHead columnKey="joined" width={columnWidths['joined']} onResize={onResizeColumn} centered>
             {t('tableHeader.joined')}
           </ResizableTableHead>
         )}
@@ -215,12 +218,14 @@ export function MembersTableHeader({
         {customFields.map((field) => {
           const columnKey = `cf_${field.id}` as PeopleColumnKey
           if (!show(columnKey)) return null
+          const shouldCenter = field.field_type === 'checkbox' || field.field_type === 'date'
           return (
             <ResizableTableHead
               key={field.id}
               columnKey={columnKey}
               width={columnWidths[columnKey]}
               onResize={onResizeColumn}
+              centered={shouldCenter}
             >
               {field.description ? (
                 <HeaderWithTooltip label={field.name} tooltip={field.description} />

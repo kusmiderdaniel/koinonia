@@ -10,6 +10,7 @@ import {
   getUpcomingBirthdays,
   getChurchHolidays,
   getCalendarBirthdays,
+  getPendingMembers,
 } from './actions'
 import { getPendingDisagreements } from '../legal/disagree/actions'
 import { DashboardClient } from '@/components/dashboard/DashboardClient'
@@ -117,6 +118,7 @@ export default async function DashboardPage() {
             labelBold: link.label_bold ?? false,
             labelItalic: link.label_italic ?? false,
             labelUnderline: link.label_underline ?? false,
+            labelAlign: (link.label_align as 'left' | 'center' | 'right') ?? 'center',
           })),
           church: {
             id: profile.church_id,
@@ -190,6 +192,7 @@ export default async function DashboardPage() {
           labelBold: link.label_bold ?? false,
           labelItalic: link.label_italic ?? false,
           labelUnderline: link.label_underline ?? false,
+          labelAlign: (link.label_align as 'left' | 'center' | 'right') ?? 'center',
         })),
         church: {
           id: profile.church_id,
@@ -198,6 +201,20 @@ export default async function DashboardPage() {
         },
       }
     }
+  }
+
+  // Check if user is a leader or above (for pending members and invite code)
+  const isLeaderOrAbove = ['leader', 'admin', 'owner'].includes(role)
+
+  // Fetch join code for leaders+ (for invite members button)
+  let joinCode: string | null = null
+  if (isLeaderOrAbove) {
+    const { data: churchData } = await adminClient
+      .from('churches')
+      .select('join_code')
+      .eq('id', profile.church_id)
+      .single()
+    joinCode = churchData?.join_code || null
   }
 
   // For volunteers and above: Fetch full dashboard data
@@ -214,6 +231,7 @@ export default async function DashboardPage() {
     holidaysResult,
     calendarBirthdaysResult,
     pendingDisagreementsResult,
+    pendingMembersResult,
   ] = await Promise.all([
     getMyAssignments(),
     getUpcomingEvents(),
@@ -283,6 +301,8 @@ export default async function DashboardPage() {
     showBirthdays ? getCalendarBirthdays(currentMonth, currentYear) : Promise.resolve({ data: [] }),
     // Pending legal disagreements
     getPendingDisagreements(),
+    // Pending member registrations for leaders+
+    isLeaderOrAbove ? getPendingMembers() : Promise.resolve({ data: [] }),
   ])
 
   const assignments = assignmentsResult.data || []
@@ -320,7 +340,8 @@ export default async function DashboardPage() {
     event: t.event ? { id: t.event.id, title: t.event.title } : null,
   }))
 
-  const urgentItems = createUrgentItems(assignments, dashboardTasks, timeFormat)
+  const pendingMembers = pendingMembersResult.data || []
+  const urgentItems = createUrgentItems(assignments, dashboardTasks, timeFormat, pendingMembers)
   const weekItems = createWeekItems(assignments, dashboardTasks, timeFormat)
 
   // Check if user can create events (admin or owner)
@@ -351,6 +372,7 @@ export default async function DashboardPage() {
       linksData={linksData}
       pendingDisagreements={pendingDisagreementsResult.data || []}
       language={language}
+      joinCode={joinCode}
     />
   )
 }

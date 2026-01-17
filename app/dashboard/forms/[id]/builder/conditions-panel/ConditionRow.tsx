@@ -68,9 +68,9 @@ export const ConditionRow = memo(function ConditionRow({
         : TEXT_OPERATORS
 
   // Shared select class names
-  const selectContentClassName = '!border !border-black dark:!border-white'
+  const selectContentClassName = '!border !border-black/20 dark:!border-white/20'
   const labelClassName = isMobile ? 'text-[10px] text-muted-foreground' : 'text-xs text-muted-foreground'
-  const triggerClassName = isMobile ? 'h-7 text-xs' : 'h-8 text-sm'
+  const triggerClassName = isMobile ? 'h-7 text-xs !border !border-black/20 dark:!border-white/20' : 'h-8 text-sm !border !border-black/20 dark:!border-white/20'
   const spacingClassName = isMobile ? 'space-y-1' : 'space-y-1.5'
 
   const handleValueChange = (value: string) => {
@@ -78,7 +78,7 @@ export const ConditionRow = memo(function ConditionRow({
   }
 
   return (
-    <div className={`border rounded-lg bg-muted/30 ${isMobile ? 'space-y-2 p-2' : 'space-y-3 p-3'}`}>
+    <div className={`border border-black/20 dark:border-white/20 rounded-lg bg-muted/30 ${isMobile ? 'space-y-2 p-2' : 'space-y-3 p-3'}`}>
       {/* Action & When - side by side on mobile */}
       {isMobile ? (
         <div className="grid grid-cols-2 gap-2">

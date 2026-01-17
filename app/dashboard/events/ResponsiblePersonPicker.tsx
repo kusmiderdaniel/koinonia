@@ -82,7 +82,7 @@ export function ResponsiblePersonPicker({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950" onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 !border !border-black dark:!border-white" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>
@@ -103,7 +103,7 @@ export function ResponsiblePersonPicker({
             placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
+            className="pl-9 !border-black/20 dark:!border-white/20"
           />
         </div>
 
@@ -131,10 +131,10 @@ export function ResponsiblePersonPicker({
                     key={person.id}
                     type="button"
                     onClick={() => handleSelect(person)}
-                    className={`w-full text-left p-3 rounded-lg transition-all border border-black dark:border-white ${
+                    className={`w-full text-left p-3 rounded-lg transition-all border border-black/20 dark:border-white/20 ${
                       isSelected
-                        ? 'bg-gray-100 dark:bg-zinc-800 font-medium'
-                        : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'
+                        ? 'border-black dark:border-white bg-gray-100 dark:bg-zinc-800 font-medium'
+                        : 'hover:border-black dark:hover:border-white hover:bg-gray-50 dark:hover:bg-zinc-800/50'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -171,7 +171,7 @@ export function ResponsiblePersonPicker({
           )}
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             className="rounded-full"
             onClick={() => onOpenChange(false)}
           >

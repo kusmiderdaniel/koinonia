@@ -140,10 +140,10 @@ export function SongLyricsTab({ song, canManage, onSongUpdated }: SongLyricsTabP
           <div className="flex items-center gap-2">
             <span className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>{t('lyrics.view')}</span>
             <Select value={selectedView} onValueChange={setSelectedView}>
-              <SelectTrigger className={`h-8 ${isMobile ? 'w-[140px] text-xs' : 'w-[180px] text-sm'}`}>
+              <SelectTrigger className={`h-8 !border !border-black/20 dark:!border-white/20 ${isMobile ? 'w-[140px] text-xs' : 'w-[180px] text-sm'}`}>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="border border-black dark:border-white">
+              <SelectContent className="border border-black/20 dark:border-white/20">
                 <SelectItem value="sections">{t('lyrics.allSections')}</SelectItem>
                 {arrangements.map((arr) => (
                   <SelectItem key={arr.id} value={arr.id}>
@@ -158,7 +158,7 @@ export function SongLyricsTab({ song, canManage, onSongUpdated }: SongLyricsTabP
               <Button
                 variant="outline"
                 size="sm"
-                className={`!border !border-black dark:!border-white ${isMobile ? 'text-xs h-7' : ''}`}
+                className={`!border !border-black/20 dark:!border-white/20 ${isMobile ? 'text-xs h-7' : ''}`}
                 onClick={() => setIsImportDialogOpen(true)}
               >
                 <FileText className={isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'} />
@@ -167,7 +167,7 @@ export function SongLyricsTab({ song, canManage, onSongUpdated }: SongLyricsTabP
               <Button
                 variant="outline"
                 size="sm"
-                className={`!border !border-black dark:!border-white ${isMobile ? 'text-xs h-7' : ''}`}
+                className={`!border !border-black/20 dark:!border-white/20 ${isMobile ? 'text-xs h-7' : ''}`}
                 onClick={() => setIsCreateDialogOpen(true)}
               >
                 <Plus className={isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'} />
@@ -182,7 +182,7 @@ export function SongLyricsTab({ song, canManage, onSongUpdated }: SongLyricsTabP
       <div>
 
         {sections.length === 0 ? (
-          <div className="border rounded-lg p-6">
+          <div className="border border-black/20 dark:border-white/20 rounded-lg p-6">
             <EmptyState
               icon={FileText}
               title={t('lyrics.noLyricsYet')}
@@ -197,14 +197,14 @@ export function SongLyricsTab({ song, canManage, onSongUpdated }: SongLyricsTabP
               <div className="flex justify-center gap-3 mt-4">
                 <Button
                   variant="outline"
-                  className="!border !border-black dark:!border-white"
+                  className="!border !border-black/20 dark:!border-white/20"
                   onClick={() => setIsImportDialogOpen(true)}
                 >
                   <FileText className="w-4 h-4 mr-2" />
                   {t('lyrics.importLyrics')}
                 </Button>
                 <Button
-                  className="!bg-brand hover:!bg-brand/90 !text-white !border-0"
+                  className="!bg-brand hover:!bg-brand/90 !text-black !border-0"
                   onClick={() => setIsCreateDialogOpen(true)}
                 >
                   <Plus className="w-4 h-4 mr-2" />

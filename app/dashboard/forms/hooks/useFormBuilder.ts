@@ -53,6 +53,7 @@ const FALLBACK_LABELS: Record<FieldType, string> = {
   single_select: 'Dropdown',
   multi_select: 'Multiple Choice',
   checkbox: 'Checkbox',
+  divider: 'Divider',
 }
 
 export const useFormBuilder = create<FormBuilderStore>((set, get) => ({
@@ -133,6 +134,14 @@ export const useFormBuilder = create<FormBuilderStore>((set, get) => ({
     const { fields } = get()
     const insertIndex = index !== undefined ? index : fields.length
 
+    // Determine initial settings based on field type
+    let settings: BuilderField['settings'] = null
+    if (type === 'number') {
+      settings = { number: { format: 'number' as const, decimals: 0 } }
+    } else if (type === 'divider') {
+      settings = { divider: { showTitle: false } }
+    }
+
     const newField: BuilderField = {
       id,
       type,
@@ -143,9 +152,9 @@ export const useFormBuilder = create<FormBuilderStore>((set, get) => ({
       placeholder: null,
       placeholder_i18n: null,
       required: false,
-      options: type === 'single_select' || type === 'multi_select' ? [{ value: 'option1', label: 'Option 1' }] : null,
+      options: type === 'single_select' || type === 'multi_select' ? [{ value: 'Option 1', label: 'Option 1' }] : null,
       options_i18n: null,
-      settings: type === 'number' ? { number: { format: 'number', decimals: 0 } } : null,
+      settings,
       sort_order: insertIndex,
       isNew: true,
     }
@@ -194,9 +203,28 @@ export const useFormBuilder = create<FormBuilderStore>((set, get) => ({
 
   deleteField: (id) =>
     set((state) => {
-      const newFields = state.fields
-        .filter((f) => f.id !== id)
-        .map((f, i) => ({ ...f, sort_order: i }))
+      const fieldToDelete = state.fields.find((f) => f.id === id)
+
+      // If field is new (not saved to DB yet), remove it immediately
+      // Otherwise, mark it as deleted so it gets deleted on save
+      let newFields: BuilderField[]
+      if (fieldToDelete?.isNew) {
+        // New field - remove immediately
+        newFields = state.fields
+          .filter((f) => f.id !== id)
+          .map((f, i) => ({ ...f, sort_order: i }))
+      } else {
+        // Existing field - mark as deleted
+        newFields = state.fields.map((f) =>
+          f.id === id ? { ...f, isDeleted: true } : f
+        )
+        // Recalculate sort_order for non-deleted fields
+        let sortOrder = 0
+        newFields = newFields.map((f) => {
+          if (f.isDeleted) return f
+          return { ...f, sort_order: sortOrder++ }
+        })
+      }
 
       // Also delete conditions that reference this field
       const newConditions = state.conditions.filter(

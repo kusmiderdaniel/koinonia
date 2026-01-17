@@ -186,10 +186,16 @@
   "actions": {
     "edit": "Edit",
     "delete": "Delete",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "openMenu": "Open menu"
   },
 
   "builtInViews": {
     "myTasks": "My Tasks"
+  },
+
+  "pagination": {
+    "showing": "Showing {start} - {end} of {total}",
+    "rowsPerPage": "Rows per page"
   }
 }

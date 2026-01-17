@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -34,6 +35,7 @@ export function EditUnavailabilityDialog({
   onSuccess,
 }: EditUnavailabilityDialogProps) {
   const router = useRouter()
+  const t = useTranslations('dashboard.unavailabilityDialog')
   const [startDate, setStartDate] = useState(item?.start_date || '')
   const [endDate, setEndDate] = useState(item?.end_date || '')
   const [reason, setReason] = useState(item?.reason || '')
@@ -61,7 +63,7 @@ export function EditUnavailabilityDialog({
     if (!item || !startDate || !endDate) return
 
     if (endDate < startDate) {
-      toast.error('End date must be on or after start date')
+      toast.error(t('endDateError'))
       return
     }
 
@@ -75,18 +77,19 @@ export function EditUnavailabilityDialog({
     if ('error' in result && result.error) {
       toast.error(result.error)
     } else {
-      toast.success('Unavailability updated')
+      toast.success(t('unavailabilityUpdated'))
       onOpenChange(false)
       onSuccess()
       router.refresh()
     }
     setIsSaving(false)
-  }, [item, startDate, endDate, reason, router, onOpenChange, onSuccess])
+  }, [item, startDate, endDate, reason, router, onOpenChange, onSuccess, t])
 
   const handleCancel = useCallback(() => {
     onOpenChange(false)
   }, [onOpenChange])
 
+  const tQuickAccess = useTranslations('dashboard.quickAccess')
   const handleDelete = useCallback(async () => {
     if (!item) return
 
@@ -94,50 +97,50 @@ export function EditUnavailabilityDialog({
     const result = await deleteUnavailability(item.id)
 
     if (result.success) {
-      toast.success('Unavailability deleted')
+      toast.success(tQuickAccess('unavailabilityDeleted'))
       onOpenChange(false)
       onSuccess()
       router.refresh()
     } else {
-      toast.error('Failed to delete')
+      toast.error(tQuickAccess('failedToDelete'))
     }
     setIsDeleting(false)
-  }, [item, router, onOpenChange, onSuccess])
+  }, [item, router, onOpenChange, onSuccess, tQuickAccess])
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md !border !border-black dark:!border-white">
         <DialogHeader>
-          <DialogTitle>Edit Unavailability</DialogTitle>
+          <DialogTitle>{t('editTitle')}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Start Date</Label>
+              <Label>{t('startDate')}</Label>
               <DatePicker
                 value={startDate}
                 onChange={setStartDate}
-                placeholder="Select date"
+                placeholder={t('selectDate')}
                 weekStartsOn={weekStartsOn}
               />
             </div>
             <div className="space-y-2">
-              <Label>End Date</Label>
+              <Label>{t('endDate')}</Label>
               <DatePicker
                 value={endDate}
                 onChange={setEndDate}
-                placeholder="Select date"
+                placeholder={t('selectDate')}
                 weekStartsOn={weekStartsOn}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="editReason">Reason (optional)</Label>
+            <Label htmlFor="editReason">{t('reasonLabel')}</Label>
             <Textarea
               id="editReason"
-              placeholder="e.g., Vacation, Family event..."
+              placeholder={t('reasonPlaceholder')}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={2}
@@ -153,23 +156,23 @@ export function EditUnavailabilityDialog({
             disabled={isSaving || isDeleting}
           >
             <Trash2 className="h-4 w-4 mr-2" />
-            Delete
+            {t('delete')}
           </Button>
           <div className="flex gap-2">
             <Button
               variant="outline"
-              className="rounded-full !border !border-black dark:!border-white"
+              className="rounded-full !border-0"
               onClick={handleCancel}
               disabled={isSaving}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               className="rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground"
               onClick={handleSave}
               disabled={isSaving}
             >
-              {isSaving ? 'Saving...' : 'Save Changes'}
+              {isSaving ? t('saving') : t('saveChanges')}
             </Button>
           </div>
         </DialogFooter>

@@ -107,7 +107,7 @@ export function SectionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? t('sectionDialog.editTitle') : t('sectionDialog.addTitle')}
@@ -123,10 +123,10 @@ export function SectionDialog({
                 value={sectionType}
                 onValueChange={(value) => setSectionType(value as SectionType)}
               >
-                <SelectTrigger id="sectionType">
+                <SelectTrigger id="sectionType" className="!border !border-black/20 dark:!border-white/20">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="border border-black dark:border-white">
+                <SelectContent className="border border-black/20 dark:border-white/20">
                   {SECTION_TYPES.map((type) => (
                     <SelectItem key={type} value={type}>
                       {t(`sectionTypes.${type}`)}
@@ -146,6 +146,7 @@ export function SectionDialog({
                   min={1}
                   value={sectionNumber}
                   onChange={(e) => setSectionNumber(parseInt(e.target.value) || 1)}
+                  className="!border !border-black/20 dark:!border-white/20"
                 />
               </div>
             )}
@@ -162,6 +163,7 @@ export function SectionDialog({
               placeholder={t('sectionDialog.customLabelPlaceholder', { type: t(`sectionTypes.${sectionType}`) })}
               value={label}
               onChange={(e) => setLabel(e.target.value)}
+              className="!border !border-black/20 dark:!border-white/20"
             />
           </div>
 
@@ -173,7 +175,7 @@ export function SectionDialog({
               placeholder={t('sectionDialog.lyricsPlaceholder')}
               value={lyrics}
               onChange={(e) => setLyrics(e.target.value)}
-              className="min-h-[200px] font-mono text-sm"
+              className="min-h-[200px] font-mono text-sm !border !border-black/20 dark:!border-white/20"
             />
           </div>
 
@@ -182,9 +184,9 @@ export function SectionDialog({
           <DialogFooter className="gap-2 pt-2 pb-0">
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
               size="sm"
-              className="!border !border-black dark:!border-white"
+              className="rounded-full"
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
             >
@@ -193,7 +195,7 @@ export function SectionDialog({
             <Button
               type="submit"
               size="sm"
-              className="!bg-brand hover:!bg-brand/90 !text-white !border-0"
+              className="!bg-brand hover:!bg-brand/90 !text-black !border-0"
               disabled={isSubmitting}
             >
               {isSubmitting

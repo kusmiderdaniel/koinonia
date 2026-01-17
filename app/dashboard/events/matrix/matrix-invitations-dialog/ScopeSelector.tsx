@@ -31,7 +31,7 @@ export function ScopeSelector({
       onValueChange={(v: string) => onScopeChange(v as BulkInvitationScope)}
     >
       {/* All */}
-      <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-900">
+      <div className="flex items-center space-x-2 p-3 border border-black/20 dark:border-white/20 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-900">
         <RadioGroupItem value="all" id="scope-all" />
         <Label htmlFor="scope-all" className="flex-1 cursor-pointer">
           <span className="font-medium">{t('allPending')}</span>
@@ -43,7 +43,7 @@ export function ScopeSelector({
 
       {/* By Date */}
       {pendingCounts.byDate.length > 0 && (
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border border-black/20 dark:border-white/20 rounded-lg overflow-hidden">
           <div className="flex items-center space-x-2 p-3 hover:bg-gray-50 dark:hover:bg-zinc-900">
             <RadioGroupItem value="dates" id="scope-dates" />
             <Label
@@ -92,7 +92,7 @@ export function ScopeSelector({
 
       {/* By Ministry */}
       {pendingCounts.byMinistry.length > 0 && (
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border border-black/20 dark:border-white/20 rounded-lg overflow-hidden">
           <div className="flex items-center space-x-2 p-3 hover:bg-gray-50 dark:hover:bg-zinc-900">
             <RadioGroupItem value="ministries" id="scope-ministries" />
             <Label
@@ -138,7 +138,7 @@ export function ScopeSelector({
 
       {/* By Position/Role */}
       {pendingCounts.byPosition.length > 0 && (
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border border-black/20 dark:border-white/20 rounded-lg overflow-hidden">
           <div className="flex items-center space-x-2 p-3 hover:bg-gray-50 dark:hover:bg-zinc-900">
             <RadioGroupItem value="positions" id="scope-positions" />
             <Label

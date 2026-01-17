@@ -91,7 +91,7 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
   // Show placeholder button until mounted to prevent hydration mismatch
   if (!mounted) {
     return trigger || (
-      <Button variant="outline" className="gap-2 justify-center !border !border-black dark:!border-white">
+      <Button variant="outline" className="gap-2 justify-center !border !border-black/20 dark:!border-white/20">
         <UserPlus className="h-4 w-4" />
         {t('offlineMember.button')}
       </Button>
@@ -102,13 +102,13 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button variant="outline" className="gap-2 justify-center !border !border-black dark:!border-white">
+          <Button variant="outline" className="gap-2 justify-center !border !border-black/20 dark:!border-white/20">
             <UserPlus className="h-4 w-4" />
             {t('offlineMember.button')}
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] !border !border-black dark:!border-white">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{t('offlineMember.title')}</DialogTitle>
@@ -177,10 +177,10 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
                   value={formData.sex}
                   onValueChange={(value) => setFormData({ ...formData, sex: value })}
                 >
-                  <SelectTrigger id="sex" className="w-full !border !border-black dark:!border-white">
+                  <SelectTrigger id="sex" className="w-full !border !border-black/20 dark:!border-white/20">
                     <SelectValue placeholder={t('offlineMember.selectPlaceholder')} />
                   </SelectTrigger>
-                  <SelectContent className="border border-black dark:border-white">
+                  <SelectContent className="border border-black/20 dark:border-white/20">
                     <SelectItem value="male">{t('sex.male')}</SelectItem>
                     <SelectItem value="female">{t('sex.female')}</SelectItem>
                   </SelectContent>
@@ -189,10 +189,10 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" className="!border !border-black dark:!border-white" onClick={() => setOpen(false)}>
+            <Button type="button" variant="ghost" className="rounded-full" onClick={() => setOpen(false)}>
               {t('actions.cancel')}
             </Button>
-            <Button type="submit" disabled={loading} className="!bg-brand hover:!bg-brand/90 !text-white !border !border-brand">
+            <Button type="submit" disabled={loading} className="!bg-brand hover:!bg-brand/90 !text-black !border !border-brand">
               {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               {t('addMember')}
             </Button>

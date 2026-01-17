@@ -43,7 +43,7 @@ export const EventHeader = memo(function EventHeader({
   // Mobile: Compact header
   if (isMobile) {
     return (
-      <div className="px-3 py-2 border-b space-y-1">
+      <div className="px-3 py-2 border-b border-black/20 dark:border-white/20 space-y-1">
         {/* Row 1: Back + Title + Actions */}
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 -ml-2" onClick={onClose} aria-label="Close event details">
@@ -93,7 +93,7 @@ export const EventHeader = memo(function EventHeader({
 
   // Desktop: Full header
   return (
-    <div className="px-6 pt-4 pb-2 border-b">
+    <div className="px-6 pt-4 pb-2 border-b border-black/20 dark:border-white/20">
       <div className="flex items-start justify-between">
         <div>
           <h2 className="text-xl font-bold">{selectedEvent.title}</h2>

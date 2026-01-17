@@ -1,7 +1,7 @@
 'use client'
 
 import { memo } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -21,7 +21,13 @@ import { Calendar } from '@/components/ui/calendar'
 import { Checkbox } from '@/components/ui/checkbox'
 import { CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
+import { enUS, pl } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
+
+const localeMap = {
+  en: enUS,
+  pl: pl,
+} as const
 
 interface FieldOption {
   value: string
@@ -53,6 +59,8 @@ export const ValueInput = memo(function ValueInput({
   onChange,
 }: ValueInputProps) {
   const t = useTranslations('forms')
+  const locale = useLocale()
+  const dateLocale = localeMap[locale as keyof typeof localeMap] || enUS
 
   if (isDate) {
     return (
@@ -61,14 +69,14 @@ export const ValueInput = memo(function ValueInput({
           <Button
             variant="outline"
             className={cn(
-              'w-full justify-start text-left font-normal !border !border-black dark:!border-white',
+              'w-full justify-start text-left font-normal !border !border-black/20 dark:!border-white/20',
               isMobile ? 'h-7 text-xs' : 'h-8 text-sm',
               !value && 'text-muted-foreground'
             )}
           >
             <CalendarIcon className={isMobile ? 'mr-1 h-3 w-3' : 'mr-2 h-4 w-4'} />
             {value
-              ? format(new Date(value), isMobile ? 'PP' : 'PPP')
+              ? format(new Date(value), isMobile ? 'PP' : 'PPP', { locale: dateLocale })
               : isMobile ? t('conditions.pickDateMobile') : t('conditions.pickDate')}
           </Button>
         </PopoverTrigger>
@@ -81,6 +89,7 @@ export const ValueInput = memo(function ValueInput({
             selected={value ? new Date(value) : undefined}
             onSelect={(date) => onChange(date ? format(date, 'yyyy-MM-dd') : '')}
             weekStartsOn={weekStartsOn}
+            locale={dateLocale}
             className="p-3"
             initialFocus
           />
@@ -93,7 +102,7 @@ export const ValueInput = memo(function ValueInput({
     const selectedValues: string[] = value ? JSON.parse(value) : []
 
     return (
-      <div className={`border rounded-md bg-background ${isMobile ? 'space-y-1 p-1.5' : 'space-y-2 p-2'}`}>
+      <div className={`border border-black/20 dark:border-white/20 rounded-md bg-background ${isMobile ? 'space-y-1 p-1.5' : 'space-y-2 p-2'}`}>
         {options.map((option) => {
           const isChecked = selectedValues.includes(option.value)
           return (
@@ -101,6 +110,7 @@ export const ValueInput = memo(function ValueInput({
               <Checkbox
                 id={`condition-${conditionId}-${option.value}`}
                 checked={isChecked}
+                className="border-black/20 dark:border-white/20"
                 onCheckedChange={(checked) => {
                   const newValues = checked
                     ? [...selectedValues, option.value]
@@ -127,14 +137,14 @@ export const ValueInput = memo(function ValueInput({
   if (hasOptions && options) {
     return (
       <Select value={value || ''} onValueChange={onChange}>
-        <SelectTrigger className={isMobile ? 'h-7 text-xs' : 'h-8 text-sm'}>
+        <SelectTrigger className={isMobile ? 'h-7 text-xs !border !border-black/20 dark:!border-white/20' : 'h-8 text-sm !border !border-black/20 dark:!border-white/20'}>
           <SelectValue placeholder={isMobile ? t('conditions.selectValueMobile') : t('conditions.selectValue')} />
         </SelectTrigger>
         <SelectContent
           position="popper"
           sideOffset={4}
           align="start"
-          className="!border !border-black dark:!border-white"
+          className="!border !border-black/20 dark:!border-white/20"
         >
           {options.map((option) => (
             <SelectItem key={option.value} value={option.value}>
@@ -151,7 +161,7 @@ export const ValueInput = memo(function ValueInput({
       value={value || ''}
       onChange={(e) => onChange(e.target.value)}
       placeholder={isMobile ? t('conditions.enterValueMobile') : t('conditions.enterValue')}
-      className={isMobile ? 'h-7 text-xs' : 'h-8 text-sm'}
+      className={isMobile ? 'h-7 text-xs !border !border-black/20 dark:!border-white/20' : 'h-8 text-sm !border !border-black/20 dark:!border-white/20'}
     />
   )
 })

@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Download, Check, Clock, AlertTriangle, Loader2 } from 'lucide-react'
 import { requestDataExport } from '../../actions'
@@ -47,15 +46,16 @@ export function DataExportCard({ initialStatus }: DataExportCardProps) {
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <div className="space-y-4">
+      <div>
         <div className="flex items-center gap-2">
-          <Download className="h-5 w-5 text-primary" />
-          <CardTitle className="text-lg">{t('dataExport.title')}</CardTitle>
+          <Download className="h-5 w-5" />
+          <h3 className="text-lg font-semibold">{t('dataExport.title')}</h3>
         </div>
-        <CardDescription>{t('dataExport.description')}</CardDescription>
-      </CardHeader>
-      <CardContent>
+        <p className="text-sm text-muted-foreground">{t('dataExport.description')}</p>
+      </div>
+
+      <div>
         {exportError && (
           <Alert variant="destructive" className="mb-4">
             <AlertDescription>{exportError}</AlertDescription>
@@ -180,7 +180,7 @@ export function DataExportCard({ initialStatus }: DataExportCardProps) {
             </Button>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

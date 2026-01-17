@@ -44,7 +44,7 @@ export const AddDialog = memo(function AddDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent className="sm:max-w-md !border !border-black dark:!border-white" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>{t('addDialog.title')}</DialogTitle>
         </DialogHeader>
@@ -112,7 +112,7 @@ export const AddDialog = memo(function AddDialog({
         <DialogFooter>
           <Button
             variant="outline-pill"
-            className="!border !border-black dark:!border-white"
+            className="!border-0"
             onClick={onCancel}
             disabled={isSaving}
           >

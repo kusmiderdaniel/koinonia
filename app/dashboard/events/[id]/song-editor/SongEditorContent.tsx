@@ -54,7 +54,7 @@ export function SongEditorContent({
           type="button"
           onClick={onOpenLeaderPicker}
           disabled={!ministryId || isSaving}
-          className="w-full text-left p-3 rounded-lg border border-gray-900 dark:border-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full text-left p-3 rounded-lg border border-black/20 dark:border-white/20 hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {selectedLeaderName ? (
             <div className="flex items-center gap-2">
@@ -77,7 +77,7 @@ export function SongEditorContent({
           onChange={(e) => onDescriptionChange(e.target.value)}
           onBlur={onDescriptionSave}
           placeholder="Add notes for this song..."
-          className="min-h-[80px] text-sm resize-none"
+          className="min-h-[80px] text-sm resize-none !border-black/20 dark:!border-white/20"
           disabled={isSavingNotes}
         />
         {isSavingNotes && (
@@ -98,7 +98,7 @@ export function SongEditorContent({
         </Button>
         <Button
           variant="outline"
-          className="flex-1 rounded-full !border !border-black dark:!border-white"
+          className="flex-1 rounded-full !border !border-black/20 dark:!border-white/20"
           onClick={onReplace}
           disabled={isSaving || isRemoving}
         >
@@ -106,7 +106,7 @@ export function SongEditorContent({
           Replace
         </Button>
         <Button
-          className="flex-1 rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground"
+          className="flex-1 rounded-full !bg-brand hover:!bg-brand/90 !text-white dark:!text-black"
           onClick={onClose}
           disabled={isSaving || isRemoving}
         >

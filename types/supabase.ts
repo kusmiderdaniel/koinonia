@@ -1905,6 +1905,7 @@ export type Database = {
           id: string
           image_url: string | null
           is_active: boolean | null
+          label_align: string
           label_bold: boolean | null
           label_italic: boolean | null
           label_underline: boolean | null
@@ -1930,6 +1931,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean | null
+          label_align?: string
           label_bold?: boolean | null
           label_italic?: boolean | null
           label_underline?: boolean | null
@@ -1955,6 +1957,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_active?: boolean | null
+          label_align?: string
           label_bold?: boolean | null
           label_italic?: boolean | null
           label_underline?: boolean | null
@@ -2554,6 +2557,7 @@ export type Database = {
           is_super_admin: boolean | null
           language: string | null
           last_name: string
+          last_seen_at: string | null
           member_type: string
           notification_preferences: Json | null
           phone: string | null
@@ -2585,6 +2589,7 @@ export type Database = {
           is_super_admin?: boolean | null
           language?: string | null
           last_name: string
+          last_seen_at?: string | null
           member_type?: string
           notification_preferences?: Json | null
           phone?: string | null
@@ -2616,6 +2621,7 @@ export type Database = {
           is_super_admin?: boolean | null
           language?: string | null
           last_name?: string
+          last_seen_at?: string | null
           member_type?: string
           notification_preferences?: Json | null
           phone?: string | null
@@ -3467,3 +3473,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+

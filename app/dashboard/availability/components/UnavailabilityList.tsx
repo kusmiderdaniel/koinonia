@@ -62,13 +62,13 @@ export const UnavailabilityList = memo(function UnavailabilityList({
       <TabsList className="w-full bg-muted/50 border border-black dark:border-white">
         <TabsTrigger
           value="upcoming"
-          className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+          className="flex-1 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground"
         >
           {t('tabs.upcoming')}
         </TabsTrigger>
         <TabsTrigger
           value="past"
-          className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+          className="flex-1 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground"
         >
           {t('tabs.past')}
         </TabsTrigger>
@@ -127,7 +127,7 @@ interface UnavailabilityItemProps {
 
 const UnavailabilityItem = memo(function UnavailabilityItem({ item, isPast, onEdit, onDelete }: UnavailabilityItemProps) {
   return (
-    <div className="flex items-center justify-between py-2 px-3 rounded-md border bg-card hover:bg-accent/50 transition-colors">
+    <div className="flex items-center justify-between py-2 px-3 rounded-md border border-black/20 dark:border-white/20 bg-card hover:bg-accent/50 transition-colors">
       <div className="min-w-0 flex-1">
         <div className="font-medium text-sm truncate">
           {formatDateRange(item.start_date, item.end_date)}
@@ -138,12 +138,12 @@ const UnavailabilityItem = memo(function UnavailabilityItem({ item, isPast, onEd
       </div>
       <div className="flex items-center gap-0.5 ml-2">
         {!isPast && (
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onEdit(item)} aria-label="Edit unavailability">
+          <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30" onClick={() => onEdit(item)} aria-label="Edit unavailability">
             <Pencil className="h-3 w-3" />
           </Button>
         )}
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onDelete(item.id)} aria-label="Delete unavailability">
-          <Trash2 className="h-3 w-3 text-destructive" />
+        <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" onClick={() => onDelete(item.id)} aria-label="Delete unavailability">
+          <Trash2 className="h-3 w-3" />
         </Button>
       </div>
     </div>

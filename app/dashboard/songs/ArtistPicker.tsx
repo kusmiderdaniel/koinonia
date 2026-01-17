@@ -71,7 +71,7 @@ export const ArtistPicker = memo(function ArtistPicker({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="w-full justify-between !border !border-black dark:!border-white"
+          className="w-full justify-between !border !border-black/20 dark:!border-white/20"
         >
           <span className={value ? 'text-foreground' : 'text-muted-foreground'}>
             {value || t('artistPicker.placeholder')}
@@ -98,11 +98,11 @@ export const ArtistPicker = memo(function ArtistPicker({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-[var(--radix-popover-trigger-width)] p-0 bg-white dark:bg-zinc-950 border border-black dark:border-white"
+        className="w-[var(--radix-popover-trigger-width)] p-0 bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20"
         align="start"
       >
         {/* Search Input */}
-        <div className="p-2 border-b">
+        <div className="p-2 border-b border-black/20 dark:border-white/20">
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
@@ -119,7 +119,7 @@ export const ArtistPicker = memo(function ArtistPicker({
                   }
                 }
               }}
-              className="pl-8 h-9"
+              className="pl-8 h-9 !border-black/20 dark:!border-white/20"
               autoFocus
             />
           </div>
@@ -158,7 +158,7 @@ export const ArtistPicker = memo(function ArtistPicker({
 
         {/* Add New Artist Option */}
         {search.trim() && !exactMatch && (
-          <div className="border-t p-1">
+          <div className="border-t border-black/20 dark:border-white/20 p-1">
             <button
               type="button"
               onClick={handleCreateArtist}

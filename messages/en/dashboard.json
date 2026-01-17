@@ -41,7 +41,8 @@
     "allCaughtUpDescription": "You're all caught up! Check your week below.",
     "decline": "Decline",
     "accept": "Accept",
-    "viewMore": "View {count} more items"
+    "viewMore": "View {count} more items",
+    "review": "Review"
   },
   "yourWeek": {
     "title": "Your Week",
@@ -119,5 +120,28 @@
     "invitationDeclined": "Invitation declined",
     "taskCompleted": "Task completed!",
     "somethingWentWrong": "Something went wrong"
+  },
+  "unavailabilityDialog": {
+    "addTitle": "Add Unavailability",
+    "editTitle": "Edit Unavailability",
+    "selectDatesDescription": "Select dates when you are unavailable",
+    "selected": "Selected:",
+    "clickAnotherDate": "Click another date for a range, or",
+    "addSingleDay": "Add Single Day",
+    "markingAsUnavailable": "Marking as unavailable",
+    "reasonLabel": "Reason (optional)",
+    "reasonPlaceholder": "e.g., Vacation, Family event...",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "selectDate": "Select date",
+    "endDateError": "End date must be on or after start date",
+    "back": "Back",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "saving": "Saving...",
+    "add": "Add",
+    "saveChanges": "Save Changes",
+    "unavailabilityAdded": "Unavailability added",
+    "unavailabilityUpdated": "Unavailability updated"
   }
 }

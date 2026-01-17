@@ -13,7 +13,7 @@ export default function Page() {
           <Button asChild size="lg" className="rounded-full !border !border-black dark:!border-white">
             <Link href="/auth/signin">Sign In</Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="rounded-full !bg-brand hover:!bg-brand/90 !text-white !border-brand">
+          <Button asChild variant="outline" size="lg" className="rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground !border-brand">
             <Link href="/auth/signup">Get Started</Link>
           </Button>
         </div>

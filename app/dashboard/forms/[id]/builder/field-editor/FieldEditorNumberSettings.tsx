@@ -22,7 +22,7 @@ export function FieldEditorNumberSettings() {
   const settings = selectedField.settings?.number
 
   return (
-    <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
+    <div className="space-y-3 p-3 border border-black/20 dark:border-white/20 rounded-lg bg-muted/30">
       <Label className="text-sm font-medium">{t('title')}</Label>
 
       {/* Format */}
@@ -34,14 +34,14 @@ export function FieldEditorNumberSettings() {
           value={settings?.format || 'number'}
           onValueChange={(value) => handleNumberSettingChange('format', value)}
         >
-          <SelectTrigger id="number-format" className="h-8 text-sm">
+          <SelectTrigger id="number-format" className="h-8 text-sm !border !border-black/20 dark:!border-white/20">
             <SelectValue />
           </SelectTrigger>
           <SelectContent
             position="popper"
             sideOffset={4}
             align="start"
-            className="!border !border-black dark:!border-white"
+            className="!border !border-black/20 dark:!border-white/20"
           >
             {NUMBER_FORMAT_VALUES.map((format) => (
               <SelectItem key={format} value={format}>
@@ -69,7 +69,7 @@ export function FieldEditorNumberSettings() {
               )
             }
             placeholder={t('noMin')}
-            className="h-8 text-sm"
+            className="h-8 text-sm !border !border-black/20 dark:!border-white/20"
           />
         </div>
         <div className="space-y-1.5">
@@ -87,7 +87,7 @@ export function FieldEditorNumberSettings() {
               )
             }
             placeholder={t('noMax')}
-            className="h-8 text-sm"
+            className="h-8 text-sm !border !border-black/20 dark:!border-white/20"
           />
         </div>
       </div>
@@ -109,7 +109,7 @@ export function FieldEditorNumberSettings() {
           onChange={(e) =>
             handleNumberSettingChange('decimals', Number(e.target.value) || 0)
           }
-          className="h-8 text-sm"
+          className="h-8 text-sm !border !border-black/20 dark:!border-white/20"
         />
       </div>
     </div>

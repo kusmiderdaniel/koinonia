@@ -41,7 +41,8 @@
     "allCaughtUpDescription": "Wszystko załatwione! Sprawdź swój tydzień poniżej.",
     "decline": "Odrzuć",
     "accept": "Akceptuj",
-    "viewMore": "Zobacz {count} więcej elementów"
+    "viewMore": "Zobacz {count} więcej elementów",
+    "review": "Sprawdź"
   },
   "yourWeek": {
     "title": "Twój tydzień",
@@ -119,5 +120,28 @@
     "invitationDeclined": "Zaproszenie odrzucone",
     "taskCompleted": "Zadanie ukończone!",
     "somethingWentWrong": "Coś poszło nie tak"
+  },
+  "unavailabilityDialog": {
+    "addTitle": "Dodaj niedostępność",
+    "editTitle": "Edytuj niedostępność",
+    "selectDatesDescription": "Wybierz daty, kiedy jesteś niedostępny",
+    "selected": "Wybrano:",
+    "clickAnotherDate": "Kliknij inną datę, aby wybrać zakres, lub",
+    "addSingleDay": "Dodaj jeden dzień",
+    "markingAsUnavailable": "Oznaczanie jako niedostępny",
+    "reasonLabel": "Powód (opcjonalnie)",
+    "reasonPlaceholder": "np. Urlop, Wydarzenie rodzinne...",
+    "startDate": "Data początkowa",
+    "endDate": "Data końcowa",
+    "selectDate": "Wybierz datę",
+    "endDateError": "Data końcowa musi być równa lub późniejsza niż data początkowa",
+    "back": "Wstecz",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "saving": "Zapisywanie...",
+    "add": "Dodaj",
+    "saveChanges": "Zapisz zmiany",
+    "unavailabilityAdded": "Niedostępność dodana",
+    "unavailabilityUpdated": "Niedostępność zaktualizowana"
   }
 }

@@ -55,7 +55,7 @@ export function ViewSelector({
           <Button
             variant="outline"
             size="sm"
-            className={`gap-2 w-full sm:w-auto justify-center !border !border-black dark:!border-zinc-700 ${hasSelectedView ? '!border-brand text-brand' : ''}`}
+            className={`gap-2 w-full sm:w-auto justify-center !border !border-zinc-300 dark:!border-white/20 ${hasSelectedView ? '!border-brand text-brand' : ''}`}
             disabled={isLoading}
           >
             {hasSelectedView ? (

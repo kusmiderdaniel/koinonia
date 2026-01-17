@@ -21,7 +21,7 @@ export function KeySelector({
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium">{t('key')}</label>
-      <div className="border rounded-lg p-3 bg-gray-50 dark:bg-zinc-900">
+      <div className="border border-black/20 dark:border-white/20 rounded-lg p-3 bg-gray-50 dark:bg-zinc-900">
         {/* No key option */}
         <button
           type="button"
@@ -59,7 +59,7 @@ export function KeySelector({
         </div>
 
         {/* Minor keys */}
-        <div className="text-xs font-semibold text-muted-foreground px-1 py-1 border-t pt-2">
+        <div className="text-xs font-semibold text-muted-foreground px-1 py-1 border-t border-black/20 dark:border-white/20 pt-2">
           {t('minor')}
         </div>
         <div className="grid grid-cols-6 gap-1">

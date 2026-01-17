@@ -268,7 +268,7 @@ export default async function PeoplePage() {
           {(userIsAdmin || userIsLeader) && (
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
               {pendingCount > 0 && (
-                <Button variant="outline" asChild className="justify-center !border !border-black dark:!border-white">
+                <Button variant="outline" asChild className="justify-center !border !border-black/20 dark:!border-white/20">
                   <Link href="/dashboard/people/pending" className="flex items-center gap-2">
                     <UserPlus className="h-4 w-4" />
                     <span>{t('pendingBadge')}</span>

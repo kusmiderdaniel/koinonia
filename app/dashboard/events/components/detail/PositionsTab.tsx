@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge'
 import {
   Users,
   Plus,
-  Pencil,
   Trash2,
   UserPlus,
   User,
@@ -74,7 +73,6 @@ export const PositionsTab = memo(function PositionsTab({
   pendingInvitationsCount,
   multiAssignedProfiles,
   onAddPosition,
-  onEditPosition,
   onDeletePosition,
   onAssignVolunteer,
   onUnassign,
@@ -103,7 +101,7 @@ export const PositionsTab = memo(function PositionsTab({
             <Button
               variant="outline-pill"
               size="sm"
-              className={`!border !border-black dark:!border-white ${isMobile ? 'text-xs h-8' : ''}`}
+              className={`!border !border-zinc-300 dark:!border-white/20 ${isMobile ? 'text-xs h-8' : ''}`}
               onClick={onAddPosition}
             >
               <Plus className={isMobile ? 'w-3.5 h-3.5 mr-1' : 'w-4 h-4 mr-1'} />
@@ -139,17 +137,12 @@ export const PositionsTab = memo(function PositionsTab({
                       className={`rounded-lg border ${isMobile ? 'p-2' : 'p-3'}`}
                       style={{
                         backgroundColor: `${ministry.color}15`,
-                        borderColor: `${ministry.color}40`,
+                        borderColor: `${ministry.color}25`,
                       }}
                     >
                       <div className="flex items-center justify-between gap-1">
                         <div className="flex items-center gap-1.5 min-w-0 flex-1">
                           <span className={`font-medium truncate ${isMobile ? 'text-xs' : 'text-sm'}`}>{position.title}</span>
-                          {position.role && position.role.name !== position.title && !isMobile && (
-                            <Badge variant="outline" className="text-xs rounded-full flex-shrink-0">
-                              {position.role.name}
-                            </Badge>
-                          )}
                         </div>
                         {canManageContent && (
                           <div className="flex items-center flex-shrink-0">
@@ -157,21 +150,13 @@ export const PositionsTab = memo(function PositionsTab({
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={`rounded-full !border !border-black dark:!border-zinc-700 ${isMobile ? 'h-6 text-[10px] px-2' : 'h-7 text-xs'}`}
+                                className={`rounded-full !border !border-zinc-300 dark:!border-white/20 ${isMobile ? 'h-6 text-[10px] px-2' : 'h-7 text-xs'}`}
                                 onClick={() => onAssignVolunteer(position)}
                               >
                                 <UserPlus className={isMobile ? 'w-3 h-3 mr-0.5' : 'w-3 h-3 mr-1'} />
                                 {t('assign')}
                               </Button>
                             )}
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className={isMobile ? 'h-6 w-6' : 'h-7 w-7'}
-                              onClick={() => onEditPosition(position)}
-                            >
-                              <Pencil className="w-3 h-3" />
-                            </Button>
                             <Button
                               variant="ghost"
                               size="icon"

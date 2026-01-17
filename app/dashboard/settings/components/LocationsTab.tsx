@@ -54,7 +54,7 @@ export const LocationsTab = memo(function LocationsTab({
                 {t('description')}
               </CardDescription>
             </div>
-            <Button onClick={() => locationManager.openLocationDialog(undefined, defaultCampus?.id)} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0 w-full sm:w-auto">
+            <Button onClick={() => locationManager.openLocationDialog(undefined, defaultCampus?.id)} className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-black shrink-0 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               {t('addLocation')}
             </Button>
@@ -72,7 +72,7 @@ export const LocationsTab = memo(function LocationsTab({
               {locations.map((location) => (
                 <div
                   key={location.id}
-                  className="flex items-center justify-between p-2 md:p-4 border rounded-lg hover:bg-muted/50 transition-colors gap-2"
+                  className="flex items-center justify-between p-2 md:p-4 border border-black/20 dark:border-white/20 rounded-lg hover:bg-muted/50 transition-colors gap-2"
                 >
                   <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                     <MapPin className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground shrink-0" />
@@ -118,7 +118,7 @@ export const LocationsTab = memo(function LocationsTab({
         open={locationManager.locationDialogOpen}
         onOpenChange={(open) => !open && locationManager.closeLocationDialog()}
       >
-        <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-[90vw] md:max-w-lg">
+        <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-[90vw] md:max-w-lg !border !border-black dark:!border-white">
           <AlertDialogHeader>
             <AlertDialogTitle>
               {locationManager.editingLocation ? t('dialog.editTitle') : t('dialog.addTitle')}
@@ -171,13 +171,13 @@ export const LocationsTab = memo(function LocationsTab({
             )}
           </div>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-            <AlertDialogCancel disabled={locationManager.isSavingLocation} className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">{t('dialog.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel disabled={locationManager.isSavingLocation} className="rounded-full !border-0 bg-white dark:bg-zinc-950 px-4 py-2">{t('dialog.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() =>
                 locationManager.handleSaveLocation(locations, setLocations, setError, setSuccess)
               }
               disabled={locationManager.isSavingLocation || !locationManager.locationName.trim()}
-              className="rounded-full !border !border-brand !bg-brand hover:!bg-brand/90 !text-white px-4 py-2 disabled:!opacity-50"
+              className="rounded-full !border !border-brand !bg-brand hover:!bg-brand/90 !text-black px-4 py-2 disabled:!opacity-50"
             >
               {locationManager.isSavingLocation
                 ? t('dialog.saving')
@@ -194,7 +194,7 @@ export const LocationsTab = memo(function LocationsTab({
         open={locationManager.deleteLocationDialogOpen}
         onOpenChange={(open) => !open && locationManager.closeDeleteLocationDialog()}
       >
-        <AlertDialogContent className="max-w-[90vw] md:max-w-lg">
+        <AlertDialogContent className="max-w-[90vw] md:max-w-lg !border !border-black dark:!border-white">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('deleteDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
@@ -202,12 +202,12 @@ export const LocationsTab = memo(function LocationsTab({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-            <AlertDialogCancel className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">{t('deleteDialog.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-full !border-0 bg-white dark:bg-zinc-950 px-4 py-2">{t('deleteDialog.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() =>
                 locationManager.handleDeleteLocation(locations, setLocations, setError, setSuccess)
               }
-              className="!rounded-full !bg-red-600 hover:!bg-red-700 !text-white !px-4 !py-2"
+              className="!rounded-lg !border !border-red-600 !bg-red-600 hover:!bg-red-700 !text-black !px-4 !py-2"
             >
               {t('deleteDialog.confirm')}
             </AlertDialogAction>

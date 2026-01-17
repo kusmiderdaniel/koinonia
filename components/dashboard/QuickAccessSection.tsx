@@ -124,7 +124,7 @@ export function QuickAccessSection({ events, birthdays = [], unavailabilityCount
       <div className={cn('grid grid-cols-1 gap-4', gridCols)}>
         {/* Upcoming Events Card */}
         <Card
-          className="cursor-pointer hover:bg-muted/50 transition-colors border border-border"
+          className="cursor-pointer hover:bg-muted/50 transition-colors border border-black dark:border-white !ring-0 outline-none"
           onClick={() => router.push('/dashboard/events')}
         >
           <CardHeader className="pb-2 p-4">
@@ -144,7 +144,7 @@ export function QuickAccessSection({ events, birthdays = [], unavailabilityCount
                 {events.slice(0, 3).map((event) => (
                   <div
                     key={event.id}
-                    className="flex items-start justify-between gap-2"
+                    className="flex items-start justify-between gap-2 p-2 rounded-md border border-black/20 dark:border-white/20"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium truncate">{event.title}</p>
@@ -166,7 +166,7 @@ export function QuickAccessSection({ events, birthdays = [], unavailabilityCount
 
         {/* Upcoming Birthdays Card */}
         {showBirthdays && (
-          <Card className="border border-border">
+          <Card className="border border-black dark:border-white !ring-0 outline-none">
             <CardHeader className="pb-2 p-4">
               <CardTitle className="text-sm font-medium flex items-center justify-between">
                 <span className="flex items-center gap-2">
@@ -186,8 +186,8 @@ export function QuickAccessSection({ events, birthdays = [], unavailabilityCount
                     <div
                       key={birthday.id}
                       className={cn(
-                        'flex items-center gap-2 p-2 rounded-md border',
-                        isToday && 'bg-brand/10 border-brand',
+                        'flex items-center gap-2 p-2 rounded-md border-black/20 dark:border-white/20',
+                        isToday && 'bg-brand/10 border-brand dark:border-brand',
                         isSoon && !isToday && 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800'
                       )}
                     >
@@ -230,7 +230,7 @@ export function QuickAccessSection({ events, birthdays = [], unavailabilityCount
 
         {/* Unavailability Card */}
         <Card
-          className="cursor-pointer hover:bg-muted/50 transition-colors border border-border"
+          className="cursor-pointer hover:bg-muted/50 transition-colors border border-black dark:border-white !ring-0 outline-none"
           onClick={() => router.push('/dashboard/availability')}
         >
           <CardHeader className="pb-2 p-4">
@@ -252,7 +252,7 @@ export function QuickAccessSection({ events, birthdays = [], unavailabilityCount
                 {upcomingItems.slice(0, 3).map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between py-2 px-3 rounded-md border bg-card hover:bg-accent/50 transition-colors"
+                  className="flex items-center justify-between py-2 px-3 rounded-md border border-black/20 dark:border-white/20 bg-card hover:bg-accent/50 transition-colors"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="min-w-0 flex-1">

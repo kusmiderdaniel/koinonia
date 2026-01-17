@@ -100,7 +100,7 @@ export function SidebarContent({
 
           {visibleAdminNavItems.length > 0 && (
             <>
-              <div className="border-t my-2" />
+              <div className="border-t border-black dark:border-white my-2" />
               {visibleAdminNavItems.map((item) => {
                 const isActive = pathname === item.href
                 return (

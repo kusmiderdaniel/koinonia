@@ -7,7 +7,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { useIsMobile } from '@/lib/hooks'
 import { useFieldEditorContext } from './FieldEditorContext'
 
-export function FieldEditorBasicFields() {
+interface FieldEditorBasicFieldsProps {
+  dividerMode?: boolean
+}
+
+export function FieldEditorBasicFields({ dividerMode = false }: FieldEditorBasicFieldsProps) {
   const t = useTranslations('forms')
   const isMobile = useIsMobile()
   const {
@@ -25,7 +29,7 @@ export function FieldEditorBasicFields() {
 
   if (!selectedField) return null
 
-  const fieldWrapper = `border rounded-lg bg-muted/30 ${isMobile ? 'p-2 space-y-1' : 'p-3 space-y-2'}`
+  const fieldWrapper = `border border-black/20 dark:border-white/20 rounded-lg bg-muted/30 ${isMobile ? 'p-2 space-y-1' : 'p-3 space-y-2'}`
 
   // Get the value for the current locale
   const getLabelValue = () => {
@@ -71,6 +75,22 @@ export function FieldEditorBasicFields() {
     }
   }
 
+  // In divider mode, only show the title (label) field
+  if (dividerMode) {
+    return (
+      <div className={fieldWrapper}>
+        <Label htmlFor="label" className={isMobile ? 'text-sm' : ''}>{t('fieldEditor.dividerTitle')}</Label>
+        <Input
+          id="label"
+          value={getLabelValue()}
+          onChange={(e) => handleLabelValueChange(e.target.value)}
+          placeholder={t('fieldEditor.dividerTitlePlaceholder')}
+          className={`!border !border-black/20 dark:!border-white/20 ${isMobile ? 'h-9' : ''}`}
+        />
+      </div>
+    )
+  }
+
   return (
     <>
       {/* Label */}
@@ -81,7 +101,7 @@ export function FieldEditorBasicFields() {
           value={getLabelValue()}
           onChange={(e) => handleLabelValueChange(e.target.value)}
           placeholder={t('fieldEditor.questionPlaceholder')}
-          className={isMobile ? 'h-9' : ''}
+          className={`!border !border-black/20 dark:!border-white/20 ${isMobile ? 'h-9' : ''}`}
         />
       </div>
 
@@ -96,7 +116,7 @@ export function FieldEditorBasicFields() {
           onChange={(e) => handleDescriptionValueChange(e.target.value)}
           placeholder={t('fieldEditor.descriptionPlaceholder')}
           rows={isMobile ? 1 : 2}
-          className={isMobile ? 'min-h-[36px] py-2' : ''}
+          className={`!border !border-black/20 dark:!border-white/20 ${isMobile ? 'min-h-[36px] py-2' : ''}`}
         />
       </div>
 
@@ -111,7 +131,7 @@ export function FieldEditorBasicFields() {
             value={getPlaceholderValue()}
             onChange={(e) => handlePlaceholderValueChange(e.target.value)}
             placeholder={t('fieldEditor.placeholderPlaceholder')}
-            className={isMobile ? 'h-9' : ''}
+            className={`!border !border-black/20 dark:!border-white/20 ${isMobile ? 'h-9' : ''}`}
           />
         </div>
       )}

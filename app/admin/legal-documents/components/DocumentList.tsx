@@ -108,7 +108,7 @@ export function DocumentList({
 
               <div className="flex items-center gap-2">
                 {doc.is_current && (
-                  <Badge className="bg-brand hover:bg-brand text-white">Current</Badge>
+                  <Badge className="bg-brand hover:bg-brand !text-brand-foreground">Current</Badge>
                 )}
                 {doc.status === 'draft' && (
                   <Badge variant="outline" className="border-amber-500 text-amber-700 dark:text-amber-400">
@@ -253,7 +253,7 @@ export function DocumentList({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting} className="!border-0">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={isDeleting}

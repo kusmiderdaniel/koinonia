@@ -52,21 +52,21 @@ export const FormsListView = memo(function FormsListView({
   return (
     <div className={`flex flex-col border border-black dark:border-white rounded-lg bg-card overflow-hidden ${className ?? ''}`}>
       {/* Search + Add Button */}
-      <div className="p-3 border-b flex gap-2">
+      <div className="p-3 border-b border-black/20 dark:border-white/20 flex gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder={t('searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9"
+            className="pl-9 !border !border-black/20 dark:!border-white/20"
           />
         </div>
         {onCreateForm && (
           <Button
             variant="outline"
             size="icon"
-            className="flex-shrink-0 rounded-full !border !border-black dark:!border-white"
+            className="flex-shrink-0 rounded-full !border !border-black/20 dark:!border-white/20"
             onClick={onCreateForm}
             title={t('newForm')}
           >
@@ -76,7 +76,7 @@ export const FormsListView = memo(function FormsListView({
       </div>
 
       {/* Status Filter Toggle */}
-      <div className="p-2 border-b">
+      <div className="p-2 border-b border-black/20 dark:border-white/20">
         <ToggleGroup
           type="single"
           value={statusFilter}
@@ -85,19 +85,19 @@ export const FormsListView = memo(function FormsListView({
         >
           <ToggleGroupItem
             value="all"
-            className="flex-1 rounded-full text-xs data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
+            className="flex-1 rounded-full text-xs data-[state=on]:!bg-brand data-[state=on]:!text-black"
           >
             {t('filter.all')}
           </ToggleGroupItem>
           <ToggleGroupItem
             value="draft"
-            className="flex-1 rounded-full text-xs data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
+            className="flex-1 rounded-full text-xs data-[state=on]:!bg-brand data-[state=on]:!text-black"
           >
             {t('filter.draft')}
           </ToggleGroupItem>
           <ToggleGroupItem
             value="published"
-            className="flex-1 rounded-full text-xs data-[state=on]:!bg-brand data-[state=on]:!text-brand-foreground"
+            className="flex-1 rounded-full text-xs data-[state=on]:!bg-brand data-[state=on]:!text-black"
           >
             {t('filter.published')}
           </ToggleGroupItem>

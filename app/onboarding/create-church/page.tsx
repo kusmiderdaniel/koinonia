@@ -391,7 +391,7 @@ export default function CreateChurchPage() {
                     type="button"
                     variant="outline"
                     size="lg"
-                    className="sm:flex-1 h-14 text-base !rounded-full !border-2 !border-black dark:!border-white gap-2 order-2 sm:order-1"
+                    className="sm:flex-1 h-14 text-base !rounded-full !border-0 gap-2 order-2 sm:order-1"
                     asChild
                   >
                     <Link href="/onboarding">
@@ -402,7 +402,7 @@ export default function CreateChurchPage() {
                   <Button
                     type="submit"
                     size="lg"
-                    className="sm:flex-1 h-14 text-base !rounded-full !bg-brand hover:!bg-brand/90 text-white order-1 sm:order-2"
+                    className="sm:flex-1 h-14 text-base !rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground order-1 sm:order-2"
                     disabled={isLoading || subdomainStatus === 'unavailable' || subdomainStatus === 'checking'}
                   >
                     {isLoading ? (

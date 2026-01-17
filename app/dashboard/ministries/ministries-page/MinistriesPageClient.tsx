@@ -156,7 +156,7 @@ export function MinistriesPageClient({ initialData }: MinistriesPageClientProps)
                   onRemoveMember={(member) => dialogs.openRemoveMemberDialog(member)}
                 />
               ) : (
-                <Card className="h-full flex items-center justify-center border border-black dark:border-zinc-700">
+                <Card className="h-full flex items-center justify-center border border-black dark:border-zinc-700 !ring-0 outline-none">
                   <EmptyState
                     icon={Users}
                     title={t('selectMinistry')}

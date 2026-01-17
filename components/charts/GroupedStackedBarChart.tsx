@@ -205,16 +205,9 @@ function CustomTooltip({ active, payload, label, activeStackId, numberFields, se
   const optionLabel = selectOption?.label || activeStackId
 
   return (
-    <div
-      style={{
-        backgroundColor: 'white',
-        border: '1px solid black',
-        borderRadius: '6px',
-        padding: '8px 12px',
-      }}
-    >
-      <p style={{ margin: 0, fontWeight: 600 }}>{optionLabel}</p>
-      <p style={{ margin: 0, marginBottom: 4, fontSize: 12, color: '#666' }}>{formattedDate}</p>
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 shadow-md">
+      <p className="font-semibold text-foreground">{optionLabel}</p>
+      <p className="text-xs text-muted-foreground mb-1">{formattedDate}</p>
       {nonZeroPayload.map((item, index) => {
         // Extract just the field label from the name (format: "Option - Field")
         const fieldId = item.dataKey.split('_').slice(1).join('_')
@@ -222,17 +215,13 @@ function CustomTooltip({ active, payload, label, activeStackId, numberFields, se
         const fieldLabel = field?.label || item.name
 
         return (
-          <div key={index} style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+          <div key={index} className="flex items-center gap-1.5 mt-0.5">
             <div
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: 2,
-                backgroundColor: item.fill,
-              }}
+              className="w-2.5 h-2.5 rounded-sm"
+              style={{ backgroundColor: item.fill }}
             />
-            <span style={{ color: '#666' }}>{fieldLabel}:</span>
-            <span style={{ fontWeight: 500 }}>{item.value}</span>
+            <span className="text-sm text-muted-foreground">{fieldLabel}:</span>
+            <span className="text-sm font-medium text-foreground">{item.value}</span>
           </div>
         )
       })}

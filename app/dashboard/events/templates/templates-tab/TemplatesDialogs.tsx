@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,6 +37,9 @@ export function TemplatesDialogs({
   onConfirmDelete,
   timeFormat,
 }: TemplatesDialogsProps) {
+  const t = useTranslations('events.templatesTab')
+  const tCommon = useTranslations('common')
+
   return (
     <>
       {/* Template Dialog */}
@@ -49,21 +53,22 @@ export function TemplatesDialogs({
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={onDeleteDialogOpenChange}>
-        <AlertDialogContent>
+        <AlertDialogContent className="!border !border-black dark:!border-white">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Template</AlertDialogTitle>
+            <AlertDialogTitle>{t('deleteDialogTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete &quot;{templateToDelete?.name}
-              &quot;? This action cannot be undone.
+              {t('deleteDialogConfirmation', { name: templateToDelete?.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="!border-0 hover:bg-muted">
+              {tCommon('buttons.cancel')}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={onConfirmDelete}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 hover:bg-red-700 !text-black"
             >
-              Delete
+              {tCommon('buttons.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

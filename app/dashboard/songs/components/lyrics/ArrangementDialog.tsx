@@ -260,7 +260,7 @@ export function ArrangementDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? t('arrangementDialog.editTitle') : t('arrangementDialog.addTitle')}
@@ -276,6 +276,7 @@ export function ArrangementDialog({
               placeholder={t('arrangementDialog.namePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
+              className="!border !border-black/20 dark:!border-white/20"
             />
           </div>
 
@@ -297,7 +298,7 @@ export function ArrangementDialog({
                   const val = e.target.value.replace(/\D/g, '')
                   if (val.length <= 2) setDurationMinutes(val)
                 }}
-                className="w-16 text-center"
+                className="w-16 text-center !border !border-black/20 dark:!border-white/20"
               />
               <span className="text-lg font-medium text-muted-foreground">:</span>
               <Input
@@ -311,7 +312,7 @@ export function ArrangementDialog({
                     setDurationSeconds(val)
                   }
                 }}
-                className="w-16 text-center"
+                className="w-16 text-center !border !border-black/20 dark:!border-white/20"
               />
               <span className="text-sm text-muted-foreground">(MM:SS)</span>
             </div>
@@ -325,7 +326,7 @@ export function ArrangementDialog({
                 {t('arrangementDialog.sectionsHint')}
               </span>
             </Label>
-            <div className="flex flex-wrap gap-1.5 p-2 border rounded-md bg-muted/30">
+            <div className="flex flex-wrap gap-1.5 p-2 border border-black/20 dark:border-white/20 rounded-md bg-muted/30">
               {sections.map((section) => (
                 <Badge
                   key={section.id}
@@ -352,7 +353,7 @@ export function ArrangementDialog({
                 {t('arrangementDialog.orderHint')}
               </span>
             </Label>
-            <ScrollArea className="border rounded-md p-2 h-[250px]">
+            <ScrollArea className="border border-black/20 dark:border-white/20 rounded-md p-2 h-[250px]">
               {arrangementItems.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-8">
                   {t('arrangementDialog.emptyOrder')}
@@ -393,9 +394,9 @@ export function ArrangementDialog({
           <DialogFooter className="gap-2 pt-2 pb-0">
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
               size="sm"
-              className="!border !border-black dark:!border-white"
+              className="rounded-full"
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
             >
@@ -404,7 +405,7 @@ export function ArrangementDialog({
             <Button
               type="submit"
               size="sm"
-              className="!bg-brand hover:!bg-brand/90 !text-white !border-0"
+              className="!bg-brand hover:!bg-brand/90 !text-black !border-0"
               disabled={isSubmitting}
             >
               {isSubmitting

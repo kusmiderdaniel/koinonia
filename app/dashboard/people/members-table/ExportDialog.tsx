@@ -262,28 +262,28 @@ export function ExportDialog({ members, customFields }: ExportDialogProps) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2 !border !border-black dark:!border-white">
+        <Button variant="outline" size="sm" className="gap-2 !border !border-black/20 dark:!border-white/20">
           <Download className="h-4 w-4" />
           <span className="hidden sm:inline">{t('export.button')}</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-full !max-w-[420px]">
+      <DialogContent className="w-full !max-w-[420px] !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>{t('export.title')}</DialogTitle>
           <DialogDescription>{t('export.description')}</DialogDescription>
         </DialogHeader>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="!border !border-black dark:!border-white" onClick={selectAll}>
+          <Button variant="outline" size="sm" className="!border !border-black/20 dark:!border-white/20" onClick={selectAll}>
             {t('export.selectAll')}
           </Button>
-          <Button variant="outline" size="sm" className="!border !border-black dark:!border-white" onClick={selectNone}>
+          <Button variant="outline" size="sm" className="!border !border-black/20 dark:!border-white/20" onClick={selectNone}>
             {t('export.selectNone')}
           </Button>
         </div>
 
         <div
-          className="h-[300px] border border-black dark:border-white rounded-lg p-3 overflow-y-auto"
+          className="h-[300px] border border-black/20 dark:border-white/20 rounded-lg p-3 overflow-y-auto"
           style={{
             scrollbarWidth: 'thin',
             scrollbarColor: 'rgba(0,0,0,0.3) transparent',
@@ -313,13 +313,13 @@ export function ExportDialog({ members, customFields }: ExportDialogProps) {
             {selectedColumns.size} {t('export.selected')}
           </span>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setOpen(false)}>
+            <Button variant="ghost" className="rounded-full" onClick={() => setOpen(false)}>
               {t('export.cancel')}
             </Button>
             <Button
               onClick={handleExport}
               disabled={selectedColumns.size === 0 || isExporting}
-              className="!bg-brand hover:!bg-brand/90 !text-brand-foreground"
+              className="!bg-brand hover:!bg-brand/90 !text-black"
             >
               {isExporting ? t('export.exporting') : t('export.exportButton')}
             </Button>

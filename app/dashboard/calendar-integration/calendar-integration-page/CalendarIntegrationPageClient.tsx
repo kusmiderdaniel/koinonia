@@ -58,13 +58,13 @@ export function CalendarIntegrationPageClient() {
             <TabsList className="mb-4 border bg-transparent p-1">
               <TabsTrigger
                 value="google"
-                className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+                className="data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground"
               >
                 {t('tabs.google')}
               </TabsTrigger>
               <TabsTrigger
                 value="other"
-                className="data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+                className="data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground"
               >
                 {t('tabs.other')}
               </TabsTrigger>
@@ -77,7 +77,7 @@ export function CalendarIntegrationPageClient() {
             </TabsContent>
 
             <TabsContent value="other" className="mt-0">
-              <div className="space-y-6">
+              <div className="space-y-6 border border-black dark:border-white rounded-lg p-4">
                 <div className="mb-4">
                   <h3 className="font-semibold">{t('ics.title')}</h3>
                   <p className="text-sm text-muted-foreground">
@@ -99,7 +99,7 @@ export function CalendarIntegrationPageClient() {
 
                 {campuses.length > 0 && (
                   <>
-                    <div className="border-t pt-6" />
+                    <div className="border-t border-black/20 dark:border-white/20" />
                     <PublicCalendarsCard
                       campuses={campuses}
                       copiedCampusId={copiedCampusId}
@@ -110,7 +110,7 @@ export function CalendarIntegrationPageClient() {
                   </>
                 )}
 
-                <div className="border-t pt-6" />
+                <div className="border-t border-black/20 dark:border-white/20" />
                 <HelpCard />
               </div>
             </TabsContent>

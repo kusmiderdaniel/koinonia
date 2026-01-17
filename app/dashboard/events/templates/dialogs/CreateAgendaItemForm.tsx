@@ -119,8 +119,8 @@ export function CreateAgendaItemForm({
 
         <DialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-2">
           <Button
-            variant="outline"
-            className="rounded-full !border !border-black dark:!border-white"
+            variant="ghost"
+            className="rounded-full"
             onClick={onBack}
             disabled={isAdding}
           >

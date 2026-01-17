@@ -66,7 +66,7 @@ export function PendingDisagreementsList({
                 size="sm"
                 onClick={() => onWithdraw(d.id)}
                 disabled={isSubmitting}
-                className="!bg-green-600 hover:!bg-green-700 !text-white"
+                className="!bg-green-600 hover:!bg-green-700 !text-brand-foreground"
               >
                 <Check className="mr-2 h-4 w-4" />
                 {t.reAgree}

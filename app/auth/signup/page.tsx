@@ -188,7 +188,7 @@ function SignUpContent() {
         </CardContent>
 
         <CardFooter className="flex flex-col space-y-4 border-t-0 bg-transparent px-0 sm:px-6 pt-2">
-          <Button type="submit" className="w-full h-11 !rounded-full !bg-brand hover:!bg-brand/90 text-white" disabled={isLoading}>
+          <Button type="submit" className="w-full h-11 !rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground" disabled={isLoading}>
             {isLoading ? t('submitting') : t('submitButton')}
           </Button>
 

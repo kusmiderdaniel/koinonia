@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { useDebouncedValue } from '@/lib/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -51,6 +52,8 @@ export function TemplatePicker({
   onOpenChange,
   onGoToTemplates,
 }: TemplatePickerProps) {
+  const t = useTranslations('events.templatePicker')
+  const tCommon = useTranslations('common')
   const [templates, setTemplates] = useState<Template[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const debouncedSearchQuery = useDebouncedValue(searchQuery, 300)
@@ -104,14 +107,14 @@ export function TemplatePicker({
   return (
     <>
       <Dialog open={open && !createDialogOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950 max-h-[80vh] flex flex-col">
+        <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950 max-h-[80vh] flex flex-col !border !border-black dark:!border-white">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FileText className="w-5 h-5" />
-              Create Event from Template
+              {t('title')}
             </DialogTitle>
             <DialogDescription>
-              Select a template to create a new event.
+              {t('description')}
             </DialogDescription>
           </DialogHeader>
 
@@ -119,34 +122,34 @@ export function TemplatePicker({
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search templates..."
+              placeholder={t('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
+              className="pl-9 !border-black/20 dark:!border-white/20"
             />
           </div>
 
           {/* Template List */}
           <div className="flex-1 overflow-y-auto space-y-2 py-2 min-h-[200px] max-h-[350px]">
             {isLoading ? (
-              <p className="text-center py-4 text-muted-foreground">Loading templates...</p>
+              <p className="text-center py-4 text-muted-foreground">{t('loading')}</p>
             ) : filteredTemplates.length === 0 ? (
               <div className="text-center py-8">
                 <FileText className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
                 <p className="text-sm text-muted-foreground">
                   {templates.length === 0
-                    ? 'No templates yet'
-                    : 'No templates found'}
+                    ? t('noTemplates')
+                    : t('noTemplatesFound')}
                 </p>
                 {templates.length === 0 && (
                   <Button
                     variant="outline"
                     size="sm"
-                    className="mt-3 rounded-full !border !border-black dark:!border-white"
+                    className="mt-3 rounded-full !border !border-black/20 dark:!border-white/20"
                     onClick={handleGoToTemplates}
                   >
                     <Settings className="w-4 h-4 mr-2" />
-                    Create your first template
+                    {t('createFirst')}
                   </Button>
                 )}
               </div>
@@ -155,7 +158,7 @@ export function TemplatePicker({
                 <button
                   key={template.id}
                   onClick={() => handleSelectTemplate(template)}
-                  className="w-full text-left p-4 rounded-lg border border-black dark:border-white hover:bg-muted/50 transition-colors"
+                  className="w-full text-left p-4 rounded-lg border border-black/20 dark:border-white/20 hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <EventTypeBadge type={template.event_type} />
@@ -186,11 +189,11 @@ export function TemplatePicker({
                   <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Music className="w-3.5 h-3.5" />
-                      <span>{template.agendaItemCount} items</span>
+                      <span>{t('itemsCount', { count: template.agendaItemCount })}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Users className="w-3.5 h-3.5" />
-                      <span>{template.positionCount} positions</span>
+                      <span>{t('positionsCount', { count: template.positionCount })}</span>
                     </div>
                   </div>
                 </button>
@@ -199,22 +202,22 @@ export function TemplatePicker({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-between items-center pt-3 border-t">
+          <div className="flex justify-between items-center pt-3 border-t border-black/20 dark:border-white/20">
             <Button
               variant="outline-pill"
               size="sm"
               onClick={handleGoToTemplates}
-              className="!border !border-black dark:!border-white"
+              className="!border !border-black/20 dark:!border-white/20"
             >
               <Settings className="w-4 h-4 mr-2" />
-              Manage Templates
+              {t('manageTemplates')}
             </Button>
             <Button
-              variant="outline-pill"
-              className="!border !border-black dark:!border-white"
+              variant="ghost"
+              className="rounded-full"
               onClick={() => onOpenChange(false)}
             >
-              Cancel
+              {tCommon('buttons.cancel')}
             </Button>
           </div>
         </DialogContent>

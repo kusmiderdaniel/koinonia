@@ -128,7 +128,7 @@ export function AvailabilityPageClient() {
         </div>
 
         <div className="flex-1 min-h-0 overflow-auto">
-          <div className="border border-black dark:border-zinc-700 rounded-lg p-3 md:p-6 w-full lg:w-fit">
+          <div className="border border-black dark:border-white rounded-lg p-3 md:p-6 w-full lg:w-fit">
             <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
               {/* Calendar Section */}
               <div className="w-full lg:w-[320px] pb-6 lg:pb-0 lg:pr-8 border-b lg:border-b-0 lg:border-r border-border">

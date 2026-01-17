@@ -143,7 +143,7 @@ export function SongEditor({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
+        <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Music className="w-5 h-5 text-indigo-600" />

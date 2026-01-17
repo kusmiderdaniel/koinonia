@@ -202,7 +202,7 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
     <>
       {/* Create Form Dialog */}
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
+        <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
           <DialogHeader>
             <DialogTitle>{t('createDialog.title')}</DialogTitle>
           </DialogHeader>
@@ -214,6 +214,7 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
                 value={newFormTitle}
                 onChange={(e) => setNewFormTitle(e.target.value)}
                 placeholder={t('createDialog.titlePlaceholder')}
+                className="!border !border-black/20 dark:!border-white/20"
               />
             </div>
             <div className="space-y-2">
@@ -224,6 +225,7 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
                 onChange={(e) => setNewFormDescription(e.target.value)}
                 placeholder={t('createDialog.descriptionPlaceholder')}
                 rows={3}
+                className="!border !border-black/20 dark:!border-white/20"
               />
             </div>
             <div className="space-y-2">
@@ -240,13 +242,13 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
                     className={`flex items-start gap-3 rounded-md border p-3 cursor-pointer transition-colors ${
                       newFormAccessType === option.value
                         ? 'border-brand bg-brand/5'
-                        : 'border-input hover:bg-accent/50'
+                        : 'border-black/20 dark:border-white/20 hover:bg-accent/50'
                     }`}
                   >
                     <RadioGroupItem
                       value={option.value}
                       id={`access-${option.value}`}
-                      className="mt-0.5"
+                      className="mt-0.5 border-black/20 dark:border-white/20"
                     />
                     <div className="flex flex-col">
                       <span className="font-medium">{option.title}</span>
@@ -259,13 +261,13 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
               </RadioGroup>
             </div>
           </div>
-          <div className="flex justify-end gap-3 pt-4 border-t mt-4">
+          <div className="flex justify-end gap-3 pt-4 border-t border-black/20 dark:border-white/20 mt-4">
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
               onClick={() => setIsCreateDialogOpen(false)}
               disabled={isCreating}
-              className="h-10 px-4 border-zinc-900 dark:border-zinc-100"
+              className="h-10 px-4 rounded-full"
             >
               {t('createDialog.cancel')}
             </Button>
@@ -273,7 +275,7 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
               type="button"
               onClick={handleCreateForm}
               disabled={isCreating || !newFormTitle.trim()}
-              className="h-10 px-4 !bg-brand hover:!bg-brand/90 !text-white"
+              className="h-10 px-4 !bg-brand hover:!bg-brand/90 !text-black rounded-full"
             >
               {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isCreating ? t('createDialog.creating') : t('createForm')}
@@ -305,7 +307,7 @@ export function FormsPageClient({ initialData }: FormsPageClientProps) {
       <ListDetailLayout
         header={headerContent}
         listView={
-          <div className="h-full flex items-center justify-center border border-black dark:border-white rounded-lg bg-card">
+          <div className="h-full flex items-center justify-center !border !border-black dark:!border-white rounded-lg bg-card">
             <EmptyState
               icon={FileText}
               title={t('empty.title')}

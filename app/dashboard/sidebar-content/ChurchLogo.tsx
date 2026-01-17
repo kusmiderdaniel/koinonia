@@ -24,7 +24,7 @@ export function ChurchLogo({
   return (
     <div
       className={cn(
-        'border-b h-[72px] flex items-center',
+        'border-b border-black dark:border-white h-[72px] flex items-center',
         collapsed ? 'p-3 justify-center' : 'p-4'
       )}
     >

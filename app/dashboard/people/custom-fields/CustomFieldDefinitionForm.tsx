@@ -320,7 +320,7 @@ export function CustomFieldDefinitionForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto !border !border-black dark:!border-white">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
@@ -355,7 +355,7 @@ export function CustomFieldDefinitionForm({
                 <SelectTrigger id="field-type">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="border border-black dark:border-white bg-white dark:bg-zinc-950">
+                <SelectContent className="!border !border-black dark:!border-white bg-white dark:bg-zinc-950">
                   {FIELD_TYPES.map((type) => (
                     <SelectItem key={type.value} value={type.value}>
                       {type.label}
@@ -434,7 +434,7 @@ export function CustomFieldDefinitionForm({
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="border border-black dark:border-white bg-white dark:bg-zinc-950">
+                    <SelectContent className="!border !border-black dark:!border-white bg-white dark:bg-zinc-950">
                       {NUMBER_FORMATS.map((format) => (
                         <SelectItem key={format.value} value={format.value!}>
                           {format.label}
@@ -529,7 +529,7 @@ export function CustomFieldDefinitionForm({
             <Button
               type="submit"
               disabled={isLoading}
-              className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white"
+              className="!rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground"
             >
               {isLoading ? t('saving') : isEditing ? t('saveChanges') : t('createField')}
             </Button>

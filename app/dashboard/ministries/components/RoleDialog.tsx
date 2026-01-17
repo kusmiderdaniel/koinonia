@@ -43,7 +43,7 @@ export function RoleDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>{editingRole ? t('roles.editRole') : t('roles.addRole')}</DialogTitle>
           <DialogDescription>
@@ -60,6 +60,7 @@ export function RoleDialog({
               value={roleName}
               onChange={(e) => onRoleNameChange(e.target.value)}
               placeholder={t('roles.roleNamePlaceholder')}
+              className="!border !border-black/20 dark:!border-white/20"
             />
           </div>
           <div className="space-y-2">
@@ -69,15 +70,16 @@ export function RoleDialog({
               value={roleDescription}
               onChange={(e) => onRoleDescriptionChange(e.target.value)}
               placeholder={t('roles.roleDescriptionPlaceholder')}
+              className="!border !border-black/20 dark:!border-white/20"
             />
           </div>
         </div>
         <DialogFooter className="!bg-transparent !border-0 !p-0 !mx-0 !mb-0 !mt-6">
           <Button
-            variant="outline-pill"
+            variant="ghost"
             onClick={onCancel}
             disabled={isSaving}
-            className="!border !border-black dark:!border-white"
+            className="rounded-full"
           >
             {t('actions.cancel')}
           </Button>
@@ -85,7 +87,7 @@ export function RoleDialog({
             variant="outline-pill"
             onClick={onSave}
             disabled={isSaving || !roleName.trim()}
-            className="!bg-brand hover:!bg-brand/90 !text-white !border-0"
+            className="!bg-brand hover:!bg-brand/90 !text-brand-foreground !border-0"
           >
             {isSaving ? t('actions.saving') : editingRole ? t('actions.saveChanges') : t('roles.addRole')}
           </Button>

@@ -59,7 +59,7 @@ export function DatePicker({
           variant="outline"
           disabled={disabled}
           className={cn(
-            "w-full justify-center font-normal h-10 !border !border-black dark:!border-white",
+            "w-full justify-center font-normal h-10 !border !border-black/20 dark:!border-white/20",
             !selectedDate && "text-muted-foreground",
             className
           )}
@@ -68,7 +68,7 @@ export function DatePicker({
           {selectedDate ? format(selectedDate, "dd/MM/yyyy") : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 bg-white dark:bg-zinc-950 border border-black dark:border-white shadow-lg" align="start">
+      <PopoverContent className="w-auto p-0 bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20 shadow-lg" align="start">
         <Calendar
           mode="single"
           selected={selectedDate}

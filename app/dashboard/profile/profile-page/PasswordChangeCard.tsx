@@ -74,7 +74,7 @@ export function PasswordChangeCard({
         )}
 
         {!showPasswordForm ? (
-          <div className="p-4 border border-border rounded-lg">
+          <div className="p-4 border border-black/20 dark:border-white/20 rounded-lg">
             <Button
               type="button"
               variant="outline"
@@ -86,7 +86,7 @@ export function PasswordChangeCard({
         ) : (
           <form
             onSubmit={onSubmit}
-            className="space-y-4 p-4 border border-border rounded-lg"
+            className="space-y-4 p-4 border border-black/20 dark:border-white/20 rounded-lg"
           >
             <div className="space-y-2">
               <Label htmlFor="currentPassword">{t('currentPassword')}</Label>
@@ -164,7 +164,7 @@ export function PasswordChangeCard({
                 variant="outline-pill"
                 onClick={onCancel}
                 disabled={isChangingPassword}
-                className="!border !border-black dark:!border-white"
+                className="!border-0"
               >
                 {t('cancel')}
               </Button>

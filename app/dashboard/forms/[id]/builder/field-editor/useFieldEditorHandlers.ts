@@ -50,9 +50,10 @@ export function useFieldEditorHandlers() {
     if (!selectedFieldId || !selectedField) return
 
     const currentOptions = selectedField.options || []
+    const optionLabel = `Option ${currentOptions.length + 1}`
     const newOption: SelectOption = {
-      value: `option${currentOptions.length + 1}`,
-      label: `Option ${currentOptions.length + 1}`,
+      value: optionLabel,
+      label: optionLabel,
     }
     updateField(selectedFieldId, { options: [...currentOptions, newOption] })
   }, [selectedFieldId, selectedField, updateField])
@@ -65,7 +66,7 @@ export function useFieldEditorHandlers() {
       newOptions[index] = {
         ...newOptions[index],
         label,
-        value: label.toLowerCase().replace(/\s+/g, '_'),
+        value: label,
       }
       updateField(selectedFieldId, { options: newOptions })
     },
@@ -114,6 +115,28 @@ export function useFieldEditorHandlers() {
           ...currentSettings,
           number: {
             ...currentNumberSettings,
+            [key]: value,
+          },
+        },
+      })
+    },
+    [selectedFieldId, selectedField, updateField]
+  )
+
+  const handleDividerSettingChange = useCallback(
+    (key: 'showTitle', value: boolean) => {
+      if (!selectedFieldId || !selectedField) return
+
+      const currentSettings = selectedField.settings || {}
+      const currentDividerSettings = currentSettings.divider || {
+        showTitle: false,
+      }
+
+      updateField(selectedFieldId, {
+        settings: {
+          ...currentSettings,
+          divider: {
+            ...currentDividerSettings,
             [key]: value,
           },
         },
@@ -222,7 +245,7 @@ export function useFieldEditorHandlers() {
         newOptions[index] = {
           ...newOptions[index],
           label,
-          value: label.toLowerCase().replace(/\s+/g, '_'),
+          value: label,
         }
         updates.options = newOptions
       }
@@ -244,6 +267,7 @@ export function useFieldEditorHandlers() {
     handleDeleteOption,
     handleUpdateOptionColor,
     handleNumberSettingChange,
+    handleDividerSettingChange,
     handleClose,
     // I18n handlers
     handleLabelI18nChange,

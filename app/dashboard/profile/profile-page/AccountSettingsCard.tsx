@@ -117,7 +117,7 @@ export function AccountSettingsCard({ churchName }: AccountSettingsCardProps) {
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Leave Church Section */}
-          <div className="border rounded-lg p-4 space-y-3">
+          <div className="border border-black/20 dark:border-white/20 rounded-lg p-4 space-y-3">
             <div className="flex items-start gap-3">
               <LogOut className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div className="flex-1">
@@ -138,7 +138,7 @@ export function AccountSettingsCard({ churchName }: AccountSettingsCardProps) {
           </div>
 
           {/* Delete Account Section */}
-          <div className="border border-destructive/50 rounded-lg p-4 space-y-3 bg-destructive/5">
+          <div className="border border-black/20 dark:border-white/20 rounded-lg p-4 space-y-3 bg-destructive/5">
             <div className="flex items-start gap-3">
               <Trash2 className="h-5 w-5 text-destructive mt-0.5" />
               <div className="flex-1">
@@ -215,7 +215,7 @@ export function AccountSettingsCard({ churchName }: AccountSettingsCardProps) {
           <AlertDialogFooter>
             <AlertDialogCancel
               disabled={isLeaving}
-              className="border-zinc-900 dark:border-zinc-100"
+              className="!border-0"
             >
               {t('cancel')}
             </AlertDialogCancel>
@@ -294,7 +294,7 @@ export function AccountSettingsCard({ churchName }: AccountSettingsCardProps) {
           <AlertDialogFooter>
             <AlertDialogCancel
               disabled={isDeleting}
-              className="border-zinc-900 dark:border-zinc-100"
+              className="!border-0"
             >
               {t('cancel')}
             </AlertDialogCancel>

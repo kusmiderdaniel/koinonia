@@ -30,7 +30,7 @@ export function AgendaItemDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="bg-white dark:bg-zinc-950"
+        className="bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader>
@@ -66,6 +66,7 @@ export function AgendaItemDialog({
             <Button
               type="button"
               variant="outline-pill-muted"
+              className="!border-0"
               onClick={() => onOpenChange(false)}
               disabled={state.isLoading}
             >
@@ -74,7 +75,7 @@ export function AgendaItemDialog({
             <Button
               type="submit"
               disabled={state.isLoading || !state.formState.title.trim()}
-              className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white !px-4 !py-2 disabled:!opacity-50"
+              className="!rounded-lg !bg-brand hover:!bg-brand/90 !text-brand-foreground !px-4 !py-2 disabled:!opacity-50"
             >
               {state.isLoading
                 ? 'Saving...'

@@ -51,7 +51,7 @@ export const DetailPanelHeader = memo(function DetailPanelHeader({
   const isMobile = useIsMobile()
 
   return (
-    <div className={cn(isMobile ? 'px-3 pt-2 pb-2' : 'px-6 pt-2 pb-3', 'border-b', className)}>
+    <div className={cn(isMobile ? 'px-3 pt-2 pb-2' : 'px-6 pt-2 pb-3', 'border-b border-black/20 dark:border-white/20', className)}>
       <div className={`flex items-start justify-between ${isMobile ? 'gap-2' : 'gap-4'}`}>
         <div className={`flex items-center flex-1 min-w-0 ${isMobile ? 'gap-2' : 'gap-3'}`}>
           {colorIndicator && (

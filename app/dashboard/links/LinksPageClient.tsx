@@ -157,21 +157,21 @@ export function LinksPageClient({
               <TabsList className="w-auto border border-black dark:border-white">
                 <TabsTrigger
                   value="links"
-                  className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+                  className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground"
                 >
                   <Link2 className="w-4 h-4" />
                   {t('tabs.links')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="settings"
-                  className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+                  className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground"
                 >
                   <Settings className="w-4 h-4" />
                   {t('tabs.settings')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="analytics"
-                  className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground"
+                  className="flex items-center gap-2 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground"
                 >
                   <BarChart3 className="w-4 h-4" />
                   {t('tabs.analytics')}
@@ -182,7 +182,7 @@ export function LinksPageClient({
             <TabsContent value="links" className="flex-1 min-h-0 mt-0">
               <div className="flex gap-4 h-full">
                 {/* Links List - 70% */}
-                <div className="w-[70%] overflow-auto border border-black dark:border-white rounded-lg p-4">
+                <div className="w-[70%] overflow-auto border border-black dark:border-zinc-600 rounded-lg p-4">
                   <LinksListPanel
                     links={links}
                     setLinks={setLinks}
@@ -203,7 +203,7 @@ export function LinksPageClient({
             </TabsContent>
 
             <TabsContent value="settings" className="flex-1 min-h-0 mt-0 overflow-auto">
-              <div className="border border-black dark:border-white rounded-lg p-4 max-w-2xl">
+              <div className="border border-black dark:border-zinc-600 rounded-lg p-4 max-w-2xl">
                 <SettingsPanel
                   settings={settings}
                   setSettings={setSettings}
@@ -214,7 +214,7 @@ export function LinksPageClient({
             </TabsContent>
 
             <TabsContent value="analytics" className="flex-1 min-h-0 mt-0 overflow-auto">
-              <div className="border border-black dark:border-white rounded-lg p-4">
+              <div className="border border-black dark:border-zinc-600 rounded-lg p-4">
                 <AnalyticsTab
                   analytics={initialAnalytics}
                   links={links}
@@ -231,19 +231,19 @@ export function LinksPageClient({
               <TabsList className="w-full bg-muted/50 border-b border-black dark:border-white rounded-t-lg rounded-b-none p-1 gap-1 shrink-0">
                 <TabsTrigger
                   value="links"
-                  className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground rounded-md"
+                  className="flex-1 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground rounded-md"
                 >
                   {t('tabs.links')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="settings"
-                  className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground rounded-md"
+                  className="flex-1 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground rounded-md"
                 >
                   {t('tabs.settings')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="analytics"
-                  className="flex-1 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground rounded-md"
+                  className="flex-1 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground rounded-md"
                 >
                   {t('tabs.analytics')}
                 </TabsTrigger>

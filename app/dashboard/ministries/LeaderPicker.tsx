@@ -77,7 +77,7 @@ export const LeaderPicker = memo(function LeaderPicker({
     <div className="space-y-2">
       {selectedLeader ? (
         <div className="flex items-center gap-2">
-          <div className="flex-1 flex items-center gap-2 p-2 border rounded-lg bg-gray-50 dark:bg-zinc-900">
+          <div className="flex-1 flex items-center gap-2 p-2 border border-black/20 dark:border-white/20 rounded-lg bg-gray-50 dark:bg-zinc-900">
             <User className="w-4 h-4 text-muted-foreground" />
             <span className="font-medium">
               {selectedLeader.first_name} {selectedLeader.last_name}
@@ -87,7 +87,7 @@ export const LeaderPicker = memo(function LeaderPicker({
             type="button"
             variant="outline"
             onClick={() => setOpen(true)}
-            className="shrink-0 !border !border-black dark:!border-white"
+            className="shrink-0 !border !border-black/20 dark:!border-white/20"
           >
             Change
           </Button>
@@ -97,7 +97,7 @@ export const LeaderPicker = memo(function LeaderPicker({
           type="button"
           variant="outline"
           onClick={() => setOpen(true)}
-          className="w-full justify-start text-muted-foreground !border !border-black dark:!border-white"
+          className="w-full justify-start text-muted-foreground !border !border-black/20 dark:!border-white/20"
         >
           <User className="w-4 h-4 mr-2" />
           Choose a Leader
@@ -105,7 +105,7 @@ export const LeaderPicker = memo(function LeaderPicker({
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
+        <DialogContent className="sm:max-w-md !border !border-black dark:!border-white" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Choose a Leader</DialogTitle>
           </DialogHeader>
@@ -116,7 +116,7 @@ export const LeaderPicker = memo(function LeaderPicker({
               placeholder="Search by name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
+              className="pl-9 !border !border-black/20 dark:!border-white/20"
             />
           </div>
 
@@ -136,7 +136,7 @@ export const LeaderPicker = memo(function LeaderPicker({
                       key={leader.id}
                       type="button"
                       onClick={() => handleSelect(leader.id)}
-                      className={`w-full text-left p-3 rounded-lg transition-colors border border-black dark:border-white hover:bg-gray-100 dark:hover:bg-zinc-800 ${
+                      className={`w-full text-left p-3 rounded-lg transition-colors border border-black/20 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-800 ${
                         isSelected ? 'bg-gray-100 dark:bg-zinc-800' : ''
                       }`}
                     >

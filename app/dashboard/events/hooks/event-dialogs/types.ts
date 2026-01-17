@@ -34,11 +34,6 @@ export interface EventCrudDialogsState {
 export interface PositionDialogsState {
   positionPickerOpen: boolean
   setPositionPickerOpen: (open: boolean) => void
-  positionDialogOpen: boolean
-  editingPosition: Position | null
-  setPositionDialogOpen: (open: boolean) => void
-  openEditPositionDialog: (position: Position) => void
-  closePositionDialog: () => void
   deletePositionDialogOpen: boolean
   deletingPosition: Position | null
   isDeletingPosition: boolean

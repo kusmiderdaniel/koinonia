@@ -32,7 +32,7 @@ export const EventPickerItem = memo(function EventPickerItem({
       className={`w-full text-left p-3 rounded-lg border transition-all ${
         isSelected
           ? 'bg-brand/10 border-brand'
-          : 'border-input hover:bg-gray-50 dark:hover:bg-zinc-900'
+          : 'border-black/20 dark:border-white/20 hover:bg-gray-50 dark:hover:bg-zinc-900'
       }`}
     >
       <div className="flex items-start justify-between gap-2">

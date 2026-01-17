@@ -43,7 +43,6 @@ export const EventDetailPanel = memo(function EventDetailPanel({
   onMoveAgendaItemUp,
   onMoveAgendaItemDown,
   onAddPosition,
-  onEditPosition,
   onDeletePosition,
   onAssignVolunteer,
   onUnassign,
@@ -100,7 +99,7 @@ export const EventDetailPanel = memo(function EventDetailPanel({
   }, [positionsByMinistry])
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-white !gap-0 !py-0">
+    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-white !gap-0 !py-0 !ring-0 outline-none">
       <EventHeader
         selectedEvent={selectedEvent}
         canManage={canManage}
@@ -116,25 +115,25 @@ export const EventDetailPanel = memo(function EventDetailPanel({
         onValueChange={setDetailTab}
         className="flex-1 flex flex-col min-h-0 overflow-hidden gap-0"
       >
-        <div className={`border-b ${isMobile ? 'px-2 py-1' : 'px-6 py-3'}`}>
+        <div className={`border-b border-black/20 dark:border-white/20 ${isMobile ? 'px-2 py-1' : 'px-6 py-3'}`}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger
               value="agenda"
-              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
+              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
               <ListOrdered className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
               {t('agenda.title')}
             </TabsTrigger>
             <TabsTrigger
               value="positions"
-              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
+              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
               <Users className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
               {t('positions.title')}
             </TabsTrigger>
             <TabsTrigger
               value="tasks"
-              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
+              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
               <CheckSquare className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
               {t('tasks.title')}
@@ -174,7 +173,6 @@ export const EventDetailPanel = memo(function EventDetailPanel({
             pendingInvitationsCount={pendingInvitationsCount}
             multiAssignedProfiles={multiAssignedProfiles}
             onAddPosition={onAddPosition}
-            onEditPosition={onEditPosition}
             onDeletePosition={onDeletePosition}
             onAssignVolunteer={onAssignVolunteer}
             onUnassign={onUnassign}

@@ -29,6 +29,18 @@ export function FieldEditorOptions() {
 
   const [openColorPickerIndex, setOpenColorPickerIndex] = useState<number | null>(null)
 
+  // Consistent visible colors for the color picker (works in both light and dark mode)
+  const pickerColors: Record<string, string> = {
+    gray: 'bg-zinc-400',
+    red: 'bg-red-500',
+    orange: 'bg-orange-500',
+    yellow: 'bg-yellow-400',
+    green: 'bg-green-500',
+    blue: 'bg-blue-500',
+    purple: 'bg-purple-500',
+    pink: 'bg-pink-500',
+  }
+
   if (!selectedField) return null
 
   const options = selectedField.options
@@ -58,11 +70,7 @@ export function FieldEditorOptions() {
       <Label>{t('fieldEditor.options')}</Label>
 
       <div className="space-y-2">
-        {options?.map((option, index) => {
-          const selectedColor = optionColors.find(
-            (c) => c.name === option.color
-          )
-          return (
+        {options?.map((option, index) => (
             <div key={index} className="flex items-center gap-2">
               <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab shrink-0" />
               <Popover
@@ -75,11 +83,11 @@ export function FieldEditorOptions() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-8 w-8 shrink-0 !border !border-black dark:!border-white"
+                    className="h-8 w-8 shrink-0 !border !border-black/20 dark:!border-white/20"
                   >
-                    {selectedColor ? (
+                    {option.color ? (
                       <div
-                        className={`h-4 w-4 rounded-full ${selectedColor.bg}`}
+                        className={`h-4 w-4 rounded-full ${pickerColors[option.color] || 'bg-zinc-400'}`}
                       />
                     ) : (
                       <Palette className="h-4 w-4 text-muted-foreground" />
@@ -87,23 +95,23 @@ export function FieldEditorOptions() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="w-auto !p-2 !gap-0 !bg-white dark:!bg-zinc-900 border border-border shadow-md"
+                  className="w-auto !p-3 !gap-0 !bg-white dark:!bg-zinc-900 !border !border-black/20 dark:!border-white/20 shadow-md"
                   align="start"
                 >
-                  <div className="grid grid-cols-4 gap-1">
+                  <div className="grid grid-cols-4 gap-2">
                     <button
                       type="button"
                       onClick={() => {
                         handleUpdateOptionColor(index, null)
                         setOpenColorPickerIndex(null)
                       }}
-                      className={`h-6 w-6 rounded-full border-2 flex items-center justify-center ${
+                      className={`h-8 w-8 rounded-full border-2 flex items-center justify-center transition-transform hover:scale-110 ${
                         !option.color
                           ? 'border-black dark:border-white'
-                          : 'border-transparent'
+                          : 'border-transparent hover:border-zinc-400'
                       }`}
                     >
-                      <div className="h-4 w-4 rounded-full bg-zinc-200 dark:bg-zinc-700" />
+                      <div className="h-6 w-6 rounded-full bg-zinc-400" />
                     </button>
                     {optionColors.slice(1).map((color) => (
                       <button
@@ -113,13 +121,13 @@ export function FieldEditorOptions() {
                           handleUpdateOptionColor(index, color.name)
                           setOpenColorPickerIndex(null)
                         }}
-                        className={`h-6 w-6 rounded-full border-2 flex items-center justify-center ${
+                        className={`h-8 w-8 rounded-full border-2 flex items-center justify-center transition-transform hover:scale-110 ${
                           option.color === color.name
                             ? 'border-black dark:border-white'
-                            : 'border-transparent'
+                            : 'border-transparent hover:border-zinc-400'
                         }`}
                       >
-                        <div className={`h-4 w-4 rounded-full ${color.bg}`} />
+                        <div className={`h-6 w-6 rounded-full ${pickerColors[color.name]}`} />
                       </button>
                     ))}
                   </div>
@@ -129,7 +137,7 @@ export function FieldEditorOptions() {
                 value={getOptionLabel(index)}
                 onChange={(e) => handleOptionLabelChange(index, e.target.value)}
                 onFocus={(e) => e.target.select()}
-                className="flex-1"
+                className="flex-1 !border !border-black/20 dark:!border-white/20"
                 placeholder={isMultilingual && activeLocale !== 'en' ? options[index]?.label : undefined}
               />
               <Button
@@ -142,14 +150,13 @@ export function FieldEditorOptions() {
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
-          )
-        })}
+        ))}
       </div>
       <Button
         variant="outline"
         size="sm"
         onClick={handleAddOption}
-        className="w-full !border !border-black dark:!border-white"
+        className="w-full !border !border-black/20 dark:!border-white/20"
       >
         <Plus className="h-4 w-4 mr-2" />
         {t('fieldEditor.addOption')}

@@ -113,7 +113,7 @@
   "builder": {
     "tabs": {
       "build": "Build",
-      "responses": "Responses ({count})",
+      "responses": "Responses",
       "settings": "Settings",
       "analytics": "Analytics"
     },
@@ -192,7 +192,9 @@
     "multi_select": "Checkboxes",
     "multi_selectDesc": "Multiple choices",
     "checkbox": "Yes/No",
-    "checkboxDesc": "Toggle checkbox"
+    "checkboxDesc": "Toggle checkbox",
+    "divider": "Divider",
+    "dividerDesc": "Visual separator"
   },
 
   "defaultLabels": {
@@ -204,6 +206,7 @@
     "single_select": "Dropdown",
     "multi_select": "Multiple Choice",
     "checkbox": "Checkbox",
+    "divider": "Divider",
     "question": "Question"
   },
 
@@ -238,7 +241,11 @@
     "placeholderPlaceholder": "Placeholder text",
     "options": "Options",
     "addOption": "Add Option",
-    "moreOptions": "+{count} more options"
+    "moreOptions": "+{count} more options",
+    "showTitle": "Show Title",
+    "showTitleHelp": "Display a title on the divider line",
+    "dividerTitle": "Title",
+    "dividerTitlePlaceholder": "Enter divider title"
   },
 
   "numberSettings": {

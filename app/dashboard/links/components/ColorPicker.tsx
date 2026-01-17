@@ -35,7 +35,7 @@ export const ColorPicker = memo(function ColorPicker({
               'w-8 h-8 rounded-full border-2 transition-all',
               'hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand',
               isSelected(color)
-                ? 'border-black dark:border-white ring-2 ring-offset-2 ring-brand'
+                ? 'border-black dark:border-zinc-600 ring-2 ring-offset-2 ring-brand'
                 : 'border-transparent'
             )}
             style={{ backgroundColor: color }}
@@ -64,7 +64,7 @@ export const ColorPicker = memo(function ColorPicker({
               'bg-gradient-to-br from-red-500 via-yellow-500 to-blue-500',
               'hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand',
               showCustom && !colors.includes(value)
-                ? 'border-black dark:border-white ring-2 ring-offset-2 ring-brand'
+                ? 'border-black dark:border-zinc-600 ring-2 ring-offset-2 ring-brand'
                 : 'border-transparent'
             )}
             onClick={() => setShowCustom(true)}
@@ -76,7 +76,7 @@ export const ColorPicker = memo(function ColorPicker({
       {showCustomInput && showCustom && (
         <div className="flex items-center gap-2">
           <div
-            className="w-8 h-8 rounded border border-black dark:border-white"
+            className="w-8 h-8 rounded border border-black dark:border-zinc-600"
             style={{ backgroundColor: value }}
           />
           <Input

@@ -31,7 +31,7 @@ import { IconPickerPopover } from './link-item/IconPickerPopover'
 import { SizePickerPopover } from './link-item/SizePickerPopover'
 import { HoverEffectPopover } from './link-item/HoverEffectPopover'
 import { ImageUploadPopover } from './link-item/ImageUploadPopover'
-import { LabelStylesPopover } from './link-item/LabelStylesPopover'
+import { LabelStylesPopover, type LabelAlign } from './link-item/LabelStylesPopover'
 
 interface SortableLinkItemProps {
   link: LinkTreeLinkRow
@@ -85,6 +85,7 @@ export const SortableLinkItem = memo(function SortableLinkItem({
     handleToggleBold,
     handleToggleItalic,
     handleToggleUnderline,
+    handleAlignChange,
     handleImageUpload,
     handleRemoveImage,
   } = useLinkItemHandlers({ link, onUpdate })
@@ -312,10 +313,12 @@ export const SortableLinkItem = memo(function SortableLinkItem({
             labelBold={link.label_bold ?? false}
             labelItalic={link.label_italic ?? false}
             labelUnderline={link.label_underline ?? false}
+            labelAlign={(link.label_align as LabelAlign) ?? 'center'}
             onToggleHideLabel={handleToggleHideLabel}
             onToggleBold={handleToggleBold}
             onToggleItalic={handleToggleItalic}
             onToggleUnderline={handleToggleUnderline}
+            onAlignChange={handleAlignChange}
             showTooltip
           />
 

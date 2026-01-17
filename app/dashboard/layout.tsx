@@ -8,6 +8,7 @@ import { PushNotificationProvider } from '@/components/PushNotificationProvider'
 import { PushPermissionBanner } from '@/components/PushPermissionBanner'
 import { PWARefreshButton } from '@/components/PWARefreshButton'
 import { BrandColorProvider } from '@/components/BrandColorProvider'
+import { ActivityTracker } from '@/components/ActivityTracker'
 
 export default async function DashboardLayout({
   children,
@@ -45,6 +46,7 @@ export default async function DashboardLayout({
   return (
     <BrandColorProvider brandColor={profile.church.brand_color}>
       <PushNotificationProvider>
+        <ActivityTracker />
         <div className="min-h-screen bg-muted/30">
           {/* Mobile Header - shown only on mobile */}
           <MobileHeader churchName={profile.church.name} churchLogoUrl={profile.church.logo_url} />

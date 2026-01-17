@@ -370,6 +370,29 @@ export async function updateLinksPageEnabled(enabled: boolean): Promise<{ succes
     return { success: false, error: error.message }
   }
 
+  // When enabling, ensure link_tree_settings exists (required for public page)
+  if (enabled) {
+    const { data: existingSettings } = await adminClient
+      .from('link_tree_settings')
+      .select('id')
+      .eq('church_id', profile.church_id)
+      .single()
+
+    if (!existingSettings) {
+      // Create default settings
+      const { error: settingsError } = await adminClient
+        .from('link_tree_settings')
+        .insert({
+          church_id: profile.church_id,
+        })
+
+      if (settingsError) {
+        console.error('Error creating default settings:', settingsError)
+        // Don't fail the whole operation, just log it
+      }
+    }
+  }
+
   revalidatePath('/dashboard/links')
   revalidatePath('/dashboard')
   revalidatePath('/links')

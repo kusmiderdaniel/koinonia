@@ -87,7 +87,7 @@ export function InlineAssigneeEditor({
               placeholder={t('memberPicker.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 h-9"
+              className="pl-8 h-9 !border !border-black/20 dark:!border-white/20"
             />
           </div>
         </div>

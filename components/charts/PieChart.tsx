@@ -2,6 +2,35 @@
 
 import { PieChart as RechartsPieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
+// Custom tooltip component with proper dark mode support
+interface CustomTooltipProps {
+  active?: boolean
+  payload?: Array<{
+    name?: string
+    value?: number
+  }>
+  tooltipLabel: string
+}
+
+function CustomTooltip({
+  active,
+  payload,
+  tooltipLabel
+}: CustomTooltipProps) {
+  if (!active || !payload || payload.length === 0) return null
+
+  return (
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 shadow-md">
+      <p className="text-sm">
+        <span className="text-foreground">{payload[0]?.name}</span>
+      </p>
+      <p className="text-sm text-muted-foreground">
+        {tooltipLabel}: {payload[0]?.value ?? 0}
+      </p>
+    </div>
+  )
+}
+
 interface PieChartProps {
   data: Array<{
     name: string
@@ -44,12 +73,12 @@ export function PieChart({
 
   return (
     <div className={className}>
-      <ResponsiveContainer width="100%" height={250}>
-        <RechartsPieChart>
+      <ResponsiveContainer width="100%" height={280}>
+        <RechartsPieChart margin={{ top: 20, bottom: 20 }}>
           <Pie
             data={filteredData}
             cx="50%"
-            cy="50%"
+            cy="45%"
             innerRadius={60}
             outerRadius={80}
             paddingAngle={2}
@@ -64,13 +93,7 @@ export function PieChart({
             ))}
           </Pie>
           <Tooltip
-            formatter={(value) => [value ?? 0, tooltipLabel]}
-            contentStyle={{
-              backgroundColor: 'white',
-              border: '1px solid black',
-              borderRadius: '6px',
-              padding: '8px 12px',
-            }}
+            content={<CustomTooltip tooltipLabel={tooltipLabel} />}
           />
           {showLegend && (
             <Legend

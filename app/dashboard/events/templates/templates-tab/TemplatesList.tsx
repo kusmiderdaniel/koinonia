@@ -51,21 +51,21 @@ export function TemplatesList({
       }`}
     >
       {/* Search + Add Button */}
-      <div className="p-3 border-b flex gap-2">
+      <div className="p-3 border-b border-black/20 dark:border-white/20 flex gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder={t('searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9"
+            className="pl-9 !border-black/20 dark:!border-white/20"
           />
         </div>
         {canManage && (
           <Button
             variant="outline"
             size="icon"
-            className="flex-shrink-0 rounded-full !border !border-black dark:!border-white"
+            className="flex-shrink-0 rounded-full !border !border-black/20 dark:!border-white/20"
             onClick={onCreateTemplate}
             title={t('createTemplate')}
           >
@@ -92,7 +92,7 @@ export function TemplatesList({
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-3 rounded-full !border !border-black dark:!border-white"
+                className="mt-3 rounded-full !border !border-black/20 dark:!border-white/20"
                 onClick={onCreateTemplate}
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -106,7 +106,7 @@ export function TemplatesList({
             return (
               <div
                 key={template.id}
-                className={`flex rounded-lg border border-black dark:border-white transition-colors ${
+                className={`flex rounded-lg border border-black/20 dark:border-white/20 transition-colors ${
                   isSelected
                     ? 'bg-gray-100 dark:bg-zinc-800'
                     : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'
@@ -153,7 +153,7 @@ export function TemplatesList({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7"
+                      className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                       onClick={(e) => {
                         e.stopPropagation()
                         onEditTemplate(template)

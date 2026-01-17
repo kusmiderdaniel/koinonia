@@ -284,7 +284,7 @@ export function TemplateAgendaItemDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="bg-white dark:bg-zinc-950 max-w-md"
+        className="bg-white dark:bg-zinc-950 max-w-md !border !border-black dark:!border-white"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader>

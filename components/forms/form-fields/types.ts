@@ -13,4 +13,5 @@ export interface MultiSelectFieldProps extends BaseFieldProps {
 
 export interface DateFieldProps extends BaseFieldProps {
   weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  locale?: string
 }

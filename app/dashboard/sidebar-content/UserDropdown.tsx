@@ -62,7 +62,7 @@ export function UserDropdown({
   )
 
   return (
-    <div className={`border-t flex items-center p-2 ${isMobile ? 'h-[80px]' : 'h-[72px]'}`}>
+    <div className={`border-t border-black dark:border-white flex items-center p-2 ${isMobile ? 'h-[80px]' : 'h-[72px]'}`}>
       <DropdownMenu>
         {collapsed ? (
           <Tooltip>

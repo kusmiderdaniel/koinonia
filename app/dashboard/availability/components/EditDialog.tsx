@@ -54,7 +54,7 @@ export const EditDialog = memo(function EditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>{t('editDialog.title')}</DialogTitle>
         </DialogHeader>
@@ -108,7 +108,7 @@ export const EditDialog = memo(function EditDialog({
           <div className="flex gap-2">
             <Button
               variant="outline-pill"
-              className="!border !border-black dark:!border-white"
+              className="!border-0"
               onClick={onCancel}
               disabled={isSaving}
             >

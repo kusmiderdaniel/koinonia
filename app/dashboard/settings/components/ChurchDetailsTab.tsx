@@ -137,7 +137,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
           {/* Logo Upload Section */}
           <div className="space-y-2">
             <Label>{t('logo.label')}</Label>
-            <div className="border border-black dark:border-white rounded-lg p-3 space-y-3">
+            <div className="border border-black/20 dark:border-white/20 rounded-lg p-3 space-y-3">
               <div className="flex items-center gap-3 md:gap-4">
                 {/* Logo Preview */}
                 <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-lg border-2 border-dashed border-muted-foreground/25 flex items-center justify-center bg-muted/30 overflow-hidden shrink-0">
@@ -169,7 +169,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
                       size="sm"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isUploadingLogo || isRemovingLogo}
-                      className="!rounded-full !border-black dark:!border-white text-xs md:text-sm"
+                      className="!rounded-lg !border-black/20 dark:!border-white/20 text-xs md:text-sm"
                     >
                       <Upload className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
                       {isUploadingLogo ? t('logo.uploading') : t('logo.upload')}
@@ -181,7 +181,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
                         size="sm"
                         onClick={handleRemoveLogo}
                         disabled={isUploadingLogo || isRemovingLogo}
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50 !rounded-full !border-red-300 dark:!border-red-800 text-xs md:text-sm"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 !rounded-lg !border-red-300 dark:!border-red-800 text-xs md:text-sm"
                       >
                         <X className="w-3.5 h-3.5 md:w-4 md:h-4 mr-1.5 md:mr-2" />
                         {isRemovingLogo ? t('logo.removing') : t('logo.remove')}
@@ -203,7 +203,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
                 <Palette className="w-4 h-4" />
                 {t('brandColor.label')}
               </Label>
-              <div className="border border-black dark:border-white rounded-lg p-3 space-y-3">
+              <div className="border border-black/20 dark:border-white/20 rounded-lg p-3 space-y-3">
                 <div className="flex flex-wrap gap-2">
                   {PRESET_COLORS.map((color) => (
                     <button
@@ -244,7 +244,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
                     size="sm"
                     onClick={() => handleBrandColorChange(customColor)}
                     disabled={isSavingColor || customColor === brandColor}
-                    className="!rounded-full !border-black dark:!border-white text-xs md:text-sm"
+                    className="!rounded-lg !border-black dark:!border-white text-xs md:text-sm"
                   >
                     {isSavingColor ? t('brandColor.saving') : t('brandColor.apply')}
                   </Button>
@@ -332,7 +332,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
 
           {isAdmin && (
             <div className="flex justify-end pt-2">
-              <Button type="submit" disabled={isLoading} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white">
+              <Button type="submit" disabled={isLoading} className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-black">
                 {isLoading ? t('saving') : t('saveChanges')}
               </Button>
             </div>

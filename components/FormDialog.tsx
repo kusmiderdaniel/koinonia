@@ -93,7 +93,7 @@ export const FormDialog = memo(function FormDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={`${sizeClass} ${className}`}
+        className={`${sizeClass} ${className} !border !border-black dark:!border-white`}
         onOpenAutoFocus={preventAutoFocus ? (e) => e.preventDefault() : undefined}
       >
         <DialogHeader>
@@ -115,7 +115,7 @@ export const FormDialog = memo(function FormDialog({
               size="sm"
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
-              className="!border !border-black dark:!border-white"
+              className="!border-0"
             >
               {cancelLabel}
             </Button>
@@ -186,7 +186,7 @@ export const SimpleDialog = memo(function SimpleDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={`${sizeClass} ${className}`}
+        className={`${sizeClass} ${className} !border !border-black dark:!border-white`}
         onOpenAutoFocus={preventAutoFocus ? (e) => e.preventDefault() : undefined}
       >
         <DialogHeader>

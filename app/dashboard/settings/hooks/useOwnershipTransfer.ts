@@ -1,11 +1,15 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { transferOwnership } from '../actions'
 import type { Member, ChurchData } from '../types'
 
 export interface OwnershipTransferTranslations {
   transferredSuccess: string
+}
+
+export interface OwnershipTransferCallbacks {
+  onSuccess?: () => void
 }
 
 interface UseOwnershipTransferReturn {
@@ -28,10 +32,20 @@ interface UseOwnershipTransferReturn {
   ) => Promise<void>
 }
 
-export function useOwnershipTransfer(members: Member[], translations: OwnershipTransferTranslations): UseOwnershipTransferReturn {
+export function useOwnershipTransfer(
+  members: Member[],
+  translations: OwnershipTransferTranslations,
+  callbacks?: OwnershipTransferCallbacks
+): UseOwnershipTransferReturn {
   const [selectedNewOwner, setSelectedNewOwner] = useState<string>('')
   const [isTransferring, setIsTransferring] = useState(false)
   const [transferDialogOpen, setTransferDialogOpen] = useState(false)
+
+  // Use ref to store the latest callback to avoid stale closures
+  const onSuccessRef = useRef(callbacks?.onSuccess)
+  useEffect(() => {
+    onSuccessRef.current = callbacks?.onSuccess
+  }, [callbacks?.onSuccess])
 
   const adminMembers = useMemo(() => members.filter((m) => m.role === 'admin'), [members])
 
@@ -60,6 +74,7 @@ export function useOwnershipTransfer(members: Member[], translations: OwnershipT
           setSuccess(translations.transferredSuccess)
           setChurchData((prev) => (prev ? { ...prev, role: 'admin' } : null))
           setSelectedNewOwner('')
+          onSuccessRef.current?.()
         }
       } catch (err) {
         setError('An unexpected error occurred')

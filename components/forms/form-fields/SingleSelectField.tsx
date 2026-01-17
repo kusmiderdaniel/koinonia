@@ -16,7 +16,13 @@ import type { BaseFieldProps } from './types'
 export function SingleSelectField({ field, value, error, onValueChange }: BaseFieldProps) {
   const t = useTranslations('forms.fieldPlaceholders')
   const [mounted, setMounted] = useState(false)
-  const selectedOption = field.options?.find((o) => o.value === value)
+
+  // Deduplicate options by value (Radix Select requires unique values)
+  const uniqueOptions = field.options?.filter(
+    (option, index, self) => self.findIndex((o) => o.value === option.value) === index
+  )
+
+  const selectedOption = uniqueOptions?.find((o) => o.value === value)
   const colorClasses = selectedOption
     ? getOptionColorClasses(selectedOption.color)
     : null
@@ -33,13 +39,11 @@ export function SingleSelectField({ field, value, error, onValueChange }: BaseFi
           value={(value as string) || ''}
           onValueChange={(v) => onValueChange(field.id, v)}
         >
-          <SelectTrigger className={error ? 'border-red-500' : ''}>
-            {selectedOption && colorClasses ? (
-              <span
-                className={`px-2 py-0.5 rounded-full text-sm font-medium ${colorClasses.bg} ${colorClasses.text}`}
-              >
-                {selectedOption.label}
-              </span>
+          <SelectTrigger
+            className={`${error ? 'border-red-500' : ''} ${selectedOption && colorClasses ? `${colorClasses.bg} ${colorClasses.text} font-medium` : ''}`}
+          >
+            {selectedOption ? (
+              <span>{selectedOption.label}</span>
             ) : (
               <SelectValue placeholder={t('selectOption')} />
             )}
@@ -47,17 +51,17 @@ export function SingleSelectField({ field, value, error, onValueChange }: BaseFi
           <SelectContent
             position="popper"
             sideOffset={4}
-            className="!border !border-black dark:!border-white"
+            className="!border !border-black/20 dark:!border-white/20"
           >
-            {field.options?.map((option) => {
+            {uniqueOptions?.map((option) => {
               const optionColor = getOptionColorClasses(option.color)
               return (
-                <SelectItem key={option.value} value={option.value}>
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-sm font-medium ${optionColor.bg} ${optionColor.text}`}
-                  >
-                    {option.label}
-                  </span>
+                <SelectItem
+                  key={option.value}
+                  value={option.value}
+                  className={`${optionColor.bg} ${optionColor.text} font-medium`}
+                >
+                  {option.label}
                 </SelectItem>
               )
             })}

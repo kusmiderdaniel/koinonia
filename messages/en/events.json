@@ -277,6 +277,25 @@
       "240": "4 hours"
     }
   },
+  "createFromTemplate": {
+    "title": "Create Event from Template",
+    "description": "Select one or more dates for the new events.",
+    "tapToSelect": "Tap to select/deselect dates",
+    "datesSelected": "{count} {count, plural, one {date} other {dates}} selected",
+    "createCount": "Create {count}"
+  },
+  "templatePicker": {
+    "title": "Create Event from Template",
+    "description": "Select a template to create a new event.",
+    "searchPlaceholder": "Search templates...",
+    "loading": "Loading templates...",
+    "noTemplates": "No templates yet",
+    "noTemplatesFound": "No templates found",
+    "createFirst": "Create your first template",
+    "itemsCount": "{count} items",
+    "positionsCount": "{count} positions",
+    "manageTemplates": "Manage Templates"
+  },
   "templatesTab": {
     "searchPlaceholder": "Search templates...",
     "createTemplate": "Create template",
@@ -290,6 +309,8 @@
     "duplicateTitle": "Duplicate",
     "editTitle": "Edit",
     "deleteTitle": "Delete",
+    "deleteDialogTitle": "Delete Template",
+    "deleteDialogConfirmation": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
     "agendaTab": "Agenda",
     "positionsTab": "Positions",
     "duplicatedAs": "Template duplicated as \"{name}\"",

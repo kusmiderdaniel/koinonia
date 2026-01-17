@@ -95,7 +95,7 @@ export const SortableSectionItem = memo(function SortableSectionItem({
       <div
         ref={setNodeRef}
         style={style}
-        className={`group relative bg-white dark:bg-zinc-900 border rounded-lg transition-all ${
+        className={`group relative bg-white dark:bg-zinc-900 border border-black/20 dark:border-white/20 rounded-lg transition-all ${
           isMobile ? 'p-3' : 'p-4'
         } ${isDragging ? 'opacity-50 shadow-lg z-50' : ''} ${
           canManage ? 'hover:border-muted-foreground/50' : ''

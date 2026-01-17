@@ -37,7 +37,7 @@ export function EventsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md max-h-[70vh] flex flex-col overflow-hidden">
+      <DialogContent className="max-w-md max-h-[70vh] flex flex-col overflow-hidden !border !border-black dark:!border-white">
         <DialogHeader className="flex-shrink-0 pb-2">
           <DialogTitle>
             {selectedDay && formatDate(
@@ -57,7 +57,7 @@ export function EventsDialog({
               const isAllDayEvent = event.event_type === 'birthday' || event.event_type === 'holiday'
 
               return (
-                <div key={event.id} className="rounded-lg border bg-card p-4">
+                <div key={event.id} className="rounded-lg border border-border dark:border-white/20 bg-card p-4">
                   <div className="flex items-start gap-3">
                     <div
                       className={cn(

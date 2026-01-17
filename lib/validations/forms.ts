@@ -34,6 +34,7 @@ export const fieldTypeSchema = z.enum([
   'single_select',
   'multi_select',
   'checkbox',
+  'divider',
 ])
 export type FieldType = z.infer<typeof fieldTypeSchema>
 
@@ -69,14 +70,14 @@ export type ConditionAction = z.infer<typeof conditionActionSchema>
 
 // Option colors for select fields
 export const optionColors = [
-  { name: 'gray', bg: 'bg-zinc-100 dark:bg-zinc-800', text: 'text-zinc-800 dark:text-zinc-200' },
-  { name: 'red', bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-800 dark:text-red-200' },
-  { name: 'orange', bg: 'bg-orange-100 dark:bg-orange-900/30', text: 'text-orange-800 dark:text-orange-200' },
-  { name: 'yellow', bg: 'bg-yellow-100 dark:bg-yellow-900/30', text: 'text-yellow-800 dark:text-yellow-200' },
-  { name: 'green', bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-800 dark:text-green-200' },
-  { name: 'blue', bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-800 dark:text-blue-200' },
-  { name: 'purple', bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-800 dark:text-purple-200' },
-  { name: 'pink', bg: 'bg-pink-100 dark:bg-pink-900/30', text: 'text-pink-800 dark:text-pink-200' },
+  { name: 'gray', bg: '!bg-zinc-200 dark:!bg-zinc-700', text: '!text-zinc-800 dark:!text-zinc-100' },
+  { name: 'red', bg: '!bg-red-200 dark:!bg-red-800/70', text: '!text-red-900 dark:!text-red-100' },
+  { name: 'orange', bg: '!bg-orange-200 dark:!bg-orange-800/70', text: '!text-orange-900 dark:!text-orange-100' },
+  { name: 'yellow', bg: '!bg-yellow-200 dark:!bg-yellow-700/70', text: '!text-yellow-900 dark:!text-yellow-100' },
+  { name: 'green', bg: '!bg-green-200 dark:!bg-green-800/70', text: '!text-green-900 dark:!text-green-100' },
+  { name: 'blue', bg: '!bg-blue-200 dark:!bg-blue-800/70', text: '!text-blue-900 dark:!text-blue-100' },
+  { name: 'purple', bg: '!bg-purple-200 dark:!bg-purple-800/70', text: '!text-purple-900 dark:!text-purple-100' },
+  { name: 'pink', bg: '!bg-pink-200 dark:!bg-pink-800/70', text: '!text-pink-900 dark:!text-pink-100' },
 ] as const
 
 export type OptionColorName = (typeof optionColors)[number]['name']
@@ -102,9 +103,16 @@ export const numberSettingsSchema = z.object({
 })
 export type NumberSettings = z.infer<typeof numberSettingsSchema>
 
+// Divider field settings
+export const dividerSettingsSchema = z.object({
+  showTitle: z.boolean().default(false),
+})
+export type DividerSettings = z.infer<typeof dividerSettingsSchema>
+
 // Field settings (type-specific)
 export const fieldSettingsSchema = z.object({
   number: numberSettingsSchema.optional(),
+  divider: dividerSettingsSchema.optional(),
 })
 export type FieldSettings = z.infer<typeof fieldSettingsSchema>
 

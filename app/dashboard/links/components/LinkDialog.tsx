@@ -62,9 +62,15 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
       return
     }
 
+    // Auto-prepend https:// if no protocol specified
+    let normalizedUrl = url.trim()
+    if (!normalizedUrl.startsWith('http://') && !normalizedUrl.startsWith('https://')) {
+      normalizedUrl = 'https://' + normalizedUrl
+    }
+
     // Validate URL
     try {
-      new URL(url)
+      new URL(normalizedUrl)
     } catch {
       toast.error(t('validation.invalidUrl'))
       return
@@ -74,7 +80,7 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
     try {
       const data = {
         title: title.trim(),
-        url: url.trim(),
+        url: normalizedUrl,
         description: description.trim() || null,
         visibility,
       }
@@ -101,7 +107,7 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>{link ? t('linkDialog.editTitle') : t('linkDialog.addTitle')}</DialogTitle>
         </DialogHeader>
@@ -115,6 +121,7 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder={t('linkDialog.titlePlaceholder')}
+              className="!border !border-black dark:!border-zinc-700"
             />
           </div>
 
@@ -127,6 +134,7 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder={t('linkDialog.urlPlaceholder')}
+              className="!border !border-black dark:!border-zinc-700"
             />
           </div>
 
@@ -139,6 +147,7 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
               onChange={(e) => setDescription(e.target.value)}
               placeholder={t('linkDialog.descriptionPlaceholder')}
               rows={2}
+              className="!border !border-black dark:!border-zinc-700"
             />
           </div>
 
@@ -163,10 +172,9 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
 
         <DialogFooter>
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => onOpenChange(false)}
             disabled={isSaving}
-            className="!border !border-black dark:!border-white"
           >
             {t('linkDialog.cancel')}
           </Button>

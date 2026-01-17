@@ -98,7 +98,7 @@ export function SaveViewDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] !border !border-black dark:!border-white">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>{isEditing ? t('editTitle') : t('saveTitle')}</DialogTitle>
@@ -147,6 +147,7 @@ export function SaveViewDialog({
             <Button
               type="button"
               variant="outline-pill-muted"
+              className="!border-0"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
             >
@@ -155,7 +156,7 @@ export function SaveViewDialog({
             <Button
               type="submit"
               disabled={isLoading}
-              className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white"
+              className="!rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground"
             >
               {isLoading ? t('saving') : isEditing ? t('saveChanges') : t('saveView')}
             </Button>

@@ -114,7 +114,7 @@ export function VolunteerPicker({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950" onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 !border !border-black dark:!border-white" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>{t('title')}</DialogTitle>
           <div className="text-sm text-muted-foreground">
@@ -141,7 +141,7 @@ export function VolunteerPicker({
             placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
+            className="pl-9 !border-black/20 dark:!border-white/20"
             autoFocus={false}
           />
         </div>
@@ -175,7 +175,7 @@ export function VolunteerPicker({
                     ? 'bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-900 opacity-60 cursor-not-allowed'
                     : volunteer.isAlreadyAssigned
                       ? 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900 hover:bg-amber-50 dark:hover:bg-amber-950/30'
-                      : 'border-gray-200 dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-900 hover:border-gray-300 dark:hover:border-zinc-600'
+                      : 'border-black/20 dark:border-white/20 hover:bg-gray-50 dark:hover:bg-zinc-900 hover:border-zinc-400 dark:hover:border-white/30'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -234,7 +234,7 @@ export function VolunteerPicker({
 
         {/* Actions */}
         <div className="flex justify-end pt-2">
-          <Button variant="outline-pill" className="!border !border-black dark:!border-white" onClick={() => onOpenChange(false)} disabled={isAssigning}>
+          <Button variant="ghost" className="rounded-full" onClick={() => onOpenChange(false)} disabled={isAssigning}>
             {tActions('close')}
           </Button>
         </div>

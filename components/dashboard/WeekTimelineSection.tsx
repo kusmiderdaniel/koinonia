@@ -61,12 +61,12 @@ export function WeekTimelineSection({ items, defaultExpanded = true, onTaskClick
 
   if (items.length === 0) {
     return (
-      <section className="p-4 border border-border rounded-lg bg-card h-full">
+      <section className="p-4 border border-black dark:border-white rounded-lg bg-card h-full">
         <h2 className="text-base md:text-lg font-semibold mb-3 flex items-center gap-2">
           <Calendar className="h-5 w-5 text-muted-foreground" />
           {t('yourWeek.title')}
         </h2>
-        <Card className="bg-muted/30 border border-border">
+        <Card className="bg-muted/30 border border-black/20 dark:border-white/20 !ring-0 outline-none">
           <CardContent className="py-6 text-center">
             <Calendar className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
             <p className="text-muted-foreground font-medium">{t('yourWeek.nothingScheduled')}</p>
@@ -80,7 +80,7 @@ export function WeekTimelineSection({ items, defaultExpanded = true, onTaskClick
   }
 
   return (
-    <section className="p-4 border border-border rounded-lg bg-card h-full">
+    <section className="p-4 border border-black dark:border-white rounded-lg bg-card h-full">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between mb-3 group"
@@ -118,7 +118,7 @@ export function WeekTimelineSection({ items, defaultExpanded = true, onTaskClick
                 <div
                   key={`${item.type}-${item.id}`}
                   onClick={() => handleNavigate(item)}
-                  className="px-3 py-2 cursor-pointer hover:opacity-80 rounded-lg transition-colors border border-border"
+                  className="px-3 py-2 cursor-pointer hover:opacity-80 rounded-lg transition-colors border border-black/20 dark:border-white/20"
                   style={{
                     backgroundColor: item.ministry?.color
                       ? hexToLowSaturation(item.ministry.color)
@@ -156,7 +156,7 @@ export function WeekTimelineSection({ items, defaultExpanded = true, onTaskClick
       {/* Collapsed preview for mobile */}
       {!isExpanded && (
         <div className="md:hidden">
-          <Card className="border border-border">
+          <Card className="border border-black/20 dark:border-white/20 !ring-0 outline-none">
             <CardContent className="p-3">
               <p className="text-sm text-muted-foreground">
                 {t('yourWeek.itemsThisWeek', { count: items.length })}

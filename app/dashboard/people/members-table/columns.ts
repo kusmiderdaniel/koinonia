@@ -133,6 +133,31 @@ export function getDefaultVisibleColumns(customFields: CustomFieldDefinition[]):
 // Pinned columns that cannot be reordered (always at the start)
 export const PINNED_COLUMNS: PeopleColumnKey[] = ['active', 'name']
 
+// Columns that should have centered content (checkboxes and dates)
+export const CENTERED_COLUMNS: StaticColumnKey[] = [
+  'active',
+  'baptized',
+  'age',
+  'date_of_birth',
+  'baptism_date',
+  'departure_date',
+  'joined',
+]
+
+// Check if a column should be centered
+export function isColumnCentered(key: PeopleColumnKey, column?: PeopleColumn): boolean {
+  // Static columns that are centered
+  if (CENTERED_COLUMNS.includes(key as StaticColumnKey)) {
+    return true
+  }
+  // Custom field columns - check field type
+  if (column?.isCustomField && column.fieldDefinition) {
+    const fieldType = column.fieldDefinition.field_type
+    return fieldType === 'checkbox' || fieldType === 'date'
+  }
+  return false
+}
+
 // Default freeze column key - freezes Active and Name columns by default
 export const DEFAULT_FREEZE_COLUMN_KEY: PeopleColumnKey = 'name'
 

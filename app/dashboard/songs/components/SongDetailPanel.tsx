@@ -58,7 +58,7 @@ export function SongDetailPanel({
 
   if (!song) {
     return (
-      <Card className="h-full flex items-center justify-center border border-black dark:border-white">
+      <Card className="h-full flex items-center justify-center border border-black dark:border-white !ring-0 outline-none">
         <EmptyState
           icon={Music}
           title={t('selectSong')}
@@ -70,7 +70,7 @@ export function SongDetailPanel({
   }
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-white !gap-0">
+    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-white !gap-0 !ring-0 outline-none">
       <DetailPanelHeader
         title={song.title}
         subtitle={
@@ -88,23 +88,23 @@ export function SongDetailPanel({
 
       {/* Tabbed Content */}
       <Tabs defaultValue="details" className="flex-1 flex flex-col overflow-hidden">
-        <div className={`border-b ${isMobile ? 'px-2 py-1' : 'px-6 py-3'}`}>
+        <div className={`border-b border-black/20 dark:border-white/20 ${isMobile ? 'px-2 py-1' : 'px-6 py-3'}`}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger
               value="details"
-              className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : ''}`}
+              className={`data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground ${isMobile ? 'text-xs py-1.5' : ''}`}
             >
               {t('detail.tabs.details')}
             </TabsTrigger>
             <TabsTrigger
               value="lyrics"
-              className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : ''}`}
+              className={`data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground ${isMobile ? 'text-xs py-1.5' : ''}`}
             >
               {t('detail.tabs.lyrics')}
             </TabsTrigger>
             <TabsTrigger
               value="arrangements"
-              className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : ''}`}
+              className={`data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground ${isMobile ? 'text-xs py-1.5' : ''}`}
             >
               {t('detail.tabs.arrangements')}
             </TabsTrigger>
@@ -176,7 +176,7 @@ export function SongDetailPanel({
                       onChange={onUploadAttachment}
                       disabled={isUploading}
                     />
-                    <Button variant="outline-pill" size="sm" className="!border !border-gray-300 dark:!border-gray-600" asChild disabled={isUploading}>
+                    <Button variant="outline-pill" size="sm" className="!border !border-black/20 dark:!border-white/20" asChild disabled={isUploading}>
                       <span>
                         <Upload className="w-4 h-4 mr-1" />
                         {isUploading ? t('detail.uploading') : t('detail.uploadPdf')}
@@ -190,7 +190,7 @@ export function SongDetailPanel({
                   {song.song_attachments.map((attachment) => (
                     <div
                       key={attachment.id}
-                      className="flex items-center justify-between p-3 border rounded-lg"
+                      className="flex items-center justify-between p-3 border border-black/20 dark:border-white/20 rounded-lg"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <FileText className="w-5 h-5 text-red-500 flex-shrink-0" />

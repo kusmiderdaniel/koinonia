@@ -113,7 +113,7 @@
   "builder": {
     "tabs": {
       "build": "Buduj",
-      "responses": "Odpowiedzi ({count})",
+      "responses": "Odpowiedzi",
       "settings": "Ustawienia",
       "analytics": "Analityka"
     },
@@ -192,7 +192,9 @@
     "multi_select": "Pola wyboru",
     "multi_selectDesc": "Wielokrotny wybór",
     "checkbox": "Tak/Nie",
-    "checkboxDesc": "Pole przełącznika"
+    "checkboxDesc": "Pole przełącznika",
+    "divider": "Podział",
+    "dividerDesc": "Wizualny separator"
   },
 
   "defaultLabels": {
@@ -204,6 +206,7 @@
     "single_select": "Lista rozwijana",
     "multi_select": "Wielokrotny wybór",
     "checkbox": "Pole wyboru",
+    "divider": "Podział",
     "question": "Pytanie"
   },
 
@@ -238,7 +241,11 @@
     "placeholderPlaceholder": "Tekst placeholdera",
     "options": "Opcje",
     "addOption": "Dodaj opcję",
-    "moreOptions": "+{count} więcej opcji"
+    "moreOptions": "+{count} więcej opcji",
+    "showTitle": "Pokaż tytuł",
+    "showTitleHelp": "Wyświetl tytuł na linii podziału",
+    "dividerTitle": "Tytuł",
+    "dividerTitlePlaceholder": "Wprowadź tytuł podziału"
   },
 
   "numberSettings": {

@@ -105,7 +105,7 @@ export const EmptyState = memo(function EmptyState({
           onClick={action.onClick}
           size={size === 'sm' ? 'sm' : 'default'}
           variant={action.variant || 'default'}
-          className={action.variant === 'outline' ? '!border !border-black dark:!border-white' : ''}
+          className={action.variant === 'outline' ? '!border !border-black/20 dark:!border-white/20' : ''}
         >
           {action.label}
         </Button>

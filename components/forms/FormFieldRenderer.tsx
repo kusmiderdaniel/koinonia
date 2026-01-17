@@ -9,6 +9,7 @@ import {
   SingleSelectField,
   MultiSelectField,
   CheckboxField,
+  DividerField,
 } from './form-fields'
 import type { FormField, FormValues, FormErrors } from './types'
 
@@ -19,6 +20,7 @@ interface FormFieldRendererProps {
   onValueChange: (fieldId: string, value: unknown) => void
   onMultiSelectChange: (fieldId: string, optionValue: string, checked: boolean) => void
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  locale?: string
 }
 
 export function FormFieldRenderer({
@@ -28,6 +30,7 @@ export function FormFieldRenderer({
   onValueChange,
   onMultiSelectChange,
   weekStartsOn = 0,
+  locale,
 }: FormFieldRendererProps) {
   const baseProps = { field, value, error, onValueChange }
 
@@ -45,7 +48,7 @@ export function FormFieldRenderer({
       return <EmailField {...baseProps} />
 
     case 'date':
-      return <DateField {...baseProps} weekStartsOn={weekStartsOn} />
+      return <DateField {...baseProps} weekStartsOn={weekStartsOn} locale={locale} />
 
     case 'single_select':
       return <SingleSelectField {...baseProps} />
@@ -55,6 +58,9 @@ export function FormFieldRenderer({
 
     case 'checkbox':
       return <CheckboxField {...baseProps} />
+
+    case 'divider':
+      return <DividerField field={field} />
 
     default:
       return null
@@ -68,6 +74,7 @@ interface FormFieldsProps {
   onValueChange: (fieldId: string, value: unknown) => void
   onMultiSelectChange: (fieldId: string, optionValue: string, checked: boolean) => void
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6
+  locale?: string
 }
 
 export function FormFields({
@@ -77,6 +84,7 @@ export function FormFields({
   onValueChange,
   onMultiSelectChange,
   weekStartsOn = 0,
+  locale,
 }: FormFieldsProps) {
   return (
     <div className="space-y-6">
@@ -89,6 +97,7 @@ export function FormFields({
           onValueChange={onValueChange}
           onMultiSelectChange={onMultiSelectChange}
           weekStartsOn={weekStartsOn}
+          locale={locale}
         />
       ))}
     </div>

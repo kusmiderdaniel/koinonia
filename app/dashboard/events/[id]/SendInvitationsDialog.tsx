@@ -147,7 +147,7 @@ export function SendInvitationsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Send className="w-5 h-5" />
@@ -182,7 +182,7 @@ export function SendInvitationsDialog({
             {/* Scope selection */}
             <RadioGroup value={scope} onValueChange={(v: string) => setScope(v as InvitationScope)}>
               {/* All */}
-              <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-900">
+              <div className="flex items-center space-x-2 p-3 border border-input rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-900">
                 <RadioGroupItem value="all" id="scope-all" />
                 <Label htmlFor="scope-all" className="flex-1 cursor-pointer">
                   <span className="font-medium">{t('allPending')}</span>
@@ -275,7 +275,7 @@ export function SendInvitationsDialog({
           <Button
             type="button"
             variant="outline-pill"
-            className="flex-1 sm:flex-none !border !border-black dark:!border-white"
+            className="flex-1 sm:flex-none !border-0"
             onClick={() => onOpenChange(false)}
             disabled={isSending}
           >
@@ -285,7 +285,7 @@ export function SendInvitationsDialog({
             variant="outline-pill"
             onClick={handleSend}
             disabled={isSending || !canSend()}
-            className="flex-1 sm:flex-none !bg-brand hover:!bg-brand/90 !text-white !border-brand"
+            className="flex-1 sm:flex-none !bg-brand hover:!bg-brand/90 !text-brand-foreground !border-brand"
           >
             {isSending ? (
               <>

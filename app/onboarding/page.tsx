@@ -95,7 +95,7 @@ export default function OnboardingPage() {
                   </ul>
 
                   {/* Button */}
-                  <Button asChild className="w-full h-12 !rounded-full !bg-brand hover:!bg-brand/90 text-white group/btn" size="lg">
+                  <Button asChild className="w-full h-12 !rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground group/btn" size="lg">
                     <Link href="/onboarding/create-church" className="gap-2">
                       {t('main.createChurch.button')}
                       <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />

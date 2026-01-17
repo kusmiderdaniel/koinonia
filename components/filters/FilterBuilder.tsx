@@ -129,7 +129,7 @@ export const FilterBuilder = memo(function FilterBuilder({
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 w-full sm:w-auto justify-center !border !border-black dark:!border-zinc-700"
+          className="gap-2 w-full sm:w-auto justify-center !border !border-black/20 dark:!border-white/20"
         >
           <Filter className="h-4 w-4" />
           {activeFilterCount > 0 ? (
@@ -193,11 +193,11 @@ export const FilterBuilder = memo(function FilterBuilder({
           )}
 
           {/* Add buttons */}
-          <div className="flex items-center gap-2 pt-2 border-t">
+          <div className="flex items-center gap-2 pt-2 border-t border-black/20 dark:border-white/20">
             <Button
               variant="outline"
               size="sm"
-              className="text-muted-foreground hover:text-foreground gap-1 !border !border-black dark:!border-white"
+              className="text-muted-foreground hover:text-foreground gap-1 !border !border-black/20 dark:!border-white/20"
               onClick={handleAddRule}
             >
               <Plus className="h-4 w-4" />
@@ -206,7 +206,7 @@ export const FilterBuilder = memo(function FilterBuilder({
             <Button
               variant="outline"
               size="sm"
-              className="text-muted-foreground hover:text-foreground gap-1 !border !border-black dark:!border-white"
+              className="text-muted-foreground hover:text-foreground gap-1 !border !border-black/20 dark:!border-white/20"
               onClick={handleAddGroup}
             >
               <Plus className="h-4 w-4" />

@@ -95,16 +95,16 @@ export function AgendaPrintView({ event, timeFormat = '24h' }: AgendaPrintViewPr
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-zinc-950">
       {/* Header - hidden when printing */}
-      <div className="print:hidden sticky top-0 z-10 bg-white border-b px-4 py-3 flex items-center justify-between">
+      <div className="print:hidden sticky top-0 z-10 bg-white dark:bg-zinc-950 border-b border-gray-200 dark:border-white/20 px-4 py-3 flex items-center justify-between">
         <Link href={`/dashboard/events?event=${event.id}`}>
           <Button variant="ghost" size="sm" className="gap-2">
             <ArrowLeft className="w-4 h-4" />
             Back
           </Button>
         </Link>
-        <Button onClick={handlePrint} className="gap-2 !bg-brand hover:!bg-brand/90 !text-white">
+        <Button onClick={handlePrint} className="gap-2 !bg-brand hover:!bg-brand/90 !text-black">
           <Printer className="w-4 h-4" />
           Print
         </Button>
@@ -114,8 +114,8 @@ export function AgendaPrintView({ event, timeFormat = '24h' }: AgendaPrintViewPr
       <div className="max-w-lg mx-auto px-4 py-6 print:px-2 print:py-4 print:max-w-none">
         {/* Event Header */}
         <div className="mb-6 print:mb-4">
-          <h1 className="text-2xl font-bold print:text-xl">{event.title}</h1>
-          <div className="mt-2 space-y-1 text-gray-600 print:text-sm">
+          <h1 className="text-2xl font-bold print:text-xl dark:text-white">{event.title}</h1>
+          <div className="mt-2 space-y-1 text-gray-600 dark:text-gray-400 print:text-sm">
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 flex-shrink-0" />
               <span>{eventDateFormatted} at {eventTime}</span>
@@ -136,8 +136,8 @@ export function AgendaPrintView({ event, timeFormat = '24h' }: AgendaPrintViewPr
         </div>
 
         {/* Duration Summary */}
-        <div className="mb-4 py-2 px-3 bg-gray-100 rounded-lg print:bg-gray-200 print:rounded-none print:border-y print:border-gray-300">
-          <div className="flex justify-between items-center text-sm">
+        <div className="mb-4 py-2 px-3 bg-gray-100 dark:bg-zinc-800 rounded-lg print:bg-gray-200 print:rounded-none print:border-y print:border-gray-300">
+          <div className="flex justify-between items-center text-sm dark:text-gray-200">
             <span className="font-medium">{event.agenda_items.length} items</span>
             <span className="font-medium">Total: {formatRunningTime(totalDuration)}</span>
           </div>
@@ -145,7 +145,7 @@ export function AgendaPrintView({ event, timeFormat = '24h' }: AgendaPrintViewPr
 
         {/* Agenda Items */}
         {event.agenda_items.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
             No agenda items for this event
           </div>
         ) : (
@@ -157,17 +157,17 @@ export function AgendaPrintView({ event, timeFormat = '24h' }: AgendaPrintViewPr
               return (
                 <div
                   key={item.id}
-                  className="border-b border-gray-200 py-3 print:py-2 last:border-b-0"
+                  className="border-b border-gray-200 dark:border-white/10 py-3 print:py-2 last:border-b-0"
                 >
                   <div className="flex gap-3">
                     {/* Index/Icon */}
                     <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
                       {isSong ? (
-                        <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center print:bg-purple-200">
-                          <Music className="w-4 h-4 text-purple-600" />
+                        <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center print:bg-purple-200">
+                          <Music className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                         </div>
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center font-semibold text-gray-600 print:bg-gray-200">
+                        <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center font-semibold text-gray-600 dark:text-gray-300 print:bg-gray-200">
                           {index + 1}
                         </div>
                       )}
@@ -178,32 +178,32 @@ export function AgendaPrintView({ event, timeFormat = '24h' }: AgendaPrintViewPr
                       {/* Title & Duration Row */}
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0 flex-1">
-                          <h3 className="font-semibold text-gray-900 print:text-sm">
+                          <h3 className="font-semibold text-gray-900 dark:text-white print:text-sm">
                             {item.song ? item.song.title : item.title}
                             {songKey && (
-                              <span className="ml-2 text-sm font-normal text-purple-600 print:text-purple-700">
+                              <span className="ml-2 text-sm font-normal text-purple-600 dark:text-purple-400 print:text-purple-700">
                                 ({songKey})
                               </span>
                             )}
                           </h3>
                           {item.song?.artist && (
-                            <p className="text-sm text-gray-500 print:text-xs">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 print:text-xs">
                               {item.song.artist}
                             </p>
                           )}
                         </div>
                         <div className="flex-shrink-0 text-right">
-                          <span className="text-sm font-medium text-gray-700 print:text-xs">
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 print:text-xs">
                             {formatDuration(item.duration_seconds)}
                           </span>
-                          <div className="text-xs text-gray-400">
+                          <div className="text-xs text-gray-400 dark:text-gray-500">
                             @{formatRunningTime(item.runningTimeStart)}
                           </div>
                         </div>
                       </div>
 
                       {/* Meta Row */}
-                      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 print:text-xs">
+                      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 dark:text-gray-400 print:text-xs">
                         {item.leader && (
                           <span className="flex items-center gap-1">
                             <User className="w-3 h-3" />
@@ -225,7 +225,7 @@ export function AgendaPrintView({ event, timeFormat = '24h' }: AgendaPrintViewPr
 
                       {/* Notes/Description */}
                       {item.description && (
-                        <p className="mt-2 text-sm text-gray-600 bg-gray-50 px-2 py-1.5 rounded print:bg-gray-100 print:text-xs print:border print:border-gray-200">
+                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-zinc-800 px-2 py-1.5 rounded print:bg-gray-100 print:text-xs print:border print:border-gray-200">
                           {item.description}
                         </p>
                       )}

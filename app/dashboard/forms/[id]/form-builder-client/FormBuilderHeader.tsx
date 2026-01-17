@@ -72,7 +72,7 @@ export function FormBuilderHeader({
   // Mobile layout - more compact with actions in dropdown
   if (isMobile) {
     return (
-      <div className="flex items-center justify-between shrink-0 border-b bg-background px-2 h-12">
+      <div className="flex items-center justify-between shrink-0 border-b border-black dark:border-white bg-background px-2 h-12">
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <Button variant="ghost" size="icon" asChild className="h-8 w-8 shrink-0" aria-label="Back to forms">
             <Link href="/dashboard/forms">
@@ -123,12 +123,12 @@ export function FormBuilderHeader({
             <Button
               size="sm"
               onClick={onPublish}
-              className="h-8 px-3 text-xs rounded-full !bg-brand hover:!bg-brand/90 !text-white"
+              className="h-8 px-3 text-xs rounded-full !bg-brand hover:!bg-brand/90 !text-black"
             >
               {t('header.publish')}
             </Button>
           ) : currentForm.status === 'published' ? (
-            <Badge variant="default" className="!bg-green-600 !text-white rounded-full text-xs">
+            <Badge variant="default" className="!bg-green-600 !text-brand-foreground rounded-full text-xs">
               {t('header.live')}
             </Badge>
           ) : (
@@ -198,7 +198,7 @@ export function FormBuilderHeader({
 
   // Desktop layout
   return (
-    <div className="flex items-center justify-between shrink-0 border-b bg-background px-4 h-[72px]">
+    <div className="flex items-center justify-between shrink-0 border-b border-black dark:border-white bg-background px-4 h-[72px]">
       <div className="flex items-center gap-2 min-w-0 flex-1">
         <Button variant="ghost" size="icon" asChild aria-label="Back to forms">
           <Link href="/dashboard/forms">
@@ -261,7 +261,7 @@ export function FormBuilderHeader({
           variant="outline"
           size="sm"
           onClick={onCopyLink}
-          className="gap-2 !border !border-black dark:!border-white"
+          className="gap-2 !border !border-black/20 dark:!border-white/20"
         >
           {copiedLink ? <Check className="h-4 w-4" /> : <LinkIcon className="h-4 w-4" />}
           {copiedLink ? t('header.copied') : t('header.share')}
@@ -271,7 +271,7 @@ export function FormBuilderHeader({
           variant="outline"
           size="sm"
           onClick={onPreview}
-          className="gap-2 !border !border-black dark:!border-white"
+          className="gap-2 !border !border-black/20 dark:!border-white/20"
         >
           <Eye className="h-4 w-4" />
           {t('header.preview')}
@@ -282,7 +282,7 @@ export function FormBuilderHeader({
           size="sm"
           onClick={onSave}
           disabled={!isDirty || isSaving}
-          className="gap-2 !border !border-black dark:!border-white"
+          className="gap-2 !border !border-black/20 dark:!border-white/20"
         >
           <Save className="h-4 w-4" />
           {isSaving ? t('header.saving') : t('header.save')}
@@ -292,12 +292,12 @@ export function FormBuilderHeader({
           <Button
             size="sm"
             onClick={onPublish}
-            className="gap-2 rounded-full !bg-brand hover:!bg-brand/90 !text-white"
+            className="gap-2 rounded-full !bg-brand hover:!bg-brand/90 !text-black"
           >
             {t('header.publish')}
           </Button>
         ) : currentForm.status === 'published' ? (
-          <Badge variant="default" className="!bg-green-600 !text-white rounded-full">
+          <Badge variant="default" className="!bg-green-600 !text-brand-foreground rounded-full">
             {t('header.live')}
           </Badge>
         ) : null}

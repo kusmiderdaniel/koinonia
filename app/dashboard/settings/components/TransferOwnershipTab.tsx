@@ -63,10 +63,10 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
                       onClick={() =>
                         ownershipTransfer.setSelectedNewOwner(isSelected ? '' : member.id)
                       }
-                      className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
+                      className={`w-full text-left p-3 rounded-lg border transition-all ${
                         isSelected
                           ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30'
-                          : 'border-border hover:border-orange-300 hover:bg-muted/50'
+                          : 'border-black/20 dark:border-white/20 hover:border-orange-300 hover:bg-muted/50'
                       }`}
                     >
                       <div className="font-medium text-sm md:text-base">
@@ -88,13 +88,13 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
               <AlertDialogTrigger asChild>
                 <Button
                   variant="outline"
-                  className="!rounded-full border-orange-500 text-orange-700 hover:bg-orange-50 w-full sm:w-auto"
+                  className="!rounded-lg !border !border-orange-500 text-orange-700 hover:bg-orange-50 w-full sm:w-auto"
                   disabled={!ownershipTransfer.selectedNewOwner || ownershipTransfer.isTransferring}
                 >
                   {t('transferButton')}
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="max-w-[90vw] md:max-w-lg">
+              <AlertDialogContent className="max-w-[90vw] md:max-w-lg !border !border-black dark:!border-white">
                 <AlertDialogHeader>
                   <AlertDialogTitle>{t('dialog.title')}</AlertDialogTitle>
                   <AlertDialogDescription>
@@ -105,7 +105,7 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-                  <AlertDialogCancel disabled={ownershipTransfer.isTransferring} className="rounded-full border-black dark:border-white bg-white dark:bg-zinc-950 px-4 py-2">
+                  <AlertDialogCancel disabled={ownershipTransfer.isTransferring} className="!rounded-lg !border-0 bg-white dark:bg-zinc-950 px-4 py-2">
                     {t('dialog.cancel')}
                   </AlertDialogCancel>
                   <AlertDialogAction
@@ -113,7 +113,7 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
                       ownershipTransfer.handleTransferOwnership(setError, setSuccess, () => {})
                     }
                     disabled={ownershipTransfer.isTransferring}
-                    className="!rounded-full !bg-orange-600 hover:!bg-orange-700 !text-white !px-4 !py-2 disabled:!opacity-50"
+                    className="!rounded-lg !border !border-orange-600 !bg-orange-600 hover:!bg-orange-700 !text-black !px-4 !py-2 disabled:!opacity-50"
                   >
                     {ownershipTransfer.isTransferring
                       ? t('dialog.transferring')

@@ -40,7 +40,7 @@ export function TaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] !border !border-black dark:!border-white">
         <form onSubmit={state.handleSubmit}>
           <DialogHeader>
             <DialogTitle>
@@ -80,10 +80,10 @@ export function TaskDialog({
           <DialogFooter className="flex justify-end gap-3 pt-4 !bg-transparent !border-0 !mx-0 !mb-0 !p-0">
             <Button
               type="button"
-              variant="outline-pill"
+              variant="ghost"
               onClick={() => onClose()}
               disabled={state.isLoading}
-              className="!border-black dark:!border-white"
+              className="rounded-full"
             >
               {t('actions.cancel')}
             </Button>
@@ -91,7 +91,7 @@ export function TaskDialog({
               type="submit"
               disabled={state.isLoading}
               variant="outline-pill"
-              className="!bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
+              className="!bg-brand hover:!bg-brand/90 !text-brand-foreground !border-brand disabled:!opacity-50"
             >
               {state.isLoading
                 ? t('dialog.saving')

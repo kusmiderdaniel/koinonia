@@ -268,7 +268,7 @@ export function UserDisagreementClient({
                       size="sm"
                       onClick={() => handleWithdraw(d.id)}
                       disabled={isSubmitting}
-                      className="!bg-green-600 hover:!bg-green-700 !text-white"
+                      className="!bg-green-600 hover:!bg-green-700 !text-brand-foreground"
                     >
                       <Check className="mr-2 h-4 w-4" />
                       {t.pending.reAgree}
@@ -383,13 +383,13 @@ export function UserDisagreementClient({
 
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-2">
-                  <Button variant="outline" onClick={() => router.back()} className="flex-1 h-11">
+                  <Button variant="outline" onClick={() => router.back()} className="flex-1 h-11 !border-0">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     {t.warning.goBack}
                   </Button>
                   <Button
                     onClick={() => setStep('confirm')}
-                    className="flex-1 h-11 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md"
+                    className="flex-1 h-11 bg-red-600 hover:bg-red-700 !text-brand-foreground font-medium rounded-md"
                   >
                     {t.warning.continueButton}
                   </Button>
@@ -441,14 +441,14 @@ export function UserDisagreementClient({
                 </div>
 
                 <div className="flex gap-3">
-                  <Button variant="outline" onClick={() => setStep('warning')} className="flex-1 h-11">
+                  <Button variant="outline" onClick={() => setStep('warning')} className="flex-1 h-11 !border-0">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     {t.confirm.goBack}
                   </Button>
                   <Button
                     onClick={handleConfirmDisagreement}
                     disabled={!understood || !password || isSubmitting}
-                    className="flex-1 h-11 bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white font-medium rounded-md"
+                    className="flex-1 h-11 bg-red-600 hover:bg-red-700 disabled:bg-red-300 !text-brand-foreground font-medium rounded-md"
                   >
                     {isSubmitting ? t.confirm.processing : t.confirm.confirmButton}
                   </Button>

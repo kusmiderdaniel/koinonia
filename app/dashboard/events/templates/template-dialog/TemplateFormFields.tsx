@@ -50,6 +50,7 @@ export function TemplateFormFields({
           onChange={(e) => updateField('name', e.target.value)}
           placeholder={t('templateDialog.namePlaceholder')}
           required
+          className="!border-black/20 dark:!border-white/20"
         />
       </div>
 
@@ -58,10 +59,10 @@ export function TemplateFormFields({
         <div className="space-y-2">
           <Label htmlFor="eventType">{t('form.eventTypeRequired')}</Label>
           <Select value={formData.eventType} onValueChange={(v) => updateField('eventType', v)}>
-            <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
+            <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black/20 dark:!border-white/20">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent align="start" className="bg-white dark:bg-zinc-950 border border-input">
+            <SelectContent align="start">
               {EVENT_TYPE_VALUES.map((type) => (
                 <SelectItem
                   key={type}
@@ -78,7 +79,7 @@ export function TemplateFormFields({
         <div className="space-y-2">
           <Label htmlFor="visibility">{t('form.visibilityLabel')}</Label>
           <Select value={formData.visibility} onValueChange={(v) => updateField('visibility', v)}>
-            <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white [&_[data-description]]:hidden">
+            <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black/20 dark:!border-white/20 [&_[data-description]]:hidden">
               <div className="flex items-center gap-2">
                 {formData.visibility === 'hidden' ? (
                   <Lock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
@@ -126,7 +127,7 @@ export function TemplateFormFields({
             value={formData.defaultDurationMinutes.toString()}
             onValueChange={(v) => updateField('defaultDurationMinutes', parseInt(v))}
           >
-            <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
+            <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black/20 dark:!border-white/20">
               <SelectValue />
             </SelectTrigger>
             <SelectContent align="start" className="bg-white dark:bg-zinc-950 border border-input">
@@ -153,6 +154,7 @@ export function TemplateFormFields({
           onChange={(e) => updateField('description', e.target.value)}
           placeholder={t('templateDialog.descriptionPlaceholder')}
           rows={2}
+          className="!border-black/20 dark:!border-white/20"
         />
       </div>
 
@@ -237,7 +239,7 @@ function EntitySelectionField<T>({
     <div className="space-y-2">
       <Label>{label}</Label>
       {value ? (
-        <div className="flex items-center gap-2 p-3 border border-black dark:border-white rounded-lg bg-muted/50">
+        <div className="flex items-center gap-2 p-3 border border-black/20 dark:border-white/20 rounded-lg bg-muted/50">
           <Icon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
           <div className="flex-1 min-w-0">
             {renderValue(value)}
@@ -256,7 +258,7 @@ function EntitySelectionField<T>({
         <Button
           type="button"
           variant="outline"
-          className="w-full justify-start text-muted-foreground rounded-lg !border !border-black dark:!border-white"
+          className="w-full justify-start text-muted-foreground rounded-lg !border !border-black/20 dark:!border-white/20"
           onClick={onSelect}
         >
           <Icon className="w-4 h-4 mr-2" />

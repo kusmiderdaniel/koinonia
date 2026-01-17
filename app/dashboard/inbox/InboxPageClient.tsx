@@ -131,7 +131,7 @@ export function InboxPageClient({
               size="sm"
               onClick={handleMarkAllAsRead}
               disabled={isMarkingAllRead}
-              className="gap-1.5 md:gap-2 !rounded-full !border-black dark:!border-white text-xs md:text-sm flex-shrink-0"
+              className="gap-1.5 md:gap-2 !rounded-full !border-black/20 dark:!border-white/20 text-xs md:text-sm flex-shrink-0"
             >
               {isMarkingAllRead ? (
                 <Loader2 className="h-3.5 w-3.5 md:h-4 md:w-4 animate-spin" />
@@ -146,41 +146,39 @@ export function InboxPageClient({
 
         {/* Content */}
         <div className="flex-1 min-h-0 overflow-auto">
-          <div className="md:border md:border-black md:dark:border-white rounded-lg md:p-4 max-w-2xl">
+          <div className="max-w-2xl">
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-              <TabsList className="mb-4 w-full border border-black dark:border-white">
-                <TabsTrigger value="all" className="flex-1 text-xs md:text-sm py-2 md:py-1.5 data-[state=active]:bg-brand data-[state=active]:text-white">
+              <TabsList className="w-full border border-black dark:border-white rounded-t-lg rounded-b-none bg-transparent">
+                <TabsTrigger value="all" className="flex-1 text-xs md:text-sm py-2.5 md:py-2 rounded-lg data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground">
                   {t('tabs.all')}
                 </TabsTrigger>
-                <TabsTrigger value="unread" className="flex-1 text-xs md:text-sm py-2 md:py-1.5 data-[state=active]:bg-brand data-[state=active]:text-white">
+                <TabsTrigger value="unread" className="flex-1 text-xs md:text-sm py-2.5 md:py-2 rounded-lg data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground">
                   {t('tabs.unread')}
                 </TabsTrigger>
-                <TabsTrigger value="actionable" className="flex-1 text-xs md:text-sm py-2 md:py-1.5 data-[state=active]:bg-brand data-[state=active]:text-white">
+                <TabsTrigger value="actionable" className="flex-1 text-xs md:text-sm py-2.5 md:py-2 rounded-lg data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground">
                   <span className="hidden sm:inline">{t('tabs.actionable')}</span>
                   <span className="sm:hidden">{t('tabs.actionableShort')}</span>
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value={activeTab} className="mt-0">
+              <TabsContent value={activeTab} className="mt-0 border border-black dark:border-white border-t-0 rounded-b-lg p-4">
                 {filteredNotifications.length === 0 ? (
-                  <Card>
-                    <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                      <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
-                        {activeTab === 'actionable' ? (
-                          <Check className="h-6 w-6 text-muted-foreground" />
-                        ) : (
-                          <Inbox className="h-6 w-6 text-muted-foreground" />
-                        )}
-                      </div>
-                      <h3 className="font-medium mb-1">
-                        {t(`empty.${activeTab}.title`)}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {t(`empty.${activeTab}.description`)}
-                      </p>
-                    </CardContent>
-                  </Card>
+                  <div className="flex flex-col items-center justify-center py-12 text-center">
+                    <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
+                      {activeTab === 'actionable' ? (
+                        <Check className="h-6 w-6 text-muted-foreground" />
+                      ) : (
+                        <Inbox className="h-6 w-6 text-muted-foreground" />
+                      )}
+                    </div>
+                    <h3 className="font-medium mb-1">
+                      {t(`empty.${activeTab}.title`)}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {t(`empty.${activeTab}.description`)}
+                    </p>
+                  </div>
                 ) : (
                   <div className="space-y-3">
                     {filteredNotifications.map((notification) => (

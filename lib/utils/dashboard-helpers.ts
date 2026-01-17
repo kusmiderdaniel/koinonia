@@ -2,8 +2,16 @@ import { format, parseISO, startOfDay, addDays } from 'date-fns'
 import type { DashboardAssignment, DashboardTask } from '@/app/dashboard/actions'
 import { getDateTimeFormatPattern, getTimeFormatPattern, type TimeFormat } from '@/lib/utils/format'
 
+export interface PendingMember {
+  id: string
+  first_name: string
+  last_name: string
+  email: string
+  created_at: string
+}
+
 export interface UrgentItem {
-  type: 'invitation' | 'task'
+  type: 'invitation' | 'task' | 'pending_member'
   id: string
   title: string
   subtitle: string
@@ -13,7 +21,7 @@ export interface UrgentItem {
     name: string
     color: string
   }
-  originalData: DashboardAssignment | DashboardTask
+  originalData: DashboardAssignment | DashboardTask | PendingMember
 }
 
 export interface WeekItem {
@@ -30,16 +38,28 @@ export interface WeekItem {
   originalData: DashboardAssignment | DashboardTask
 }
 
-// Helper function to create urgent items from assignments and tasks
+// Helper function to create urgent items from assignments, tasks, and pending members
 export function createUrgentItems(
   assignments: DashboardAssignment[],
   tasks: DashboardTask[],
-  timeFormat: TimeFormat = '24h'
+  timeFormat: TimeFormat = '24h',
+  pendingMembers: PendingMember[] = []
 ): UrgentItem[] {
   const now = new Date()
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
   const items: UrgentItem[] = []
+
+  // Add pending member registrations (highest priority for leaders)
+  pendingMembers.forEach((member) => {
+    items.push({
+      type: 'pending_member',
+      id: member.id,
+      title: `${member.first_name} ${member.last_name}`,
+      subtitle: member.email,
+      originalData: member,
+    })
+  })
 
   // Add pending invitations
   assignments
@@ -81,9 +101,10 @@ export function createUrgentItems(
     }
   })
 
-  // Sort: invitations first, then by overdue status
+  // Sort: pending_members first, then invitations, then by overdue status
   items.sort((a, b) => {
-    if (a.type !== b.type) return a.type === 'invitation' ? -1 : 1
+    const typeOrder = { pending_member: 0, invitation: 1, task: 2 }
+    if (a.type !== b.type) return typeOrder[a.type] - typeOrder[b.type]
     if (a.isOverdue !== b.isOverdue) return a.isOverdue ? -1 : 1
     return 0
   })

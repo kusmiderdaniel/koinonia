@@ -70,7 +70,7 @@ export const FilterRuleRow = memo(function FilterRuleRow({
               <button
                 type="button"
                 onClick={() => onConjunctionChange(conjunction === 'and' ? 'or' : 'and')}
-                className="h-8 px-3 text-xs rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+                className="h-8 px-3 text-xs rounded-md border border-black/20 dark:border-white/20 bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
               >
                 {t(conjunction)}
               </button>
@@ -86,10 +86,10 @@ export const FilterRuleRow = memo(function FilterRuleRow({
 
         {/* Field selector */}
         <Select value={rule.field} onValueChange={handleFieldChange}>
-          <SelectTrigger className="flex-1 sm:w-[130px] h-8 text-xs">
+          <SelectTrigger className="flex-1 sm:w-[130px] h-8 text-xs !border !border-black/20 dark:!border-white/20">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="border border-black dark:border-zinc-700">
+          <SelectContent className="border border-black/20 dark:border-white/20">
             {filterFields.map((f) => (
               <SelectItem
                 key={f.id}
@@ -116,10 +116,10 @@ export const FilterRuleRow = memo(function FilterRuleRow({
       <div className="flex items-center gap-2 pl-16 sm:pl-0">
         {/* Operator selector */}
         <Select value={rule.operator} onValueChange={(v) => onUpdate({ operator: v })}>
-          <SelectTrigger className="w-[100px] sm:w-[120px] h-8 text-xs">
+          <SelectTrigger className="w-[100px] sm:w-[120px] h-8 text-xs !border !border-black/20 dark:!border-white/20">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent className="border border-black dark:border-zinc-700">
+          <SelectContent className="border border-black/20 dark:border-white/20">
             {operators.map((op) => (
               <SelectItem
                 key={op.value}

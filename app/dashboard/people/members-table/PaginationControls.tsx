@@ -98,7 +98,7 @@ export function PaginationControls({
   if (totalItems === 0) return null
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-black/20 dark:border-white/20">
       {/* Results info and page size selector */}
       <div className="flex items-center gap-4 text-sm text-muted-foreground">
         <span>
@@ -110,10 +110,10 @@ export function PaginationControls({
             value={String(pageSize)}
             onValueChange={(value) => onPageSizeChange(Number(value))}
           >
-            <SelectTrigger className="h-8 w-[70px]">
+            <SelectTrigger className="h-8 w-[70px] !border !border-black/20 dark:!border-white/20">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="border border-black/20 dark:border-white/20">
               <SelectItem value={String(PAGE_SIZE.SMALL)}>{PAGE_SIZE.SMALL}</SelectItem>
               <SelectItem value={String(PAGE_SIZE.DEFAULT)}>{PAGE_SIZE.DEFAULT}</SelectItem>
               <SelectItem value={String(PAGE_SIZE.LARGE)}>{PAGE_SIZE.LARGE}</SelectItem>

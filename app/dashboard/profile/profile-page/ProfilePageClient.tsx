@@ -17,7 +17,7 @@ import { AccountSettingsCard } from './AccountSettingsCard'
 import { PrivacySettingsCard } from './PrivacySettingsCard'
 import { isLeaderOrAbove } from '@/lib/permissions'
 
-type TabKey = 'personal' | 'password' | 'notifications' | 'language' | 'appearance' | 'privacy' | 'account'
+type TabKey = 'personal' | 'password' | 'notifications' | 'preferences' | 'privacy' | 'account'
 
 interface TabItem {
   key: TabKey
@@ -44,8 +44,7 @@ export function ProfilePageClient() {
     { key: 'personal', labelKey: 'tabs.personal', descriptionKey: 'tabDescriptions.personal', show: true },
     { key: 'password', labelKey: 'tabs.password', descriptionKey: 'tabDescriptions.password', show: true },
     { key: 'notifications', labelKey: 'tabs.notifications', descriptionKey: 'tabDescriptions.notifications', show: showNotificationSettings },
-    { key: 'language', labelKey: 'tabs.language', descriptionKey: 'tabDescriptions.language', show: true },
-    { key: 'appearance', labelKey: 'tabs.appearance', descriptionKey: 'tabDescriptions.appearance', show: true },
+    { key: 'preferences', labelKey: 'tabs.preferences', descriptionKey: 'tabDescriptions.preferences', show: true },
     { key: 'privacy', labelKey: 'tabs.privacy', descriptionKey: 'tabDescriptions.privacy', show: true },
     { key: 'account', labelKey: 'tabs.account', descriptionKey: 'tabDescriptions.account', show: true },
   ]
@@ -136,10 +135,14 @@ export function ProfilePageClient() {
             />
           </>
         ) : null
-      case 'language':
-        return <LanguageSettingsCard currentLanguage={state.language} />
-      case 'appearance':
-        return <AppearanceSettingsCard currentTheme={state.theme} />
+      case 'preferences':
+        return (
+          <div className="space-y-6">
+            <LanguageSettingsCard currentLanguage={state.language} />
+            <div className="border-t border-black/20 dark:border-white/20" />
+            <AppearanceSettingsCard currentTheme={state.theme} />
+          </div>
+        )
       case 'privacy':
         return <PrivacySettingsCard />
       case 'account':
@@ -324,12 +327,12 @@ export function ProfilePageClient() {
                 </>
               )}
 
-              {activeTab === 'language' && (
-                <LanguageSettingsCard currentLanguage={state.language} />
-              )}
-
-              {activeTab === 'appearance' && (
-                <AppearanceSettingsCard currentTheme={state.theme} />
+              {activeTab === 'preferences' && (
+                <div className="space-y-6">
+                  <LanguageSettingsCard currentLanguage={state.language} />
+                  <div className="border-t border-black/20 dark:border-white/20" />
+                  <AppearanceSettingsCard currentTheme={state.theme} />
+                </div>
               )}
 
               {activeTab === 'privacy' && (

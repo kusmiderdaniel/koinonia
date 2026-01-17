@@ -44,11 +44,16 @@ export function FormBuilder() {
   const [previewLocale, setPreviewLocale] = useState<Locale>('en')
   const isMultilingual = form?.is_multilingual ?? false
 
+  // Filter out deleted fields for rendering
+  const visibleFields = useMemo(() => {
+    return fields.filter((f) => !f.isDeleted)
+  }, [fields])
+
   // Resolve fields to the preview locale for display
   const resolvedFields = useMemo(() => {
-    if (!isMultilingual) return fields
-    return resolveFormFields(fields, previewLocale) as BuilderField[]
-  }, [fields, isMultilingual, previewLocale])
+    if (!isMultilingual) return visibleFields
+    return resolveFormFields(visibleFields, previewLocale) as BuilderField[]
+  }, [visibleFields, isMultilingual, previewLocale])
 
   // Prevent hydration mismatch by waiting for client mount
   useEffect(() => {
@@ -84,8 +89,8 @@ export function FormBuilder() {
         // Get the translated default label from drag data
         const defaultLabel = (active.data.current as { defaultLabel?: string })?.defaultLabel
         // Find the index to insert at
-        const overIndex = fields.findIndex((f) => f.id === over.id)
-        const insertIndex = overIndex >= 0 ? overIndex : fields.length
+        const overIndex = visibleFields.findIndex((f) => f.id === over.id)
+        const insertIndex = overIndex >= 0 ? overIndex : visibleFields.length
         addField(fieldType, defaultLabel, insertIndex)
         return
       }
@@ -95,7 +100,7 @@ export function FormBuilder() {
         reorderFields(active.id as string, over.id as string)
       }
     },
-    [fields, addField, reorderFields]
+    [visibleFields, addField, reorderFields]
   )
 
   const handleAddField = useCallback(
@@ -108,7 +113,7 @@ export function FormBuilder() {
     [addField, isMobile]
   )
 
-  const activeField = activeId ? fields.find((f) => f.id === activeId) : null
+  const activeField = activeId ? visibleFields.find((f) => f.id === activeId) : null
 
   // Show loading skeleton until mounted to prevent hydration mismatch
   if (!mounted) {
@@ -139,7 +144,7 @@ export function FormBuilder() {
       <>
         <div className="flex flex-col h-full">
           {/* Language selector for multilingual forms - Mobile */}
-          {isMultilingual && fields.length > 0 && (
+          {isMultilingual && visibleFields.length > 0 && (
             <div className="shrink-0 px-3 pt-3 pb-2 bg-muted/10 flex items-center justify-between">
               <span className="text-xs text-muted-foreground">{t('builder.previewLanguage')}</span>
               <LanguageTabs
@@ -152,7 +157,7 @@ export function FormBuilder() {
 
           {/* Mobile Canvas */}
           <div className="flex-1 overflow-y-auto p-3 bg-muted/10">
-            {fields.length === 0 ? (
+            {visibleFields.length === 0 ? (
               <EmptyState
                 icon={FileText}
                 title={t('builder.empty.title')}
@@ -161,7 +166,7 @@ export function FormBuilder() {
               />
             ) : (
               <div className="space-y-2">
-                {fields.map((field, index) => (
+                {visibleFields.map((field, index) => (
                   <SortableField
                     key={field.id}
                     field={field}
@@ -169,7 +174,7 @@ export function FormBuilder() {
                     isSelected={selectedFieldId === field.id}
                     onClick={() => selectField(field.id)}
                     index={index}
-                    totalFields={fields.length}
+                    totalFields={visibleFields.length}
                   />
                 ))}
               </div>
@@ -177,10 +182,10 @@ export function FormBuilder() {
           </div>
 
           {/* Mobile Add Field Button */}
-          <div className="shrink-0 p-3 border-t bg-background">
+          <div className="shrink-0 p-3 border-t border-black/20 dark:border-white/20 bg-background">
             <Button
               variant="outline"
-              className="w-full !border !border-black dark:!border-white"
+              className="w-full !border !border-black/20 dark:!border-white/20"
               onClick={() => setIsPaletteOpen(true)}
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -226,7 +231,7 @@ export function FormBuilder() {
     >
       <div className="flex h-full">
         {/* Field Palette */}
-        <div className="w-64 border-r bg-muted/30 overflow-y-auto">
+        <div className="w-64 border-r border-black/20 dark:border-white/20 bg-muted/30 overflow-y-auto">
           <FieldPalette onAddField={handleAddField} />
         </div>
 
@@ -234,7 +239,7 @@ export function FormBuilder() {
         <div className="flex-1 overflow-y-auto p-6 bg-muted/10">
           <div className="max-w-2xl mx-auto">
             {/* Language selector for multilingual forms */}
-            {isMultilingual && fields.length > 0 && (
+            {isMultilingual && visibleFields.length > 0 && (
               <div className="mb-4 flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('builder.previewLanguage')}</span>
                 <LanguageTabs
@@ -245,7 +250,7 @@ export function FormBuilder() {
               </div>
             )}
 
-            {fields.length === 0 ? (
+            {visibleFields.length === 0 ? (
               <EmptyState
                 icon={FileText}
                 title={t('builder.empty.title')}
@@ -253,11 +258,11 @@ export function FormBuilder() {
               />
             ) : (
               <SortableContext
-                items={fields.map((f) => f.id)}
+                items={visibleFields.map((f) => f.id)}
                 strategy={verticalListSortingStrategy}
               >
                 <div className="space-y-3">
-                  {fields.map((field, index) => (
+                  {visibleFields.map((field, index) => (
                     <SortableField
                       key={field.id}
                       field={field}
@@ -273,7 +278,7 @@ export function FormBuilder() {
         </div>
 
         {/* Field Editor */}
-        <div className="w-80 border-l bg-background overflow-y-auto">
+        <div className="w-80 border-l border-black/20 dark:border-white/20 bg-background overflow-y-auto">
           <FieldEditor />
         </div>
       </div>

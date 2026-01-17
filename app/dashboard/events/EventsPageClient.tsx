@@ -193,7 +193,6 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
     closeSongPicker: dialogs.closeSongPicker,
     openDeleteAgendaItemDialog: dialogs.openDeleteAgendaItemDialog,
     setPositionPickerOpen: dialogs.setPositionPickerOpen,
-    openEditPositionDialog: dialogs.openEditPositionDialog,
     openDeletePositionDialog: dialogs.openDeletePositionDialog,
     openVolunteerPicker: dialogs.openVolunteerPicker,
     openUnassignDialog: dialogs.openUnassignDialog,
@@ -329,10 +328,6 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
         positionPickerOpen={dialogs.positionPickerOpen}
         setPositionPickerOpen={dialogs.setPositionPickerOpen}
         onPositionPickerSuccess={handlers.handlePositionPickerSuccess}
-        positionDialogOpen={dialogs.positionDialogOpen}
-        setPositionDialogOpen={dialogs.setPositionDialogOpen}
-        editingPosition={dialogs.editingPosition}
-        onPositionDialogSuccess={handlers.handlePositionDialogSuccess}
         volunteerPickerOpen={dialogs.volunteerPickerOpen}
         volunteerPickerPositionId={dialogs.volunteerPickerPositionId}
         setVolunteerPickerOpen={dialogs.setVolunteerPickerOpen}

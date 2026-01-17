@@ -127,7 +127,7 @@ export function ImportLyricsDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className={`max-h-[90vh] flex flex-col ${isMobile ? 'w-[95vw] max-w-[95vw] p-4' : 'sm:max-w-2xl'}`}>
+      <DialogContent className={`max-h-[90vh] flex flex-col !border !border-black dark:!border-white ${isMobile ? 'w-[95vw] max-w-[95vw] p-4' : 'sm:max-w-2xl'}`}>
         <DialogHeader className={isMobile ? 'pb-2' : ''}>
           <DialogTitle className={`flex items-center gap-2 ${isMobile ? 'text-base' : ''}`}>
             <FileText className={isMobile ? 'w-4 h-4' : 'w-5 h-5'} />
@@ -149,7 +149,7 @@ export function ImportLyricsDialog({
                 onClick={() => setMobileTab('input')}
                 className={`flex items-center justify-center text-xs py-1.5 px-3 rounded-md transition-colors ${
                   mobileTab === 'input'
-                    ? 'bg-brand text-white shadow-sm'
+                    ? 'bg-brand !text-black shadow-sm'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -161,7 +161,7 @@ export function ImportLyricsDialog({
                 onClick={() => setMobileTab('preview')}
                 className={`flex items-center justify-center text-xs py-1.5 px-3 rounded-md transition-colors ${
                   mobileTab === 'preview'
-                    ? 'bg-brand text-white shadow-sm'
+                    ? 'bg-brand !text-black shadow-sm'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -195,11 +195,11 @@ I once was lost but now I'm found`}
                     setRawLyrics(e.target.value)
                     setError(null)
                   }}
-                  className="h-[250px] font-mono text-xs resize-none"
+                  className="h-[250px] font-mono text-xs resize-none !border !border-black/20 dark:!border-white/20"
                 />
               </div>
             ) : (
-              <ScrollArea className="h-[280px] border rounded-md p-2">
+              <ScrollArea className="h-[280px] border border-black/20 dark:border-white/20 rounded-md p-2">
                 <PreviewContent />
               </ScrollArea>
             )}
@@ -235,7 +235,7 @@ Was blind but now I see`}
                   setRawLyrics(e.target.value)
                   setError(null)
                 }}
-                className="h-[350px] font-mono text-sm resize-none"
+                className="h-[350px] font-mono text-sm resize-none !border !border-black/20 dark:!border-white/20"
               />
             </div>
 
@@ -246,7 +246,7 @@ Was blind but now I see`}
                   {t('importDialog.previewCount', { count: parsedSections.length })}
                 </Label>
               </div>
-              <ScrollArea className="h-[350px] border rounded-md p-3">
+              <ScrollArea className="h-[350px] border border-black/20 dark:border-white/20 rounded-md p-3">
                 <PreviewContent />
               </ScrollArea>
             </div>
@@ -263,9 +263,9 @@ Was blind but now I see`}
         <DialogFooter className={`gap-2 ${isMobile ? 'py-1' : 'py-2'}`}>
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="sm"
-            className={`!border !border-black dark:!border-white ${isMobile ? 'text-xs h-8' : ''}`}
+            className={`rounded-full ${isMobile ? 'text-xs h-8' : ''}`}
             onClick={handleClose}
             disabled={isSubmitting}
           >
@@ -273,7 +273,7 @@ Was blind but now I see`}
           </Button>
           <Button
             size="sm"
-            className={`!bg-brand hover:!bg-brand/90 !text-white !border-0 ${isMobile ? 'text-xs h-8' : ''}`}
+            className={`!bg-brand hover:!bg-brand/90 !text-black !border-0 ${isMobile ? 'text-xs h-8' : ''}`}
             onClick={handleSubmit}
             disabled={isSubmitting || parsedSections.length === 0}
           >

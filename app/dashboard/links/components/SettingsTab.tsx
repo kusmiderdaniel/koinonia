@@ -191,7 +191,7 @@ export function SettingsTab({ settings, setSettings }: SettingsTabProps) {
                 variant={cardStyle === style.value ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setCardStyle(style.value)}
-                className={cardStyle === style.value ? '!bg-brand !text-brand-foreground' : '!border !border-black dark:!border-white'}
+                className={cardStyle === style.value ? '!bg-brand !text-brand-foreground' : '!border !border-black dark:!border-zinc-600'}
               >
                 {style.label}
               </Button>
@@ -208,7 +208,7 @@ export function SettingsTab({ settings, setSettings }: SettingsTabProps) {
                 variant={borderRadius === radius.value ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setBorderRadius(radius.value)}
-                className={borderRadius === radius.value ? '!bg-brand !text-brand-foreground' : '!border !border-black dark:!border-white'}
+                className={borderRadius === radius.value ? '!bg-brand !text-brand-foreground' : '!border !border-black dark:!border-zinc-600'}
               >
                 {radius.label}
               </Button>

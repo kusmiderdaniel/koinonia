@@ -69,6 +69,7 @@ export const EventFormFields = memo(function EventFormFields({
           onChange={(e) => setTitle(e.target.value)}
           placeholder={t('form.titlePlaceholder')}
           required
+          className="!border-black/20 dark:!border-white/20"
         />
       </div>
 
@@ -76,7 +77,7 @@ export const EventFormFields = memo(function EventFormFields({
         <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
           <Label htmlFor="eventType" className={isMobile ? 'text-sm' : ''}>{t('form.eventTypeRequired')}</Label>
           <Select value={eventType} onValueChange={setEventType}>
-            <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
+            <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black/20 dark:!border-white/20">
               <SelectValue />
             </SelectTrigger>
             <SelectContent
@@ -99,7 +100,7 @@ export const EventFormFields = memo(function EventFormFields({
         <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
           <Label htmlFor="visibility" className={isMobile ? 'text-sm' : ''}>{t('form.visibilityLabel')}</Label>
           <Select value={visibility} onValueChange={setVisibility}>
-            <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black dark:!border-white [&_[data-description]]:hidden">
+            <SelectTrigger className="w-full bg-white dark:bg-zinc-950 !border !border-black/20 dark:!border-white/20 [&_[data-description]]:hidden">
               <div className="flex items-center gap-2">
                 {visibility === 'hidden' ? (
                   <Lock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
@@ -111,7 +112,7 @@ export const EventFormFields = memo(function EventFormFields({
             </SelectTrigger>
             <SelectContent
               align="start"
-              className="bg-white dark:bg-zinc-950 border border-input"
+              className="bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20"
             >
               {VISIBILITY_VALUES.map((v) => (
                 <SelectItem
@@ -166,7 +167,7 @@ export const EventFormFields = memo(function EventFormFields({
       <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
         <Label className={isMobile ? 'text-sm' : ''}>{t('form.locationLabel')}</Label>
         {selectedLocation ? (
-          <div className="flex items-center gap-2 p-3 border border-black dark:border-white rounded-lg bg-muted/50">
+          <div className="flex items-center gap-2 p-3 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-muted/50">
             <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="font-medium truncate">{selectedLocation.name}</div>
@@ -190,7 +191,7 @@ export const EventFormFields = memo(function EventFormFields({
           <Button
             type="button"
             variant="outline"
-            className="w-full justify-start text-muted-foreground rounded-lg !border !border-black dark:!border-white"
+            className="w-full justify-start text-muted-foreground rounded-lg !border !border-black/20 dark:!border-white/20"
             onClick={() => setLocationPickerOpen(true)}
           >
             <MapPin className="w-4 h-4 mr-2" />
@@ -210,7 +211,7 @@ export const EventFormFields = memo(function EventFormFields({
       <div className={isMobile ? 'space-y-1' : 'space-y-2'}>
         <Label className={isMobile ? 'text-sm' : ''}>{t('form.responsiblePersonLabel')}</Label>
         {selectedResponsiblePerson ? (
-          <div className="flex items-center gap-2 p-3 border border-black dark:border-white rounded-lg bg-muted/50">
+          <div className="flex items-center gap-2 p-3 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-muted/50">
             <User className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="font-medium truncate">
@@ -236,7 +237,7 @@ export const EventFormFields = memo(function EventFormFields({
           <Button
             type="button"
             variant="outline"
-            className="w-full justify-start text-muted-foreground rounded-lg !border !border-black dark:!border-white"
+            className="w-full justify-start text-muted-foreground rounded-lg !border !border-black/20 dark:!border-white/20"
             onClick={() => setResponsiblePersonPickerOpen(true)}
           >
             <User className="w-4 h-4 mr-2" />

@@ -90,7 +90,7 @@ export function AgendaPresetsTab({
                 {t('description')}
               </CardDescription>
             </div>
-            <Button onClick={() => editDialog.open()} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0 w-full sm:w-auto">
+            <Button onClick={() => editDialog.open()} className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-black shrink-0 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               {t('addItem')}
             </Button>
@@ -108,7 +108,7 @@ export function AgendaPresetsTab({
               {presets.map((preset) => (
                 <div
                   key={preset.id}
-                  className="flex items-center justify-between p-2 md:p-4 border rounded-lg hover:bg-muted/50 transition-colors gap-2"
+                  className="flex items-center justify-between p-2 md:p-4 border border-black/20 dark:border-white/20 rounded-lg hover:bg-muted/50 transition-colors gap-2"
                 >
                   <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                     <ListChecks className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground shrink-0" />
@@ -166,7 +166,7 @@ export function AgendaPresetsTab({
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialog.isOpen} onOpenChange={deleteDialog.setOpen}>
-        <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-[90vw] md:max-w-lg">
+        <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-[90vw] md:max-w-lg !border !border-black dark:!border-white">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('deleteDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
@@ -174,11 +174,11 @@ export function AgendaPresetsTab({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-            <AlertDialogCancel className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">{t('deleteDialog.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel className="!rounded-lg !border-0 bg-white dark:bg-zinc-950 px-4 py-2">{t('deleteDialog.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               disabled={deleteDialog.isLoading}
-              className="rounded-full !border !border-red-600 !bg-red-600 hover:!bg-red-700 !text-white px-4 py-2"
+              className="!rounded-lg !border !border-red-600 !bg-red-600 hover:!bg-red-700 !text-black px-4 py-2"
             >
               {deleteDialog.isLoading ? t('deleteDialog.deleting') : t('deleteDialog.confirm')}
             </AlertDialogAction>

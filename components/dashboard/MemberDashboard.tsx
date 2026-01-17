@@ -35,6 +35,7 @@ export interface MemberLinksData {
     labelBold: boolean
     labelItalic: boolean
     labelUnderline: boolean
+    labelAlign: 'left' | 'center' | 'right'
   }>
   church: {
     id: string
@@ -97,7 +98,7 @@ export function MemberDashboard({
               <Link2 className="h-5 w-5" />
               Quick Links
             </h2>
-            <Card className="border border-black dark:border-zinc-700">
+            <Card className="border border-border">
               <CardContent className="p-4 pt-5">
                 <MemberLinksPanel
                   settings={linksData.settings}

@@ -187,7 +187,7 @@ export function DocumentEditorDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="!max-w-5xl !w-[90vw] h-[85vh] flex flex-col p-0 gap-0">
+      <DialogContent className="!max-w-5xl !w-[90vw] h-[85vh] flex flex-col p-0 gap-0 !border !border-black dark:!border-white">
         <DialogHeader className="px-6 py-4 border-b">
           <div className="flex items-center gap-3">
             <DialogTitle className="text-lg">
@@ -307,8 +307,8 @@ export function DocumentEditorDialog({
                   </div>
                   <Tabs value={previewTab} onValueChange={(v) => setPreviewTab(v as 'edit' | 'preview')}>
                     <TabsList className="h-8">
-                      <TabsTrigger value="edit" className="text-xs px-3 h-7 data-[state=active]:bg-brand data-[state=active]:text-white">Edit</TabsTrigger>
-                      <TabsTrigger value="preview" className="text-xs px-3 h-7 data-[state=active]:bg-brand data-[state=active]:text-white">Preview</TabsTrigger>
+                      <TabsTrigger value="edit" className="text-xs px-3 h-7 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground">Edit</TabsTrigger>
+                      <TabsTrigger value="preview" className="text-xs px-3 h-7 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground">Preview</TabsTrigger>
                     </TabsList>
                   </Tabs>
                 </div>
@@ -371,7 +371,7 @@ export function DocumentEditorDialog({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSaving} className="min-w-[120px] !bg-brand hover:!bg-brand/90 text-white">
+              <Button type="submit" disabled={isSaving} className="min-w-[120px] !bg-brand hover:!bg-brand/90 !text-brand-foreground">
                 {isSaving ? 'Saving...' : documentId ? 'Save Changes' : 'Create Draft'}
               </Button>
             </div>

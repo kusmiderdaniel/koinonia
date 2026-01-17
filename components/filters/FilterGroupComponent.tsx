@@ -83,7 +83,7 @@ export const FilterGroupComponent = memo(function FilterGroupComponent({
             <button
               type="button"
               onClick={() => onParentConjunctionChange(parentConjunction === 'and' ? 'or' : 'and')}
-              className="h-8 px-3 text-xs rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="h-8 px-3 text-xs rounded-md border border-black/20 dark:border-white/20 bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
             >
               {t(parentConjunction)}
             </button>
@@ -98,7 +98,7 @@ export const FilterGroupComponent = memo(function FilterGroupComponent({
       </div>
 
       {/* Group content */}
-      <div className="flex-1 border rounded-lg p-3 bg-muted/30 space-y-2">
+      <div className="flex-1 border border-black/20 dark:border-white/20 rounded-lg p-3 bg-muted/30 space-y-2">
         {group.rules.map((rule, index) => (
           <FilterRuleRow
             key={rule.id}
@@ -116,7 +116,7 @@ export const FilterGroupComponent = memo(function FilterGroupComponent({
         <Button
           variant="outline"
           size="sm"
-          className="text-muted-foreground hover:text-foreground gap-1 text-xs !border !border-black dark:!border-white"
+          className="text-muted-foreground hover:text-foreground gap-1 text-xs !border !border-black/20 dark:!border-white/20"
           onClick={handleAddRule}
         >
           <Plus className="h-3 w-3" />

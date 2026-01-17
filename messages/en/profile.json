@@ -6,8 +6,7 @@
     "personal": "Personal Information",
     "password": "Password",
     "notifications": "Notification Settings",
-    "language": "Language",
-    "appearance": "Appearance",
+    "preferences": "Preferences",
     "privacy": "Privacy & Data",
     "account": "Account"
   },
@@ -15,8 +14,7 @@
     "personal": "Name, email, phone, and more",
     "password": "Change your password",
     "notifications": "Manage notification preferences",
-    "language": "Choose your preferred language",
-    "appearance": "Light, dark, or system theme",
+    "preferences": "Language and theme settings",
     "privacy": "Manage consents, export data, delete account",
     "account": "Leave church or delete account"
   },

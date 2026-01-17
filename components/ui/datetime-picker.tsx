@@ -180,7 +180,7 @@ export function DateTimePicker({
           variant="outline"
           disabled={disabled}
           className={cn(
-            "w-full justify-start font-normal !border !border-black dark:!border-white",
+            "w-full justify-start font-normal !border !border-black/20 dark:!border-white/20",
             !dateValue && "text-muted-foreground",
             className
           )}
@@ -190,7 +190,7 @@ export function DateTimePicker({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-auto max-w-[calc(100vw-32px)] p-2 bg-white dark:bg-zinc-950 border border-black dark:border-white shadow-lg overflow-hidden"
+        className="w-auto max-w-[calc(100vw-32px)] p-2 bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20 shadow-lg overflow-hidden"
         align="start"
         side="bottom"
         sideOffset={4}
@@ -224,10 +224,10 @@ export function DateTimePicker({
 
             {/* Hour Select */}
             <Select value={getHourValue()} onValueChange={handleHourChange}>
-              <SelectTrigger className="w-[70px] h-8 text-sm !border !border-black dark:!border-white bg-zinc-100 dark:bg-zinc-800">
+              <SelectTrigger className="w-[70px] h-8 text-sm !border !border-black/20 dark:!border-white/20 bg-zinc-100 dark:bg-zinc-800">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="max-h-[200px] !border !border-black dark:!border-white">
+              <SelectContent className="max-h-[200px] !border !border-black/20 dark:!border-white/20">
                 {hourOptions.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
@@ -240,10 +240,10 @@ export function DateTimePicker({
 
             {/* Minute Select */}
             <Select value={getMinuteValue()} onValueChange={handleMinuteChange}>
-              <SelectTrigger className="w-[60px] h-8 text-sm !border !border-black dark:!border-white bg-zinc-100 dark:bg-zinc-800">
+              <SelectTrigger className="w-[60px] h-8 text-sm !border !border-black/20 dark:!border-white/20 bg-zinc-100 dark:bg-zinc-800">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="max-h-[200px] !border !border-black dark:!border-white">
+              <SelectContent className="max-h-[200px] !border !border-black/20 dark:!border-white/20">
                 {MINUTE_OPTIONS.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
@@ -255,10 +255,10 @@ export function DateTimePicker({
             {/* AM/PM Select (only for 12h format) */}
             {timeFormat === '12h' && (
               <Select value={getPeriodValue()} onValueChange={handlePeriodChange}>
-                <SelectTrigger className="w-[65px] h-8 text-sm !border !border-black dark:!border-white bg-zinc-100 dark:bg-zinc-800">
+                <SelectTrigger className="w-[65px] h-8 text-sm !border !border-black/20 dark:!border-white/20 bg-zinc-100 dark:bg-zinc-800">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="!border !border-black dark:!border-white">
+                <SelectContent className="!border !border-black/20 dark:!border-white/20">
                   <SelectItem value="AM">AM</SelectItem>
                   <SelectItem value="PM">PM</SelectItem>
                 </SelectContent>

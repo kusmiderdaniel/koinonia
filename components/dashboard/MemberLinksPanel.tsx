@@ -32,6 +32,7 @@ interface MemberLinksPanelProps {
     labelBold: boolean
     labelItalic: boolean
     labelUnderline: boolean
+    labelAlign: 'left' | 'center' | 'right'
   }>
   church: {
     id: string
@@ -86,6 +87,7 @@ export function MemberLinksPanel({ settings, links, church }: MemberLinksPanelPr
           labelBold={link.labelBold}
           labelItalic={link.labelItalic}
           labelUnderline={link.labelUnderline}
+          labelAlign={link.labelAlign}
         />
       ))}
 

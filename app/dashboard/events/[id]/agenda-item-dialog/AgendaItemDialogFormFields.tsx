@@ -125,12 +125,12 @@ export function AgendaItemDialogFormFields({
       <div className="space-y-2">
         <Label>Responsible Ministry *</Label>
         <Select value={formState.ministryId} onValueChange={setMinistryId}>
-          <SelectTrigger className="bg-white dark:bg-zinc-950 border border-input">
+          <SelectTrigger className="bg-white dark:bg-zinc-950">
             <SelectValue placeholder="Select a ministry..." />
           </SelectTrigger>
           <SelectContent
             align="start"
-            className="bg-white dark:bg-zinc-950 border border-input"
+            className="bg-white dark:bg-zinc-950"
           >
             {ministries.map((ministry) => (
               <SelectItem key={ministry.id} value={ministry.id}>

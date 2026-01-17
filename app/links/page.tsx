@@ -143,6 +143,7 @@ export default async function PublicLinksPage() {
         labelBold: link.label_bold ?? false,
         labelItalic: link.label_italic ?? false,
         labelUnderline: link.label_underline ?? false,
+        labelAlign: (link.label_align as 'left' | 'center' | 'right') ?? 'center',
       }))}
       userRole={userRole}
     />

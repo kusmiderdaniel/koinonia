@@ -11,7 +11,8 @@
   "google": {
     "title": "Google Calendar",
     "recommended": "Recommended",
-    "description": "Connect your Google account for real-time, two-way sync. Events are instantly added to your Google Calendar.",
+    "description1": "Connect your Google account for real-time, two-way sync.",
+    "description2": "Events are instantly added to your Google Calendar.",
     "notConnected": "Not connected",
     "connectedAs": "Connected as {email}",
     "connect": "Connect Google Calendar",

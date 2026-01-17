@@ -1,6 +1,6 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -21,10 +21,16 @@ import {
 import { Calendar } from '@/components/ui/calendar'
 import { CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
+import { enUS, pl } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { useIsMobile } from '@/lib/hooks'
 import { getOptionColorClasses } from './types'
 import type { FieldRendererProps } from './types'
+
+const localeMap = {
+  en: enUS,
+  pl: pl,
+} as const
 
 export function PreviewFieldRenderer({
   field,
@@ -33,6 +39,7 @@ export function PreviewFieldRenderer({
   weekStartsOn,
   onValueChange,
   onMultiSelectChange,
+  locale,
 }: FieldRendererProps) {
   const t = useTranslations('forms.fieldPlaceholders')
 
@@ -79,7 +86,7 @@ export function PreviewFieldRenderer({
       )
 
     case 'date':
-      return <DateField field={field} value={value} weekStartsOn={weekStartsOn} onValueChange={onValueChange} pickDateLabel={t('pickDate')} />
+      return <DateField field={field} value={value} weekStartsOn={weekStartsOn} onValueChange={onValueChange} pickDateLabel={t('pickDate')} locale={locale} />
 
     case 'single_select':
       return <SingleSelectField field={field} value={value} onValueChange={onValueChange} selectOptionLabel={t('selectOption')} />
@@ -107,6 +114,9 @@ export function PreviewFieldRenderer({
           </div>
         </div>
       )
+
+    case 'divider':
+      return <DividerField field={field} />
 
     default:
       return null
@@ -197,7 +207,12 @@ function DateField({
   weekStartsOn,
   onValueChange,
   pickDateLabel,
-}: Pick<FieldRendererProps, 'field' | 'value' | 'weekStartsOn' | 'onValueChange'> & { pickDateLabel: string }) {
+  locale: localeProp,
+}: Pick<FieldRendererProps, 'field' | 'value' | 'weekStartsOn' | 'onValueChange' | 'locale'> & { pickDateLabel: string }) {
+  const appLocale = useLocale()
+  // Use provided locale (for multilingual form preview) or fall back to app locale
+  const locale = localeProp || appLocale
+  const dateLocale = localeMap[locale as keyof typeof localeMap] || enUS
   const dateValue = value ? new Date(value as string) : undefined
 
   return (
@@ -207,20 +222,21 @@ function DateField({
           <Button
             variant="outline"
             className={cn(
-              'w-full justify-start text-left font-normal text-sm !border !border-black dark:!border-white',
+              'w-full justify-start text-left font-normal text-sm !border !border-black/20 dark:!border-white/20',
               !value && 'text-muted-foreground'
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {dateValue ? format(dateValue, 'PPP') : pickDateLabel}
+            {dateValue ? format(dateValue, 'PPP', { locale: dateLocale }) : pickDateLabel}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto !p-0 !gap-0 !bg-white dark:!bg-zinc-900 border border-border shadow-md" align="start">
+        <PopoverContent className="w-auto !p-0 !gap-0 !bg-white dark:!bg-zinc-900 !border !border-black/20 dark:!border-white/20 shadow-md" align="start">
           <Calendar
             mode="single"
             selected={dateValue}
             onSelect={(date) => onValueChange(field.id, date ? format(date, 'yyyy-MM-dd') : '')}
             weekStartsOn={weekStartsOn}
+            locale={dateLocale}
             className="p-3"
             initialFocus
           />
@@ -237,7 +253,13 @@ function SingleSelectField({
   onValueChange,
   selectOptionLabel,
 }: Pick<FieldRendererProps, 'field' | 'value' | 'onValueChange'> & { selectOptionLabel: string }) {
-  const selectedOption = field.options?.find((o: { value: string }) => o.value === value)
+  // Deduplicate options by value (Radix Select requires unique values)
+  const uniqueOptions = field.options?.filter(
+    (option: { value: string }, index: number, self: Array<{ value: string }>) =>
+      self.findIndex((o) => o.value === option.value) === index
+  )
+
+  const selectedOption = uniqueOptions?.find((o: { value: string }) => o.value === value)
   const colorClasses = selectedOption ? getOptionColorClasses(selectedOption.color) : null
 
   return (
@@ -246,23 +268,25 @@ function SingleSelectField({
         value={(value as string) || ''}
         onValueChange={(v) => onValueChange(field.id, v)}
       >
-        <SelectTrigger className="text-sm">
-          {selectedOption && colorClasses ? (
-            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${colorClasses.bg} ${colorClasses.text}`}>
-              {selectedOption.label}
-            </span>
+        <SelectTrigger
+          className={`text-sm ${selectedOption && colorClasses ? `${colorClasses.bg} ${colorClasses.text} font-medium` : ''}`}
+        >
+          {selectedOption ? (
+            <span>{selectedOption.label}</span>
           ) : (
             <SelectValue placeholder={selectOptionLabel} />
           )}
         </SelectTrigger>
-        <SelectContent position="popper" sideOffset={4} className="!border !border-black dark:!border-white">
-          {field.options?.map((option: { value: string; label: string; color?: string | null }) => {
+        <SelectContent position="popper" sideOffset={4} className="!border !border-black/20 dark:!border-white/20">
+          {uniqueOptions?.map((option: { value: string; label: string; color?: string | null }) => {
             const optionColor = getOptionColorClasses(option.color)
             return (
-              <SelectItem key={option.value} value={option.value}>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${optionColor.bg} ${optionColor.text}`}>
-                  {option.label}
-                </span>
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                className={`${optionColor.bg} ${optionColor.text} font-medium`}
+              >
+                {option.label}
               </SelectItem>
             )
           })}
@@ -280,14 +304,23 @@ function MultiSelectField({
 }: Pick<FieldRendererProps, 'field' | 'value' | 'onMultiSelectChange'>) {
   const currentValues = (value as string[]) || []
 
+  // Deduplicate options by value
+  const uniqueOptions = field.options?.filter(
+    (option: { value: string }, index: number, self: Array<{ value: string }>) =>
+      self.findIndex((o) => o.value === option.value) === index
+  )
+
   return (
     <FieldWrapper field={field}>
       <div className="space-y-2">
-        {field.options?.map((option: { value: string; label: string; color?: string | null }) => {
+        {uniqueOptions?.map((option: { value: string; label: string; color?: string | null }) => {
           const isChecked = currentValues.includes(option.value)
           const optionColor = getOptionColorClasses(option.color)
           return (
-            <div key={option.value} className="flex items-center space-x-2">
+            <div
+              key={option.value}
+              className={`flex items-center space-x-2 px-2 py-1.5 rounded-md ${optionColor.bg} ${optionColor.text}`}
+            >
               <Checkbox
                 id={`preview-${field.id}-${option.value}`}
                 checked={isChecked}
@@ -297,7 +330,7 @@ function MultiSelectField({
               />
               <Label
                 htmlFor={`preview-${field.id}-${option.value}`}
-                className={`px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer ${optionColor.bg} ${optionColor.text}`}
+                className="text-xs font-medium cursor-pointer"
               >
                 {option.label}
               </Label>
@@ -306,5 +339,30 @@ function MultiSelectField({
         })}
       </div>
     </FieldWrapper>
+  )
+}
+
+// Divider field
+function DividerField({
+  field,
+}: Pick<FieldRendererProps, 'field'>) {
+  const showTitle = field.settings?.divider?.showTitle ?? false
+
+  if (showTitle && field.label) {
+    return (
+      <div key={field.id} className="flex items-center gap-3 py-2">
+        <div className="h-px bg-zinc-300 dark:bg-zinc-600 w-8 shrink-0" />
+        <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+          {field.label}
+        </span>
+        <div className="h-px bg-zinc-300 dark:bg-zinc-600 flex-1" />
+      </div>
+    )
+  }
+
+  return (
+    <div key={field.id} className="py-2">
+      <div className="h-px bg-zinc-300 dark:bg-zinc-600 w-full" />
+    </div>
   )
 }

@@ -142,10 +142,10 @@ export function InteractiveChart({
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">{t('analytics.showField')}:</span>
           <Select value={selectedValueField} onValueChange={setSelectedValueField}>
-            <SelectTrigger className="w-[200px] border border-black dark:border-white">
+            <SelectTrigger className="w-[200px] border border-black/20 dark:border-white/20">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="border border-black dark:border-white">
+            <SelectContent className="border border-black/20 dark:border-white/20">
               {chartableFields.map((field) => (
                 <SelectItem key={field.id} value={field.id}>
                   {field.label}
@@ -160,10 +160,10 @@ export function InteractiveChart({
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground">{t('analytics.dateField')}:</span>
             <Select value={selectedDateField} onValueChange={setSelectedDateField}>
-              <SelectTrigger className="w-[200px] border border-black dark:border-white">
+              <SelectTrigger className="w-[200px] border border-black/20 dark:border-white/20">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="border border-black dark:border-white">
+              <SelectContent className="border border-black/20 dark:border-white/20">
                 {dateFields.map((field) => (
                   <SelectItem key={field.id} value={field.id}>
                     {field.label}
@@ -178,10 +178,10 @@ export function InteractiveChart({
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">{t('analytics.groupBy')}:</span>
           <Select value={groupBy} onValueChange={(v) => setGroupBy(v as GroupByOption)}>
-            <SelectTrigger className="w-[130px] border border-black dark:border-white">
+            <SelectTrigger className="w-[130px] border border-black/20 dark:border-white/20">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="border border-black dark:border-white">
+            <SelectContent className="border border-black/20 dark:border-white/20">
               <SelectItem value="date">{t('analytics.perDate')}</SelectItem>
               <SelectItem value="week">{t('analytics.perWeek')}</SelectItem>
               <SelectItem value="month">{t('analytics.perMonth')}</SelectItem>
@@ -200,10 +200,10 @@ export function InteractiveChart({
                 value={aggregation}
                 onValueChange={(v) => setAggregation(v as AggregationMethod)}
               >
-                <SelectTrigger className="w-[130px] border border-black dark:border-white">
+                <SelectTrigger className="w-[130px] border border-black/20 dark:border-white/20">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="border border-black dark:border-white">
+                <SelectContent className="border border-black/20 dark:border-white/20">
                   <SelectItem value="sum">{t('analytics.sum')}</SelectItem>
                   <SelectItem value="average">{t('analytics.avg')}</SelectItem>
                   <SelectItem value="median">{t('analytics.median')}</SelectItem>
@@ -221,10 +221,10 @@ export function InteractiveChart({
                   value={selectedSplitByField || 'none'}
                   onValueChange={(v) => setSelectedSplitByField(v === 'none' ? '' : v)}
                 >
-                  <SelectTrigger className="w-[180px] border border-black dark:border-white">
+                  <SelectTrigger className="w-[180px] border border-black/20 dark:border-white/20">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="border border-black dark:border-white">
+                  <SelectContent className="border border-black/20 dark:border-white/20">
                     <SelectItem value="none">{t('analytics.none')}</SelectItem>
                     {splitByFields.map((field) => (
                       <SelectItem key={field.id} value={field.id}>
@@ -240,7 +240,7 @@ export function InteractiveChart({
       </div>
 
       {/* Chart */}
-      <Card className="border border-black dark:border-white">
+      <Card className="border border-black/20 dark:border-white/20">
         <CardContent className="pt-4">
           {loading ? (
             <div className="flex items-center justify-center h-[300px]">

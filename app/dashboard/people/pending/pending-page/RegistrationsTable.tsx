@@ -105,7 +105,7 @@ export function RegistrationsTable({
                     size="sm"
                     onClick={() => onLink(registration)}
                     disabled={actionLoading === registration.id}
-                    className="!bg-blue-600 hover:!bg-blue-700 !text-white"
+                    className="!bg-blue-600 hover:!bg-blue-700 !text-brand-foreground"
                   >
                     <Link2 className="h-4 w-4 mr-1" />
                     {t('pending.link')}
@@ -115,7 +115,7 @@ export function RegistrationsTable({
                   size="sm"
                   onClick={() => onReject(registration)}
                   disabled={actionLoading === registration.id}
-                  className="!bg-red-600 hover:!bg-red-700 !text-white"
+                  className="!bg-red-600 hover:!bg-red-700 !text-brand-foreground"
                 >
                   <X className="h-4 w-4 mr-1" />
                   {t('pending.reject')}
@@ -124,7 +124,7 @@ export function RegistrationsTable({
                   size="sm"
                   onClick={() => onApprove(registration)}
                   disabled={actionLoading === registration.id}
-                  className="!bg-green-600 hover:!bg-green-700 !text-white !border-green-600"
+                  className="!bg-green-600 hover:!bg-green-700 !text-brand-foreground !border-green-600"
                 >
                   {actionLoading === registration.id ? (
                     <Loader2 className="h-4 w-4 mr-1 animate-spin" />

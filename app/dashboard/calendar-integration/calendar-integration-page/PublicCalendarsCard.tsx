@@ -40,7 +40,7 @@ export function PublicCalendarsCard({
         {campuses.map((campus) => (
           <div
             key={campus.id}
-            className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 border border-black dark:border-zinc-700 rounded-lg"
+            className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 border border-black/20 dark:border-white/20 rounded-lg"
           >
             <div className="flex items-center gap-2 flex-1 min-w-0">
               {campus.color && (
@@ -58,7 +58,7 @@ export function PublicCalendarsCard({
                 onClick={() =>
                   onCopy(getPublicCalendarUrl(campus.id), campus.id)
                 }
-                className="gap-1 !border !border-black dark:!border-white"
+                className="gap-1 !border-black/20 dark:!border-white/20"
               >
                 {copiedCampusId === campus.id ? (
                   <Check className="h-3 w-3 text-green-600" />
@@ -73,7 +73,7 @@ export function PublicCalendarsCard({
                 onClick={() =>
                   window.open(getPublicWebcalUrl(campus.id), '_blank')
                 }
-                className="gap-1 !border !border-black dark:!border-white"
+                className="gap-1 !border-black/20 dark:!border-white/20"
               >
                 <ExternalLink className="h-3 w-3" />
                 {t('public.add')}

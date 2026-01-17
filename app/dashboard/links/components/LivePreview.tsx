@@ -167,7 +167,9 @@ export const LivePreview = memo(function LivePreview({
                     <div className={cn(
                       'absolute inset-0 flex items-center gap-2 text-white',
                       sizeStyles.padding,
-                      link.hide_label && 'justify-center'
+                      link.hide_label && 'justify-center',
+                      !link.hide_label && link.label_align === 'center' && 'justify-center',
+                      !link.hide_label && link.label_align === 'right' && 'justify-end'
                     )}>
                       {IconComponent && <IconComponent className={cn(
                         'flex-shrink-0',
@@ -197,7 +199,9 @@ export const LivePreview = memo(function LivePreview({
                     'w-full flex items-center gap-2',
                     borderRadius,
                     sizeStyles.padding,
-                    link.hide_label && 'justify-center'
+                    link.hide_label && 'justify-center',
+                    !link.hide_label && link.label_align === 'center' && 'justify-center',
+                    !link.hide_label && link.label_align === 'right' && 'justify-end'
                   )}
                   style={cardStyles}
                 >

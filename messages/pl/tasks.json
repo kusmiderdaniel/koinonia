@@ -186,10 +186,16 @@
   "actions": {
     "edit": "Edytuj",
     "delete": "Usuń",
-    "cancel": "Anuluj"
+    "cancel": "Anuluj",
+    "openMenu": "Otwórz menu"
   },
 
   "builtInViews": {
     "myTasks": "Moje zadania"
+  },
+
+  "pagination": {
+    "showing": "Wyświetlanie {start} - {end} z {total}",
+    "rowsPerPage": "Wierszy na stronę"
   }
 }

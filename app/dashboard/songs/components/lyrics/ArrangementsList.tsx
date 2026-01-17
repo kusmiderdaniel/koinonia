@@ -96,7 +96,7 @@ export function ArrangementsList({
           <Button
             variant="outline"
             size="sm"
-            className={`!border !border-black dark:!border-white ${isMobile ? 'text-xs h-7' : ''}`}
+            className={`!border !border-black/20 dark:!border-white/20 ${isMobile ? 'text-xs h-7' : ''}`}
             onClick={() => setIsCreateDialogOpen(true)}
           >
             <Plus className={isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'} />
@@ -107,7 +107,7 @@ export function ArrangementsList({
 
       <div className="space-y-2">
         {arrangements.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-4 text-center border rounded-lg">
+          <p className="text-sm text-muted-foreground py-4 text-center border border-black/20 dark:border-white/20 rounded-lg">
             {t('arrangements.noArrangementsYet')}
           </p>
         ) : (
@@ -117,7 +117,7 @@ export function ArrangementsList({
             return (
               <div
                 key={arrangement.id}
-                className={`group flex items-start justify-between border rounded-lg hover:border-muted-foreground/50 transition-colors ${isMobile ? 'p-2' : 'p-3'}`}
+                className={`group flex items-start justify-between border border-black/20 dark:border-white/20 rounded-lg hover:border-muted-foreground/50 transition-colors ${isMobile ? 'p-2' : 'p-3'}`}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">

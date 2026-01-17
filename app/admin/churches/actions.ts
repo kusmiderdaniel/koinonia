@@ -3,6 +3,14 @@
 import { subMonths, startOfMonth, format } from 'date-fns'
 import { requireSuperAdmin, isAdminAuthError } from '@/lib/utils/admin-auth'
 
+export interface ConsentStatus {
+  documentType: string
+  hasConsent: boolean
+  consentedVersion: number | null
+  currentVersion: number
+  consentedAt: string | null
+}
+
 export interface ChurchWithStats {
   id: string
   name: string
@@ -18,10 +26,12 @@ export interface ChurchWithStats {
   member_count: number
   owner: {
     id: string
+    user_id: string | null
     first_name: string
     last_name: string
     email: string | null
   } | null
+  ownerConsents: ConsentStatus[]
 }
 
 export async function getChurches(): Promise<{
@@ -48,6 +58,19 @@ export async function getChurches(): Promise<{
     return { data: [] }
   }
 
+  // Fetch current legal documents for church-oriented documents
+  const { data: currentDocs } = await adminClient
+    .from('legal_documents')
+    .select('document_type, version')
+    .eq('is_current', true)
+    .eq('status', 'published')
+    .in('document_type', ['dpa', 'church_admin_terms'])
+
+  const currentVersions = new Map<string, number>()
+  currentDocs?.forEach((doc) => {
+    currentVersions.set(doc.document_type, doc.version)
+  })
+
   // Get member counts and owners for each church
   const churchesWithStats: ChurchWithStats[] = await Promise.all(
     churches.map(async (church) => {
@@ -58,19 +81,92 @@ export async function getChurches(): Promise<{
         .eq('church_id', church.id)
         .eq('active', true)
 
-      // Get owner
+      // Get owner (including user_id for consent lookup)
       const { data: owner } = await adminClient
         .from('profiles')
-        .select('id, first_name, last_name, email')
+        .select('id, user_id, first_name, last_name, email')
         .eq('church_id', church.id)
         .eq('role', 'owner')
         .limit(1)
         .single()
 
+      // Build owner consents
+      let ownerConsents: ConsentStatus[] = []
+
+      if (owner?.user_id) {
+        // Fetch consent records for this owner
+        const { data: consentRecords } = await adminClient
+          .from('consent_records')
+          .select('consent_type, document_version, recorded_at, action')
+          .eq('user_id', owner.user_id)
+          .in('consent_type', ['dpa', 'church_admin_terms'])
+          .order('recorded_at', { ascending: false })
+
+        // Group by consent type (keep most recent)
+        const consentsByType = new Map<string, { version: number; recordedAt: string; action: string }>()
+        consentRecords?.forEach((record) => {
+          if (!consentsByType.has(record.consent_type)) {
+            consentsByType.set(record.consent_type, {
+              version: record.document_version || 0,
+              recordedAt: record.recorded_at,
+              action: record.action,
+            })
+          }
+        })
+
+        // Helper to check if action represents consent granted
+        const isConsentGranted = (action: string | undefined): boolean => {
+          return action === 'accept' || action === 'granted'
+        }
+
+        // Build consent status for DPA
+        const dpaConsent = consentsByType.get('dpa')
+        const currentDpaVersion = currentVersions.get('dpa') || 1
+        const hasDpaConsent = isConsentGranted(dpaConsent?.action)
+        ownerConsents.push({
+          documentType: 'dpa',
+          hasConsent: hasDpaConsent && dpaConsent?.version === currentDpaVersion,
+          consentedVersion: hasDpaConsent ? dpaConsent?.version || null : null,
+          currentVersion: currentDpaVersion,
+          consentedAt: hasDpaConsent ? dpaConsent?.recordedAt || null : null,
+        })
+
+        // Build consent status for Church Admin Terms
+        const adminTermsConsent = consentsByType.get('church_admin_terms')
+        const currentAdminTermsVersion = currentVersions.get('church_admin_terms') || 1
+        const hasAdminTermsConsent = isConsentGranted(adminTermsConsent?.action)
+        ownerConsents.push({
+          documentType: 'church_admin_terms',
+          hasConsent: hasAdminTermsConsent && adminTermsConsent?.version === currentAdminTermsVersion,
+          consentedVersion: hasAdminTermsConsent ? adminTermsConsent?.version || null : null,
+          currentVersion: currentAdminTermsVersion,
+          consentedAt: hasAdminTermsConsent ? adminTermsConsent?.recordedAt || null : null,
+        })
+      } else {
+        // No owner user_id, return empty consents
+        ownerConsents = [
+          {
+            documentType: 'dpa',
+            hasConsent: false,
+            consentedVersion: null,
+            currentVersion: currentVersions.get('dpa') || 1,
+            consentedAt: null,
+          },
+          {
+            documentType: 'church_admin_terms',
+            hasConsent: false,
+            consentedVersion: null,
+            currentVersion: currentVersions.get('church_admin_terms') || 1,
+            consentedAt: null,
+          },
+        ]
+      }
+
       return {
         ...church,
         member_count: memberCount || 0,
         owner: owner || null,
+        ownerConsents,
       }
     })
   )
@@ -113,10 +209,23 @@ export async function getChurchDetails(churchId: string): Promise<{
     return { error: 'Church not found' }
   }
 
-  // Get members
+  // Fetch current legal documents for church-oriented documents
+  const { data: currentDocs } = await adminClient
+    .from('legal_documents')
+    .select('document_type, version')
+    .eq('is_current', true)
+    .eq('status', 'published')
+    .in('document_type', ['dpa', 'church_admin_terms'])
+
+  const currentVersions = new Map<string, number>()
+  currentDocs?.forEach((doc) => {
+    currentVersions.set(doc.document_type, doc.version)
+  })
+
+  // Get members (including user_id for owner consent lookup)
   const { data: members } = await adminClient
     .from('profiles')
-    .select('id, first_name, last_name, email, role, created_at')
+    .select('id, user_id, first_name, last_name, email, role, created_at')
     .eq('church_id', churchId)
     .eq('active', true)
     .order('role', { ascending: true })
@@ -130,7 +239,79 @@ export async function getChurchDetails(churchId: string): Promise<{
     .eq('active', true)
 
   // Get owner
-  const owner = members?.find((m) => m.role === 'owner') || null
+  const ownerMember = members?.find((m) => m.role === 'owner') || null
+
+  // Build owner consents
+  let ownerConsents: ConsentStatus[] = []
+
+  if (ownerMember?.user_id) {
+    // Fetch consent records for this owner
+    const { data: consentRecords } = await adminClient
+      .from('consent_records')
+      .select('consent_type, document_version, recorded_at, action')
+      .eq('user_id', ownerMember.user_id)
+      .in('consent_type', ['dpa', 'church_admin_terms'])
+      .order('recorded_at', { ascending: false })
+
+    // Group by consent type (keep most recent)
+    const consentsByType = new Map<string, { version: number; recordedAt: string; action: string }>()
+    consentRecords?.forEach((record) => {
+      if (!consentsByType.has(record.consent_type)) {
+        consentsByType.set(record.consent_type, {
+          version: record.document_version || 0,
+          recordedAt: record.recorded_at,
+          action: record.action,
+        })
+      }
+    })
+
+    // Helper to check if action represents consent granted
+    const isConsentGranted = (action: string | undefined): boolean => {
+      return action === 'accept' || action === 'granted'
+    }
+
+    // Build consent status for DPA
+    const dpaConsent = consentsByType.get('dpa')
+    const currentDpaVersion = currentVersions.get('dpa') || 1
+    const hasDpaConsent = isConsentGranted(dpaConsent?.action)
+    ownerConsents.push({
+      documentType: 'dpa',
+      hasConsent: hasDpaConsent && dpaConsent?.version === currentDpaVersion,
+      consentedVersion: hasDpaConsent ? dpaConsent?.version || null : null,
+      currentVersion: currentDpaVersion,
+      consentedAt: hasDpaConsent ? dpaConsent?.recordedAt || null : null,
+    })
+
+    // Build consent status for Church Admin Terms
+    const adminTermsConsent = consentsByType.get('church_admin_terms')
+    const currentAdminTermsVersion = currentVersions.get('church_admin_terms') || 1
+    const hasAdminTermsConsent = isConsentGranted(adminTermsConsent?.action)
+    ownerConsents.push({
+      documentType: 'church_admin_terms',
+      hasConsent: hasAdminTermsConsent && adminTermsConsent?.version === currentAdminTermsVersion,
+      consentedVersion: hasAdminTermsConsent ? adminTermsConsent?.version || null : null,
+      currentVersion: currentAdminTermsVersion,
+      consentedAt: hasAdminTermsConsent ? adminTermsConsent?.recordedAt || null : null,
+    })
+  } else {
+    // No owner user_id, return empty consents
+    ownerConsents = [
+      {
+        documentType: 'dpa',
+        hasConsent: false,
+        consentedVersion: null,
+        currentVersion: currentVersions.get('dpa') || 1,
+        consentedAt: null,
+      },
+      {
+        documentType: 'church_admin_terms',
+        hasConsent: false,
+        consentedVersion: null,
+        currentVersion: currentVersions.get('church_admin_terms') || 1,
+        consentedAt: null,
+      },
+    ]
+  }
 
   // Get stats
   const { count: totalEvents } = await adminClient
@@ -153,16 +334,25 @@ export async function getChurchDetails(churchId: string): Promise<{
       church: {
         ...church,
         member_count: memberCount || 0,
-        owner: owner
+        owner: ownerMember
           ? {
-              id: owner.id,
-              first_name: owner.first_name,
-              last_name: owner.last_name,
-              email: owner.email,
+              id: ownerMember.id,
+              user_id: ownerMember.user_id,
+              first_name: ownerMember.first_name,
+              last_name: ownerMember.last_name,
+              email: ownerMember.email,
             }
           : null,
+        ownerConsents,
       },
-      members: members || [],
+      members: (members || []).map(m => ({
+        id: m.id,
+        first_name: m.first_name,
+        last_name: m.last_name,
+        email: m.email,
+        role: m.role,
+        created_at: m.created_at,
+      })),
       stats: {
         totalEvents: totalEvents || 0,
         totalMinistries: totalMinistries || 0,

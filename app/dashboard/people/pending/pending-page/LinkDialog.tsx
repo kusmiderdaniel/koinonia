@@ -42,7 +42,7 @@ export function LinkDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>{t('linkDialog.title')}</DialogTitle>
           <DialogDescription>
@@ -104,7 +104,7 @@ export function LinkDialog({
           <Button
             onClick={onConfirm}
             disabled={!selectedProfileId}
-            className="!bg-brand hover:!bg-brand/90 !text-white !border !border-brand"
+            className="!bg-brand hover:!bg-brand/90 !text-brand-foreground !border !border-brand"
           >
             {t('linkDialog.confirmButton')}
           </Button>

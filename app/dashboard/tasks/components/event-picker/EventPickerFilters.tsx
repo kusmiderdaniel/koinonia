@@ -37,13 +37,13 @@ export function EventTypeFilter({ selectedTypes, onToggle, onClear }: EventTypeF
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="w-full justify-between !bg-white dark:!bg-zinc-950 text-sm !border !border-input rounded-full hover:!bg-gray-100 dark:hover:!bg-zinc-800 transition-colors font-normal"
+          className="w-full justify-between !bg-white dark:!bg-zinc-950 text-sm !border !border-black/20 dark:!border-white/20 rounded-full hover:!bg-gray-100 dark:hover:!bg-zinc-800 transition-colors font-normal"
         >
           <span className="truncate">{getLabel()}</span>
           <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-56 p-2 bg-white dark:bg-zinc-950 border border-input" align="start">
+      <PopoverContent className="w-56 p-2 bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20" align="start">
         <div className="space-y-1">
           {EVENT_TYPES.map((type) => (
             <label
@@ -99,13 +99,13 @@ export function CampusFilter({ campuses, selectedCampuses, onToggle, onClear }: 
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="w-full justify-between !bg-white dark:!bg-zinc-950 text-sm !border !border-input rounded-full hover:!bg-gray-100 dark:hover:!bg-zinc-800 transition-colors font-normal"
+          className="w-full justify-between !bg-white dark:!bg-zinc-950 text-sm !border !border-black/20 dark:!border-white/20 rounded-full hover:!bg-gray-100 dark:hover:!bg-zinc-800 transition-colors font-normal"
         >
           <span className="truncate">{getLabel()}</span>
           <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-56 p-2 bg-white dark:bg-zinc-950 border border-input" align="start">
+      <PopoverContent className="w-56 p-2 bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20" align="start">
         <div className="space-y-1">
           {campuses.map((campus) => (
             <label

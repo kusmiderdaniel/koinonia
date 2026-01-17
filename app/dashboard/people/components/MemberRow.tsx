@@ -159,20 +159,34 @@ export const MemberRow = memo(function MemberRow({
       if (!field) return null
       const value = member.custom_field_values?.[field.id]
       const isUpdating = updatingCustomFieldKey === `${member.id}:${field.id}`
+      const shouldCenter = field.field_type === 'checkbox' || field.field_type === 'date'
       return (
         <TableCell
           key={columnKey}
           className={cn('text-muted-foreground', getFrozenClasses(columnKey))}
           style={getColumnStyle(columnKey)}
         >
-          <CustomFieldCell
-            field={field}
-            value={value}
-            memberId={member.id}
-            canEdit={canEditFields}
-            isUpdating={isUpdating}
-            onValueChange={(fId, newValue) => onCustomFieldChange(member.id, fId, newValue)}
-          />
+          {shouldCenter ? (
+            <div className="flex justify-center">
+              <CustomFieldCell
+                field={field}
+                value={value}
+                memberId={member.id}
+                canEdit={canEditFields}
+                isUpdating={isUpdating}
+                onValueChange={(fId, newValue) => onCustomFieldChange(member.id, fId, newValue)}
+              />
+            </div>
+          ) : (
+            <CustomFieldCell
+              field={field}
+              value={value}
+              memberId={member.id}
+              canEdit={canEditFields}
+              isUpdating={isUpdating}
+              onValueChange={(fId, newValue) => onCustomFieldChange(member.id, fId, newValue)}
+            />
+          )}
         </TableCell>
       )
     }

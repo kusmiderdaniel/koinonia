@@ -94,6 +94,7 @@ export function TaskDialogFormFields({
           onChange={(e) => setTitle(e.target.value)}
           placeholder={t('dialog.titlePlaceholder')}
           autoFocus
+          className="!border-black/20 dark:!border-white/20"
         />
       </div>
 
@@ -107,7 +108,7 @@ export function TaskDialogFormFields({
           >
             <SelectTrigger
               centered
-              className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
+              className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black/20 dark:!border-white/20"
             >
               <SelectValue />
             </SelectTrigger>
@@ -139,7 +140,7 @@ export function TaskDialogFormFields({
           >
             <SelectTrigger
               centered
-              className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
+              className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black/20 dark:!border-white/20"
             >
               <SelectValue placeholder={t('dialog.none')} />
             </SelectTrigger>
@@ -175,7 +176,7 @@ export function TaskDialogFormFields({
           >
             <SelectTrigger
               centered
-              className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
+              className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black/20 dark:!border-white/20"
             >
               <SelectValue placeholder={t('dialog.none')} />
             </SelectTrigger>
@@ -219,7 +220,7 @@ export function TaskDialogFormFields({
           <Button
             type="button"
             variant="outline"
-            className="w-full justify-center bg-white dark:bg-zinc-950 !border !border-black dark:!border-white font-normal h-10"
+            className="w-full justify-center bg-white dark:bg-zinc-950 !border !border-black/20 dark:!border-white/20 font-normal h-10"
             onClick={() => setShowMemberPicker(true)}
           >
             <User className="h-4 w-4 mr-2 text-muted-foreground" />
@@ -246,7 +247,7 @@ export function TaskDialogFormFields({
           <Button
             type="button"
             variant="outline"
-            className="w-full justify-center bg-white dark:bg-zinc-950 !border !border-black dark:!border-white font-normal h-10"
+            className="w-full justify-center bg-white dark:bg-zinc-950 !border !border-black/20 dark:!border-white/20 font-normal h-10"
             onClick={() => setShowEventPicker(true)}
           >
             <CalendarDays className="h-4 w-4 mr-2 text-muted-foreground" />
@@ -273,7 +274,7 @@ export function TaskDialogFormFields({
           >
             <SelectTrigger
               centered
-              className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black dark:!border-white"
+              className="w-full h-10 bg-white dark:bg-zinc-950 !border !border-black/20 dark:!border-white/20"
             >
               <SelectValue />
             </SelectTrigger>
@@ -316,6 +317,7 @@ export function TaskDialogFormFields({
           onChange={(e) => setDescription(e.target.value)}
           placeholder={t('dialog.descriptionPlaceholder')}
           rows={3}
+          className="!border-black/20 dark:!border-white/20"
         />
       </div>
     </div>

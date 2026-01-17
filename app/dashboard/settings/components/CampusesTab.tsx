@@ -61,7 +61,7 @@ export const CampusesTab = memo(function CampusesTab({
                 {t('description')}
               </CardDescription>
             </div>
-            <Button onClick={() => campusManager.openCampusDialog()} className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white shrink-0 w-full sm:w-auto">
+            <Button onClick={() => campusManager.openCampusDialog()} className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-black shrink-0 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               {t('addCampus')}
             </Button>
@@ -79,7 +79,7 @@ export const CampusesTab = memo(function CampusesTab({
               {campuses.map((campus) => (
                 <div
                   key={campus.id}
-                  className="flex items-center justify-between p-2 md:p-4 border rounded-lg hover:bg-muted/50 transition-colors gap-2"
+                  className="flex items-center justify-between p-2 md:p-4 border border-black/20 dark:border-white/20 rounded-lg hover:bg-muted/50 transition-colors gap-2"
                 >
                   <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
                     <div
@@ -200,13 +200,13 @@ export const CampusesTab = memo(function CampusesTab({
             )}
           </div>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-            <AlertDialogCancel disabled={campusManager.isSavingCampus} className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">{t('dialog.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel disabled={campusManager.isSavingCampus} className="rounded-full !border-0 bg-white dark:bg-zinc-950 px-4 py-2">{t('dialog.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() =>
                 campusManager.handleSaveCampus(campuses, setCampuses, setError, setSuccess)
               }
               disabled={campusManager.isSavingCampus || !campusManager.campusName.trim()}
-              className="rounded-full !border !border-brand !bg-brand hover:!bg-brand/90 !text-white px-4 py-2 disabled:!opacity-50"
+              className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-black px-4 py-2 disabled:!opacity-50"
             >
               {campusManager.isSavingCampus
                 ? t('dialog.saving')
@@ -223,7 +223,7 @@ export const CampusesTab = memo(function CampusesTab({
         open={campusManager.deleteCampusDialogOpen}
         onOpenChange={(open) => !open && campusManager.closeDeleteCampusDialog()}
       >
-        <AlertDialogContent className="max-w-[90vw] md:max-w-lg">
+        <AlertDialogContent className="max-w-[90vw] md:max-w-lg !border !border-black dark:!border-white">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('deleteDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
@@ -231,12 +231,12 @@ export const CampusesTab = memo(function CampusesTab({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-            <AlertDialogCancel className="rounded-full !border !border-black dark:!border-white bg-white dark:bg-zinc-950 px-4 py-2">{t('deleteDialog.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel className="!rounded-lg !border-0 bg-white dark:bg-zinc-950 px-4 py-2">{t('deleteDialog.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() =>
                 campusManager.handleDeleteCampus(campuses, setCampuses, setError, setSuccess)
               }
-              className="rounded-full !border !border-red-600 !bg-red-600 hover:!bg-red-700 !text-white px-4 py-2"
+              className="!rounded-lg !border !border-red-600 !bg-red-600 hover:!bg-red-700 !text-black px-4 py-2"
             >
               {t('deleteDialog.confirm')}
             </AlertDialogAction>

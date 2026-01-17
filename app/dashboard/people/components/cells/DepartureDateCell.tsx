@@ -20,12 +20,14 @@ export const DepartureDateCell = memo(function DepartureDateCell({
       className={cn('text-muted-foreground', getFrozenClasses(columnKey))}
       style={getColumnStyle(columnKey)}
     >
-      <InlineDateEditor
-        value={member.date_of_departure}
-        onChange={(date) => onDepartureChange(member.id, date, member.reason_for_departure)}
-        disabled={isUpdatingDeparture}
-        canEdit={canEditDeparture}
-      />
+      <div className="flex justify-center">
+        <InlineDateEditor
+          value={member.date_of_departure}
+          onChange={(date) => onDepartureChange(member.id, date, member.reason_for_departure)}
+          disabled={isUpdatingDeparture}
+          canEdit={canEditDeparture}
+        />
+      </div>
     </TableCell>
   )
 })

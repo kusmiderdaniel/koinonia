@@ -85,7 +85,7 @@ export function SongList({
             placeholder={t('searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9"
+            className="pl-9 !border-black/20 dark:!border-white/20"
           />
         </div>
 
@@ -130,12 +130,12 @@ export function SongList({
       )}
 
       {/* Create new button */}
-      <div className="border-t pt-3">
+      <div className="border-t border-black/20 dark:border-white/20 pt-3">
         <Button
           onClick={onCreateNew}
           disabled={isAdding}
           variant="outline"
-          className="w-full rounded-full !border-black dark:!border-white"
+          className="w-full rounded-full !border-black/20 dark:!border-white/20"
         >
           <Plus className="w-4 h-4 mr-2" />
           {t('createNew')}
@@ -143,7 +143,7 @@ export function SongList({
       </div>
 
       <DialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
-        <Button variant="outline-pill-muted" onClick={onClose} className="!border-black dark:!border-white">
+        <Button variant="ghost" onClick={onClose} className="rounded-full">
           {tCommon('cancel')}
         </Button>
       </DialogFooter>

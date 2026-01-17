@@ -230,7 +230,7 @@ export default function ReconsentPage() {
                   </div>
                   <Button
                     onClick={() => router.push('/dashboard')}
-                    className="mt-2 !bg-brand hover:!bg-brand/90 text-white"
+                    className="mt-2 !bg-brand hover:!bg-brand/90 !text-brand-foreground"
                   >
                     {t.continueToApp}
                     <ChevronRight className="ml-2 h-4 w-4" />
@@ -387,7 +387,7 @@ export default function ReconsentPage() {
                             <Button
                               onClick={() => handleAccept(consent.documentId)}
                               disabled={isAccepting}
-                              className="flex-1 h-11 !bg-brand hover:!bg-brand/90 text-white"
+                              className="flex-1 h-11 !bg-brand hover:!bg-brand/90 !text-brand-foreground"
                             >
                               {isAccepting ? (
                                 <>

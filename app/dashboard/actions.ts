@@ -37,3 +37,8 @@ export {
   getChurchHolidays,
   type ChurchHoliday,
 } from './actions/holidays'
+
+export {
+  getPendingMembers,
+  type DashboardPendingMember,
+} from './actions/pending-members'

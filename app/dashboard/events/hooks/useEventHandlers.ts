@@ -137,13 +137,6 @@ export function useEventHandlers({
   )
 
   // Position handlers
-  const handlePositionDialogSuccess = useCallback(() => {
-    dialogs.closePositionDialog()
-    if (eventDetail.selectedEvent) {
-      eventDetail.loadEventDetail(eventDetail.selectedEvent.id)
-    }
-  }, [dialogs, eventDetail])
-
   const handleDeletePosition = useCallback(async () => {
     const result = await dialogs.handleDeletePosition(() => {
       if (eventDetail.selectedEvent) {
@@ -273,7 +266,6 @@ export function useEventHandlers({
     handleAgendaArrangementChange,
 
     // Position handlers
-    handlePositionDialogSuccess,
     handleDeletePosition,
 
     // Volunteer handlers

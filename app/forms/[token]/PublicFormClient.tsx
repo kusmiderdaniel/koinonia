@@ -205,7 +205,7 @@ export function PublicFormClient({
           className="bg-white dark:bg-zinc-900 rounded-lg shadow-lg overflow-hidden"
         >
           {/* Header */}
-          <div className="p-6 md:p-8 border-b bg-gradient-to-br from-brand/5 to-transparent">
+          <div className="p-6 md:p-8 border-b border-black/20 dark:border-white/20 bg-gradient-to-br from-brand/5 to-transparent">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1">
                 <h1 className="text-2xl md:text-3xl font-bold">{resolvedForm.title}</h1>
@@ -225,7 +225,7 @@ export function PublicFormClient({
           {/* Fields */}
           <div className="p-6 md:p-8">
             {/* Optional email for anonymous submissions */}
-            <div className="pb-6 mb-6 border-b space-y-2">
+            <div className="pb-6 mb-6 border-b border-black/20 dark:border-white/20 space-y-2">
               <Label htmlFor="respondent-email" className="text-base font-medium">
                 {formT?.emailOptional || t('public.emailOptional')}
               </Label>
@@ -250,16 +250,17 @@ export function PublicFormClient({
               onValueChange={handleValueChangeWithTracking}
               onMultiSelectChange={handleMultiSelectChangeWithTracking}
               weekStartsOn={weekStartsOn}
+              locale={form.is_multilingual ? selectedLocale : undefined}
             />
           </div>
 
           {/* Submit */}
-          <div className="p-6 md:p-8 border-t bg-muted/30">
+          <div className="p-6 md:p-8 border-t border-black/20 dark:border-white/20 bg-muted/30">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-8 h-9 rounded-full text-white text-sm font-medium disabled:opacity-50 hover:opacity-90 flex items-center justify-center"
-              style={{ backgroundColor: '#f49f1e' }}
+              className="px-8 h-9 rounded-full text-sm font-medium disabled:opacity-50 hover:opacity-90 flex items-center justify-center"
+              style={{ backgroundColor: '#f49f1e', color: '#000000' }}
             >
               {isSubmitting ? (
                 <>

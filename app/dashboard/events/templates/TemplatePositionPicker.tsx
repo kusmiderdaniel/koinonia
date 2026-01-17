@@ -152,7 +152,7 @@ export function TemplatePositionPicker({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950">
+      <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>
@@ -185,7 +185,7 @@ export function TemplatePositionPicker({
             {t('noRolesDefined')}
           </div>
         ) : (
-          <div className="border rounded-lg overflow-hidden">
+          <div className="border border-black/20 dark:border-white/20 rounded-lg overflow-hidden">
             <div className="h-[350px] overflow-y-auto p-4">
               <div className="space-y-6">
               {ministriesWithRoles.map((ministry) => {
@@ -225,7 +225,7 @@ export function TemplatePositionPicker({
                       return (
                         <label
                           key={role.id}
-                          className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                          className={`flex items-center gap-3 p-3 rounded-lg border border-black/20 dark:border-white/20 cursor-pointer transition-colors ${
                             alreadyAdded
                               ? 'opacity-50 cursor-not-allowed bg-muted/30'
                               : isSelected
@@ -262,7 +262,8 @@ export function TemplatePositionPicker({
 
         <DialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
           <Button
-            variant="outline-pill-muted"
+            variant="ghost"
+            className="rounded-full"
             onClick={() => onOpenChange(false)}
             disabled={isAdding}
           >
@@ -271,7 +272,7 @@ export function TemplatePositionPicker({
           <Button
             onClick={handleSubmit}
             disabled={isAdding || selectedPositions.length === 0}
-            className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white !px-4 !py-2 disabled:!opacity-50"
+            className="!rounded-lg !bg-brand hover:!bg-brand/90 !text-white dark:!text-black !px-4 !py-2 disabled:!opacity-50"
           >
             {isAdding
               ? t('adding')

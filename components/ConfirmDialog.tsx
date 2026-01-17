@@ -61,20 +61,20 @@ export const ConfirmDialog = memo(function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="!border !border-black dark:!border-white">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div>{description}</div>
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="flex justify-end gap-2 pt-4 border-t mt-4">
+        <div className="flex justify-end gap-2 pt-4 border-t border-black/20 dark:border-white/20 mt-4">
           <Button
-            variant="outline-pill"
+            variant="ghost"
             size="sm"
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
-            className="!border !border-black dark:!border-white"
+            className="rounded-full"
           >
             {cancelLabel}
           </Button>
@@ -84,7 +84,7 @@ export const ConfirmDialog = memo(function ConfirmDialog({
             onClick={onConfirm}
             disabled={isLoading}
             className={destructive
-              ? "!border !border-red-600 !bg-red-600 !text-white hover:!bg-red-700"
+              ? "!border !border-red-600 !bg-red-600 !text-brand-foreground hover:!bg-red-700"
               : "!border !border-brand !bg-brand !text-brand-foreground hover:!bg-brand/90"
             }
           >

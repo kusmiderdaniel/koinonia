@@ -61,6 +61,26 @@
       "general": {
         "title": "Notification",
         "message": ""
+      },
+      "task_assignment": {
+        "title": "Task Assigned",
+        "message": "You've been assigned a new task"
+      },
+      "task_due_reminder": {
+        "title": "Task Due Soon",
+        "message": "A task is due soon"
+      },
+      "task_comment": {
+        "title": "New Comment",
+        "message": "Someone commented on a task"
+      },
+      "pending_member": {
+        "title": "New Member Request",
+        "message": "A new member has requested to join your church"
+      },
+      "unfilled_positions_reminder": {
+        "title": "Positions Need Attention",
+        "message": "An upcoming event has unfilled positions"
       }
     },
     "status": {
@@ -74,7 +94,8 @@
       "cancel": "Cancel",
       "acceptInstead": "Accept Instead",
       "declineInstead": "Decline Instead",
-      "markAsRead": "Mark as read"
+      "markAsRead": "Mark as read",
+      "review": "Review"
     },
     "labels": {
       "position": "Position:"

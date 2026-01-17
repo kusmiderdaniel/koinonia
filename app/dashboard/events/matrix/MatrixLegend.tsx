@@ -6,7 +6,7 @@ export function MatrixLegend() {
   const t = useTranslations('events.matrix')
 
   return (
-    <div className="flex flex-wrap items-center justify-center gap-4 py-3 px-4 border-t bg-white dark:bg-zinc-950 text-xs">
+    <div className="flex flex-wrap items-center justify-center gap-4 py-3 px-4 border-t border-black/20 dark:border-white/20 bg-white dark:bg-zinc-950 text-xs">
       <span className="text-muted-foreground font-medium">{t('legend')}</span>
 
       {/* Song */}

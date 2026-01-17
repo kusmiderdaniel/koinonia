@@ -44,7 +44,7 @@ export const TemplateHeader = memo(function TemplateHeader({
   // Mobile: Compact header
   if (isMobile) {
     return (
-      <div className="px-3 py-2 border-b flex-shrink-0 space-y-1">
+      <div className="px-3 py-2 border-b border-black/20 dark:border-white/20 flex-shrink-0 space-y-1">
         {/* Row 1: Back + Title + Actions */}
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="rounded-full flex-shrink-0 -ml-2" onClick={onClose}>
@@ -68,13 +68,13 @@ export const TemplateHeader = memo(function TemplateHeader({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={onEdit}>
-                    <Pencil className="w-4 h-4 mr-2" />
-                    {t('editTitle')}
-                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={onDuplicate} disabled={isDuplicating}>
                     <Copy className="w-4 h-4 mr-2" />
                     {isDuplicating ? t('duplicatingTemplate') : t('duplicateTitle')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={onEdit} className="text-blue-600">
+                    <Pencil className="w-4 h-4 mr-2" />
+                    {t('editTitle')}
                   </DropdownMenuItem>
                   {canDelete && (
                     <DropdownMenuItem onClick={onDelete} className="text-red-600">
@@ -101,7 +101,7 @@ export const TemplateHeader = memo(function TemplateHeader({
 
   // Desktop: Full header
   return (
-    <div className="px-6 pt-3 pb-4 border-b flex-shrink-0">
+    <div className="px-6 pt-3 pb-4 border-b border-black/20 dark:border-white/20 flex-shrink-0">
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
           <h2 className="text-xl font-semibold truncate">{template.name}</h2>
@@ -131,7 +131,7 @@ export const TemplateHeader = memo(function TemplateHeader({
           <Button
             variant="outline-pill"
             size="sm"
-            className="!border !border-black dark:!border-white"
+            className="!border !border-black/20 dark:!border-white/20"
             onClick={onCreateEvent}
           >
             <CalendarPlus className="w-4 h-4 mr-2" />
@@ -145,13 +145,13 @@ export const TemplateHeader = memo(function TemplateHeader({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={onEdit}>
-                  <Pencil className="w-4 h-4 mr-2" />
-                  {t('editTemplate')}
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={onDuplicate} disabled={isDuplicating}>
                   <Copy className="w-4 h-4 mr-2" />
                   {isDuplicating ? t('duplicatingTemplate') : t('duplicateTemplate')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onEdit} className="text-blue-600">
+                  <Pencil className="w-4 h-4 mr-2" />
+                  {t('editTemplate')}
                 </DropdownMenuItem>
                 {canDelete && (
                   <DropdownMenuItem onClick={onDelete} className="text-red-600">

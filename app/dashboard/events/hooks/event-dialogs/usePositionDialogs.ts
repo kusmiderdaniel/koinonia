@@ -1,12 +1,11 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { useDialogState, useConfirmDialog, usePickerDialog } from '@/lib/hooks'
+import { useConfirmDialog, usePickerDialog } from '@/lib/hooks'
 import { removeEventPosition, unassignVolunteer } from '../../actions'
 import type { Position, Assignment, PositionDialogsState } from './types'
 
 export function usePositionDialogs(): PositionDialogsState {
-  const positionDialog = useDialogState<Position>()
   const deletePositionDialog = useConfirmDialog<Position>()
   const volunteerPicker = usePickerDialog<Position>()
   const unassignDialog = useConfirmDialog<{ assignment: Assignment; positionTitle: string }>()
@@ -71,13 +70,6 @@ export function usePositionDialogs(): PositionDialogsState {
     // Position picker
     positionPickerOpen,
     setPositionPickerOpen,
-
-    // Position dialog
-    positionDialogOpen: positionDialog.isOpen,
-    editingPosition: positionDialog.item,
-    setPositionDialogOpen: positionDialog.setOpen,
-    openEditPositionDialog: positionDialog.open,
-    closePositionDialog: positionDialog.close,
 
     // Delete position dialog
     deletePositionDialogOpen: deletePositionDialog.isOpen,

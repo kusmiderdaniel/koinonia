@@ -77,29 +77,29 @@ export function FormBuilderClient({ initialData }: FormBuilderClientProps) {
         onValueChange={state.setActiveTab}
         className="flex-1 flex flex-col min-h-0"
       >
-        <div className="border-b px-4 shrink-0">
+        <div className="border-b border-black dark:border-white px-4 shrink-0">
           <TabsList className="h-10 bg-transparent">
             <TabsTrigger
               value="build"
-              className="h-8 px-3 rounded-md data-[state=active]:bg-brand data-[state=active]:text-white"
+              className="h-8 px-3 rounded-md data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground"
             >
               {t('builder.tabs.build')}
             </TabsTrigger>
             <TabsTrigger
-              value="responses"
-              className="h-8 px-3 rounded-md data-[state=active]:bg-brand data-[state=active]:text-white"
-            >
-              {t('builder.tabs.responses', { count: initialData.submissionsCount })}
-            </TabsTrigger>
-            <TabsTrigger
               value="settings"
-              className="h-8 px-3 rounded-md data-[state=active]:bg-brand data-[state=active]:text-white"
+              className="h-8 px-3 rounded-md data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground"
             >
               {t('builder.tabs.settings')}
             </TabsTrigger>
             <TabsTrigger
+              value="responses"
+              className="h-8 px-3 rounded-md data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground"
+            >
+              {t('builder.tabs.responses')}
+            </TabsTrigger>
+            <TabsTrigger
               value="analytics"
-              className="h-8 px-3 rounded-md data-[state=active]:bg-brand data-[state=active]:text-white"
+              className="h-8 px-3 rounded-md data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground"
             >
               {t('builder.tabs.analytics')}
             </TabsTrigger>
@@ -111,17 +111,17 @@ export function FormBuilderClient({ initialData }: FormBuilderClientProps) {
         </TabsContent>
 
         <TabsContent
-          value="responses"
-          className="flex-1 mt-0 min-h-0 overflow-hidden"
-        >
-          <ResponsesTable formId={state.currentForm.id} fields={initialData.fields} />
-        </TabsContent>
-
-        <TabsContent
           value="settings"
           className="flex-1 mt-0 min-h-0 overflow-y-auto"
         >
           <FormSettings />
+        </TabsContent>
+
+        <TabsContent
+          value="responses"
+          className="flex-1 mt-0 min-h-0 overflow-hidden"
+        >
+          <ResponsesTable formId={state.currentForm.id} fields={initialData.fields} />
         </TabsContent>
 
         <TabsContent

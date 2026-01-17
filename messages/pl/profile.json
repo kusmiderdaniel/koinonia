@@ -6,8 +6,7 @@
     "personal": "Dane osobowe",
     "password": "Hasło",
     "notifications": "Ustawienia powiadomień",
-    "language": "Język",
-    "appearance": "Wygląd",
+    "preferences": "Preferencje",
     "privacy": "Prywatność i Dane",
     "account": "Konto"
   },
@@ -15,8 +14,7 @@
     "personal": "Imię, e-mail, telefon i więcej",
     "password": "Zmień swoje hasło",
     "notifications": "Zarządzaj preferencjami powiadomień",
-    "language": "Wybierz preferowany język",
-    "appearance": "Jasny, ciemny lub systemowy motyw",
+    "preferences": "Ustawienia języka i motywu",
     "privacy": "Zarządzaj zgodami, eksportuj dane, usuń konto",
     "account": "Opuść kościół lub usuń konto"
   },

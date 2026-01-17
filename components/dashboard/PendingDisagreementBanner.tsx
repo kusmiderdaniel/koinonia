@@ -68,7 +68,7 @@ export function PendingDisagreementBanner({
       <Link href={withdrawUrl}>
         <Button
           size="sm"
-          className="bg-red-600 hover:bg-red-700 text-white font-medium h-8"
+          className="bg-red-600 hover:bg-red-700 !text-brand-foreground font-medium h-8"
         >
           {t.withdrawButton}
           <ArrowRight className="ml-2 h-4 w-4" />

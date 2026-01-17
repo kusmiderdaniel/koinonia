@@ -1,7 +1,6 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Shield, FileText, Check, Loader2 } from 'lucide-react'
 import type { ConsentRecord } from './types'
@@ -52,48 +51,47 @@ export function ActiveConsentsCard({ consents, isLoading }: ActiveConsentsCardPr
   }
 
   return (
-    <Card>
-      <CardHeader>
+    <div className="space-y-4">
+      <div>
         <div className="flex items-center gap-2">
-          <Shield className="h-5 w-5 text-primary" />
-          <CardTitle className="text-lg">{t('yourConsents')}</CardTitle>
+          <Shield className="h-5 w-5" />
+          <h3 className="text-lg font-semibold">{t('yourConsents')}</h3>
         </div>
-        <CardDescription>{t('yourConsentsDescription')}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-          </div>
-        ) : activeConsents.length === 0 ? (
-          <p className="text-muted-foreground text-sm">{t('noConsents')}</p>
-        ) : (
-          <div className="space-y-3">
-            {activeConsents.map((consent) => (
-              <div
-                key={consent.id}
-                className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-              >
-                <div className="flex items-center gap-3">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium text-sm">
-                      {getConsentTypeLabel(consent.consent_type)}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {t('consentedOn', { date: formatDate(consent.recorded_at) })}
-                    </p>
-                  </div>
+        <p className="text-sm text-muted-foreground">{t('yourConsentsDescription')}</p>
+      </div>
+
+      {isLoading ? (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      ) : activeConsents.length === 0 ? (
+        <p className="text-muted-foreground text-sm">{t('noConsents')}</p>
+      ) : (
+        <div className="space-y-2">
+          {activeConsents.map((consent) => (
+            <div
+              key={consent.id}
+              className="flex items-center justify-between p-3 rounded-lg border border-black/20 dark:border-white/20"
+            >
+              <div className="flex items-center gap-3">
+                <FileText className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="font-medium text-sm">
+                    {getConsentTypeLabel(consent.consent_type)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t('consentedOn', { date: formatDate(consent.recorded_at) })}
+                  </p>
                 </div>
-                <Badge variant="outline" className="text-green-600 border-green-600">
-                  <Check className="h-3 w-3 mr-1" />
-                  {t('status.active')}
-                </Badge>
               </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+              <Badge variant="outline" className="text-green-600 border-green-600">
+                <Check className="h-3 w-3 mr-1" />
+                {t('status.active')}
+              </Badge>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }

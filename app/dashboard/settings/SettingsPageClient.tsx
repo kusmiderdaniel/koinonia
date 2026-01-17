@@ -1,7 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { toast } from 'sonner'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -66,6 +68,7 @@ interface TabItem {
 
 export function SettingsPageClient({ initialData, defaultTab = 'details' }: SettingsPageClientProps) {
   const t = useTranslations('settings')
+  const router = useRouter()
   const [mounted, setMounted] = useState(false)
   const isMobile = useIsMobile()
   const settings = useChurchSettings(initialData, {
@@ -86,9 +89,15 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
   const preferencesManager = usePreferencesManager({
     savedSuccess: t('preferences.savedSuccess'),
   })
-  const ownershipTransfer = useOwnershipTransfer(settings.members, {
-    transferredSuccess: t('transfer.transferredSuccess'),
-  })
+  const handleOwnershipTransferSuccess = useCallback(() => {
+    // Use hard redirect to force full page reload with fresh data
+    window.location.href = '/dashboard/settings'
+  }, [])
+  const ownershipTransfer = useOwnershipTransfer(
+    settings.members,
+    { transferredSuccess: t('transfer.transferredSuccess') },
+    { onSuccess: handleOwnershipTransferSuccess }
+  )
   const [presets, setPresets] = useState<Preset[]>(initialData.presets)
   const presetsMinistries = initialData.ministries
   const [logoUrl, setLogoUrl] = useState<string | null>(initialData.church.logo_url)
@@ -107,6 +116,21 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
       preferencesManager.initializePreferences(settings.preferences)
     }
   }, [settings.isLoadingData, settings.preferences]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Show toast messages for success/error
+  useEffect(() => {
+    if (settings.success) {
+      toast.success(settings.success)
+      settings.setSuccess(null)
+    }
+  }, [settings.success]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (settings.error) {
+      toast.error(settings.error)
+      settings.setError(null)
+    }
+  }, [settings.error]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Tab items configuration
   const tabItems: TabItem[] = [
@@ -238,17 +262,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
             )}
           </div>
 
-          {/* Alerts */}
-          {settings.error && (
-            <Alert variant="destructive" className="mx-4 mb-2 shrink-0">
-              <AlertDescription>{settings.error}</AlertDescription>
-            </Alert>
-          )}
-          {settings.success && (
-            <Alert className="mx-4 mb-2 border-green-500 text-green-700 shrink-0">
-              <AlertDescription>{settings.success}</AlertDescription>
-            </Alert>
-          )}
+          {/* Admin-only alert */}
           {!settings.isAdmin && !mobileSelectedTab && (
             <Alert className="mx-4 mb-2 shrink-0">
               <AlertDescription>
@@ -301,18 +315,6 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
           </div>
         </div>
 
-        {settings.error && (
-          <Alert variant="destructive" className="mb-4 shrink-0">
-            <AlertDescription>{settings.error}</AlertDescription>
-          </Alert>
-        )}
-
-        {settings.success && (
-          <Alert className="mb-4 border-green-500 text-green-700 shrink-0">
-            <AlertDescription>{settings.success}</AlertDescription>
-          </Alert>
-        )}
-
         {!settings.isAdmin && (
           <Alert className="mb-4 shrink-0">
             <AlertDescription>
@@ -328,20 +330,20 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
               <TabsList className="flex flex-col w-full h-auto gap-1 p-1 border border-black dark:border-white rounded-lg bg-muted/50">
                 <TabsTrigger
                   value="details"
-                  className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
+                  className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground text-sm py-2 px-3"
                 >
                   {t('tabs.details')}
                 </TabsTrigger>
                 <TabsTrigger
                   value="invite"
-                  className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
+                  className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground text-sm py-2 px-3"
                 >
                   {t('tabs.invite')}
                 </TabsTrigger>
                 {settings.canManageLocations && (
                   <TabsTrigger
                     value="locations"
-                    className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
+                    className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground text-sm py-2 px-3"
                   >
                     {t('tabs.locations')}
                   </TabsTrigger>
@@ -349,7 +351,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
                 {settings.isAdmin && (
                   <TabsTrigger
                     value="campuses"
-                    className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
+                    className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground text-sm py-2 px-3"
                   >
                     {t('tabs.campuses')}
                   </TabsTrigger>
@@ -357,7 +359,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
                 {settings.isAdmin && (
                   <TabsTrigger
                     value="presets"
-                    className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
+                    className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground text-sm py-2 px-3"
                   >
                     {t('tabs.presets')}
                   </TabsTrigger>
@@ -365,7 +367,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
                 {settings.isAdmin && (
                   <TabsTrigger
                     value="preferences"
-                    className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
+                    className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground text-sm py-2 px-3"
                   >
                     {t('tabs.preferences')}
                   </TabsTrigger>
@@ -373,7 +375,7 @@ export function SettingsPageClient({ initialData, defaultTab = 'details' }: Sett
                 {settings.isOwner && (
                   <TabsTrigger
                     value="transfer"
-                    className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:text-brand-foreground text-sm py-2 px-3"
+                    className="w-full justify-start data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground text-sm py-2 px-3"
                   >
                     {t('tabs.transfer')}
                   </TabsTrigger>

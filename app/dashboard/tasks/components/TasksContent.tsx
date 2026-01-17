@@ -7,6 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Plus } from 'lucide-react'
 import { TasksTable } from './TasksTable'
 import { TaskCard } from './TaskCard'
+import { TasksPaginationControls } from './TasksPaginationControls'
 import { useIsMobile } from '@/lib/hooks'
 import type { Task, TaskMinistry, TaskCampus, Person, TaskStatus, TaskPriority } from '../types'
 
@@ -29,6 +30,14 @@ interface TasksContentProps {
   members: Person[]
   selectedTaskId: string | null
   weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6
+
+  // Pagination
+  page: number
+  pageSize: number
+  totalPages: number
+  totalItems: number
+  onPageChange: (page: number) => void
+  onPageSizeChange: (pageSize: number) => void
 
   // Handlers
   onTitleClick: (taskId: string) => void
@@ -57,6 +66,12 @@ export function TasksContent({
   members,
   selectedTaskId,
   weekStartsOn,
+  page,
+  pageSize,
+  totalPages,
+  totalItems,
+  onPageChange,
+  onPageSizeChange,
   onTitleClick,
   onStatusChange,
   onPriorityChange,
@@ -70,10 +85,15 @@ export function TasksContent({
   onCreateTask,
   onMobileStatusChange,
 }: TasksContentProps) {
+  const startIndex = totalItems === 0 ? 0 : (page - 1) * pageSize + 1
+  const endIndex = Math.min(page * pageSize, totalItems)
+  const canGoPrevious = page > 1
+  const canGoNext = page < totalPages
+
   if (isMobile) {
     return (
-      <Card className="flex-1 overflow-hidden border rounded-lg">
-        <ScrollArea className="h-full">
+      <Card className="flex-1 overflow-hidden border rounded-lg flex flex-col">
+        <ScrollArea className="flex-1">
           {tasks.length === 0 ? (
             <EmptyState onCreateTask={onCreateTask} />
           ) : showGroupHeaders ? (
@@ -98,33 +118,63 @@ export function TasksContent({
             />
           )}
         </ScrollArea>
+        {totalItems > 0 && (
+          <TasksPaginationControls
+            page={page}
+            pageSize={pageSize}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            startIndex={startIndex}
+            endIndex={endIndex}
+            canGoPrevious={canGoPrevious}
+            canGoNext={canGoNext}
+            onPageChange={onPageChange}
+            onPageSizeChange={onPageSizeChange}
+          />
+        )}
       </Card>
     )
   }
 
   return (
-    <Card className="flex-1 overflow-auto border rounded-lg">
-      <TasksTable
-        tasks={tasks}
-        groups={groups}
-        showGroupHeaders={showGroupHeaders}
-        ministries={ministries}
-        campuses={campuses}
-        members={members}
-        selectedTaskId={selectedTaskId}
-        onTitleClick={onTitleClick}
-        onStatusChange={onStatusChange}
-        onPriorityChange={onPriorityChange}
-        onAssigneeChange={onAssigneeChange}
-        onMinistryChange={onMinistryChange}
-        onCampusChange={onCampusChange}
-        onDueDateChange={onDueDateChange}
-        onCompletionToggle={onCompletionToggle}
-        onEdit={onEdit}
-        onDelete={onDelete}
-        onCreateTask={onCreateTask}
-        weekStartsOn={weekStartsOn}
-      />
+    <Card className="flex-1 overflow-hidden border rounded-lg flex flex-col">
+      <div className="flex-1 overflow-auto">
+        <TasksTable
+          tasks={tasks}
+          groups={groups}
+          showGroupHeaders={showGroupHeaders}
+          ministries={ministries}
+          campuses={campuses}
+          members={members}
+          selectedTaskId={selectedTaskId}
+          onTitleClick={onTitleClick}
+          onStatusChange={onStatusChange}
+          onPriorityChange={onPriorityChange}
+          onAssigneeChange={onAssigneeChange}
+          onMinistryChange={onMinistryChange}
+          onCampusChange={onCampusChange}
+          onDueDateChange={onDueDateChange}
+          onCompletionToggle={onCompletionToggle}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onCreateTask={onCreateTask}
+          weekStartsOn={weekStartsOn}
+        />
+      </div>
+      {totalItems > 0 && (
+        <TasksPaginationControls
+          page={page}
+          pageSize={pageSize}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          startIndex={startIndex}
+          endIndex={endIndex}
+          canGoPrevious={canGoPrevious}
+          canGoNext={canGoNext}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+        />
+      )}
     </Card>
   )
 }
@@ -136,7 +186,7 @@ function EmptyState({ onCreateTask }: { onCreateTask: () => void }) {
   return (
     <div className={`flex flex-col items-center justify-center px-4 text-center ${isMobile ? 'py-8' : 'py-16'}`}>
       <div className={`text-muted-foreground ${isMobile ? 'text-sm mb-3' : 'mb-4'}`}>{t('noTasksFound')}</div>
-      <Button onClick={onCreateTask} variant="outline" size={isMobile ? 'sm' : 'default'} className="!border !border-black dark:!border-white rounded-full">
+      <Button onClick={onCreateTask} variant="outline" size={isMobile ? 'sm' : 'default'} className="!border !border-black/20 dark:!border-white/20 rounded-full">
         <Plus className={isMobile ? 'h-3.5 w-3.5 mr-1' : 'h-4 w-4 mr-2'} />
         {t('createFirstTask')}
       </Button>

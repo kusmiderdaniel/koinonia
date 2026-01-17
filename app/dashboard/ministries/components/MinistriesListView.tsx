@@ -36,7 +36,7 @@ export function MinistriesListView({
   return (
     <div className={`flex flex-col border border-black dark:border-white rounded-lg bg-card overflow-hidden ${className ?? 'w-full md:w-80 md:flex-shrink-0'}`}>
       {/* Search and Add Button */}
-      <div className="p-3 border-b">
+      <div className="p-3 border-b border-black/20 dark:border-white/20">
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -44,14 +44,14 @@ export function MinistriesListView({
               placeholder={t('searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-9"
+              className="pl-9 !border !border-black/20 dark:!border-white/20"
             />
           </div>
           {canManage && onAddClick && (
             <Button
               variant="ghost"
               size="icon"
-              className="shrink-0 rounded-full !border !border-black dark:!border-white"
+              className="shrink-0 rounded-full !border !border-black/20 dark:!border-white/20"
               onClick={onAddClick}
               aria-label={t('addMinistry')}
             >

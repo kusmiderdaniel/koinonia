@@ -148,7 +148,7 @@ export function GoogleCalendarCard() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 border border-black dark:border-white rounded-lg p-4">
       {/* Connection Card */}
       <Card>
         <CardHeader className="pb-3">
@@ -163,6 +163,7 @@ export function GoogleCalendarCard() {
               <Button
                 variant="outline"
                 size="sm"
+                className="!border-black/20 dark:!border-white/20"
                 onClick={handleSync}
                 disabled={isSyncing}
               >
@@ -181,7 +182,11 @@ export function GoogleCalendarCard() {
               </Button>
             )}
           </div>
-          <CardDescription>{t('description')}</CardDescription>
+          <CardDescription>
+            {t('description1')}
+            <br />
+            {t('description2')}
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -193,7 +198,7 @@ export function GoogleCalendarCard() {
               <div>
                 <p className="font-medium">{t('notConnected')}</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {t('description')}
+                  {t('description1')} {t('description2')}
                 </p>
               </div>
               <Button
@@ -249,7 +254,7 @@ export function GoogleCalendarCard() {
                     : () => setShowDisconnectDialog(true)
                 }
                 disabled={isConnecting || isDisconnecting}
-                className="gap-2"
+                className="gap-2 !border-black/20 dark:!border-white/20"
               >
                 {(isConnecting || isDisconnecting) ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -416,7 +421,7 @@ export function GoogleCalendarCard() {
           </div>
 
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('disconnectDialog.cancel')}</AlertDialogCancel>
+            <AlertDialogCancel className="!border-0">{t('disconnectDialog.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDisconnect}
               disabled={isDisconnecting}

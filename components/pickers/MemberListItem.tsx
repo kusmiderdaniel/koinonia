@@ -42,7 +42,7 @@ export function MemberListItem({
           ? 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800 cursor-not-allowed opacity-75'
           : isSelected
           ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800'
-          : 'border-transparent hover:bg-gray-50 dark:hover:bg-zinc-900'
+          : 'border-black/20 dark:border-white/20 hover:bg-gray-50 dark:hover:bg-zinc-900'
       )}
     >
       <div className="flex items-center justify-between">
@@ -102,7 +102,7 @@ export function UnassignedOption({
         'w-full text-left p-3 rounded-lg border transition-all',
         isSelected
           ? 'bg-gray-100 dark:bg-zinc-800 border-gray-300 dark:border-zinc-600'
-          : 'border-transparent hover:bg-gray-50 dark:hover:bg-zinc-900'
+          : 'border-black/20 dark:border-white/20 hover:bg-gray-50 dark:hover:bg-zinc-900'
       )}
     >
       <span className="text-muted-foreground italic">{label}</span>

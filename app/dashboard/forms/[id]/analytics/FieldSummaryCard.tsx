@@ -26,7 +26,7 @@ export function FieldSummaryCard({ summary }: FieldSummaryCardProps) {
           {summary.responseCount} {t('analytics.responses')}
         </span>
       </div>
-      <Card className="border border-black dark:border-white">
+      <Card className="border border-black/20 dark:border-white/20">
         <CardContent className="pt-4">
           {summary.data.type === 'select' && (
             <BarChart
@@ -42,15 +42,17 @@ export function FieldSummaryCard({ summary }: FieldSummaryCardProps) {
           )}
 
           {summary.data.type === 'checkbox' && (
-            <PieChart
-              data={[
-                { name: t('analytics.yes'), value: summary.data.trueCount },
-                { name: t('analytics.no'), value: summary.data.falseCount },
-              ]}
-              colors={['#10b981', '#ef4444']}
-              className="max-h-[200px]"
-              tooltipLabel={t('analytics.responses')}
-            />
+            <div className="flex items-center justify-center min-h-[280px]">
+              <PieChart
+                data={[
+                  { name: t('analytics.yes'), value: summary.data.trueCount },
+                  { name: t('analytics.no'), value: summary.data.falseCount },
+                ]}
+                colors={['#10b981', '#ef4444']}
+                className="w-full"
+                tooltipLabel={t('analytics.responses')}
+              />
+            </div>
           )}
 
           {summary.data.type === 'number' && (

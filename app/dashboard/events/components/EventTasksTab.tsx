@@ -162,7 +162,7 @@ export function EventTasksTab({
               <Button
                 variant="outline-pill"
                 size="sm"
-                className="!border !border-black dark:!border-white text-xs h-8"
+                className="!border !border-black/20 dark:!border-white/20 text-xs h-8"
                 onClick={onAddTask}
               >
                 <Plus className="w-3.5 h-3.5 mr-1" />
@@ -189,7 +189,7 @@ export function EventTasksTab({
                 <Button
                   variant="outline-pill"
                   size="sm"
-                  className="!border !border-black dark:!border-white"
+                  className="!border !border-black/20 dark:!border-white/20"
                   onClick={onAddTask}
                 >
                   <Plus className="w-4 h-4 mr-1" />
@@ -208,7 +208,7 @@ export function EventTasksTab({
           <CheckSquare className="w-10 h-10 mx-auto mb-2 opacity-50" />
           <p className="text-sm">{t('noTasks')}</p>
           {canManage && (
-            <Button variant="outline" size="sm" className="mt-4 !rounded-full !border-black dark:!border-white" onClick={onAddTask}>
+            <Button variant="outline" size="sm" className="mt-4 !rounded-full !border-black/20 dark:!border-white/20" onClick={onAddTask}>
               <Plus className="w-4 h-4 mr-1" />
               {t('addATask')}
             </Button>
@@ -223,7 +223,7 @@ export function EventTasksTab({
             return (
               <div
                 key={task.id}
-                className={`flex items-center gap-2 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer ${isMobile ? 'p-2' : 'p-3 gap-3'}`}
+                className={`flex items-center gap-2 border border-black/20 dark:border-white/20 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer ${isMobile ? 'p-2' : 'p-3 gap-3'}`}
                 onClick={() => handleTaskClick(task)}
               >
                 {/* Checkbox for completion */}

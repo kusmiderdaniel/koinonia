@@ -47,6 +47,19 @@ export function EventCalendar({
   const eventsByDay = useMemo(() => {
     const map = new Map<number, CalendarEvent[]>()
 
+    // First, calculate which events are multi-day
+    const multiDayEventIds = new Set<string>()
+    events.forEach((event) => {
+      const startDate = new Date(event.start_time)
+      const endDate = event.end_time ? new Date(event.end_time) : startDate
+      // Check if event spans multiple days
+      const startDay = startDate.toDateString()
+      const endDay = endDate.toDateString()
+      if (startDay !== endDay) {
+        multiDayEventIds.add(event.id)
+      }
+    })
+
     events.forEach((event) => {
       const startDate = new Date(event.start_time)
       const endDate = event.end_time ? new Date(event.end_time) : startDate
@@ -78,11 +91,21 @@ export function EventCalendar({
       }
     })
 
-    // Sort events within each day by start time
+    // Sort events within each day:
+    // 1. Multi-day events first, sorted by start time (earliest first)
+    // 2. Single-day events after, sorted by start time
     map.forEach((dayEvents) => {
-      dayEvents.sort(
-        (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
-      )
+      dayEvents.sort((a, b) => {
+        const aIsMultiDay = multiDayEventIds.has(a.id)
+        const bIsMultiDay = multiDayEventIds.has(b.id)
+
+        // Multi-day events come first
+        if (aIsMultiDay && !bIsMultiDay) return -1
+        if (!aIsMultiDay && bIsMultiDay) return 1
+
+        // Within same category, sort by start time
+        return new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+      })
     })
 
     return map
@@ -133,6 +156,7 @@ export function EventCalendar({
         currentYear={currentYear}
         selectedDay={selectedDay}
         timeFormat={timeFormat}
+        events={events}
         getEventsForDay={getEventsForDay}
         onDayClick={handleDayClick}
       />
@@ -162,7 +186,7 @@ export function EventCalendar({
             {calendarContent}
           </>
         ) : (
-          <Card className="border border-black dark:border-zinc-700">
+          <Card className="border border-border">
             <CardHeader className="pt-5 pb-2">
               <CalendarHeader
                 currentMonth={currentMonth}

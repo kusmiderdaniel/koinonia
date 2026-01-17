@@ -7,7 +7,6 @@ import type { Event, EventDetail, AgendaItem, Position, Assignment } from '../ty
 
 // Dynamic imports for dialogs (only loaded when opened)
 const EventDialog = dynamic(() => import('../dialogs').then(mod => ({ default: mod.EventDialog })), { ssr: false })
-const PositionDialog = dynamic(() => import('../[id]/PositionDialog').then(mod => ({ default: mod.PositionDialog })), { ssr: false })
 const PositionPicker = dynamic(() => import('../[id]/PositionPicker').then(mod => ({ default: mod.PositionPicker })), { ssr: false })
 const VolunteerPicker = dynamic(() => import('../[id]/VolunteerPicker').then(mod => ({ default: mod.VolunteerPicker })), { ssr: false })
 const AgendaItemDialog = dynamic(() => import('../[id]/agenda-item-dialog').then(mod => ({ default: mod.AgendaItemDialog })), { ssr: false })
@@ -54,11 +53,6 @@ interface EventDialogsProps {
   positionPickerOpen: boolean
   setPositionPickerOpen: (open: boolean) => void
   onPositionPickerSuccess: () => void
-  // Position dialog
-  positionDialogOpen: boolean
-  setPositionDialogOpen: (open: boolean) => void
-  editingPosition: Position | null
-  onPositionDialogSuccess: () => void
   // Volunteer picker
   volunteerPickerOpen: boolean
   volunteerPickerPositionId: string | null
@@ -149,10 +143,6 @@ export function EventDialogs({
   positionPickerOpen,
   setPositionPickerOpen,
   onPositionPickerSuccess,
-  positionDialogOpen,
-  setPositionDialogOpen,
-  editingPosition,
-  onPositionDialogSuccess,
   volunteerPickerOpen,
   volunteerPickerPositionId,
   setVolunteerPickerOpen,
@@ -248,14 +238,6 @@ export function EventDialogs({
               role_id: p.role?.id || null,
             })) || []}
             onSuccess={onPositionPickerSuccess}
-          />
-
-          <PositionDialog
-            open={positionDialogOpen}
-            onOpenChange={setPositionDialogOpen}
-            eventId={selectedEvent.id}
-            position={editingPosition}
-            onSuccess={onPositionDialogSuccess}
           />
         </>
       )}

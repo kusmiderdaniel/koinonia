@@ -141,7 +141,7 @@ export function LocationPicker({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950" onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 !border !border-black dark:!border-white" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>{showNewForm ? t('newLocation') : t('chooseLocation')}</DialogTitle>
           <DialogDescription>
@@ -167,6 +167,7 @@ export function LocationPicker({
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder={t('namePlaceholder')}
                 autoFocus
+                className="!border-black/20 dark:!border-white/20"
               />
             </div>
             <div className="space-y-2">
@@ -176,6 +177,7 @@ export function LocationPicker({
                 value={newAddress}
                 onChange={(e) => setNewAddress(e.target.value)}
                 placeholder={t('addressPlaceholder')}
+                className="!border-black/20 dark:!border-white/20"
               />
             </div>
             <div className="space-y-2">
@@ -185,13 +187,14 @@ export function LocationPicker({
                 value={newNotes}
                 onChange={(e) => setNewNotes(e.target.value)}
                 placeholder={t('notesPlaceholder')}
+                className="!border-black/20 dark:!border-white/20"
               />
             </div>
             <DialogFooter className="flex justify-end gap-3 pt-4 !bg-transparent !border-0 !mx-0 !mb-0 !p-0">
               <Button
                 type="button"
-                variant="outline-pill"
-                className="!border !border-black dark:!border-white"
+                variant="ghost"
+                className="rounded-full"
                 onClick={() => {
                   setShowNewForm(false)
                   setNewName('')
@@ -207,7 +210,7 @@ export function LocationPicker({
                 variant="outline-pill"
                 onClick={handleCreateLocation}
                 disabled={isCreating || !newName.trim()}
-                className="!border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
+                className="!border !bg-brand hover:!bg-brand/90 !text-brand-foreground !border-brand disabled:!opacity-50"
               >
                 {isCreating ? t('creating') : t('createAndSelect')}
               </Button>
@@ -222,7 +225,7 @@ export function LocationPicker({
                 placeholder={t('searchPlaceholder')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9"
+                className="pl-9 !border-black/20 dark:!border-white/20"
               />
             </div>
 
@@ -287,7 +290,7 @@ export function LocationPicker({
                 type="button"
                 variant="outline"
                 size="sm"
-                className="rounded-full !border !border-black dark:!border-white"
+                className="rounded-full !border !border-black/20 dark:!border-white/20"
                 onClick={() => setShowNewForm(true)}
               >
                 <Plus className="w-4 h-4 mr-2" />
@@ -307,7 +310,7 @@ export function LocationPicker({
                 )}
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   className="rounded-full"
                   onClick={() => onOpenChange(false)}

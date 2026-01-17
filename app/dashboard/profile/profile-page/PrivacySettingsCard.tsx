@@ -1,23 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Separator } from '@/components/ui/separator'
 import { getConsentHistory } from '@/lib/legal/actions'
-import { getDataExportStatus, getAccountDeletionStatus } from '../actions'
+import { getAccountDeletionStatus } from '../actions'
 import {
   ActiveConsentsCard,
   ConsentHistoryCard,
-  DataExportCard,
   AccountDeletionCard,
   type ConsentRecord,
-  type DataExportStatus,
   type DeletionStatus,
 } from './privacy'
 
 export function PrivacySettingsCard() {
   const [consents, setConsents] = useState<ConsentRecord[]>([])
   const [isLoadingConsents, setIsLoadingConsents] = useState(true)
-  const [exportStatus, setExportStatus] = useState<DataExportStatus>({ status: 'none' })
   const [deletionStatus, setDeletionStatus] = useState<DeletionStatus>({ status: 'none' })
 
   // Load consent history on mount
@@ -35,21 +31,6 @@ export function PrivacySettingsCard() {
       }
     }
     loadConsents()
-  }, [])
-
-  // Load export status on mount
-  useEffect(() => {
-    async function loadExportStatus() {
-      try {
-        const result = await getDataExportStatus()
-        if (result.status) {
-          setExportStatus(result.status)
-        }
-      } catch (error) {
-        console.error('Failed to load export status:', error)
-      }
-    }
-    loadExportStatus()
   }, [])
 
   // Load deletion status on mount
@@ -73,11 +54,7 @@ export function PrivacySettingsCard() {
 
       <ConsentHistoryCard consents={consents} />
 
-      <Separator />
-
-      <DataExportCard initialStatus={exportStatus} />
-
-      <Separator />
+      <div className="border-t border-black/20 dark:border-white/20" />
 
       <AccountDeletionCard initialStatus={deletionStatus} />
     </div>

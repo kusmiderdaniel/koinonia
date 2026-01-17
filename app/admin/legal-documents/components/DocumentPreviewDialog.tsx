@@ -25,7 +25,7 @@ export function DocumentPreviewDialog({
 
   return (
     <Dialog open={!!document} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-4xl w-[95vw] max-h-[90vh] flex flex-col">
+      <DialogContent className="sm:max-w-4xl w-[95vw] max-h-[90vh] flex flex-col !border !border-black dark:!border-white">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <DialogTitle>{document.title}</DialogTitle>

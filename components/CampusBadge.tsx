@@ -43,7 +43,7 @@ export const CampusBadge = memo(function CampusBadge({
     <Badge
       variant="secondary"
       className={cn(
-        'font-medium whitespace-nowrap rounded-full',
+        'font-medium whitespace-nowrap rounded-md',
         size === 'sm' ? 'text-xs px-2 py-0.5' : 'text-xs px-2.5 py-0.5',
         className
       )}
@@ -94,7 +94,7 @@ export const CampusBadges = memo(function CampusBadges({
         />
       ))}
       {hiddenCount > 0 && (
-        <Badge variant="outline" className={cn('font-medium rounded-full', size === 'sm' ? 'text-xs px-2 py-0.5' : 'text-xs px-2.5 py-0.5')}>
+        <Badge variant="outline" className={cn('font-medium rounded-md', size === 'sm' ? 'text-xs px-2 py-0.5' : 'text-xs px-2.5 py-0.5')}>
           +{hiddenCount} more
         </Badge>
       )}

@@ -32,7 +32,7 @@ export const FilterValueInput = memo(function FilterValueInput({
   switch (field.type) {
     case 'boolean':
       return (
-        <div className="flex items-center gap-2 h-8 px-3 border rounded-md">
+        <div className="flex items-center gap-2 h-8 px-3 border border-black/20 dark:border-white/20 rounded-md">
           <Checkbox
             checked={rule.value as boolean}
             onCheckedChange={(checked) => onUpdate({ value: checked as boolean })}
@@ -44,10 +44,10 @@ export const FilterValueInput = memo(function FilterValueInput({
     case 'select':
       return (
         <Select value={rule.value as string} onValueChange={(v) => onUpdate({ value: v })}>
-          <SelectTrigger className="w-[120px] h-8 text-xs">
+          <SelectTrigger className="w-[120px] h-8 text-xs !border !border-black/20 dark:!border-white/20">
             <SelectValue placeholder={tCommon('select')} />
           </SelectTrigger>
-          <SelectContent className="border border-black dark:border-zinc-700">
+          <SelectContent className="border border-black/20 dark:border-white/20">
             {field.options?.map((opt) => (
               <SelectItem
                 key={opt.value}
@@ -67,7 +67,7 @@ export const FilterValueInput = memo(function FilterValueInput({
           type="date"
           value={(rule.value as string) || ''}
           onChange={(e) => onUpdate({ value: e.target.value })}
-          className="w-[140px] h-8 text-xs"
+          className="w-[140px] h-8 text-xs !border !border-black/20 dark:!border-white/20"
         />
       )
 
@@ -78,7 +78,7 @@ export const FilterValueInput = memo(function FilterValueInput({
           value={(rule.value as string) || ''}
           onChange={(e) => onUpdate({ value: e.target.value })}
           placeholder={t('valuePlaceholder')}
-          className="w-[100px] h-8 text-xs"
+          className="w-[100px] h-8 text-xs !border !border-black/20 dark:!border-white/20"
         />
       )
 
@@ -91,7 +91,7 @@ export const FilterValueInput = memo(function FilterValueInput({
           value={(rule.value as string) || ''}
           onChange={(e) => onUpdate({ value: e.target.value })}
           placeholder={t('valuePlaceholder')}
-          className="flex-1 min-w-[100px] h-8 text-xs"
+          className="flex-1 min-w-[100px] h-8 text-xs !border !border-black/20 dark:!border-white/20"
         />
       )
   }

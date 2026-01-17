@@ -28,7 +28,7 @@
     "titleLabel": "Tytuł *",
     "titlePlaceholder": "Tytuł linku",
     "urlLabel": "URL *",
-    "urlPlaceholder": "https://example.com",
+    "urlPlaceholder": "example.com",
     "descriptionLabel": "Opis (opcjonalnie)",
     "descriptionPlaceholder": "Krótki opis",
     "visibilityLabel": "Kto może zobaczyć ten link?",
@@ -91,6 +91,9 @@
   },
 
   "analytics": {
+    "title": "Analityka",
+    "subtitle": "Śledź jak radzą sobie Twoje linki",
+    "overview": "Przegląd",
     "empty": {
       "title": "Brak danych analitycznych",
       "description": "Dane o kliknięciach pojawią się tutaj, gdy ludzie zaczną klikać Twoje linki"
@@ -129,7 +132,10 @@
       "hideLabel": "Ukryj etykietę",
       "bold": "Pogrubienie",
       "italic": "Kursywa",
-      "underline": "Podkreślenie"
+      "underline": "Podkreślenie",
+      "alignLeft": "Wyrównaj do lewej",
+      "alignCenter": "Wyśrodkuj",
+      "alignRight": "Wyrównaj do prawej"
     },
 
     "icon": {

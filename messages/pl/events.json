@@ -277,6 +277,25 @@
       "240": "4 godziny"
     }
   },
+  "createFromTemplate": {
+    "title": "Utwórz wydarzenie z szablonu",
+    "description": "Wybierz jedną lub więcej dat dla nowych wydarzeń.",
+    "tapToSelect": "Dotknij, aby wybrać/odznaczyć daty",
+    "datesSelected": "{count} {count, plural, one {data wybrana} few {daty wybrane} other {dat wybranych}}",
+    "createCount": "Utwórz {count}"
+  },
+  "templatePicker": {
+    "title": "Utwórz wydarzenie z szablonu",
+    "description": "Wybierz szablon, aby utworzyć nowe wydarzenie.",
+    "searchPlaceholder": "Szukaj szablonów...",
+    "loading": "Ładowanie szablonów...",
+    "noTemplates": "Brak szablonów",
+    "noTemplatesFound": "Nie znaleziono szablonów",
+    "createFirst": "Utwórz swój pierwszy szablon",
+    "itemsCount": "{count} elementów",
+    "positionsCount": "{count} ról",
+    "manageTemplates": "Zarządzaj szablonami"
+  },
   "templatesTab": {
     "searchPlaceholder": "Szukaj szablonów...",
     "createTemplate": "Utwórz szablon",
@@ -290,6 +309,8 @@
     "duplicateTitle": "Duplikuj",
     "editTitle": "Edytuj",
     "deleteTitle": "Usuń",
+    "deleteDialogTitle": "Usuń szablon",
+    "deleteDialogConfirmation": "Czy na pewno chcesz usunąć \"{name}\"? Ta akcja jest nieodwracalna.",
     "agendaTab": "Agenda",
     "positionsTab": "Role",
     "duplicatedAs": "Szablon zduplikowany jako \"{name}\"",

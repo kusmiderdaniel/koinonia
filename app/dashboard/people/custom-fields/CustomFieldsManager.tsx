@@ -198,7 +198,7 @@ export function CustomFieldsManager({ initialFields }: CustomFieldsManagerProps)
         <SheetTrigger asChild>
           <Button
             variant="outline"
-            className="gap-2 justify-center !border !border-black dark:!border-white"
+            className="gap-2 justify-center !border !border-black/20 dark:!border-white/20"
           >
             <Settings2 className="h-4 w-4" />
             {t('manageFields')}
@@ -242,7 +242,7 @@ export function CustomFieldsManager({ initialFields }: CustomFieldsManagerProps)
 
             <Button
               variant="outline"
-              className="w-full gap-2 !border !border-dashed !border-black dark:!border-zinc-700"
+              className="w-full gap-2 !border !border-dashed !border-black/20 dark:!border-white/20"
               onClick={() => setShowAddDialog(true)}
             >
               <Plus className="h-4 w-4" />

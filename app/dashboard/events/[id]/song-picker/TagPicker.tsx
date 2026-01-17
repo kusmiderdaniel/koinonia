@@ -123,19 +123,23 @@ export const TagPicker = memo(function TagPicker({
               }}
               autoFocus
             />
-            <div className="flex gap-1 flex-wrap">
+            <div className="flex gap-2 flex-wrap">
               {PRESET_COLORS.map((color) => (
                 <button
                   key={color}
                   type="button"
                   onClick={() => setNewTagColor(color)}
-                  className={`w-6 h-6 rounded-full transition-all ${
+                  className={`w-7 h-7 rounded-full transition-all flex items-center justify-center ${
                     newTagColor === color
-                      ? 'ring-2 ring-offset-1 ring-gray-400'
-                      : 'hover:scale-110'
+                      ? 'border-2 border-gray-400'
+                      : 'border-2 border-transparent hover:scale-110'
                   }`}
-                  style={{ backgroundColor: color }}
-                />
+                >
+                  <span
+                    className="w-5 h-5 rounded-full"
+                    style={{ backgroundColor: color }}
+                  />
+                </button>
               ))}
             </div>
             <div className="flex gap-2">

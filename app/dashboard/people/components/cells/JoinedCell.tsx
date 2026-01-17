@@ -17,7 +17,9 @@ export const JoinedCell = memo(function JoinedCell({
       className={cn('text-muted-foreground', getFrozenClasses(columnKey))}
       style={getColumnStyle(columnKey)}
     >
-      {formatDate(member.created_at)}
+      <div className="flex justify-center">
+        {formatDate(member.created_at)}
+      </div>
     </TableCell>
   )
 })

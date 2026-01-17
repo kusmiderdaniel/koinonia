@@ -17,6 +17,9 @@ import {
   Heart,
   FileText,
   TrendingUp,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -35,7 +38,13 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
-import type { ChurchWithStats, GrowthDataPoint } from './actions'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import type { ChurchWithStats, GrowthDataPoint, ConsentStatus } from './actions'
 import { getChurchDetails } from './actions'
 
 const ChurchGrowthChart = dynamic(
@@ -109,6 +118,64 @@ export function ChurchesClient({ initialChurches, growthData }: ChurchesClientPr
     }
   }
 
+  const renderConsentStatus = (consents: ConsentStatus[], documentType: string) => {
+    const consent = consents.find(c => c.documentType === documentType)
+
+    if (!consent) {
+      return (
+        <Badge variant="outline" className="rounded-full bg-gray-50 text-gray-500 border-gray-200 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-700 gap-1">
+          <XCircle className="h-3 w-3" />
+          None
+        </Badge>
+      )
+    }
+
+    if (consent.hasConsent) {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge variant="outline" className="rounded-full bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-400 dark:border-green-800 gap-1 cursor-help">
+                <CheckCircle2 className="h-3 w-3" />
+                v{consent.consentedVersion}
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Consented on {consent.consentedAt ? format(new Date(consent.consentedAt), 'MMM d, yyyy') : 'Unknown'}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )
+    }
+
+    if (consent.consentedVersion !== null) {
+      // Has consent but for an older version
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge variant="outline" className="rounded-full bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800 gap-1 cursor-help">
+                <AlertTriangle className="h-3 w-3" />
+                v{consent.consentedVersion}
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Consented to v{consent.consentedVersion}, current is v{consent.currentVersion}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )
+    }
+
+    // No consent at all
+    return (
+      <Badge variant="outline" className="rounded-full bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800 gap-1">
+        <XCircle className="h-3 w-3" />
+        None
+      </Badge>
+    )
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -160,6 +227,8 @@ export function ChurchesClient({ initialChurches, growthData }: ChurchesClientPr
                 <TableHead>Owner</TableHead>
                 <TableHead className="text-center">Members</TableHead>
                 <TableHead>Location</TableHead>
+                <TableHead className="text-center">DPA</TableHead>
+                <TableHead className="text-center">Admin Terms</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -167,7 +236,7 @@ export function ChurchesClient({ initialChurches, growthData }: ChurchesClientPr
             <TableBody>
               {filteredChurches.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                     {searchQuery ? 'No churches match your search' : 'No churches found'}
                   </TableCell>
                 </TableRow>
@@ -220,6 +289,12 @@ export function ChurchesClient({ initialChurches, growthData }: ChurchesClientPr
                         <span className="text-muted-foreground">-</span>
                       )}
                     </TableCell>
+                    <TableCell className="text-center">
+                      {renderConsentStatus(church.ownerConsents, 'dpa')}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {renderConsentStatus(church.ownerConsents, 'church_admin_terms')}
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1 text-sm text-muted-foreground">
                         <Calendar className="h-3 w-3" />
@@ -247,7 +322,7 @@ export function ChurchesClient({ initialChurches, growthData }: ChurchesClientPr
 
       {/* Church Details Dialog */}
       <Dialog open={!!selectedChurch} onOpenChange={(open) => !open && setSelectedChurch(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] p-0 gap-0 overflow-hidden">
+        <DialogContent className="max-w-2xl max-h-[90vh] p-0 gap-0 overflow-hidden !border !border-black dark:!border-white">
           <VisuallyHidden>
             <DialogTitle>Church Details</DialogTitle>
           </VisuallyHidden>

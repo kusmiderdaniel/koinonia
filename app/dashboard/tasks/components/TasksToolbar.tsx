@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/input'
-import { Search } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Search, Plus } from 'lucide-react'
 import { TaskSortBuilder } from '../sort-builder'
 import { TaskFilterBuilder } from '../filter-builder'
 import { GroupBySelector, type GroupByField } from './GroupBySelector'
@@ -18,6 +19,9 @@ interface TasksToolbarProps {
   // Search
   searchQuery: string
   onSearchChange: (query: string) => void
+
+  // Create task
+  onCreateTask: () => void
 
   // Group
   groupBy: GroupByField
@@ -54,6 +58,7 @@ interface TasksToolbarProps {
 export function TasksToolbar({
   searchQuery,
   onSearchChange,
+  onCreateTask,
   groupBy,
   onGroupByChange,
   sortState,
@@ -89,14 +94,25 @@ export function TasksToolbar({
 
   return (
     <div className={`flex flex-col gap-2 ${isMobile ? 'mb-2' : 'mb-4'}`}>
-      <div className="relative">
-        <Search className={`absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground ${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'}`} />
-        <Input
-          placeholder={t('search.placeholder')}
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className={isMobile ? 'pl-9 h-9 text-sm' : 'pl-10'}
-        />
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className={`absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground ${isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'}`} />
+          <Input
+            placeholder={t('search.placeholder')}
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className={`${isMobile ? 'pl-9 h-9 text-sm' : 'pl-10'} !border !border-black/20 dark:!border-white/20`}
+          />
+        </div>
+        <Button
+          onClick={onCreateTask}
+          variant="outline"
+          size={isMobile ? 'icon' : 'default'}
+          className={`rounded-full !border !border-black/20 dark:!border-white/20 ${isMobile ? 'h-9 w-9' : ''}`}
+        >
+          <Plus className={isMobile ? 'h-4 w-4' : 'h-4 w-4 mr-2'} />
+          {!isMobile && t('newTask')}
+        </Button>
       </div>
       {mounted && (
         <div className="grid grid-cols-4 gap-1.5 sm:flex sm:items-center sm:gap-2">

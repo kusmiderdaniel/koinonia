@@ -28,7 +28,7 @@
     "titleLabel": "Title *",
     "titlePlaceholder": "Link title",
     "urlLabel": "URL *",
-    "urlPlaceholder": "https://example.com",
+    "urlPlaceholder": "example.com",
     "descriptionLabel": "Description (optional)",
     "descriptionPlaceholder": "Brief description",
     "visibilityLabel": "Who can see this link?",
@@ -91,6 +91,9 @@
   },
 
   "analytics": {
+    "title": "Analytics",
+    "subtitle": "Track how your links are performing",
+    "overview": "Overview",
     "empty": {
       "title": "No analytics data yet",
       "description": "Click data will appear here once people start clicking your links"
@@ -129,7 +132,10 @@
       "hideLabel": "Hide label",
       "bold": "Bold",
       "italic": "Italic",
-      "underline": "Underline"
+      "underline": "Underline",
+      "alignLeft": "Align left",
+      "alignCenter": "Align center",
+      "alignRight": "Align right"
     },
 
     "icon": {

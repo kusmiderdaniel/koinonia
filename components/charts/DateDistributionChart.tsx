@@ -10,6 +10,41 @@ import {
   CartesianGrid,
 } from 'recharts'
 
+// Custom tooltip component with proper dark mode support
+interface CustomTooltipProps {
+  active?: boolean
+  payload?: Array<{
+    value?: number
+  }>
+  label?: string
+}
+
+function CustomTooltip({
+  active,
+  payload,
+  label,
+}: CustomTooltipProps) {
+  if (!active || !payload || payload.length === 0) return null
+
+  // Format date label
+  let formattedLabel = label
+  if (typeof label === 'string') {
+    const date = new Date(label)
+    formattedLabel = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`
+  }
+
+  const value = payload[0]?.value ?? 0
+
+  return (
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 shadow-md">
+      <p className="text-sm font-medium text-foreground">{formattedLabel}</p>
+      <p className="text-sm text-muted-foreground">
+        {value} response{value !== 1 ? 's' : ''} selected
+      </p>
+    </div>
+  )
+}
+
 interface DateDistributionChartProps {
   data: Array<{
     date: string
@@ -59,26 +94,7 @@ export function DateDistributionChart({
             axisLine={false}
             allowDecimals={false}
           />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: 'white',
-              border: '1px solid black',
-              borderRadius: '6px',
-              padding: '8px 12px',
-              fontSize: '12px',
-            }}
-            labelFormatter={(label) => {
-              if (typeof label === 'string') {
-                const date = new Date(label)
-                return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`
-              }
-              return label
-            }}
-            formatter={(value) => {
-              const num = value ?? 0
-              return [`${num} response${num !== 1 ? 's' : ''}`, 'Selected']
-            }}
-          />
+          <Tooltip content={<CustomTooltip />} />
           <Line
             type="monotone"
             dataKey="count"

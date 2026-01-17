@@ -2,13 +2,7 @@
 
 import { memo } from 'react'
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { GripVertical, MoreVertical, Pencil, Trash2, Music, ChevronUp, ChevronDown } from 'lucide-react'
+import { GripVertical, Pencil, Trash2, Music, ChevronUp, ChevronDown } from 'lucide-react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { formatSecondsToMinutes } from '@/lib/utils/format'
@@ -68,7 +62,7 @@ export const SortableTemplateAgendaItem = memo(function SortableTemplateAgendaIt
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-3 p-3 rounded-lg border bg-white dark:bg-zinc-950 transition-all hover:bg-gray-100 dark:hover:bg-zinc-900 select-none ${
+      className={`flex items-center gap-3 p-3 rounded-lg border border-black/20 dark:border-white/20 bg-white dark:bg-zinc-950 transition-all hover:bg-gray-100 dark:hover:bg-zinc-900 select-none ${
         isDragging ? 'opacity-50 shadow-lg' : ''
       }`}
     >
@@ -124,26 +118,26 @@ export const SortableTemplateAgendaItem = memo(function SortableTemplateAgendaIt
         )}
       </div>
       {canManage && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="flex-shrink-0 h-8 w-8">
-              <MoreVertical className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => onEdit(item)}>
-              <Pencil className="w-4 h-4 mr-2" />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onRemove(item.id)}
-              className="text-red-600"
+        <div className="flex items-center gap-0.5 flex-shrink-0">
+          {!item.is_song_placeholder && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+              onClick={() => onEdit(item)}
             >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Remove
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <Pencil className="w-3.5 h-3.5" />
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-red-600 hover:text-red-700 hover:bg-red-50"
+            onClick={() => onRemove(item.id)}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </Button>
+        </div>
       )}
     </div>
   )

@@ -3,9 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
-import { Globe } from 'lucide-react'
 import { toast } from 'sonner'
-import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -65,10 +63,6 @@ export function LanguageSettingsCard({ currentLanguage }: LanguageSettingsCardPr
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="language" className="flex items-center gap-2">
-          <Globe className="h-4 w-4" />
-          {t('label')}
-        </Label>
         <Select
           value={effectiveLanguage}
           onValueChange={handleChange}

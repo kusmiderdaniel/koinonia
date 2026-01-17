@@ -148,7 +148,7 @@ export function MyAssignmentsWidget({ assignments, onUpdate }: MyAssignmentsWidg
                       <Button
                         size="sm"
                         variant="destructive"
-                        className="h-7 px-3 text-xs rounded-full !bg-red-600 hover:!bg-red-700 !text-white"
+                        className="h-7 px-3 text-xs rounded-full !bg-red-600 hover:!bg-red-700 !text-brand-foreground"
                         onClick={(e) => handleRespond(assignment.id, 'declined', e)}
                         disabled={loadingId === assignment.id}
                       >
@@ -164,7 +164,7 @@ export function MyAssignmentsWidget({ assignments, onUpdate }: MyAssignmentsWidg
                       <Button
                         size="sm"
                         variant="default"
-                        className="h-7 px-3 text-xs rounded-full !bg-green-600 hover:!bg-green-700 !text-white"
+                        className="h-7 px-3 text-xs rounded-full !bg-green-600 hover:!bg-green-700 !text-brand-foreground"
                         onClick={(e) => handleRespond(assignment.id, 'accepted', e)}
                         disabled={loadingId === assignment.id}
                       >

@@ -11,11 +11,16 @@ export function getFirstDayOffset(year: number, month: number, firstDayOfWeek: n
 
 export function formatTime(dateString: string, timeFormat: '12h' | '24h' = '24h'): string {
   const date = new Date(dateString)
-  return date.toLocaleTimeString('en-US', {
-    hour: timeFormat === '12h' ? 'numeric' : '2-digit',
-    minute: '2-digit',
-    hour12: timeFormat === '12h',
-  })
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+
+  if (timeFormat === '24h') {
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+  } else {
+    const period = hours >= 12 ? 'PM' : 'AM'
+    const hour12 = hours % 12 || 12
+    return `${hour12}:${minutes.toString().padStart(2, '0')} ${period}`
+  }
 }
 
 export function formatDate(dateString: string): string {

@@ -58,7 +58,7 @@ export function PersonalCalendarCard({
               size="icon"
               onClick={onCopy}
               title={t('personal.copyUrl')}
-              className="!border !border-black dark:!border-white"
+              className="!border-black/20 dark:!border-white/20"
             >
               {copied ? (
                 <Check className="h-4 w-4 text-green-600" />
@@ -72,7 +72,7 @@ export function PersonalCalendarCard({
             <Button
               variant="outline"
               onClick={() => window.open(webcalUrl!, '_blank')}
-              className="gap-2 !border !border-black dark:!border-white"
+              className="gap-2 !border-black/20 dark:!border-white/20"
             >
               <ExternalLink className="h-4 w-4" />
               {t('personal.addToCalendar')}
@@ -82,7 +82,7 @@ export function PersonalCalendarCard({
               <AlertDialogTrigger asChild>
                 <Button
                   variant="outline"
-                  className="gap-2 text-muted-foreground !border !border-black dark:!border-white"
+                  className="gap-2 text-muted-foreground !border-black/20 dark:!border-white/20"
                   disabled={isRegenerating}
                 >
                   <RefreshCw
@@ -99,7 +99,7 @@ export function PersonalCalendarCard({
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel className="!border !border-black dark:!border-white">{t('regenerate.cancel')}</AlertDialogCancel>
+                  <AlertDialogCancel className="!border-0">{t('regenerate.cancel')}</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={onRegenerate}
                     className="!bg-brand hover:!bg-brand/90 !text-brand-foreground"

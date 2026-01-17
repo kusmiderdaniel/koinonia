@@ -100,7 +100,7 @@ export const ListDetailLayout = memo(function ListDetailLayout({
             {hasSelection ? (
               detailView
             ) : (
-              <Card className="h-full flex items-center justify-center border border-black dark:border-white">
+              <Card className="h-full flex items-center justify-center border border-black dark:border-white !ring-0 outline-none">
                 <EmptyState
                   icon={emptyIcon}
                   title={emptyTitle}

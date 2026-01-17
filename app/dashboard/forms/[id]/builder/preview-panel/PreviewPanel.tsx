@@ -61,7 +61,7 @@ export function PreviewPanel({ onClose, weekStartsOn: weekStartsOnProp }: Previe
       {/* Preview Header */}
       <div className="flex items-center justify-between px-4 h-[72px] border-b bg-muted/50">
         <div className="flex items-center gap-2">
-          <Button size="sm" onClick={handleReset} className="!border !border-black dark:!border-white bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800">
+          <Button size="sm" onClick={handleReset} className="!border !border-black/20 dark:!border-white/20 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800">
             <RotateCcw className="h-3.5 w-3.5 mr-1" />
             {t('previewPanel.reset')}
           </Button>
@@ -82,9 +82,9 @@ export function PreviewPanel({ onClose, weekStartsOn: weekStartsOnProp }: Previe
 
       {/* Preview Content */}
       <div className="flex-1 overflow-y-auto p-4 bg-muted/30">
-        <div className="max-w-md mx-auto bg-white dark:bg-zinc-900 rounded-lg border shadow-sm overflow-hidden">
+        <div className="max-w-md mx-auto bg-white dark:bg-zinc-900 rounded-lg border border-black/20 dark:border-white/20 shadow-sm overflow-hidden">
           {/* Form Header */}
-          <div className="p-4 border-b bg-muted/30">
+          <div className="p-4 border-b border-black/20 dark:border-white/20 bg-muted/30">
             <h2 className="font-semibold text-lg">{resolvedForm?.title || form.title}</h2>
             {resolvedForm?.description && (
               <p className="text-sm text-muted-foreground mt-1">{resolvedForm.description}</p>
@@ -111,6 +111,7 @@ export function PreviewPanel({ onClose, weekStartsOn: weekStartsOnProp }: Previe
                   weekStartsOn={weekStartsOn}
                   onValueChange={handleValueChange}
                   onMultiSelectChange={handleMultiSelectChange}
+                  locale={isMultilingual ? previewLocale : undefined}
                 />
               ))
             )}
@@ -120,8 +121,8 @@ export function PreviewPanel({ onClose, weekStartsOn: weekStartsOnProp }: Previe
                 <button
                   type="button"
                   disabled
-                  className="px-8 h-9 rounded-full text-white text-sm font-medium disabled:opacity-50"
-                  style={{ backgroundColor: '#f49f1e' }}
+                  className="px-8 h-9 rounded-full text-sm font-medium disabled:opacity-50"
+                  style={{ backgroundColor: '#f49f1e', color: '#000000' }}
                 >
                   {t('previewPanel.submit')}
                 </button>

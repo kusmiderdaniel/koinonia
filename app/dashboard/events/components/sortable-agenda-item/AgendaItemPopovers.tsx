@@ -129,7 +129,7 @@ export function DurationPopover({
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
         <button
-          className={`text-xs rounded-full px-2 py-0.5 border transition-colors ${
+          className={`text-xs rounded-full px-2 py-0.5 border border-input transition-colors ${
             canManage ? 'hover:bg-muted cursor-pointer' : ''
           }`}
           disabled={!canManage || isUpdating}
@@ -138,7 +138,7 @@ export function DurationPopover({
         </button>
       </PopoverTrigger>
       {canManage && (
-        <PopoverContent className="w-[180px] p-3 bg-white dark:bg-zinc-950 border" align="start">
+        <PopoverContent className="w-[180px] p-3 bg-white dark:bg-zinc-950 border border-input" align="start">
           <div className="space-y-3">
             <div className="text-xs font-semibold text-muted-foreground">Duration (MM:SS)</div>
             <div className="flex items-center gap-1">

@@ -162,7 +162,7 @@ export function CreateSongForm({
         <Button
           onClick={handleSubmit}
           disabled={isAdding || !title.trim()}
-          className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white !px-4 !py-2 disabled:!opacity-50"
+          className="!rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground !px-4 !py-2 disabled:!opacity-50"
         >
           {isAdding ? 'Creating...' : 'Create & Add'}
         </Button>

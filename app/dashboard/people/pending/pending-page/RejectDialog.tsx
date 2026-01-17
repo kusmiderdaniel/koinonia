@@ -35,7 +35,7 @@ export function RejectDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="!border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>{t('rejectDialog.title')}</DialogTitle>
           <DialogDescription>
@@ -55,14 +55,14 @@ export function RejectDialog({
         <DialogFooter>
           <Button
             variant="outline"
-            className="!border !border-black dark:!border-white"
+            className="!border-0"
             onClick={() => onOpenChange(false)}
           >
             {t('actions.cancel')}
           </Button>
           <Button
             variant="destructive"
-            className="!bg-red-600 hover:!bg-red-700 !text-white !border !border-red-600"
+            className="!bg-red-600 hover:!bg-red-700 !text-brand-foreground !border !border-red-600"
             onClick={onConfirm}
           >
             {t('rejectDialog.confirmButton')}

@@ -61,6 +61,26 @@
       "general": {
         "title": "Powiadomienie",
         "message": ""
+      },
+      "task_assignment": {
+        "title": "Przydzielone zadanie",
+        "message": "Przydzielono ci nowe zadanie"
+      },
+      "task_due_reminder": {
+        "title": "Termin zadania",
+        "message": "Zbliża się termin wykonania zadania"
+      },
+      "task_comment": {
+        "title": "Nowy komentarz",
+        "message": "Ktoś skomentował zadanie"
+      },
+      "pending_member": {
+        "title": "Nowy wniosek o członkostwo",
+        "message": "Nowa osoba chce dołączyć do twojego kościoła"
+      },
+      "unfilled_positions_reminder": {
+        "title": "Stanowiska wymagają uwagi",
+        "message": "Nadchodzące wydarzenie ma nieobsadzone stanowiska"
       }
     },
     "status": {
@@ -74,7 +94,8 @@
       "cancel": "Anuluj",
       "acceptInstead": "Zaakceptuj zamiast",
       "declineInstead": "Odrzuć zamiast",
-      "markAsRead": "Oznacz jako przeczytane"
+      "markAsRead": "Oznacz jako przeczytane",
+      "review": "Przejrzyj"
     },
     "labels": {
       "position": "Stanowisko:"

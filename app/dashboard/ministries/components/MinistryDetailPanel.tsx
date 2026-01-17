@@ -69,7 +69,7 @@ export function MinistryDetailPanel({
 
   if (!ministry) {
     return (
-      <Card className="border border-black dark:border-white">
+      <Card className="border border-black dark:border-white !ring-0 outline-none">
         <div className={`flex flex-col items-center justify-center ${isMobile ? 'py-8' : 'py-12'}`}>
           <Users className={`text-muted-foreground mb-4 opacity-50 ${isMobile ? 'w-10 h-10' : 'w-12 h-12'}`} />
           <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>{t('selectMinistryDescription')}</p>
@@ -79,9 +79,9 @@ export function MinistryDetailPanel({
   }
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-white !gap-0">
+    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-white !gap-0 !ring-0 outline-none">
       {/* Ministry Header */}
-      <div className={`border-b ${isMobile ? 'px-3 pt-2 pb-2' : 'px-6 pt-2 pb-3'}`}>
+      <div className={`border-b border-black/20 dark:border-white/20 ${isMobile ? 'px-3 pt-2 pb-2' : 'px-6 pt-2 pb-3'}`}>
         <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-3'}`}>
           <div
             className={`rounded-full flex-shrink-0 ${isMobile ? 'w-2.5 h-2.5' : 'w-3 h-3'}`}
@@ -125,12 +125,12 @@ export function MinistryDetailPanel({
         </div>
       ) : (
         <Tabs defaultValue="roles" className="flex-1 flex flex-col overflow-hidden !gap-0">
-          <div className={`py-0 pt-0 pb-0 mt-0 border-b ${isMobile ? 'px-3' : 'px-6'}`}>
+          <div className={`py-0 pt-0 pb-0 mt-0 border-b border-black/20 dark:border-white/20 ${isMobile ? 'px-3' : 'px-6'}`}>
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="roles" className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-sm' : ''}`}>
+              <TabsTrigger value="roles" className={`data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground ${isMobile ? 'text-sm' : ''}`}>
                 {t('tabs.rolesCount', { count: roles.length })}
               </TabsTrigger>
-              <TabsTrigger value="members" className={`data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-sm' : ''}`}>
+              <TabsTrigger value="members" className={`data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground ${isMobile ? 'text-sm' : ''}`}>
                 {t('tabs.membersCount', { count: members.length })}
               </TabsTrigger>
             </TabsList>
@@ -139,7 +139,7 @@ export function MinistryDetailPanel({
           <TabsContent value="roles" className={`flex-1 overflow-y-auto mt-0 ${isMobile ? 'px-3 pt-3 pb-3' : 'px-6 pt-4 pb-6'}`}>
             <div className={`flex justify-end ${isMobile ? 'mb-2' : 'mb-4'}`}>
               {canManage && (
-                <Button variant="outline-pill" className="!border !border-black dark:!border-white" size="sm" onClick={onAddRole}>
+                <Button variant="outline-pill" className="!border !border-black/20 dark:!border-white/20" size="sm" onClick={onAddRole}>
                   <Plus className={isMobile ? 'w-3.5 h-3.5 mr-1' : 'w-4 h-4 mr-1'} />
                   {t('roles.addRole')}
                 </Button>
@@ -155,7 +155,7 @@ export function MinistryDetailPanel({
                 {roles.map((role) => (
                   <div
                     key={role.id}
-                    className={`flex items-center justify-between rounded-lg border ${isMobile ? 'p-2' : 'p-3'}`}
+                    className={`flex items-center justify-between rounded-lg border border-black/20 dark:border-white/20 ${isMobile ? 'p-2' : 'p-3'}`}
                   >
                     <div>
                       <p className={`font-medium ${isMobile ? 'text-sm' : ''}`}>{role.name}</p>

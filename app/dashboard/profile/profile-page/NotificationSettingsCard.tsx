@@ -58,7 +58,7 @@ function NotificationRow({
   children,
 }: NotificationRowProps) {
   return (
-    <div className="space-y-3 py-4 border-b last:border-b-0">
+    <div className="space-y-3 py-4 border-b border-black/20 dark:border-white/20 last:border-b-0">
       <div>
         <Label htmlFor={`${id}-in-app`} className="text-sm font-medium">
           {label}

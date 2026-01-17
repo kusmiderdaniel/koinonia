@@ -199,7 +199,8 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
   ])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-4">
+      {/* Header with save status */}
       <div className="flex justify-between items-center">
         <h3 className="font-semibold">{t('settings.title')}</h3>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -219,34 +220,34 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
       </div>
 
       {/* Basic Info */}
-      <section className="space-y-3">
-        <h4 className="text-sm font-medium text-muted-foreground">{t('settings.basicInfo.title')}</h4>
+      <section className="rounded-lg border border-zinc-200 dark:border-zinc-700 p-4 space-y-4">
+        <h4 className="text-sm font-semibold">{t('settings.basicInfo.title')}</h4>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="title" className="text-xs">{t('settings.basicInfo.pageTitle')}</Label>
+        <div className="space-y-2">
+          <Label htmlFor="title" className="text-xs text-muted-foreground">{t('settings.basicInfo.pageTitle')}</Label>
           <Input
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder={t('settings.basicInfo.pageTitlePlaceholder')}
-            className="h-8 text-sm"
+            className="h-9 text-sm border-black/20 dark:border-white/20"
           />
         </div>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="bio" className="text-xs">{t('settings.basicInfo.bio')}</Label>
+        <div className="space-y-2">
+          <Label htmlFor="bio" className="text-xs text-muted-foreground">{t('settings.basicInfo.bio')}</Label>
           <Textarea
             id="bio"
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             placeholder={t('settings.basicInfo.bioPlaceholder')}
-            rows={2}
-            className="text-sm"
+            rows={3}
+            className="text-sm border-black/20 dark:border-white/20"
           />
         </div>
 
-        <div className="flex items-center justify-between">
-          <Label className="text-xs">{t('settings.basicInfo.showChurchName')}</Label>
+        <div className="flex items-center justify-between pt-2">
+          <Label className="text-sm">{t('settings.basicInfo.showChurchName')}</Label>
           <Switch
             checked={showChurchName}
             onCheckedChange={setShowChurchName}
@@ -255,11 +256,11 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
       </section>
 
       {/* Background */}
-      <section className="space-y-3">
-        <h4 className="text-sm font-medium text-muted-foreground">{t('settings.background.title')}</h4>
+      <section className="rounded-lg border border-zinc-200 dark:border-zinc-700 p-4 space-y-4">
+        <h4 className="text-sm font-semibold">{t('settings.background.title')}</h4>
 
         <div className="flex items-center justify-between">
-          <Label className="text-xs">{t('settings.background.useGradient')}</Label>
+          <Label className="text-sm">{t('settings.background.useGradient')}</Label>
           <Switch
             checked={useGradient}
             onCheckedChange={setUseGradient}
@@ -267,17 +268,17 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
         </div>
 
         {useGradient ? (
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label className="text-xs">{t('settings.background.start')}</Label>
+          <div className="grid grid-cols-2 gap-4 pt-2">
+            <div className="space-y-2">
+              <Label className="text-xs text-muted-foreground">{t('settings.background.start')}</Label>
               <ColorPicker
                 value={gradientStart}
                 onChange={setGradientStart}
                 colors={BACKGROUND_COLORS}
               />
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">{t('settings.background.end')}</Label>
+            <div className="space-y-2">
+              <Label className="text-xs text-muted-foreground">{t('settings.background.end')}</Label>
               <ColorPicker
                 value={gradientEnd}
                 onChange={setGradientEnd}
@@ -286,8 +287,8 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
             </div>
           </div>
         ) : (
-          <div className="space-y-1.5">
-            <Label className="text-xs">{t('settings.background.color')}</Label>
+          <div className="space-y-2 pt-2">
+            <Label className="text-xs text-muted-foreground">{t('settings.background.color')}</Label>
             <ColorPicker
               value={backgroundColor}
               onChange={setBackgroundColor}
@@ -298,19 +299,19 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
       </section>
 
       {/* Card Style */}
-      <section className="space-y-3">
-        <h4 className="text-sm font-medium text-muted-foreground">{t('settings.cardStyle.title')}</h4>
+      <section className="rounded-lg border border-zinc-200 dark:border-zinc-700 p-4 space-y-4">
+        <h4 className="text-sm font-semibold">{t('settings.cardStyle.title')}</h4>
 
-        <div className="space-y-1.5">
-          <Label className="text-xs">{t('settings.cardStyle.style')}</Label>
-          <div className="flex flex-wrap gap-1.5">
+        <div className="space-y-2">
+          <Label className="text-xs text-muted-foreground">{t('settings.cardStyle.style')}</Label>
+          <div className="flex flex-wrap gap-2">
             {CARD_STYLE_VALUES.map(style => (
               <Button
                 key={style}
                 variant={cardStyle === style ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setCardStyle(style)}
-                className={`h-7 text-xs ${cardStyle === style ? '!bg-brand !text-brand-foreground' : '!border !border-black dark:!border-white'}`}
+                className={`h-8 text-xs ${cardStyle === style ? '!bg-brand !text-brand-foreground' : 'border-black/20 dark:border-white/20'}`}
               >
                 {t(`settings.cardStyle.styles.${style}`)}
               </Button>
@@ -318,16 +319,16 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
           </div>
         </div>
 
-        <div className="space-y-1.5">
-          <Label className="text-xs">{t('settings.cardStyle.cornerRadius')}</Label>
-          <div className="flex flex-wrap gap-1.5">
+        <div className="space-y-2">
+          <Label className="text-xs text-muted-foreground">{t('settings.cardStyle.cornerRadius')}</Label>
+          <div className="flex flex-wrap gap-2">
             {BORDER_RADIUS_VALUES.map(radius => (
               <Button
                 key={radius.value}
                 variant={borderRadius === radius.value ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setBorderRadius(radius.value)}
-                className={`h-7 text-xs ${borderRadius === radius.value ? '!bg-brand !text-brand-foreground' : '!border !border-black dark:!border-white'}`}
+                className={`h-8 text-xs ${borderRadius === radius.value ? '!bg-brand !text-brand-foreground' : 'border-black/20 dark:border-white/20'}`}
               >
                 {t(`settings.cardStyle.radii.${radius.key}`)}
               </Button>
@@ -337,21 +338,19 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
       </section>
 
       {/* Social Links */}
-      <section className="space-y-3">
-        <h4 className="text-sm font-medium text-muted-foreground">{t('settings.socialLinks.title')}</h4>
+      <section className="rounded-lg border border-zinc-200 dark:border-zinc-700 p-4 space-y-4">
+        <h4 className="text-sm font-semibold">{t('settings.socialLinks.title')}</h4>
         <SocialLinksEditor
           links={socialLinks}
           onChange={setSocialLinks}
         />
       </section>
 
-      {/* Status */}
-      <section className="space-y-3 pb-8">
-        <h4 className="text-sm font-medium text-muted-foreground">{t('settings.pageStatus.title')}</h4>
-
+      {/* Page Status */}
+      <section className="rounded-lg border border-zinc-200 dark:border-zinc-700 p-4">
         <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <Label className="text-xs">{t('settings.pageStatus.enabled')}</Label>
+          <div className="space-y-1">
+            <h4 className="text-sm font-semibold">{t('settings.pageStatus.title')}</h4>
             <p className="text-xs text-muted-foreground">
               {t('settings.pageStatus.disabledDescription')}
             </p>

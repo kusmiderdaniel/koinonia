@@ -122,13 +122,13 @@ export const MemberPicker = memo(function MemberPicker({
 
   return (
     <>
-      <Button variant="ghost" className="rounded-full !border !border-black dark:!border-white" size="sm" onClick={() => setOpen(true)}>
+      <Button variant="ghost" className="rounded-full !border !border-black/20 dark:!border-white/20" size="sm" onClick={() => setOpen(true)}>
         <UserPlus className="w-4 h-4 mr-1" />
         {t('members.addMember')}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
+        <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
           <DialogHeader>
             <DialogTitle>{t('members.addMemberToMinistry')}</DialogTitle>
           </DialogHeader>
@@ -140,7 +140,7 @@ export const MemberPicker = memo(function MemberPicker({
               placeholder={t('members.searchByName')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
+              className="pl-9 !border !border-black/20 dark:!border-white/20"
             />
           </div>
 
@@ -169,7 +169,7 @@ export const MemberPicker = memo(function MemberPicker({
                   className={`w-full text-left p-3 rounded-lg border transition-all ${
                     isSelected
                       ? 'border-primary bg-primary/5 border-2'
-                      : 'border-black dark:border-zinc-700 hover:bg-gray-50 dark:hover:bg-zinc-900'
+                      : 'border-black/20 dark:border-white/20 hover:bg-gray-50 dark:hover:bg-zinc-900'
                   }`}
                 >
                   <div className="font-medium">
@@ -198,7 +198,7 @@ export const MemberPicker = memo(function MemberPicker({
 
           {/* Role Selection with Checkboxes */}
           {selectedMember && ministryRoles.length > 0 && (
-            <div className="space-y-3 pt-3 border-t">
+            <div className="space-y-3 pt-3 border-t border-black/20 dark:border-white/20">
               <label className="text-sm font-medium">{t('members.assignRoles')}</label>
               <div className="space-y-2">
                 {ministryRoles.map((role) => (
@@ -207,6 +207,7 @@ export const MemberPicker = memo(function MemberPicker({
                       id={`role-${role.id}`}
                       checked={selectedRoleIds.includes(role.id)}
                       onCheckedChange={() => handleRoleToggle(role.id)}
+                      className="border-black/20 dark:border-white/20"
                     />
                     <label
                       htmlFor={`role-${role.id}`}
@@ -222,10 +223,10 @@ export const MemberPicker = memo(function MemberPicker({
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-2">
-            <Button variant="outline-pill" onClick={handleCancel} disabled={isAdding} className="!border !border-black dark:!border-white">
+            <Button variant="ghost" onClick={handleCancel} disabled={isAdding} className="rounded-full">
               {t('actions.cancel')}
             </Button>
-            <Button variant="outline-pill" onClick={handleAdd} disabled={!selectedMemberId || isAdding} className="!bg-brand hover:!bg-brand/90 !text-white !border-0">
+            <Button variant="outline-pill" onClick={handleAdd} disabled={!selectedMemberId || isAdding} className="!bg-brand hover:!bg-brand/90 !text-black !border-0">
               {isAdding ? t('actions.adding') : t('members.addMember')}
             </Button>
           </div>

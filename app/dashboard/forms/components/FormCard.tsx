@@ -35,7 +35,7 @@ export const FormCard = memo(function FormCard({
 
   return (
     <div
-      className={`flex rounded-lg border border-black dark:border-white transition-colors ${
+      className={`flex rounded-lg border border-black/20 dark:border-white/20 transition-colors ${
         isSelected
           ? 'bg-gray-100 dark:bg-zinc-800'
           : 'hover:bg-gray-50 dark:hover:bg-zinc-800/50'

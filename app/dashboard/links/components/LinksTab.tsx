@@ -137,7 +137,7 @@ export function LinksTab({ links, setLinks, settings, churchName, churchLogo, an
             <Button
               onClick={handleAddLink}
               variant="outline"
-              className="!border !border-black dark:!border-white"
+              className="!border !border-black dark:!border-zinc-600"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Link

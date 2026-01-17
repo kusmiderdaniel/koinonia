@@ -76,7 +76,7 @@ export const SortableAgendaItem = memo(function SortableAgendaItem({
       ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-700 border-dashed hover:bg-amber-100 dark:hover:bg-amber-950/50'
       : isSong
       ? 'bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-950/50'
-      : 'bg-white dark:bg-zinc-950 hover:bg-gray-100 dark:hover:bg-zinc-900'
+      : 'bg-white dark:bg-zinc-950 border-black/20 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-900'
   } ${isDragging ? 'opacity-50 shadow-lg' : ''} ${isClickable ? 'cursor-pointer' : ''}`
 
   const canMoveUp = index > 0

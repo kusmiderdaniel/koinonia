@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { toast } from 'sonner'
 import { updateLink, uploadLinkImage, deleteLinkImage } from '../../actions'
 import type { LinkTreeLinkRow, CardSize, HoverEffect } from '../../types'
+import type { LabelAlign } from './LabelStylesPopover'
 
 interface UseLinkItemHandlersProps {
   link: LinkTreeLinkRow
@@ -102,6 +103,15 @@ export function useLinkItemHandlers({ link, onUpdate }: UseLinkItemHandlersProps
     }
   }, [link.id, link.label_underline, onUpdate])
 
+  const handleAlignChange = useCallback(async (align: LabelAlign) => {
+    const result = await updateLink(link.id, { label_align: align })
+    if (result.error) {
+      toast.error(result.error)
+    } else {
+      if (result.link) onUpdate(result.link)
+    }
+  }, [link.id, onUpdate])
+
   const handleImageUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>, closePopover?: () => void) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -163,6 +173,7 @@ export function useLinkItemHandlers({ link, onUpdate }: UseLinkItemHandlersProps
     handleToggleBold,
     handleToggleItalic,
     handleToggleUnderline,
+    handleAlignChange,
     handleImageUpload,
     handleRemoveImage,
   }

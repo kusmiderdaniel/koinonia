@@ -16,12 +16,14 @@ export const ActiveCell = memo(function ActiveCell({
 }: ActiveCellProps) {
   return (
     <TableCell className={getFrozenClasses(columnKey)} style={getColumnStyle(columnKey)}>
-      <Checkbox
-        checked={member.active}
-        onCheckedChange={(checked) => onActiveChange(member.id, checked as boolean)}
-        disabled={!canEditActiveStatus || isUpdatingActive}
-        className={isUpdatingActive ? 'opacity-50' : ''}
-      />
+      <div className="flex justify-center">
+        <Checkbox
+          checked={member.active}
+          onCheckedChange={(checked) => onActiveChange(member.id, checked as boolean)}
+          disabled={!canEditActiveStatus || isUpdatingActive}
+          className={isUpdatingActive ? 'opacity-50' : ''}
+        />
+      </div>
     </TableCell>
   )
 })

@@ -32,7 +32,7 @@ export const SongDialog = memo(function SongDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>
             {dialogTitle ?? (state.isEditing ? t('dialog.editTitle') : t('dialog.addTitle'))}
@@ -57,6 +57,7 @@ export const SongDialog = memo(function SongDialog({
               value={state.title}
               onChange={(e) => state.setTitle(e.target.value)}
               placeholder={t('dialog.titlePlaceholder')}
+              className="!border-black/20 dark:!border-white/20"
             />
           </div>
 
@@ -92,7 +93,7 @@ export const SongDialog = memo(function SongDialog({
                   value={state.durationMinutes}
                   onChange={(e) => state.handleMinutesChange(e.target.value)}
                   onFocus={(e) => e.target.select()}
-                  className="w-16 text-center"
+                  className="w-16 text-center !border-black/20 dark:!border-white/20"
                   maxLength={2}
                 />
                 <span className="text-lg font-medium text-muted-foreground">
@@ -102,7 +103,7 @@ export const SongDialog = memo(function SongDialog({
                   value={state.durationSeconds}
                   onChange={(e) => state.handleSecondsChange(e.target.value)}
                   onFocus={(e) => e.target.select()}
-                  className="w-16 text-center"
+                  className="w-16 text-center !border-black/20 dark:!border-white/20"
                   maxLength={2}
                 />
               </div>
@@ -123,8 +124,8 @@ export const SongDialog = memo(function SongDialog({
           <DialogFooter className="pt-4 !bg-transparent !border-t-0">
             <Button
               type="button"
-              variant="outline-pill"
-              className="!border-black dark:!border-white"
+              variant="ghost"
+              className="rounded-full"
               onClick={() => onOpenChange(false)}
               disabled={state.isLoading}
             >
@@ -134,7 +135,7 @@ export const SongDialog = memo(function SongDialog({
               type="submit"
               variant="outline-pill"
               disabled={state.isLoading}
-              className="!bg-brand hover:!bg-brand/90 !text-white !border-brand"
+              className="!bg-brand hover:!bg-brand/90 !text-brand-foreground !border-brand"
             >
               {state.isLoading
                 ? t('dialog.saving')

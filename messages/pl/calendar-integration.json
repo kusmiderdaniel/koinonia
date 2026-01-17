@@ -11,7 +11,8 @@
   "google": {
     "title": "Kalendarz Google",
     "recommended": "Zalecane",
-    "description": "Połącz swoje konto Google dla synchronizacji w czasie rzeczywistym. Wydarzenia są natychmiast dodawane do Twojego Kalendarza Google.",
+    "description1": "Połącz swoje konto Google dla synchronizacji w czasie rzeczywistym.",
+    "description2": "Wydarzenia są natychmiast dodawane do Twojego Kalendarza Google.",
     "notConnected": "Nie połączono",
     "connectedAs": "Połączono jako {email}",
     "connect": "Połącz Kalendarz Google",

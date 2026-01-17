@@ -16,6 +16,7 @@ import type { DragEndEvent } from '@dnd-kit/core'
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { useIsMobile } from '@/lib/hooks'
 import {
+  addTemplateAgendaItem,
   removeTemplateAgendaItem,
   reorderTemplateAgendaItems,
   removeTemplatePosition,
@@ -111,10 +112,25 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
     }
   }
 
-  const handleAddAgendaItem = (isSongPlaceholder: boolean = false) => {
-    setEditingAgendaItem(
-      isSongPlaceholder ? ({ is_song_placeholder: true } as AgendaItem) : null
-    )
+  const handleAddAgendaItem = async (isSongPlaceholder: boolean = false) => {
+    if (isSongPlaceholder) {
+      // Directly add song placeholder without dialog
+      const worshipMinistry = ministries.find(m => m.is_system === true)
+      const result = await addTemplateAgendaItem(template.id, {
+        title: 'Song',
+        durationSeconds: 300,
+        isSongPlaceholder: true,
+        ministryId: worshipMinistry?.id || null,
+      })
+      if (result.error) {
+        toast.error(result.error)
+      } else {
+        onTemplateUpdated()
+      }
+      return
+    }
+
+    setEditingAgendaItem(null)
     setAgendaItemDialogOpen(true)
   }
 
@@ -208,7 +224,7 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
   const positions = template.event_template_positions || []
 
   return (
-    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-white !gap-0 !py-0">
+    <Card className="h-full flex flex-col overflow-hidden border border-black dark:border-white !gap-0 !py-0 !ring-0 outline-none">
       <TemplateHeader
         template={template}
         canManage={canManage}
@@ -227,18 +243,18 @@ export const TemplateDetailPanel = memo(function TemplateDetailPanel({
         onValueChange={setActiveTab}
         className="flex-1 flex flex-col min-h-0 overflow-hidden gap-0"
       >
-        <div className={`border-b ${isMobile ? 'px-2 py-1' : 'px-6 py-3'}`}>
+        <div className={`border-b border-black/20 dark:border-white/20 ${isMobile ? 'px-2 py-1' : 'px-6 py-3'}`}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger
               value="agenda"
-              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
+              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
               <Music className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
               {t('agendaTab')}
             </TabsTrigger>
             <TabsTrigger
               value="positions"
-              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
+              className={`flex items-center gap-1.5 data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground ${isMobile ? 'text-xs py-1.5' : 'gap-2'}`}
             >
               <Users className={isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
               {t('positionsTab')}

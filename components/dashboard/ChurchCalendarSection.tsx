@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
-import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -11,6 +10,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { EnhancedCalendar } from './EnhancedCalendar'
+import { EventDialog } from '@/app/dashboard/events/dialogs/EventDialog'
 import {
   Calendar,
   ChevronDown,
@@ -19,7 +19,6 @@ import {
   Cake,
   Star,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import {
   getCalendarEventsForMember,
   getChurchHolidays,
@@ -54,8 +53,6 @@ export function ChurchCalendarSection({
   canCreateEvents = false,
 }: ChurchCalendarSectionProps) {
   const t = useTranslations('dashboard')
-  const router = useRouter()
-
   const [events, setEvents] = useState<CalendarEvent[]>(initialEvents)
   const [holidays, setHolidays] = useState<ChurchHoliday[]>(initialHolidays)
   const [birthdays, setBirthdays] = useState<CalendarBirthday[]>(initialBirthdays)
@@ -63,6 +60,7 @@ export function ChurchCalendarSection({
   const [isExpanded, setIsExpanded] = useState(true)
   const [currentMonth, setCurrentMonth] = useState(initialMonth)
   const [currentYear, setCurrentYear] = useState(initialYear)
+  const [eventDialogOpen, setEventDialogOpen] = useState(false)
 
   // Check if user can see birthdays (leaders and above)
   const canSeeBirthdays = ['leader', 'admin', 'owner'].includes(role)
@@ -154,8 +152,14 @@ export function ChurchCalendarSection({
   }, [canSeeBirthdays])
 
   const handleCreateEvent = useCallback(() => {
-    router.push('/dashboard/events/new')
-  }, [router])
+    setEventDialogOpen(true)
+  }, [])
+
+  const handleEventDialogSuccess = useCallback(() => {
+    setEventDialogOpen(false)
+    // Refresh events for current month
+    handleMonthChange(currentMonth, currentYear)
+  }, [handleMonthChange, currentMonth, currentYear])
 
   const formatUpcomingDate = (date: Date) => {
     const today = new Date()
@@ -177,7 +181,7 @@ export function ChurchCalendarSection({
     return (
       <div className="mt-6">
         <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-          <Card className="border border-black dark:border-zinc-700">
+          <Card className="border border-black dark:border-white !ring-0 outline-none">
             <div className="p-4 flex items-center justify-between">
               <CollapsibleTrigger asChild>
                 <button className="flex items-center gap-3 hover:bg-muted/50 transition-colors rounded-md p-1 -m-1 flex-1 text-left">
@@ -194,7 +198,7 @@ export function ChurchCalendarSection({
                 {canCreateEvents && (
                   <Button
                     size="sm"
-                    className="rounded-full !bg-brand hover:!bg-brand/90 !text-white border border-black"
+                    className="rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground border border-black"
                     onClick={handleCreateEvent}
                   >
                     <Plus className="h-4 w-4 mr-1" />
@@ -219,7 +223,7 @@ export function ChurchCalendarSection({
     return (
       <div className="mt-6">
         <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-          <Card className="border border-black dark:border-zinc-700">
+          <Card className="border border-black dark:border-white !ring-0 outline-none">
             <div className="p-4 flex items-center justify-between">
               <CollapsibleTrigger asChild>
                 <button className="flex items-center gap-3 hover:bg-muted/50 transition-colors rounded-md p-1 -m-1 flex-1 text-left">
@@ -251,7 +255,7 @@ export function ChurchCalendarSection({
                 {canCreateEvents && (
                   <Button
                     size="sm"
-                    className="rounded-full !bg-brand hover:!bg-brand/90 !text-white border border-black"
+                    className="rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground border border-black"
                     onClick={handleCreateEvent}
                   >
                     <Plus className="h-4 w-4 mr-1" />
@@ -286,7 +290,7 @@ export function ChurchCalendarSection({
         {canCreateEvents && (
           <Button
             size="sm"
-            className="rounded-full !bg-brand hover:!bg-brand/90 !text-white border border-black"
+            className="rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground border border-black"
             onClick={handleCreateEvent}
           >
             <Plus className="h-4 w-4 mr-1" />
@@ -295,7 +299,7 @@ export function ChurchCalendarSection({
         )}
       </div>
 
-      <Card className="border border-black dark:border-zinc-700">
+      <Card className="border border-black dark:border-white !ring-0 outline-none">
         <CardContent className="p-4">
           {/* Holidays Legend (birthdays are shown only on the calendar itself) */}
           {holidays.length > 0 && (
@@ -330,6 +334,13 @@ export function ChurchCalendarSection({
           />
         </CardContent>
       </Card>
+
+      <EventDialog
+        open={eventDialogOpen}
+        onOpenChange={setEventDialogOpen}
+        onSuccess={handleEventDialogSuccess}
+        timeFormat={timeFormat}
+      />
     </div>
   )
 }

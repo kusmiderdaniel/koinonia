@@ -165,7 +165,7 @@ export function PositionPicker({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white dark:bg-zinc-950 max-w-lg">
+      <DialogContent className="bg-white dark:bg-zinc-950 max-w-lg !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>
@@ -196,7 +196,7 @@ export function PositionPicker({
             {t('allRolesAdded')}
           </div>
         ) : (
-          <div className="border rounded-lg overflow-hidden">
+          <div className="border border-black/20 dark:border-white/20 rounded-lg overflow-hidden">
             <div className="h-[350px] overflow-y-auto p-4">
               <div className="space-y-6">
               {ministries.map((ministry) => {
@@ -244,7 +244,7 @@ export function PositionPicker({
                       {availableRoles.map((role) => (
                         <label
                           key={role.id}
-                          className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors"
+                          className="flex items-center gap-3 p-3 rounded-lg border border-black/20 dark:border-white/20 cursor-pointer hover:bg-muted/50 transition-colors"
                         >
                           <Checkbox
                             checked={isRoleSelected(ministry.id, role.id)}
@@ -265,10 +265,10 @@ export function PositionPicker({
 
         <DialogFooter className="!bg-transparent !border-0 flex justify-end gap-3 pt-4">
           <Button
-            variant="outline-pill"
+            variant="ghost"
             onClick={() => onOpenChange(false)}
             disabled={isAdding}
-            className="!border !border-black dark:!border-white"
+            className="rounded-full"
           >
             {tCommon('cancel')}
           </Button>
@@ -276,7 +276,7 @@ export function PositionPicker({
             onClick={handleAdd}
             disabled={isAdding || selectedRoles.length === 0}
             variant="outline-pill"
-            className="!border !bg-brand hover:!bg-brand/90 !text-white !border-brand disabled:!opacity-50"
+            className="!border !bg-brand hover:!bg-brand/90 !text-brand-foreground !border-brand disabled:!opacity-50"
           >
             {isAdding
               ? t('adding')

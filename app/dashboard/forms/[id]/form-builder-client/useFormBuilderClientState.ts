@@ -105,6 +105,7 @@ export function useFormBuilderClientState({ initialData }: FormBuilderClientProp
         settings: f.settings || undefined,
         sortOrder: f.sort_order,
         isNew: f.isNew,
+        isDeleted: f.isDeleted,
       }))
 
       const fieldsResult = await bulkSaveFormFields(form.id, fieldsToSave)

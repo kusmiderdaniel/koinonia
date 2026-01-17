@@ -90,7 +90,7 @@ export const TagPicker = memo(function TagPicker({
         <div
           role="button"
           tabIndex={0}
-          className="flex w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background cursor-pointer hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 min-h-[42px] h-auto"
+          className="flex w-full items-center justify-between rounded-md border border-black/20 dark:border-white/20 bg-background px-3 py-2 text-sm ring-offset-background cursor-pointer hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 min-h-[42px] h-auto"
         >
           <div className="flex flex-wrap gap-1 flex-1 text-left">
             {selectedTags.length === 0 ? (
@@ -117,7 +117,7 @@ export const TagPicker = memo(function TagPicker({
           <ChevronDown className="w-4 h-4 ml-2 opacity-50 flex-shrink-0" />
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-3 bg-white dark:bg-zinc-950 border" align="start">
+      <PopoverContent className="w-64 p-3 bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20" align="start">
         {/* Existing Tags */}
         {availableTags.length > 0 && (
           <div className="space-y-1 mb-3">
@@ -130,6 +130,7 @@ export const TagPicker = memo(function TagPicker({
                   id={`tag-${tag.id}`}
                   checked={selectedTagIds.includes(tag.id)}
                   onCheckedChange={() => handleToggleTag(tag.id)}
+                  className="border-black/20 dark:border-white/20"
                 />
                 <label
                   htmlFor={`tag-${tag.id}`}
@@ -147,7 +148,7 @@ export const TagPicker = memo(function TagPicker({
         )}
 
         {/* Divider */}
-        {availableTags.length > 0 && <div className="border-t my-3" />}
+        {availableTags.length > 0 && <div className="border-t border-black/20 dark:border-white/20 my-3" />}
 
         {/* Create New Tag */}
         {showCreateForm ? (
@@ -162,20 +163,25 @@ export const TagPicker = memo(function TagPicker({
                   handleCreateTag()
                 }
               }}
+              className="!border-black/20 dark:!border-white/20"
             />
-            <div className="flex gap-1 flex-wrap">
+            <div className="flex gap-2 flex-wrap">
               {PRESET_COLORS.map((color) => (
                 <button
                   key={color}
                   type="button"
                   onClick={() => setNewTagColor(color)}
-                  className={`w-6 h-6 rounded-full transition-all ${
+                  className={`w-7 h-7 rounded-full transition-all flex items-center justify-center ${
                     newTagColor === color
-                      ? 'ring-2 ring-offset-1 ring-gray-400'
-                      : 'hover:scale-110'
+                      ? 'border-2 border-gray-400'
+                      : 'border-2 border-transparent hover:scale-110'
                   }`}
-                  style={{ backgroundColor: color }}
-                />
+                >
+                  <span
+                    className="w-5 h-5 rounded-full"
+                    style={{ backgroundColor: color }}
+                  />
+                </button>
               ))}
             </div>
             <div className="flex gap-2">
@@ -194,7 +200,7 @@ export const TagPicker = memo(function TagPicker({
               <Button
                 type="button"
                 size="sm"
-                className="flex-1 !bg-brand hover:!bg-brand/90 !text-white"
+                className="flex-1 !bg-brand hover:!bg-brand/90 !text-brand-foreground"
                 onClick={handleCreateTag}
                 disabled={!newTagName.trim() || isCreating}
               >

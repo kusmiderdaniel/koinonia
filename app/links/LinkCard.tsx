@@ -13,6 +13,8 @@ import {
 } from '@/lib/utils/link-utils'
 import type { LinkVisibility } from '@/app/dashboard/links/types'
 
+type LabelAlign = 'left' | 'center' | 'right'
+
 interface LinkCardProps {
   title: string
   description: string | null
@@ -32,6 +34,7 @@ interface LinkCardProps {
   labelBold?: boolean
   labelItalic?: boolean
   labelUnderline?: boolean
+  labelAlign?: LabelAlign
 }
 
 // Visibility icons
@@ -62,6 +65,7 @@ export const LinkCard = memo(function LinkCard({
   labelBold,
   labelItalic,
   labelUnderline,
+  labelAlign = 'center',
 }: LinkCardProps) {
   // Calculate text color if not provided
   const computedTextColor = textColor || getContrastColor(cardColor)
@@ -143,7 +147,8 @@ export const LinkCard = memo(function LinkCard({
         {/* Content */}
         <div className={cn(
           'absolute inset-0 flex items-center gap-3 text-white',
-          sizeStyles.padding
+          sizeStyles.padding,
+          hideLabel && 'justify-center'
         )}>
           {/* Icon */}
           {IconComponent && (
@@ -154,8 +159,17 @@ export const LinkCard = memo(function LinkCard({
 
           {/* Content */}
           {!hideLabel && (
-            <div className="flex-1 min-w-0 text-left">
-              <div className="flex items-center gap-2">
+            <div className={cn(
+              'flex-1 min-w-0',
+              labelAlign === 'left' && 'text-left',
+              labelAlign === 'center' && 'text-center',
+              labelAlign === 'right' && 'text-right'
+            )}>
+              <div className={cn(
+                'flex items-center gap-2',
+                labelAlign === 'center' && 'justify-center',
+                labelAlign === 'right' && 'justify-end'
+              )}>
                 <span className={labelClasses}>{title}</span>
                 {showVisibilityBadge && visibility && visibility !== 'public' && VisibilityIcon && (
                   <Badge
@@ -225,7 +239,10 @@ export const LinkCard = memo(function LinkCard({
       )}
       style={cardStyles}
     >
-      <div className={cn('flex items-center gap-3', hideLabel && 'justify-center')}>
+      <div className={cn(
+        'flex items-center gap-3',
+        hideLabel && 'justify-center'
+      )}>
         {/* Icon */}
         {IconComponent && (
           <div className="flex-shrink-0">
@@ -235,8 +252,17 @@ export const LinkCard = memo(function LinkCard({
 
         {/* Content */}
         {!hideLabel && (
-          <div className="flex-1 min-w-0 text-left">
-            <div className="flex items-center gap-2">
+          <div className={cn(
+            'flex-1 min-w-0',
+            labelAlign === 'left' && 'text-left',
+            labelAlign === 'center' && 'text-center',
+            labelAlign === 'right' && 'text-right'
+          )}>
+            <div className={cn(
+              'flex items-center gap-2',
+              labelAlign === 'center' && 'justify-center',
+              labelAlign === 'right' && 'justify-end'
+            )}>
               <span className={labelClasses}>{title}</span>
               {showVisibilityBadge && visibility && visibility !== 'public' && VisibilityIcon && (
                 <Badge

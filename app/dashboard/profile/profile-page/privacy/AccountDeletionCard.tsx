@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -82,15 +81,16 @@ export function AccountDeletionCard({ initialStatus }: AccountDeletionCardProps)
   }
 
   return (
-    <Card className="border-destructive/50">
-      <CardHeader>
+    <div className="space-y-4">
+      <div>
         <div className="flex items-center gap-2">
           <Trash2 className="h-5 w-5 text-destructive" />
-          <CardTitle className="text-lg text-destructive">{t('deleteAccount.title')}</CardTitle>
+          <h3 className="text-lg font-semibold text-destructive">{t('deleteAccount.title')}</h3>
         </div>
-        <CardDescription>{t('deleteAccount.description')}</CardDescription>
-      </CardHeader>
-      <CardContent>
+        <p className="text-sm text-muted-foreground">{t('deleteAccount.description')}</p>
+      </div>
+
+      <div>
         {deletionError && (
           <Alert variant="destructive" className="mb-4">
             <AlertDescription>{deletionError}</AlertDescription>
@@ -109,7 +109,7 @@ export function AccountDeletionCard({ initialStatus }: AccountDeletionCardProps)
 
             <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive">
+                <Button variant="outline" className="!border-red-500 !text-red-500 hover:!bg-red-50 dark:hover:!bg-red-950/30">
                   <Trash2 className="h-4 w-4 mr-2" />
                   {t('deleteAccount.button')}
                 </Button>
@@ -137,7 +137,7 @@ export function AccountDeletionCard({ initialStatus }: AccountDeletionCardProps)
                   </p>
                 </div>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{t('deleteAccount.cancelButton')}</AlertDialogCancel>
+                  <AlertDialogCancel className="!border-0">{t('deleteAccount.cancelButton')}</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleRequestDeletion}
                     disabled={isRequestingDeletion}
@@ -194,7 +194,7 @@ export function AccountDeletionCard({ initialStatus }: AccountDeletionCardProps)
             </Button>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

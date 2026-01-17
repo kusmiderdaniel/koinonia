@@ -137,7 +137,7 @@ export const SortBuilder = memo(function SortBuilder({
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 w-full sm:w-auto justify-center !border !border-black dark:!border-zinc-700"
+          className="gap-2 w-full sm:w-auto justify-center !border !border-black/20 dark:!border-white/20"
         >
           <ArrowUpDown className="h-4 w-4" />
           {activeSortCount > 0 ? (
@@ -188,11 +188,11 @@ export const SortBuilder = memo(function SortBuilder({
           )}
 
           {/* Add sort button */}
-          <div className="pt-2 border-t">
+          <div className="pt-2 border-t border-black/20 dark:border-white/20">
             <Button
               variant="outline"
               size="sm"
-              className="text-muted-foreground hover:text-foreground gap-1 !border !border-black dark:!border-white"
+              className="text-muted-foreground hover:text-foreground gap-1 !border !border-black/20 dark:!border-white/20"
               onClick={handleAddSort}
               disabled={sortState.length >= sortFields.length}
             >
@@ -271,7 +271,7 @@ const SortRuleRow = memo(function SortRuleRow({
 
       {/* Field selector */}
       <Select value={sort.field} onValueChange={(v) => onUpdate({ field: v })}>
-        <SelectTrigger className="flex-1 sm:w-[140px] h-8 text-xs">
+        <SelectTrigger className="flex-1 sm:w-[140px] h-8 text-xs !border !border-black/20 dark:!border-white/20">
           <SelectValue>
             <div className="flex items-center gap-2">
               {currentField && fieldIcons[currentField.icon]}
@@ -279,7 +279,7 @@ const SortRuleRow = memo(function SortRuleRow({
             </div>
           </SelectValue>
         </SelectTrigger>
-        <SelectContent className="border border-black dark:border-zinc-700">
+        <SelectContent className="border border-black/20 dark:border-white/20">
           {allFieldsForSelect.map((f) => (
             <SelectItem
               key={f.id}
@@ -297,10 +297,10 @@ const SortRuleRow = memo(function SortRuleRow({
 
       {/* Direction selector */}
       <Select value={sort.direction} onValueChange={(v) => onUpdate({ direction: v as SortDirection })}>
-        <SelectTrigger className="w-[90px] sm:w-[120px] h-8 text-xs flex-shrink-0">
+        <SelectTrigger className="w-[90px] sm:w-[120px] h-8 text-xs flex-shrink-0 !border !border-black/20 dark:!border-white/20">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="border border-black dark:border-zinc-700">
+        <SelectContent className="border border-black/20 dark:border-white/20">
           <SelectItem value="asc" className="hover:bg-zinc-100 dark:hover:bg-zinc-800">
             {t('ascending')}
           </SelectItem>

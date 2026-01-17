@@ -167,7 +167,7 @@ export function CampusStep({
                 <SelectTrigger className="h-11 bg-white dark:bg-zinc-950">
                   <SelectValue placeholder={t('profileInfo.genderPlaceholder')} />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-zinc-950" style={{ borderColor: '#18181b', borderWidth: '1px' }}>
+                <SelectContent className="bg-white dark:bg-zinc-950 border border-border">
                   <SelectItem value="male">{t('profileInfo.male')}</SelectItem>
                   <SelectItem value="female">{t('profileInfo.female')}</SelectItem>
                 </SelectContent>
@@ -191,7 +191,7 @@ export function CampusStep({
           type="button"
           variant="outline"
           size="lg"
-          className="sm:flex-1 h-14 text-base !rounded-full !border-2 !border-black dark:!border-white gap-2 order-2 sm:order-1"
+          className="sm:flex-1 h-14 text-base !rounded-full !border-0 gap-2 order-2 sm:order-1"
           onClick={onBack}
           disabled={isLoading}
         >
@@ -201,7 +201,7 @@ export function CampusStep({
         <Button
           type="button"
           size="lg"
-          className="sm:flex-1 h-14 text-base !rounded-full !bg-brand hover:!bg-brand/90 text-white order-1 sm:order-2"
+          className="sm:flex-1 h-14 text-base !rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground order-1 sm:order-2"
           disabled={isLoading || (campuses.length > 1 && !selectedCampusId) || !dataSharingConsent}
           onClick={onSubmit}
         >

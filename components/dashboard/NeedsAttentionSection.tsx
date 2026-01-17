@@ -15,7 +15,9 @@ import {
   CheckCircle,
   Calendar,
   CheckSquare,
+  UserPlus,
 } from 'lucide-react'
+import Link from 'next/link'
 import { respondToInvitation } from '@/app/dashboard/events/actions/invitations'
 import { updateTaskStatus } from '@/app/dashboard/tasks/actions'
 import { toast } from 'sonner'
@@ -92,6 +94,8 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
     if (item.type === 'invitation') {
       const assignment = item.originalData as DashboardAssignment
       router.push(`/dashboard/events?event=${assignment.event.id}`)
+    } else if (item.type === 'pending_member') {
+      router.push('/dashboard/people/pending')
     } else {
       // Open task dialog if callback provided, otherwise navigate to tasks page
       if (onTaskClick) {
@@ -104,12 +108,12 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
 
   if (items.length === 0) {
     return (
-      <section className="p-4 border border-border rounded-lg bg-card h-full">
+      <section className="p-4 border border-black dark:border-white rounded-lg bg-card h-full">
         <h2 className="text-base md:text-lg font-semibold mb-3 flex items-center gap-2">
           <CheckCircle className="h-5 w-5 text-green-600" />
           {t('needsAttention.allCaughtUp')}
         </h2>
-        <Card className="bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800">
+        <Card className="bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-900/50 !ring-0 outline-none">
           <CardContent className="py-6 text-center">
             <CheckCircle className="h-8 w-8 mx-auto text-green-600 mb-2" />
             <p className="text-green-700 dark:text-green-300 font-medium">{t('needsAttention.noPendingItems')}</p>
@@ -123,7 +127,7 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
   }
 
   return (
-    <section className="p-4 border border-border rounded-lg bg-card h-full">
+    <section className="p-4 border border-black dark:border-white rounded-lg bg-card h-full">
       <h2 className="text-base md:text-lg font-semibold mb-3 flex items-center gap-2">
         <AlertCircle className="h-5 w-5 text-amber-500" />
         {t('needsAttention.title')}
@@ -137,7 +141,7 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
           <Card
             key={`${item.type}-${item.id}`}
             onClick={() => handleNavigate(item)}
-            className="cursor-pointer hover:bg-muted/50 transition-colors border border-border"
+            className="cursor-pointer hover:bg-muted/50 transition-colors border border-black/20 dark:border-white/20"
           >
             <CardContent className="p-3">
               <div className="flex gap-3">
@@ -163,6 +167,8 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
                       <div className="flex items-center gap-2">
                         {item.type === 'invitation' ? (
                           <Calendar className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                        ) : item.type === 'pending_member' ? (
+                          <UserPlus className="w-4 h-4 text-blue-500 flex-shrink-0" />
                         ) : (
                           <CheckSquare className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                         )}
@@ -186,6 +192,20 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
                         {item.dueLabel}
                       </Badge>
                     )}
+
+                    {/* Review button for pending members */}
+                    {item.type === 'pending_member' && (
+                      <Button
+                        size="sm"
+                        className="h-6 px-3 text-xs rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground flex-shrink-0"
+                        asChild
+                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                      >
+                        <Link href="/dashboard/people/pending">
+                          {t('needsAttention.review')}
+                        </Link>
+                      </Button>
+                    )}
                   </div>
 
                   {/* Action buttons for invitations */}
@@ -193,7 +213,7 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
                     <div className="flex gap-2 mt-2">
                       <Button
                         size="sm"
-                        className="h-7 px-3 text-xs rounded-full !bg-red-600 hover:!bg-red-700 !text-white"
+                        className="h-7 px-3 text-xs rounded-full !bg-red-600 hover:!bg-red-700 !text-brand-foreground"
                         onClick={(e) => handleRespondToInvitation(item.id, 'declined', e)}
                         disabled={loadingId === item.id}
                       >
@@ -208,7 +228,7 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
                       </Button>
                       <Button
                         size="sm"
-                        className="h-7 px-3 text-xs rounded-full !bg-green-600 hover:!bg-green-700 !text-white"
+                        className="h-7 px-3 text-xs rounded-full !bg-green-600 hover:!bg-green-700 !text-brand-foreground"
                         onClick={(e) => handleRespondToInvitation(item.id, 'accepted', e)}
                         disabled={loadingId === item.id}
                       >
@@ -223,6 +243,7 @@ export function NeedsAttentionSection({ items, maxItems = 5, onTaskClick }: Need
                       </Button>
                     </div>
                   )}
+
                 </div>
               </div>
             </CardContent>

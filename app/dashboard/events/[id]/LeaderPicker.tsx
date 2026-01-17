@@ -72,7 +72,7 @@ export function LeaderPicker({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-zinc-950 !border !border-black dark:!border-white">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <User className="w-5 h-5" />
@@ -93,7 +93,7 @@ export function LeaderPicker({
             placeholder="Search by name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
+            className="pl-9 !border-black/20 dark:!border-white/20"
           />
         </div>
 
@@ -140,7 +140,7 @@ export function LeaderPicker({
 
         {/* Actions */}
         <div className="flex justify-end pt-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isAssigning}>
+          <Button variant="ghost" className="rounded-full" onClick={() => onOpenChange(false)} disabled={isAssigning}>
             Close
           </Button>
         </div>

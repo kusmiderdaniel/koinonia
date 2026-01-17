@@ -194,7 +194,7 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={`sm:max-w-md ${isMobile ? 'max-h-[90vh] overflow-y-auto' : ''}`}>
+      <DialogContent className={`sm:max-w-md !border !border-black dark:!border-white ${isMobile ? 'max-h-[90vh] overflow-y-auto' : ''}`}>
         <DialogHeader>
           <DialogTitle>{isEditing ? t('dialog.editTitle') : t('dialog.createTitle')}</DialogTitle>
           {!isMobile && (
@@ -221,7 +221,7 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
               onChange={(e) => setName(e.target.value)}
               placeholder={t('fields.namePlaceholder')}
               required
-              className={isMobile ? 'h-9' : ''}
+              className={`${isMobile ? 'h-9' : ''} !border !border-black/20 dark:!border-white/20`}
             />
           </div>
 
@@ -233,7 +233,7 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
               onChange={(e) => setDescription(e.target.value)}
               placeholder={t('fields.descriptionPlaceholder')}
               rows={isMobile ? 2 : 3}
-              className={isMobile ? 'text-sm' : ''}
+              className={`${isMobile ? 'text-sm' : ''} !border !border-black/20 dark:!border-white/20`}
             />
           </div>
 
@@ -292,10 +292,10 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
           <DialogFooter className={`!bg-transparent !border-0 !p-0 !mx-0 !mb-0 ${isMobile ? '!mt-4' : '!mt-6'}`}>
             <Button
               type="button"
-              variant="outline-pill"
+              variant="ghost"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
-              className="!border !border-black dark:!border-white"
+              className="rounded-full"
             >
               {t('actions.cancel')}
             </Button>
@@ -303,7 +303,7 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
               type="submit"
               variant="outline-pill"
               disabled={isLoading || !name.trim() || (!isEditing && !leaderId)}
-              className="!bg-brand hover:!bg-brand/90 !text-white !border-brand"
+              className="!bg-brand hover:!bg-brand/90 !text-black !border-brand"
             >
               {isLoading
                 ? isEditing

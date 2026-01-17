@@ -63,7 +63,7 @@ export function MatrixFilters({
           <label className="text-xs text-muted-foreground">{t('form.campusLabel')}</label>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="min-w-[140px] max-w-[200px] justify-between !border-black dark:!border-white">
+              <Button variant="outline" className="min-w-[140px] max-w-[200px] justify-between !border-black/20 dark:!border-white/20">
                 <span className="truncate">
                   {selectedCampusId
                     ? campuses.find((c) => c.id === selectedCampusId)?.name || t('matrix.allCampuses')
@@ -104,7 +104,7 @@ export function MatrixFilters({
         <label className="text-xs text-muted-foreground">{t('matrix.ministryLabel')}</label>
         <DropdownMenu open={ministryDropdownOpen} onOpenChange={setMinistryDropdownOpen}>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-[180px] justify-between !border-black dark:!border-white">
+            <Button variant="outline" className="w-[180px] justify-between !border-black/20 dark:!border-white/20">
               {selectedMinistriesLabel}
               <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
             </Button>
@@ -147,7 +147,7 @@ export function MatrixFilters({
         <label className="text-xs text-muted-foreground">{t('fields.type')}</label>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-[160px] justify-between !border-black dark:!border-white">
+            <Button variant="outline" className="w-[160px] justify-between !border-black/20 dark:!border-white/20">
               {selectedEventType
                 ? t(`types.${selectedEventType}`)
                 : t('matrix.allTypes')}

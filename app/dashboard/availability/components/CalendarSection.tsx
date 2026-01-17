@@ -52,7 +52,7 @@ export const CalendarSection = memo(function CalendarSection({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 !border !border-black dark:!border-white"
+              className="h-8 w-8 !border !border-black/20 dark:!border-white/20"
               onClick={onPrevMonth}
               disabled={!canGoPrevious}
               aria-label="Previous month"
@@ -63,7 +63,7 @@ export const CalendarSection = memo(function CalendarSection({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 !border !border-black dark:!border-white"
+              className="h-8 w-8 !border !border-black/20 dark:!border-white/20"
               onClick={onNextMonth}
               aria-label="Next month"
             >
@@ -125,7 +125,7 @@ export const CalendarSection = memo(function CalendarSection({
                     <span className="hidden sm:inline">{t('calendar.clickForRange')}</span>
                     <span className="sm:hidden">{t('calendar.tapForRange')}</span>
                   </span>
-                  <Button size="sm" className="w-full sm:w-auto text-xs h-7" onClick={onAddSingleDay}>
+                  <Button size="sm" variant="outline" className="w-full sm:w-auto text-xs h-7 !border-black/20 dark:!border-white/20" onClick={onAddSingleDay}>
                     {t('calendar.addSingleDay')}
                   </Button>
                 </div>

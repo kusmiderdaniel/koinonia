@@ -46,9 +46,9 @@ export function MatrixGrid({
       <div className="flex-1 overflow-auto scrollbar-minimal">
         <div className="inline-flex min-w-full min-h-full">
           {/* Sticky sidebar */}
-          <div className="flex-shrink-0 w-48 border-r bg-white dark:bg-zinc-950 sticky left-0 z-[5]">
+          <div className="flex-shrink-0 w-48 border-r border-black/20 dark:border-white/20 bg-white dark:bg-zinc-950 sticky left-0 z-[5]">
             {/* Header */}
-            <div className="h-16 border-b flex items-center px-3 bg-white dark:bg-zinc-950">
+            <div className="h-16 border-b border-black/20 dark:border-white/20 flex items-center px-3 bg-white dark:bg-zinc-950">
               <span className="text-sm font-medium text-muted-foreground">{t('agenda')}</span>
             </div>
 
@@ -84,7 +84,7 @@ export function MatrixGrid({
 function RowLabel({ row, availabilityLabel }: { row: MatrixRow; availabilityLabel: string }) {
   if (row.type === 'agenda-header') {
     return (
-      <div className="h-8 flex items-center px-3 bg-white dark:bg-zinc-950 border-b">
+      <div className="h-8 flex items-center px-3 bg-white dark:bg-zinc-950 border-b border-black/20 dark:border-white/20">
         <span className="text-xs font-semibold uppercase tracking-wide">
           {row.label}
         </span>
@@ -94,7 +94,7 @@ function RowLabel({ row, availabilityLabel }: { row: MatrixRow; availabilityLabe
 
   if (row.type === 'agenda-item') {
     return (
-      <div className="h-12 flex items-center px-3 border-b bg-white dark:bg-zinc-950">
+      <div className="h-12 flex items-center px-3 border-b border-black/20 dark:border-white/20 bg-white dark:bg-zinc-950">
         <span className="text-sm text-muted-foreground">{row.label}</span>
       </div>
     )
@@ -102,7 +102,7 @@ function RowLabel({ row, availabilityLabel }: { row: MatrixRow; availabilityLabe
 
   if (row.type === 'ministry-header') {
     return (
-      <div className="h-8 flex items-center px-3 bg-white dark:bg-zinc-950 border-b">
+      <div className="h-8 flex items-center px-3 bg-white dark:bg-zinc-950 border-b border-black/20 dark:border-white/20">
         <div
           className="w-2 h-2 rounded-full mr-2"
           style={{ backgroundColor: row.ministryColor }}
@@ -116,7 +116,7 @@ function RowLabel({ row, availabilityLabel }: { row: MatrixRow; availabilityLabe
 
   if (row.type === 'position') {
     return (
-      <div className="h-12 flex items-center px-3 border-b bg-white dark:bg-zinc-950">
+      <div className="h-12 flex items-center px-3 border-b border-black/20 dark:border-white/20 bg-white dark:bg-zinc-950">
         <span className="text-sm truncate">{row.label}</span>
       </div>
     )
@@ -124,7 +124,7 @@ function RowLabel({ row, availabilityLabel }: { row: MatrixRow; availabilityLabe
 
   if (row.type === 'availability-header') {
     return (
-      <div className="h-8 flex items-center px-3 bg-white dark:bg-zinc-950 border-b">
+      <div className="h-8 flex items-center px-3 bg-white dark:bg-zinc-950 border-b border-black/20 dark:border-white/20">
         <Clock className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
           {availabilityLabel}
@@ -159,10 +159,10 @@ function EventColumn({
   const eventDate = new Date(event.start_time)
 
   return (
-    <div className="flex-shrink-0 w-44 border-r">
+    <div className="flex-shrink-0 w-44 border-r border-black/20 dark:border-white/20">
       {/* Event header */}
       <button
-        className="w-full h-16 px-3 border-b bg-white dark:bg-zinc-950 hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors text-left"
+        className="w-full h-16 px-3 border-b border-black/20 dark:border-white/20 bg-white dark:bg-zinc-950 hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors text-left"
         onClick={() => onEventClick?.(event.id)}
       >
         <div className="text-lg font-bold">{format(eventDate, 'dd/MM')}</div>
@@ -200,7 +200,7 @@ interface EventCellProps {
 function EventCell({ event, row, onAgendaCellClick, onPositionCellClick }: EventCellProps) {
   // Header rows are just spacers
   if (row.type === 'agenda-header' || row.type === 'ministry-header' || row.type === 'availability-header') {
-    return <div className="h-8 border-b bg-white dark:bg-zinc-950" />
+    return <div className="h-8 border-b border-black/20 dark:border-white/20 bg-white dark:bg-zinc-950" />
   }
 
   // Agenda item cell
@@ -210,14 +210,14 @@ function EventCell({ event, row, onAgendaCellClick, onPositionCellClick }: Event
     if (!agendaItem) {
       // This event doesn't have this agenda slot - show dash
       return (
-        <div className="h-12 border-b p-1 flex items-center justify-center">
+        <div className="h-12 border-b border-black/20 dark:border-white/20 p-1 flex items-center justify-center">
           <span className="text-muted-foreground">—</span>
         </div>
       )
     }
 
     return (
-      <div className="h-12 border-b p-1">
+      <div className="h-12 border-b border-black/20 dark:border-white/20 p-1">
         <MatrixCell
           type={agendaItem.isSong ? 'song' : 'agenda'}
           title={agendaItem.isSong ? (agendaItem.songTitle || agendaItem.title) : agendaItem.title}
@@ -256,14 +256,14 @@ function EventCell({ event, row, onAgendaCellClick, onPositionCellClick }: Event
     if (!position) {
       // This event doesn't have this position - show dash
       return (
-        <div className="h-12 border-b p-1 flex items-center justify-center">
+        <div className="h-12 border-b border-black/20 dark:border-white/20 p-1 flex items-center justify-center">
           <span className="text-muted-foreground">—</span>
         </div>
       )
     }
 
     return (
-      <div className="h-12 border-b p-1">
+      <div className="h-12 border-b border-black/20 dark:border-white/20 p-1">
         <MatrixCell
           type="position"
           personName={position.assignment ? `${position.assignment.firstName} ${position.assignment.lastName}` : null}
@@ -275,5 +275,5 @@ function EventCell({ event, row, onAgendaCellClick, onPositionCellClick }: Event
     )
   }
 
-  return <div className="h-12 border-b" />
+  return <div className="h-12 border-b border-black/20 dark:border-white/20" />
 }

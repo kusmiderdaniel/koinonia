@@ -32,7 +32,7 @@ export const TemplatePositionsSection = memo(function TemplatePositionsSection({
             <Button
               variant="outline-pill"
               size="sm"
-              className="!border !border-black dark:!border-white"
+              className="!border !border-black/20 dark:!border-white/20"
               onClick={onAddPosition}
             >
               <Plus className="w-4 h-4 mr-1" />

@@ -31,7 +31,6 @@ interface UseEventDetailPanelPropsOptions {
   closeSongPicker: () => void
   openDeleteAgendaItemDialog: (item: AgendaItem) => void
   setPositionPickerOpen: (open: boolean) => void
-  openEditPositionDialog: (position: Position) => void
   openDeletePositionDialog: (position: Position) => void
   openVolunteerPicker: (position: Position) => void
   openUnassignDialog: (assignment: Assignment, positionTitle: string) => void
@@ -84,7 +83,6 @@ export function useEventDetailPanelProps(
     closeSongPicker,
     openDeleteAgendaItemDialog,
     setPositionPickerOpen,
-    openEditPositionDialog,
     openDeletePositionDialog,
     openVolunteerPicker,
     openUnassignDialog,
@@ -145,7 +143,6 @@ export function useEventDetailPanelProps(
       onMoveAgendaItemUp: handleMoveAgendaItemUp,
       onMoveAgendaItemDown: handleMoveAgendaItemDown,
       onAddPosition: () => setPositionPickerOpen(true),
-      onEditPosition: (position) => openEditPositionDialog(position),
       onDeletePosition: (position) => openDeletePositionDialog(position),
       onAssignVolunteer: (position) => openVolunteerPicker(position),
       onUnassign: (assignment, positionTitle) => openUnassignDialog(assignment, positionTitle),
@@ -189,7 +186,6 @@ export function useEventDetailPanelProps(
     handleMoveAgendaItemUp,
     handleMoveAgendaItemDown,
     setPositionPickerOpen,
-    openEditPositionDialog,
     openDeletePositionDialog,
     openVolunteerPicker,
     openUnassignDialog,

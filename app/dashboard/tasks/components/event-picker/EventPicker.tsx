@@ -44,7 +44,7 @@ export function EventPicker({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950 max-h-[85vh] overflow-y-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent className="sm:max-w-lg bg-white dark:bg-zinc-950 max-h-[85vh] overflow-y-auto !border !border-black dark:!border-white" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>{t('eventPicker.title')}</DialogTitle>
           <p className="text-sm text-muted-foreground">
@@ -65,7 +65,7 @@ export function EventPicker({
             placeholder={t('eventPicker.searchPlaceholder')}
             value={state.search}
             onChange={(e) => state.setSearch(e.target.value)}
-            className="pl-9"
+            className="pl-9 !border-black/20 dark:!border-white/20"
             autoFocus={false}
           />
         </div>
@@ -161,7 +161,7 @@ export function EventPicker({
 
         {/* Actions */}
         <div className="flex justify-end pt-2">
-          <Button variant="outline-pill" className="!border !border-black dark:!border-white" onClick={() => handleOpenChange(false)}>
+          <Button variant="ghost" className="rounded-full" onClick={() => handleOpenChange(false)}>
             {t('eventPicker.cancel')}
           </Button>
         </div>

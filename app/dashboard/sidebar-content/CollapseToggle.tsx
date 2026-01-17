@@ -21,7 +21,7 @@ export function CollapseToggle({ collapsed, onToggle }: CollapseToggleProps) {
   return (
     <div
       className={cn(
-        'border-t h-[48px] flex items-center',
+        'border-t border-black dark:border-white h-[48px] flex items-center',
         collapsed ? 'p-2 justify-center' : 'px-4 py-2'
       )}
     >

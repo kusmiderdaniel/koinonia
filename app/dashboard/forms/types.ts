@@ -60,6 +60,7 @@ export interface BuilderField extends Omit<FormField, 'id' | 'form_id' | 'create
   id: string // Can be temp ID before save
   form_id?: string
   isNew?: boolean
+  isDeleted?: boolean // Marked for deletion on next save
 }
 
 // Form condition for builder
@@ -88,6 +89,7 @@ export const FIELD_TYPES: FieldTypeInfo[] = [
   { type: 'single_select', label: 'Dropdown', icon: 'ChevronDown', description: 'Single choice from options', hasOptions: true },
   { type: 'multi_select', label: 'Multi Select', icon: 'CheckSquare', description: 'Multiple choices from options', hasOptions: true },
   { type: 'checkbox', label: 'Checkbox', icon: 'Square', description: 'Yes/No toggle', hasOptions: false },
+  { type: 'divider', label: 'Divider', icon: 'Minus', description: 'Visual separator with optional title', hasOptions: false },
 ]
 
 // Condition operator metadata

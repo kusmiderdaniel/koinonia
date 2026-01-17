@@ -41,7 +41,7 @@ export async function notifyLeadersOfPendingMember(
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-  const reviewUrl = `${siteUrl}/dashboard/people?tab=pending`
+  const reviewUrl = `${siteUrl}/dashboard/people/pending`
   const memberFullName = `${pendingMember.firstName} ${pendingMember.lastName}`
 
   for (const leader of leaders) {

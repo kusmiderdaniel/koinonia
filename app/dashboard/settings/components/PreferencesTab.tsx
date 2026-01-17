@@ -180,7 +180,7 @@ export const PreferencesTab = memo(function PreferencesTab({
           <Button
             onClick={() => preferencesManager.handleSavePreferences(setError, setSuccess)}
             disabled={preferencesManager.isSavingPreferences}
-            className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white w-full sm:w-auto"
+            className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-black w-full sm:w-auto"
           >
             {preferencesManager.isSavingPreferences ? t('saving') : t('savePreferences')}
           </Button>

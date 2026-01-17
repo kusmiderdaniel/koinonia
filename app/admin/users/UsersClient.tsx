@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
-import { format } from 'date-fns'
+import { format, formatDistanceToNow } from 'date-fns'
 import {
   Users,
   Search,
@@ -17,6 +17,9 @@ import {
   FileText,
   Globe,
   TrendingUp,
+  Check,
+  X,
+  AlertTriangle,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -37,6 +40,12 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { toast } from 'sonner'
 import type { UserWithChurch, GrowthDataPoint } from './actions'
 import { getUserDetails, toggleSuperAdmin } from './actions'
@@ -133,9 +142,18 @@ export function UsersClient({ initialUsers, growthData }: UsersClientProps) {
         return 'secondary'
       case 'leader':
         return 'outline'
+      case 'pending':
+        return 'outline'
       default:
         return 'outline'
     }
+  }
+
+  const getRoleBadgeClass = (role: string) => {
+    if (role === 'pending') {
+      return 'rounded-full bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800'
+    }
+    return ''
   }
 
   return (
@@ -189,14 +207,16 @@ export function UsersClient({ initialUsers, growthData }: UsersClientProps) {
                 <TableHead>Church</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead className="text-center">Status</TableHead>
-                <TableHead>Joined</TableHead>
+                <TableHead className="text-center">Privacy</TableHead>
+                <TableHead className="text-center">Terms</TableHead>
+                <TableHead>Last Active</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredUsers.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                     {searchQuery ? 'No users match your search' : 'No users found'}
                   </TableCell>
                 </TableRow>
@@ -205,11 +225,16 @@ export function UsersClient({ initialUsers, growthData }: UsersClientProps) {
                   <TableRow key={user.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10">
-                          <AvatarFallback>
-                            {user.first_name[0]}{user.last_name[0]}
-                          </AvatarFallback>
-                        </Avatar>
+                        <div className="relative" suppressHydrationWarning>
+                          <Avatar className="h-10 w-10">
+                            <AvatarFallback>
+                              {user.first_name[0]}{user.last_name[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          {user.last_seen_at && new Date(user.last_seen_at).getTime() > Date.now() - 5 * 60 * 1000 && (
+                            <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-green-500 border-2 border-background" />
+                          )}
+                        </div>
                         <div>
                           <div className="font-medium flex items-center gap-2">
                             {user.first_name} {user.last_name}
@@ -234,25 +259,129 @@ export function UsersClient({ initialUsers, growthData }: UsersClientProps) {
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={getRoleBadgeVariant(user.role)} className="capitalize">
-                        {user.role}
+                      <Badge
+                        variant={getRoleBadgeVariant(user.role)}
+                        className={`capitalize ${getRoleBadgeClass(user.role)}`}
+                      >
+                        {user.role === 'pending' ? 'Not onboarded' : user.role}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-center">
                       {user.active ? (
-                        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                        <Badge variant="outline" className="rounded-full bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-400 dark:border-green-800">
                           Active
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                        <Badge variant="outline" className="rounded-full bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800">
                           Inactive
                         </Badge>
                       )}
                     </TableCell>
+                    {/* Privacy Policy Consent */}
+                    <TableCell className="text-center">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            {(() => {
+                              const privacy = user.legalConsents?.find(c => c.documentType === 'privacy_policy')
+                              if (!privacy) {
+                                return (
+                                  <Badge variant="outline" className="rounded-full bg-gray-50 text-gray-500 border-gray-200 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-700">
+                                    <X className="h-3 w-3 mr-1" />
+                                    None
+                                  </Badge>
+                                )
+                              }
+                              if (privacy.hasConsent) {
+                                return (
+                                  <Badge variant="outline" className="rounded-full bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-400 dark:border-green-800">
+                                    <Check className="h-3 w-3 mr-1" />
+                                    v{privacy.consentedVersion}
+                                  </Badge>
+                                )
+                              }
+                              if (privacy.consentedVersion) {
+                                return (
+                                  <Badge variant="outline" className="rounded-full bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800">
+                                    <AlertTriangle className="h-3 w-3 mr-1" />
+                                    v{privacy.consentedVersion}
+                                  </Badge>
+                                )
+                              }
+                              return (
+                                <Badge variant="outline" className="rounded-full bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800">
+                                  <X className="h-3 w-3 mr-1" />
+                                  None
+                                </Badge>
+                              )
+                            })()}
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {(() => {
+                              const privacy = user.legalConsents?.find(c => c.documentType === 'privacy_policy')
+                              if (!privacy || !privacy.consentedVersion) return 'No consent recorded'
+                              if (privacy.hasConsent) return `Accepted v${privacy.consentedVersion} (current)`
+                              return `Accepted v${privacy.consentedVersion}, current is v${privacy.currentVersion}`
+                            })()}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </TableCell>
+                    {/* Terms of Service Consent */}
+                    <TableCell className="text-center">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            {(() => {
+                              const terms = user.legalConsents?.find(c => c.documentType === 'terms_of_service')
+                              if (!terms) {
+                                return (
+                                  <Badge variant="outline" className="rounded-full bg-gray-50 text-gray-500 border-gray-200 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-700">
+                                    <X className="h-3 w-3 mr-1" />
+                                    None
+                                  </Badge>
+                                )
+                              }
+                              if (terms.hasConsent) {
+                                return (
+                                  <Badge variant="outline" className="rounded-full bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-400 dark:border-green-800">
+                                    <Check className="h-3 w-3 mr-1" />
+                                    v{terms.consentedVersion}
+                                  </Badge>
+                                )
+                              }
+                              if (terms.consentedVersion) {
+                                return (
+                                  <Badge variant="outline" className="rounded-full bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800">
+                                    <AlertTriangle className="h-3 w-3 mr-1" />
+                                    v{terms.consentedVersion}
+                                  </Badge>
+                                )
+                              }
+                              return (
+                                <Badge variant="outline" className="rounded-full bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-800">
+                                  <X className="h-3 w-3 mr-1" />
+                                  None
+                                </Badge>
+                              )
+                            })()}
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {(() => {
+                              const terms = user.legalConsents?.find(c => c.documentType === 'terms_of_service')
+                              if (!terms || !terms.consentedVersion) return 'No consent recorded'
+                              if (terms.hasConsent) return `Accepted v${terms.consentedVersion} (current)`
+                              return `Accepted v${terms.consentedVersion}, current is v${terms.currentVersion}`
+                            })()}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Calendar className="h-3 w-3" />
-                        {format(new Date(user.created_at), 'MMM d, yyyy')}
+                      <div className="text-sm text-muted-foreground" suppressHydrationWarning>
+                        {user.last_seen_at
+                          ? formatDistanceToNow(new Date(user.last_seen_at), { addSuffix: true })
+                          : 'Never'}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">
@@ -276,7 +405,7 @@ export function UsersClient({ initialUsers, growthData }: UsersClientProps) {
 
       {/* User Details Dialog */}
       <Dialog open={!!selectedUser} onOpenChange={(open) => !open && setSelectedUser(null)}>
-        <DialogContent className="sm:max-w-xl max-h-[90vh] p-0 gap-0 overflow-hidden">
+        <DialogContent className="sm:max-w-xl max-h-[90vh] p-0 gap-0 overflow-hidden !border !border-black dark:!border-white">
           <VisuallyHidden>
             <DialogTitle>User Details</DialogTitle>
           </VisuallyHidden>

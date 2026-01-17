@@ -64,21 +64,21 @@ export function TaskActivityTab({
             onKeyDown={handleKeyDown}
             placeholder="Add a comment... (⌘+Enter to send)"
             rows={2}
-            className="resize-none"
+            className="resize-none !border-black/20 dark:!border-white/20"
           />
           <div className="flex justify-end">
             <Button
               size="sm"
               onClick={handleSubmitComment}
               disabled={!newComment.trim() || isSubmitting}
-              className="bg-brand hover:bg-brand/90 ring-2 ring-brand ring-offset-2"
+              className="!bg-brand hover:!bg-brand/90 !text-black !border !border-black/20 dark:!border-white/20"
             >
               <Send className="h-4 w-4 mr-1" />
               {isSubmitting ? 'Sending...' : 'Comment'}
             </Button>
           </div>
         </div>
-        <div className="border-b -mx-6" />
+        <div className="border-b border-black/20 dark:border-white/20 -mx-6" />
 
         {isLoadingComments ? (
           <div className="text-center py-4 text-muted-foreground text-sm">

@@ -11,6 +11,35 @@ import {
   Cell,
 } from 'recharts'
 
+// Custom tooltip component with proper dark mode support
+interface CustomTooltipProps {
+  active?: boolean
+  payload?: Array<{
+    payload?: { name?: string }
+    value?: number
+  }>
+  tooltipLabel: string
+}
+
+function CustomTooltip({
+  active,
+  payload,
+  tooltipLabel
+}: CustomTooltipProps) {
+  if (!active || !payload || payload.length === 0) return null
+
+  return (
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-md px-3 py-2 shadow-md">
+      <p className="text-sm">
+        <span className="text-foreground">{payload[0]?.payload?.name}</span>
+      </p>
+      <p className="text-sm text-muted-foreground">
+        {tooltipLabel}: {payload[0]?.value ?? 0}
+      </p>
+    </div>
+  )
+}
+
 const CHART_COLORS = [
   '#f49f1e', // brand
   '#3b82f6', // blue
@@ -73,13 +102,7 @@ export function BarChart({
               tickLine={false}
             />
             <Tooltip
-              formatter={(value) => [value ?? 0, tooltipLabel]}
-              contentStyle={{
-                backgroundColor: 'white',
-                border: '1px solid black',
-                borderRadius: '6px',
-                padding: '8px 12px',
-              }}
+              content={<CustomTooltip tooltipLabel={tooltipLabel} />}
             />
             <Bar dataKey="value" radius={[0, 8, 8, 0]}>
               {data.map((_, index) => (
@@ -105,12 +128,7 @@ export function BarChart({
           />
           <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
           <Tooltip
-            formatter={(value) => [value ?? 0, tooltipLabel]}
-            contentStyle={{
-              backgroundColor: 'hsl(var(--background))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: '6px',
-            }}
+            content={<CustomTooltip tooltipLabel={tooltipLabel} />}
           />
           <Bar dataKey="value" radius={[8, 8, 0, 0]}>
             {data.map((_, index) => (
