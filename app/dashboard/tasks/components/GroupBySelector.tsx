@@ -34,7 +34,7 @@ export function GroupBySelector({ value, onChange }: GroupBySelectorProps) {
         <Button
           variant="outline"
           size="sm"
-          className={`gap-1.5 w-full sm:w-auto justify-center !border !border-black dark:!border-zinc-700 ${hasGrouping ? '!border-brand text-brand' : ''}`}
+          className={`gap-1.5 w-full sm:w-auto justify-center !border !border-black/20 dark:!border-white/20 ${hasGrouping ? '!border-brand text-brand' : ''}`}
         >
           <Layers className={isMobile ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
           {hasGrouping ? (

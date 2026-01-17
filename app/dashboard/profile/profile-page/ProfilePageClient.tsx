@@ -14,10 +14,9 @@ import { NotificationSettingsCard } from './NotificationSettingsCard'
 import { LanguageSettingsCard } from './LanguageSettingsCard'
 import { AppearanceSettingsCard } from './AppearanceSettingsCard'
 import { AccountSettingsCard } from './AccountSettingsCard'
-import { PrivacySettingsCard } from './PrivacySettingsCard'
 import { isLeaderOrAbove } from '@/lib/permissions'
 
-type TabKey = 'personal' | 'password' | 'notifications' | 'preferences' | 'privacy' | 'account'
+type TabKey = 'personal' | 'password' | 'notifications' | 'preferences' | 'account'
 
 interface TabItem {
   key: TabKey
@@ -45,7 +44,6 @@ export function ProfilePageClient() {
     { key: 'password', labelKey: 'tabs.password', descriptionKey: 'tabDescriptions.password', show: true },
     { key: 'notifications', labelKey: 'tabs.notifications', descriptionKey: 'tabDescriptions.notifications', show: showNotificationSettings },
     { key: 'preferences', labelKey: 'tabs.preferences', descriptionKey: 'tabDescriptions.preferences', show: true },
-    { key: 'privacy', labelKey: 'tabs.privacy', descriptionKey: 'tabDescriptions.privacy', show: true },
     { key: 'account', labelKey: 'tabs.account', descriptionKey: 'tabDescriptions.account', show: true },
   ]
 
@@ -143,8 +141,6 @@ export function ProfilePageClient() {
             <AppearanceSettingsCard currentTheme={state.theme} />
           </div>
         )
-      case 'privacy':
-        return <PrivacySettingsCard />
       case 'account':
         return <AccountSettingsCard churchName={state.churchName} />
       default:
@@ -333,10 +329,6 @@ export function ProfilePageClient() {
                   <div className="border-t border-black/20 dark:border-white/20" />
                   <AppearanceSettingsCard currentTheme={state.theme} />
                 </div>
-              )}
-
-              {activeTab === 'privacy' && (
-                <PrivacySettingsCard />
               )}
 
               {activeTab === 'account' && (

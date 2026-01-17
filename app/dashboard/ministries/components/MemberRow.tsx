@@ -90,7 +90,7 @@ export const MemberRow = memo(function MemberRow({
                       id={`member-role-${member.id}-${role.id}`}
                       checked={selectedRoleIds.includes(role.id)}
                       onCheckedChange={() => handleRoleToggle(role.id)}
-                      className="border-black/20 dark:border-white/20"
+                      className="border-black/20 dark:border-white/20 focus-visible:ring-0 focus-visible:ring-offset-0"
                     />
                     <label
                       htmlFor={`member-role-${member.id}-${role.id}`}
@@ -105,7 +105,7 @@ export const MemberRow = memo(function MemberRow({
                 <Button variant="ghost" size="sm" onClick={handleCancel} className="rounded-full">
                   {t('actions.cancel')}
                 </Button>
-                <Button size="sm" onClick={handleSave} className="!bg-brand hover:!bg-brand/90 !text-black">
+                <Button size="sm" onClick={handleSave} className="!bg-brand hover:!bg-brand/90 !text-white dark:!text-black">
                   {t('actions.save')}
                 </Button>
               </div>

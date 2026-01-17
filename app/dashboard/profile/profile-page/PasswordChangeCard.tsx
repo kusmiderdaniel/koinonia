@@ -55,7 +55,7 @@ export function PasswordChangeCard({
 }: PasswordChangeCardProps) {
   const t = useTranslations('profile.password')
   return (
-    <Card>
+    <Card className="border-0 shadow-none !ring-0">
       <CardHeader>
         <CardTitle>{t('title')}</CardTitle>
         <CardDescription>{t('description')}</CardDescription>

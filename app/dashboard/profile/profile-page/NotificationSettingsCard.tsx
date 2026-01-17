@@ -122,7 +122,7 @@ export function NotificationSettingsCard({
   }
 
   return (
-    <Card>
+    <Card className="border-0 shadow-none !ring-0">
       <CardHeader>
         <CardTitle>{t('title')}</CardTitle>
         <CardDescription>

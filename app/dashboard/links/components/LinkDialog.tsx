@@ -121,7 +121,7 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder={t('linkDialog.titlePlaceholder')}
-              className="!border !border-black dark:!border-zinc-700"
+              className="!border !border-black/20 dark:!border-white/20"
             />
           </div>
 
@@ -134,7 +134,7 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder={t('linkDialog.urlPlaceholder')}
-              className="!border !border-black dark:!border-zinc-700"
+              className="!border !border-black/20 dark:!border-white/20"
             />
           </div>
 
@@ -147,7 +147,7 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
               onChange={(e) => setDescription(e.target.value)}
               placeholder={t('linkDialog.descriptionPlaceholder')}
               rows={2}
-              className="!border !border-black dark:!border-zinc-700"
+              className="!border !border-black/20 dark:!border-white/20"
             />
           </div>
 
@@ -155,10 +155,10 @@ export function LinkDialog({ open, onOpenChange, link, onSave }: LinkDialogProps
           <div className="space-y-2">
             <Label>{t('linkDialog.visibilityLabel')}</Label>
             <Select value={visibility} onValueChange={(v) => setVisibility(v as LinkVisibility)}>
-              <SelectTrigger className="!border !border-black dark:!border-zinc-700">
+              <SelectTrigger className="!border !border-black/20 dark:!border-white/20">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="border border-black dark:border-zinc-700">
+              <SelectContent className="border border-black/20 dark:border-white/20">
                 {VISIBILITY_OPTIONS.map((value) => (
                   <SelectItem key={value} value={value}>
                     <span className="font-medium">{t(`visibility.${value}.label`)}</span>

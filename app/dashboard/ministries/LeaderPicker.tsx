@@ -28,12 +28,21 @@ interface Ministry {
   leader_id: string | null
 }
 
+interface LeaderPickerTranslations {
+  title: string
+  searchPlaceholder: string
+  noLeadersFound: string
+  change: string
+  leads: string
+}
+
 interface LeaderPickerProps {
   selectedLeaderId: string
   onSelect: (leaderId: string) => void
   leaders: Leader[]
   ministries: Ministry[]
   currentMinistryId?: string
+  translations: LeaderPickerTranslations
 }
 
 export const LeaderPicker = memo(function LeaderPicker({
@@ -42,6 +51,7 @@ export const LeaderPicker = memo(function LeaderPicker({
   leaders,
   ministries,
   currentMinistryId,
+  translations,
 }: LeaderPickerProps) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
@@ -89,7 +99,7 @@ export const LeaderPicker = memo(function LeaderPicker({
             onClick={() => setOpen(true)}
             className="shrink-0 !border !border-black/20 dark:!border-white/20"
           >
-            Change
+            {translations.change}
           </Button>
         </div>
       ) : (
@@ -100,20 +110,20 @@ export const LeaderPicker = memo(function LeaderPicker({
           className="w-full justify-start text-muted-foreground !border !border-black/20 dark:!border-white/20"
         >
           <User className="w-4 h-4 mr-2" />
-          Choose a Leader
+          {translations.title}
         </Button>
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md !border !border-black dark:!border-white" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader>
-            <DialogTitle>Choose a Leader</DialogTitle>
+            <DialogTitle>{translations.title}</DialogTitle>
           </DialogHeader>
 
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name..."
+              placeholder={translations.searchPlaceholder}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 !border !border-black/20 dark:!border-white/20"
@@ -123,7 +133,7 @@ export const LeaderPicker = memo(function LeaderPicker({
           <div className="max-h-[300px] overflow-y-auto -mx-4 px-4">
             {eligibleLeaders.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-4">
-                No leaders found
+                {translations.noLeadersFound}
               </p>
             ) : (
               <div className="space-y-1">
@@ -145,7 +155,7 @@ export const LeaderPicker = memo(function LeaderPicker({
                       </div>
                       {leaderMinistries.length > 0 && (
                         <div className="text-xs text-muted-foreground mt-0.5">
-                          Leads: {leaderMinistries.map((m) => m.name).join(', ')}
+                          {translations.leads} {leaderMinistries.map((m) => m.name).join(', ')}
                         </div>
                       )}
                     </button>

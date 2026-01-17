@@ -249,7 +249,11 @@ interface StatCardProps {
 
 const StatCard = memo(function StatCard({ title, value, icon: Icon, highlight }: StatCardProps) {
   return (
-    <Card className={`border p-4 py-5 flex flex-col justify-between min-h-[100px] ${highlight ? 'border-brand bg-brand/5' : 'border-zinc-200 dark:border-zinc-700'}`}>
+    <Card
+      tabIndex={-1}
+      style={{ outline: 'none' }}
+      className={`border p-4 py-5 flex flex-col justify-between min-h-[100px] !outline-none !ring-0 focus:!outline-none focus:!ring-0 focus-visible:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 ${highlight ? 'border-brand bg-brand/5' : 'border-zinc-200 dark:border-zinc-700'}`}
+    >
       <div className="flex items-center justify-between">
         <span className={`text-sm font-medium ${highlight ? 'text-brand' : 'text-muted-foreground'}`}>{title}</span>
         <Icon className={`h-4 w-4 ${highlight ? 'text-brand' : 'text-muted-foreground'}`} />

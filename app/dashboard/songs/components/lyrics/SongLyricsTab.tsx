@@ -204,7 +204,7 @@ export function SongLyricsTab({ song, canManage, onSongUpdated }: SongLyricsTabP
                   {t('lyrics.importLyrics')}
                 </Button>
                 <Button
-                  className="!bg-brand hover:!bg-brand/90 !text-black !border-0"
+                  className="!bg-brand hover:!bg-brand/90 !text-white dark:!text-black !border-0"
                   onClick={() => setIsCreateDialogOpen(true)}
                 >
                   <Plus className="w-4 h-4 mr-2" />

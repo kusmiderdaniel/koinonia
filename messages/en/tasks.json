@@ -197,5 +197,54 @@
   "pagination": {
     "showing": "Showing {start} - {end} of {total}",
     "rowsPerPage": "Rows per page"
+  },
+
+  "details": {
+    "tabs": {
+      "details": "Details",
+      "activity": "Activity"
+    },
+    "activity": {
+      "placeholder": "Add a comment... (⌘+Enter to send)",
+      "comment": "Comment",
+      "sending": "Sending...",
+      "loading": "Loading activity...",
+      "noActivity": "No activity yet",
+      "unknown": "Unknown",
+      "messages": {
+        "created": "Task created",
+        "completed": "Task marked as completed",
+        "reopened": "Task reopened",
+        "assigned": "Task assigned",
+        "assigneeRemoved": "Assignee removed",
+        "statusChanged": "Status changed from {oldValue} to {newValue}",
+        "priorityChanged": "Priority changed from {oldValue} to {newValue}",
+        "dueDateChanged": "Due date changed",
+        "updated": "Task updated"
+      }
+    },
+    "labels": {
+      "status": "Status",
+      "priority": "Priority",
+      "ministry": "Ministry",
+      "campus": "Campus",
+      "assignedTo": "Assigned to",
+      "dueDate": "Due date",
+      "linkedEvent": "Linked event",
+      "description": "Description"
+    },
+    "values": {
+      "none": "None",
+      "noMinistry": "No ministry",
+      "noCampus": "No campus",
+      "noEvent": "No event",
+      "unassigned": "Unassigned"
+    },
+    "placeholder": {
+      "addDescription": "Add a description...",
+      "noDueDate": "None"
+    },
+    "createdBy": "Created by {name} {time}",
+    "createdAt": "Created {time}"
   }
 }

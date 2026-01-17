@@ -26,7 +26,7 @@ export function FieldSummaryCard({ summary }: FieldSummaryCardProps) {
           {summary.responseCount} {t('analytics.responses')}
         </span>
       </div>
-      <Card className="border border-black/20 dark:border-white/20">
+      <Card className="border border-black/20 dark:border-white/20 !ring-0">
         <CardContent className="pt-4">
           {summary.data.type === 'select' && (
             <BarChart

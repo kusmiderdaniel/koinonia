@@ -146,7 +146,7 @@ export function AnalyticsDashboard({ formId }: AnalyticsDashboardProps) {
       {analytics.timeline.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-base font-medium">{t('analytics.activityOverTime')}</h3>
-          <Card className="border border-black/20 dark:border-white/20">
+          <Card className="border border-black/20 dark:border-white/20 !ring-0">
             <CardContent className="pt-4">
               <LineChart
                 data={analytics.timeline}
@@ -168,7 +168,7 @@ export function AnalyticsDashboard({ formId }: AnalyticsDashboardProps) {
         analytics.deviceBreakdown.tablet > 0) && (
         <div className="space-y-2">
           <h3 className="text-base font-medium">{t('analytics.deviceBreakdown')}</h3>
-          <Card className="border border-black/20 dark:border-white/20">
+          <Card className="border border-black/20 dark:border-white/20 !ring-0">
             <CardContent className="pt-4">
               <PieChart data={deviceData} tooltipLabel={t('analytics.responses')} />
             </CardContent>

@@ -43,7 +43,7 @@ export const InviteMembersTab = memo(function InviteMembersTab({
   }
 
   return (
-    <Card className="w-full md:min-w-[28rem]">
+    <Card className="w-full md:min-w-[28rem] border-0 shadow-none !ring-0">
       <CardHeader className="p-4 md:p-6">
         <CardTitle className="text-lg md:text-xl">{t('title')}</CardTitle>
         <CardDescription className="text-sm">
@@ -51,7 +51,7 @@ export const InviteMembersTab = memo(function InviteMembersTab({
         </CardDescription>
       </CardHeader>
       <CardContent className="p-4 md:p-6 pt-0 md:pt-0">
-        <div className="border border-black dark:border-zinc-700 rounded-lg p-3 md:p-4 space-y-3 md:space-y-4">
+        <div className="border border-black/20 dark:border-white/20 rounded-lg p-3 md:p-4 space-y-3 md:space-y-4">
           <div className="text-sm font-medium">{t('joinCodeLabel')}</div>
 
           {/* Join code display */}
@@ -96,7 +96,7 @@ export const InviteMembersTab = memo(function InviteMembersTab({
                     <AlertDialogCancel className="rounded-full !border-0">{t('regenerateDialog.cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleRegenerate}
-                      className="!rounded-full !bg-brand hover:!bg-brand/90 !text-black"
+                      className="!rounded-full !bg-brand hover:!bg-brand/90 !text-white dark:!text-black"
                     >
                       {t('regenerateDialog.confirm')}
                     </AlertDialogAction>

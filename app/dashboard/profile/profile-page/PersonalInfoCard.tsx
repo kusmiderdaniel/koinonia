@@ -1,7 +1,8 @@
 'use client'
 
 import { UseFormReturn } from 'react-hook-form'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { enUS, pl } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -21,6 +22,11 @@ import {
 } from '@/components/ui/select'
 import { DatePicker } from '@/components/ui/date-picker'
 import type { ProfileInput } from './types'
+
+const localeMap = {
+  en: enUS,
+  pl: pl,
+} as const
 
 interface PersonalInfoCardProps {
   form: UseFormReturn<ProfileInput>
@@ -46,6 +52,8 @@ export function PersonalInfoCard({
   onSexChange,
 }: PersonalInfoCardProps) {
   const t = useTranslations('profile.personalInfo')
+  const locale = useLocale()
+  const dateLocale = localeMap[locale as keyof typeof localeMap] || enUS
   const {
     register,
     handleSubmit,
@@ -53,7 +61,7 @@ export function PersonalInfoCard({
   } = form
 
   return (
-    <Card>
+    <Card className="border-0 shadow-none !ring-0">
       <CardHeader>
         <CardTitle>{t('title')}</CardTitle>
         <CardDescription>{t('description')}</CardDescription>
@@ -125,6 +133,7 @@ export function PersonalInfoCard({
                 placeholder={t('dateOfBirthPlaceholder')}
                 disabled={isLoading}
                 weekStartsOn={firstDayOfWeek}
+                locale={dateLocale}
               />
             </div>
 

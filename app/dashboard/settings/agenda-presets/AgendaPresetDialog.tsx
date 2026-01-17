@@ -242,7 +242,7 @@ export function AgendaPresetDialog({
             <Button
               type="submit"
               disabled={isLoading || !title.trim()}
-              className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-black !px-4 !py-2 disabled:!opacity-50"
+              className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-white dark:!text-black !px-4 !py-2 disabled:!opacity-50"
             >
               {isLoading ? t('saving') : isEditing ? t('saveChanges') : t('createButton')}
             </Button>

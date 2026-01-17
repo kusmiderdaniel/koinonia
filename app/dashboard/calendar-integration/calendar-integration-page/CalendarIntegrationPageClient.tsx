@@ -55,7 +55,7 @@ export function CalendarIntegrationPageClient() {
 
         <div className="flex-1 min-h-0 overflow-auto">
           <Tabs defaultValue="google" className="w-full">
-            <TabsList className="mb-4 border bg-transparent p-1">
+            <TabsList className="mb-4 border border-black dark:border-white bg-transparent p-1">
               <TabsTrigger
                 value="google"
                 className="data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground"

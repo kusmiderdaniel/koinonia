@@ -252,7 +252,15 @@
     "showByDefaultHint": "When enabled, this field will be visible in the table for all users.",
     "saving": "Saving...",
     "saveChanges": "Save Changes",
-    "createField": "Create Field"
+    "createField": "Create Field",
+    "fieldTypes": {
+      "text": "Text",
+      "date": "Date",
+      "select": "Single Select",
+      "multiselect": "Multi-select",
+      "checkbox": "Checkbox",
+      "number": "Number"
+    }
   },
   "export": {
     "button": "Export",

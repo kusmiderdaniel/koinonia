@@ -192,7 +192,7 @@ export function OfflineMemberDialog({ trigger, weekStartsOn = 0 }: OfflineMember
             <Button type="button" variant="ghost" className="rounded-full" onClick={() => setOpen(false)}>
               {t('actions.cancel')}
             </Button>
-            <Button type="submit" disabled={loading} className="!bg-brand hover:!bg-brand/90 !text-black !border !border-brand">
+            <Button type="submit" disabled={loading} className="!bg-brand hover:!bg-brand/90 !text-white dark:!text-black !border !border-brand">
               {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               {t('addMember')}
             </Button>

@@ -1,12 +1,18 @@
 'use client'
 
 import { memo } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { enUS, pl } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Calendar } from '@/components/ui/calendar'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { formatDateShort } from '../types'
+
+const localeMap = {
+  en: enUS,
+  pl: pl,
+} as const
 
 export interface CalendarSectionProps {
   calendarMonth: Date
@@ -40,12 +46,14 @@ export const CalendarSection = memo(function CalendarSection({
   onAddSingleDay,
 }: CalendarSectionProps) {
   const t = useTranslations('availability')
-  // Format month name
-  const monthName = calendarMonth.toLocaleString('default', { month: 'long', year: 'numeric' })
+  const locale = useLocale()
+  const dateLocale = localeMap[locale as keyof typeof localeMap] || enUS
+  // Format month name using locale
+  const monthName = calendarMonth.toLocaleString(locale, { month: 'long', year: 'numeric' })
 
   return (
     <div className="w-full">
-      <Card className="w-full">
+      <Card className="w-full border border-black dark:border-white !ring-0">
         <CardContent className="p-3 md:p-4">
           {/* Month navigation - above calendar */}
           <div className="flex items-center justify-between mb-3">
@@ -80,6 +88,7 @@ export const CalendarSection = memo(function CalendarSection({
             disabled={disabledDays}
             hideNavigation
             weekStartsOn={firstDayOfWeek}
+            locale={dateLocale}
             modifiers={{
               unavailable: unavailableDates,
               selectedStart: selectedStart ? [selectedStart] : [],

@@ -130,7 +130,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
   }
 
   return (
-    <Card className="w-full md:min-w-[28rem]">
+    <Card className="w-full md:min-w-[28rem] border-0 shadow-none !ring-0">
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="p-3 md:p-6">
           <div className="space-y-4">
@@ -332,7 +332,7 @@ export const ChurchDetailsTab = memo(function ChurchDetailsTab({
 
           {isAdmin && (
             <div className="flex justify-end pt-2">
-              <Button type="submit" disabled={isLoading} className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-black">
+              <Button type="submit" disabled={isLoading} className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-white dark:!text-black">
                 {isLoading ? t('saving') : t('saveChanges')}
               </Button>
             </div>

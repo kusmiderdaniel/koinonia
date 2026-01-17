@@ -240,7 +240,7 @@ export function InteractiveChart({
       </div>
 
       {/* Chart */}
-      <Card className="border border-black/20 dark:border-white/20">
+      <Card className="border border-black/20 dark:border-white/20 !ring-0">
         <CardContent className="pt-4">
           {loading ? (
             <div className="flex items-center justify-center h-[300px]">

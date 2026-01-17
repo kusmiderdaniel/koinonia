@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import {
@@ -27,6 +27,8 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, LogOut, Trash2, AlertTriangle } from 'lucide-react'
 import { leaveChurch, deleteAccount } from '../actions'
+import { getConsentHistory } from '@/lib/legal/actions'
+import { ActiveConsentsCard, ConsentHistoryCard, type ConsentRecord } from './privacy'
 
 interface AccountSettingsCardProps {
   churchName: string
@@ -35,6 +37,27 @@ interface AccountSettingsCardProps {
 export function AccountSettingsCard({ churchName }: AccountSettingsCardProps) {
   const t = useTranslations('profile.account')
   const router = useRouter()
+
+  // Consents state
+  const [consents, setConsents] = useState<ConsentRecord[]>([])
+  const [isLoadingConsents, setIsLoadingConsents] = useState(true)
+
+  // Load consent history on mount
+  useEffect(() => {
+    async function loadConsents() {
+      try {
+        const result = await getConsentHistory()
+        if (result.consents) {
+          setConsents(result.consents)
+        }
+      } catch (error) {
+        console.error('Failed to load consents:', error)
+      } finally {
+        setIsLoadingConsents(false)
+      }
+    }
+    loadConsents()
+  }, [])
 
   // Leave church state
   const [showLeaveDialog, setShowLeaveDialog] = useState(false)
@@ -110,12 +133,18 @@ export function AccountSettingsCard({ churchName }: AccountSettingsCardProps) {
 
   return (
     <>
-      <Card>
+      <Card className="border-0 shadow-none !ring-0">
         <CardHeader>
           <CardTitle>{t('title')}</CardTitle>
           <CardDescription>{t('description')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Consents Section */}
+          <ActiveConsentsCard consents={consents} isLoading={isLoadingConsents} />
+          <ConsentHistoryCard consents={consents} />
+
+          <div className="border-t border-black/20 dark:border-white/20" />
+
           {/* Leave Church Section */}
           <div className="border border-black/20 dark:border-white/20 rounded-lg p-4 space-y-3">
             <div className="flex items-start gap-3">

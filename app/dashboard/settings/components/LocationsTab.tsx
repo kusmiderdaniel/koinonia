@@ -45,7 +45,7 @@ export const LocationsTab = memo(function LocationsTab({
 
   return (
     <>
-      <Card className="w-full md:min-w-[28rem]">
+      <Card className="w-full md:min-w-[28rem] border-0 shadow-none !ring-0">
         <CardHeader className="p-4 md:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-6">
             <div>
@@ -54,7 +54,7 @@ export const LocationsTab = memo(function LocationsTab({
                 {t('description')}
               </CardDescription>
             </div>
-            <Button onClick={() => locationManager.openLocationDialog(undefined, defaultCampus?.id)} className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-black shrink-0 w-full sm:w-auto">
+            <Button onClick={() => locationManager.openLocationDialog(undefined, defaultCampus?.id)} className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-white dark:!text-black shrink-0 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               {t('addLocation')}
             </Button>
@@ -177,7 +177,7 @@ export const LocationsTab = memo(function LocationsTab({
                 locationManager.handleSaveLocation(locations, setLocations, setError, setSuccess)
               }
               disabled={locationManager.isSavingLocation || !locationManager.locationName.trim()}
-              className="rounded-full !border !border-brand !bg-brand hover:!bg-brand/90 !text-black px-4 py-2 disabled:!opacity-50"
+              className="rounded-full !border !border-brand !bg-brand hover:!bg-brand/90 !text-white dark:!text-black px-4 py-2 disabled:!opacity-50"
             >
               {locationManager.isSavingLocation
                 ? t('dialog.saving')
@@ -207,7 +207,7 @@ export const LocationsTab = memo(function LocationsTab({
               onClick={() =>
                 locationManager.handleDeleteLocation(locations, setLocations, setError, setSuccess)
               }
-              className="!rounded-lg !border !border-red-600 !bg-red-600 hover:!bg-red-700 !text-black !px-4 !py-2"
+              className="!rounded-lg !border !border-red-600 !bg-red-600 hover:!bg-red-700 !text-white !px-4 !py-2"
             >
               {t('deleteDialog.confirm')}
             </AlertDialogAction>

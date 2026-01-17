@@ -182,7 +182,7 @@ export function LinksPageClient({
             <TabsContent value="links" className="flex-1 min-h-0 mt-0">
               <div className="flex gap-4 h-full">
                 {/* Links List - 70% */}
-                <div className="w-[70%] overflow-auto border border-black dark:border-zinc-600 rounded-lg p-4">
+                <div className="w-[70%] overflow-auto border border-black dark:border-white rounded-lg p-4">
                   <LinksListPanel
                     links={links}
                     setLinks={setLinks}
@@ -203,7 +203,7 @@ export function LinksPageClient({
             </TabsContent>
 
             <TabsContent value="settings" className="flex-1 min-h-0 mt-0 overflow-auto">
-              <div className="border border-black dark:border-zinc-600 rounded-lg p-4 max-w-2xl">
+              <div className="border border-black dark:border-white rounded-lg p-4 max-w-2xl">
                 <SettingsPanel
                   settings={settings}
                   setSettings={setSettings}
@@ -214,7 +214,7 @@ export function LinksPageClient({
             </TabsContent>
 
             <TabsContent value="analytics" className="flex-1 min-h-0 mt-0 overflow-auto">
-              <div className="border border-black dark:border-zinc-600 rounded-lg p-4">
+              <div className="border border-black dark:border-white rounded-lg p-4">
                 <AnalyticsTab
                   analytics={initialAnalytics}
                   links={links}

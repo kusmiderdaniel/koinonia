@@ -127,7 +127,7 @@ export function ImportLyricsDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className={`max-h-[90vh] flex flex-col !border !border-black dark:!border-white ${isMobile ? 'w-[95vw] max-w-[95vw] p-4' : 'sm:max-w-2xl'}`}>
+      <DialogContent className={`max-h-[90vh] flex flex-col !border !border-black dark:!border-white ${isMobile ? 'w-[95vw] max-w-[95vw] p-4' : 'sm:max-w-3xl'}`}>
         <DialogHeader className={isMobile ? 'pb-2' : ''}>
           <DialogTitle className={`flex items-center gap-2 ${isMobile ? 'text-base' : ''}`}>
             <FileText className={isMobile ? 'w-4 h-4' : 'w-5 h-5'} />
@@ -273,7 +273,7 @@ Was blind but now I see`}
           </Button>
           <Button
             size="sm"
-            className={`!bg-brand hover:!bg-brand/90 !text-black !border-0 ${isMobile ? 'text-xs h-8' : ''}`}
+            className={`!bg-brand hover:!bg-brand/90 !text-white dark:!text-black !border-0 ${isMobile ? 'text-xs h-8' : ''}`}
             onClick={handleSubmit}
             disabled={isSubmitting || parsedSections.length === 0}
           >

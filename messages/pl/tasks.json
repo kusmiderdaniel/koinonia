@@ -197,5 +197,54 @@
   "pagination": {
     "showing": "Wyświetlanie {start} - {end} z {total}",
     "rowsPerPage": "Wierszy na stronę"
+  },
+
+  "details": {
+    "tabs": {
+      "details": "Szczegóły",
+      "activity": "Aktywność"
+    },
+    "activity": {
+      "placeholder": "Dodaj komentarz... (⌘+Enter aby wysłać)",
+      "comment": "Komentarz",
+      "sending": "Wysyłanie...",
+      "loading": "Ładowanie aktywności...",
+      "noActivity": "Brak aktywności",
+      "unknown": "Nieznany",
+      "messages": {
+        "created": "Zadanie utworzone",
+        "completed": "Zadanie oznaczone jako ukończone",
+        "reopened": "Zadanie wznowione",
+        "assigned": "Zadanie przypisane",
+        "assigneeRemoved": "Usunięto przypisanie",
+        "statusChanged": "Zmieniono status z {oldValue} na {newValue}",
+        "priorityChanged": "Zmieniono priorytet z {oldValue} na {newValue}",
+        "dueDateChanged": "Zmieniono termin",
+        "updated": "Zadanie zaktualizowane"
+      }
+    },
+    "labels": {
+      "status": "Status",
+      "priority": "Priorytet",
+      "ministry": "Posługa",
+      "campus": "Kampus",
+      "assignedTo": "Przypisany do",
+      "dueDate": "Termin",
+      "linkedEvent": "Powiązane wydarzenie",
+      "description": "Opis"
+    },
+    "values": {
+      "none": "Brak",
+      "noMinistry": "Brak posługi",
+      "noCampus": "Brak kampusu",
+      "noEvent": "Brak wydarzenia",
+      "unassigned": "Nieprzypisane"
+    },
+    "placeholder": {
+      "addDescription": "Dodaj opis...",
+      "noDueDate": "Brak"
+    },
+    "createdBy": "Utworzone przez {name} {time}",
+    "createdAt": "Utworzone {time}"
   }
 }

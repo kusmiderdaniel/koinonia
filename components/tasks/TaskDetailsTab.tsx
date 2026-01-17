@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
@@ -14,6 +15,7 @@ import {
 import { DatePicker } from '@/components/ui/date-picker'
 import { User, CalendarDays } from 'lucide-react'
 import { format, formatDistanceToNow, parseISO } from 'date-fns'
+import { pl, enUS } from 'date-fns/locale'
 import { TaskStatusBadge, TaskPriorityBadge } from '@/app/dashboard/tasks/components/TaskBadges'
 import { MemberPicker } from '@/app/dashboard/tasks/components/MemberPicker'
 import { EventPicker } from '@/app/dashboard/tasks/components/event-picker'
@@ -40,6 +42,9 @@ export function TaskDetailsTab({
   onDescriptionChange,
   handlers,
 }: TaskDetailsTabProps) {
+  const t = useTranslations('tasks.details')
+  const locale = useLocale()
+  const dateLocale = locale === 'pl' ? pl : enUS
   const [showMemberPicker, setShowMemberPicker] = useState(false)
   const [showEventPicker, setShowEventPicker] = useState(false)
 
@@ -54,7 +59,7 @@ export function TaskDetailsTab({
       <div className="grid grid-cols-2 gap-3">
         {/* Status */}
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-muted-foreground">Status</label>
+          <label className="text-xs font-medium text-muted-foreground">{t('labels.status')}</label>
           <Select value={task.status} onValueChange={handlers.handleStatusChange}>
             <SelectTrigger centered className="w-full bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20 h-9">
               <SelectValue>
@@ -80,7 +85,7 @@ export function TaskDetailsTab({
 
         {/* Priority */}
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-muted-foreground">Priority</label>
+          <label className="text-xs font-medium text-muted-foreground">{t('labels.priority')}</label>
           <Select value={task.priority} onValueChange={handlers.handlePriorityChange}>
             <SelectTrigger centered className="w-full bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20 h-9">
               <SelectValue>
@@ -107,7 +112,7 @@ export function TaskDetailsTab({
         {/* Ministry */}
         {canEditMinistry ? (
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Ministry</label>
+            <label className="text-xs font-medium text-muted-foreground">{t('labels.ministry')}</label>
             <Select
               value={task.ministry_id || 'none'}
               onValueChange={(value) => handlers.handleMinistryChange(value === 'none' ? null : value)}
@@ -123,13 +128,13 @@ export function TaskDetailsTab({
                       {task.ministry.name}
                     </Badge>
                   ) : (
-                    <span className="text-muted-foreground text-sm">None</span>
+                    <span className="text-muted-foreground text-sm">{t('values.none')}</span>
                   )}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20">
                 <SelectItem value="none" className="cursor-pointer hover:!bg-gray-50 dark:hover:!bg-zinc-800/50">
-                  <span className="text-muted-foreground">No ministry</span>
+                  <span className="text-muted-foreground">{t('values.noMinistry')}</span>
                 </SelectItem>
                 {ministries.map((ministry) => (
                   <SelectItem
@@ -151,7 +156,7 @@ export function TaskDetailsTab({
           </div>
         ) : task.ministry && (
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Ministry</label>
+            <label className="text-xs font-medium text-muted-foreground">{t('labels.ministry')}</label>
             <div className="flex items-center gap-2 h-9 px-3 border border-black/20 dark:border-white/20 rounded-md bg-muted/30">
               <Badge
                 variant="outline"
@@ -167,7 +172,7 @@ export function TaskDetailsTab({
         {/* Campus */}
         {canEditCampus ? (
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Campus</label>
+            <label className="text-xs font-medium text-muted-foreground">{t('labels.campus')}</label>
             <Select
               value={task.campus_id || 'none'}
               onValueChange={(value) => handlers.handleCampusChange(value === 'none' ? null : value)}
@@ -183,13 +188,13 @@ export function TaskDetailsTab({
                       {task.campus.name}
                     </Badge>
                   ) : (
-                    <span className="text-muted-foreground text-sm">None</span>
+                    <span className="text-muted-foreground text-sm">{t('values.none')}</span>
                   )}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-zinc-950 border border-black/20 dark:border-white/20">
                 <SelectItem value="none" className="cursor-pointer hover:!bg-gray-50 dark:hover:!bg-zinc-800/50">
-                  <span className="text-muted-foreground">No campus</span>
+                  <span className="text-muted-foreground">{t('values.noCampus')}</span>
                 </SelectItem>
                 {campuses.map((campus) => (
                   <SelectItem
@@ -213,7 +218,7 @@ export function TaskDetailsTab({
           </div>
         ) : task.campus && (
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Campus</label>
+            <label className="text-xs font-medium text-muted-foreground">{t('labels.campus')}</label>
             <div className="flex items-center gap-2 h-9 px-3 border border-black/20 dark:border-white/20 rounded-md bg-muted/30">
               <Badge
                 variant="outline"
@@ -229,7 +234,7 @@ export function TaskDetailsTab({
         {/* Assignee */}
         {canEditAssignee ? (
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Assigned to</label>
+            <label className="text-xs font-medium text-muted-foreground">{t('labels.assignedTo')}</label>
             <Button
               variant="outline"
               className="w-full justify-center bg-white dark:bg-zinc-950 !border-[1px] !border-black/20 dark:!border-white/20 rounded-md h-9 px-2 font-normal text-sm"
@@ -238,7 +243,7 @@ export function TaskDetailsTab({
               <User className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
               {task.assignee
                 ? <span className="truncate">{task.assignee.first_name} {task.assignee.last_name}</span>
-                : <span className="text-muted-foreground">None</span>}
+                : <span className="text-muted-foreground">{t('values.none')}</span>}
             </Button>
             <MemberPicker
               open={showMemberPicker}
@@ -250,13 +255,13 @@ export function TaskDetailsTab({
           </div>
         ) : (
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Assigned to</label>
+            <label className="text-xs font-medium text-muted-foreground">{t('labels.assignedTo')}</label>
             <div className="flex items-center gap-2 h-9 px-3 border border-black/20 dark:border-white/20 rounded-md bg-muted/30">
               <User className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm">
                 {task.assignee
                   ? `${task.assignee.first_name} ${task.assignee.last_name}`
-                  : <span className="text-muted-foreground">Unassigned</span>}
+                  : <span className="text-muted-foreground">{t('values.unassigned')}</span>}
               </span>
             </div>
           </div>
@@ -264,11 +269,11 @@ export function TaskDetailsTab({
 
         {/* Due Date - always editable */}
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-muted-foreground">Due date</label>
+          <label className="text-xs font-medium text-muted-foreground">{t('labels.dueDate')}</label>
           <DatePicker
             value={task.due_date ? format(parseISO(task.due_date), 'yyyy-MM-dd') : undefined}
             onChange={(value) => handlers.handleDueDateChange(value ? parseISO(value) : undefined)}
-            placeholder="None"
+            placeholder={t('placeholder.noDueDate')}
             weekStartsOn={weekStartsOn}
             className="h-9 !border-black/20 dark:!border-white/20 text-sm"
           />
@@ -277,7 +282,7 @@ export function TaskDetailsTab({
 
       {/* Event - full width */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-muted-foreground">Linked event</label>
+        <label className="text-sm font-medium text-muted-foreground">{t('labels.linkedEvent')}</label>
         <Button
           variant="outline"
           className="w-full justify-start bg-white dark:bg-zinc-950 !border !border-black/20 dark:!border-white/20 rounded-full h-10 px-3 font-normal"
@@ -285,8 +290,8 @@ export function TaskDetailsTab({
         >
           <CalendarDays className="h-4 w-4 mr-2 text-muted-foreground" />
           {task.event
-            ? <span className="truncate">{task.event.title} <span className="text-muted-foreground">({format(parseISO(task.event.start_time), 'MMM d, yyyy')})</span></span>
-            : <span className="text-muted-foreground">No event</span>}
+            ? <span className="truncate">{task.event.title} <span className="text-muted-foreground">({format(parseISO(task.event.start_time), 'MMM d, yyyy', { locale: dateLocale })})</span></span>
+            : <span className="text-muted-foreground">{t('values.noEvent')}</span>}
         </Button>
         <EventPicker
           open={showEventPicker}
@@ -299,12 +304,12 @@ export function TaskDetailsTab({
 
       {/* Description */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-muted-foreground">Description</label>
+        <label className="text-sm font-medium text-muted-foreground">{t('labels.description')}</label>
         <Textarea
           value={descriptionValue}
           onChange={(e) => onDescriptionChange(e.target.value)}
           onBlur={handlers.handleDescriptionBlur}
-          placeholder="Add a description..."
+          placeholder={t('placeholder.addDescription')}
           rows={3}
           className="resize-none !border-black/20 dark:!border-white/20"
         />
@@ -313,9 +318,14 @@ export function TaskDetailsTab({
       {/* Created info */}
       <div className="border-t border-black/20 dark:border-white/20 -mx-6 mt-4" />
       <div className="pt-4 text-xs text-muted-foreground">
-        Created {task.created_by_profile
-          ? `by ${task.created_by_profile.first_name} ${task.created_by_profile.last_name}`
-          : ''} {formatDistanceToNow(parseISO(task.created_at), { addSuffix: true })}
+        {task.created_by_profile
+          ? t('createdBy', {
+              name: `${task.created_by_profile.first_name} ${task.created_by_profile.last_name}`,
+              time: formatDistanceToNow(parseISO(task.created_at), { addSuffix: true, locale: dateLocale })
+            })
+          : t('createdAt', {
+              time: formatDistanceToNow(parseISO(task.created_at), { addSuffix: true, locale: dateLocale })
+            })}
       </div>
     </div>
   )

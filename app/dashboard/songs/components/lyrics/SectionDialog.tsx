@@ -195,7 +195,7 @@ export function SectionDialog({
             <Button
               type="submit"
               size="sm"
-              className="!bg-brand hover:!bg-brand/90 !text-black !border-0"
+              className="!bg-brand hover:!bg-brand/90 !text-white dark:!text-black !border-0"
               disabled={isSubmitting}
             >
               {isSubmitting

@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Send } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatDistanceToNow, parseISO } from 'date-fns'
+import { pl, enUS } from 'date-fns/locale'
 import { addComment } from '@/app/dashboard/tasks/actions'
 import type { Task, TaskComment } from './types'
 
@@ -23,11 +25,43 @@ export function TaskActivityTab({
   isLoadingComments,
   onCommentAdded,
 }: TaskActivityTabProps) {
+  const t = useTranslations('tasks.details.activity')
+  const locale = useLocale()
+  const dateLocale = locale === 'pl' ? pl : enUS
   const [newComment, setNewComment] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase()
+  }
+
+  const getActivityMessage = (comment: TaskComment): string => {
+    // User comments are displayed as-is
+    if (comment.activity_type === 'comment') {
+      return comment.content
+    }
+
+    // System activities are translated
+    switch (comment.activity_type) {
+      case 'created':
+        return t('messages.created')
+      case 'completed':
+        return t('messages.completed')
+      case 'reopened':
+        return t('messages.reopened')
+      case 'assigned':
+        return comment.new_value === 'Unassigned'
+          ? t('messages.assigneeRemoved')
+          : t('messages.assigned')
+      case 'status_changed':
+        return t('messages.statusChanged', { oldValue: comment.old_value, newValue: comment.new_value })
+      case 'priority_changed':
+        return t('messages.priorityChanged', { oldValue: comment.old_value, newValue: comment.new_value })
+      case 'due_date_changed':
+        return t('messages.dueDateChanged')
+      default:
+        return t('messages.updated')
+    }
   }
 
   const handleSubmitComment = useCallback(async () => {
@@ -62,7 +96,7 @@ export function TaskActivityTab({
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Add a comment... (⌘+Enter to send)"
+            placeholder={t('placeholder')}
             rows={2}
             className="resize-none !border-black/20 dark:!border-white/20"
           />
@@ -71,10 +105,10 @@ export function TaskActivityTab({
               size="sm"
               onClick={handleSubmitComment}
               disabled={!newComment.trim() || isSubmitting}
-              className="!bg-brand hover:!bg-brand/90 !text-black !border !border-black/20 dark:!border-white/20"
+              className="!bg-brand hover:!bg-brand/90 !text-white dark:!text-black !border !border-black/20 dark:!border-white/20"
             >
               <Send className="h-4 w-4 mr-1" />
-              {isSubmitting ? 'Sending...' : 'Comment'}
+              {isSubmitting ? t('sending') : t('comment')}
             </Button>
           </div>
         </div>
@@ -82,11 +116,11 @@ export function TaskActivityTab({
 
         {isLoadingComments ? (
           <div className="text-center py-4 text-muted-foreground text-sm">
-            Loading activity...
+            {t('loading')}
           </div>
         ) : comments.length === 0 ? (
           <div className="text-center py-4 text-muted-foreground text-sm">
-            No activity yet
+            {t('noActivity')}
           </div>
         ) : (
           <div className="space-y-3 max-h-[300px] overflow-y-auto">
@@ -104,16 +138,16 @@ export function TaskActivityTab({
                     <span className="text-sm font-medium">
                       {comment.author
                         ? `${comment.author.first_name} ${comment.author.last_name}`
-                        : 'Unknown'}
+                        : t('unknown')}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(parseISO(comment.created_at), { addSuffix: true })}
+                      {formatDistanceToNow(parseISO(comment.created_at), { addSuffix: true, locale: dateLocale })}
                     </span>
                   </div>
                   <p className={`text-sm mt-0.5 ${
                     comment.activity_type !== 'comment' ? 'text-muted-foreground italic' : ''
                   }`}>
-                    {comment.content}
+                    {getActivityMessage(comment)}
                   </p>
                 </div>
               </div>

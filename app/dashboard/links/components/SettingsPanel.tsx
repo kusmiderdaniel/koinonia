@@ -311,7 +311,7 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
                 variant={cardStyle === style ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setCardStyle(style)}
-                className={`h-8 text-xs ${cardStyle === style ? '!bg-brand !text-brand-foreground' : 'border-black/20 dark:border-white/20'}`}
+                className={`h-8 text-xs ${cardStyle === style ? '!bg-brand !text-brand-foreground' : '!border !border-black/20 dark:!border-white/20'}`}
               >
                 {t(`settings.cardStyle.styles.${style}`)}
               </Button>
@@ -328,7 +328,7 @@ export function SettingsPanel({ settings, setSettings, linksPageEnabled, setLink
                 variant={borderRadius === radius.value ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setBorderRadius(radius.value)}
-                className={`h-8 text-xs ${borderRadius === radius.value ? '!bg-brand !text-brand-foreground' : 'border-black/20 dark:border-white/20'}`}
+                className={`h-8 text-xs ${borderRadius === radius.value ? '!bg-brand !text-brand-foreground' : '!border !border-black/20 dark:!border-white/20'}`}
               >
                 {t(`settings.cardStyle.radii.${radius.key}`)}
               </Button>

@@ -244,15 +244,21 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
                 <button
                   key={presetColor}
                   type="button"
-                  onClick={() => setColor(presetColor)}
-                  className={`rounded-full transition-all ${
+                  onClick={(e) => {
+                    setColor(presetColor)
+                    e.currentTarget.blur()
+                  }}
+                  className={`rounded-full outline-none focus:outline-none flex items-center justify-center ${
                     isMobile ? 'w-7 h-7' : 'w-8 h-8'
                   } ${
-                    color === presetColor
-                      ? 'ring-2 ring-offset-2 ring-gray-400'
-                      : 'hover:scale-110'
+                    color !== presetColor ? 'hover:scale-110 transition-transform' : ''
                   }`}
-                  style={{ backgroundColor: presetColor }}
+                  style={{
+                    backgroundColor: presetColor,
+                    boxShadow: color === presetColor
+                      ? '0 0 0 2px var(--background), 0 0 0 4px currentColor'
+                      : 'none'
+                  }}
                 />
               ))}
             </div>
@@ -265,6 +271,11 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
               selectedCampusId={campusId}
               onChange={setCampusId}
               placeholder={t('fields.allCampuses')}
+              translations={{
+                allCampuses: t('campusPicker.allCampuses'),
+                main: t('campusPicker.main'),
+                noCampuses: t('campusPicker.noCampuses'),
+              }}
             />
             {!isMobile && (
               <p className="text-sm text-muted-foreground">
@@ -281,6 +292,13 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
               leaders={filteredLeaders}
               ministries={allMinistries}
               currentMinistryId={ministry?.id}
+              translations={{
+                title: t('leaderPicker.title'),
+                searchPlaceholder: t('leaderPicker.searchPlaceholder'),
+                noLeadersFound: t('leaderPicker.noLeadersFound'),
+                change: t('leaderPicker.change'),
+                leads: t('leaderPicker.leads'),
+              }}
             />
             {!isEditing && !leaderId && !isMobile && (
               <p className="text-sm text-muted-foreground">
@@ -303,7 +321,7 @@ export const MinistryDialog = memo(function MinistryDialog({ open, onOpenChange,
               type="submit"
               variant="outline-pill"
               disabled={isLoading || !name.trim() || (!isEditing && !leaderId)}
-              className="!bg-brand hover:!bg-brand/90 !text-black !border-brand"
+              className="!bg-brand hover:!bg-brand/90 !text-white dark:!text-black !border-brand"
             >
               {isLoading
                 ? isEditing

@@ -74,6 +74,18 @@
     "leaderRequired": "Ministry Leader *",
     "leaderHint": "A leader must be assigned to create a ministry"
   },
+  "leaderPicker": {
+    "title": "Choose a Leader",
+    "searchPlaceholder": "Search by name...",
+    "noLeadersFound": "No leaders found",
+    "change": "Change",
+    "leads": "Leads:"
+  },
+  "campusPicker": {
+    "allCampuses": "All campuses",
+    "main": "(Main)",
+    "noCampuses": "No campuses available"
+  },
   "actions": {
     "cancel": "Cancel",
     "save": "Save",

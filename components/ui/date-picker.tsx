@@ -3,6 +3,7 @@
 import * as React from "react"
 import { format, parse, isValid } from "date-fns"
 import { CalendarIcon } from "lucide-react"
+import type { Locale } from "date-fns"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -21,6 +22,7 @@ interface DatePickerProps {
   className?: string
   id?: string
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6 // 0 = Sunday, 1 = Monday, etc.
+  locale?: Locale // date-fns locale for translations
 }
 
 export function DatePicker({
@@ -31,6 +33,7 @@ export function DatePicker({
   className,
   id,
   weekStartsOn = 0,
+  locale,
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -78,6 +81,7 @@ export function DatePicker({
           toYear={new Date().getFullYear() + 5}
           captionLayout="dropdown"
           weekStartsOn={weekStartsOn}
+          locale={locale}
           classNames={{
             caption_label: "hidden",
           }}

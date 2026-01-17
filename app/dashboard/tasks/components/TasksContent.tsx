@@ -92,7 +92,7 @@ export function TasksContent({
 
   if (isMobile) {
     return (
-      <Card className="flex-1 overflow-hidden border rounded-lg flex flex-col">
+      <Card className="flex-1 overflow-hidden border border-black dark:border-white rounded-lg flex flex-col !ring-0">
         <ScrollArea className="flex-1">
           {tasks.length === 0 ? (
             <EmptyState onCreateTask={onCreateTask} />
@@ -137,7 +137,7 @@ export function TasksContent({
   }
 
   return (
-    <Card className="flex-1 overflow-hidden border rounded-lg flex flex-col">
+    <Card className="flex-1 overflow-hidden border border-black dark:border-white rounded-lg flex flex-col !ring-0">
       <div className="flex-1 overflow-auto">
         <TasksTable
           tasks={tasks}

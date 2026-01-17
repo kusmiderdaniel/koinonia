@@ -74,6 +74,18 @@
     "leaderRequired": "Lider służby *",
     "leaderHint": "Lider musi zostać przypisany do utworzenia służby"
   },
+  "leaderPicker": {
+    "title": "Wybierz lidera",
+    "searchPlaceholder": "Szukaj po imieniu...",
+    "noLeadersFound": "Nie znaleziono liderów",
+    "change": "Zmień",
+    "leads": "Prowadzi:"
+  },
+  "campusPicker": {
+    "allCampuses": "Wszystkie lokalizacje",
+    "main": "(Główna)",
+    "noCampuses": "Brak dostępnych lokalizacji"
+  },
   "actions": {
     "cancel": "Anuluj",
     "save": "Zapisz",

@@ -52,7 +52,7 @@ export const CampusesTab = memo(function CampusesTab({
   const t = useTranslations('settings.campuses')
   return (
     <>
-      <Card className="w-full md:min-w-[28rem]">
+      <Card className="w-full md:min-w-[28rem] border-0 shadow-none !ring-0">
         <CardHeader className="p-4 md:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-6">
             <div>
@@ -61,7 +61,7 @@ export const CampusesTab = memo(function CampusesTab({
                 {t('description')}
               </CardDescription>
             </div>
-            <Button onClick={() => campusManager.openCampusDialog()} className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-black shrink-0 w-full sm:w-auto">
+            <Button onClick={() => campusManager.openCampusDialog()} className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-white dark:!text-black shrink-0 w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               {t('addCampus')}
             </Button>
@@ -139,7 +139,7 @@ export const CampusesTab = memo(function CampusesTab({
         open={campusManager.campusDialogOpen}
         onOpenChange={(open) => !open && campusManager.closeCampusDialog()}
       >
-        <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-[90vw] md:max-w-lg overflow-hidden">
+        <AlertDialogContent className="bg-white dark:bg-zinc-950 max-w-[90vw] md:max-w-lg overflow-hidden !border !border-black dark:!border-white">
           <AlertDialogHeader>
             <AlertDialogTitle>
               {campusManager.editingCampus ? t('dialog.editTitle') : t('dialog.addTitle')}
@@ -171,12 +171,18 @@ export const CampusesTab = memo(function CampusesTab({
                     key={color}
                     type="button"
                     className={`w-8 h-8 rounded-full transition-all ${
-                      campusManager.campusColor === color
-                        ? 'ring-2 ring-offset-2 ring-black dark:ring-white'
-                        : 'hover:scale-110'
+                      campusManager.campusColor === color ? '' : 'hover:scale-110'
                     }`}
-                    style={{ backgroundColor: color }}
-                    onClick={() => campusManager.setCampusColor(color)}
+                    style={{
+                      backgroundColor: color,
+                      boxShadow: campusManager.campusColor === color
+                        ? '0 0 0 2px var(--background), 0 0 0 4px currentColor'
+                        : 'none'
+                    }}
+                    onClick={(e) => {
+                      campusManager.setCampusColor(color)
+                      e.currentTarget.blur()
+                    }}
                   />
                 ))}
               </div>
@@ -206,7 +212,7 @@ export const CampusesTab = memo(function CampusesTab({
                 campusManager.handleSaveCampus(campuses, setCampuses, setError, setSuccess)
               }
               disabled={campusManager.isSavingCampus || !campusManager.campusName.trim()}
-              className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-black px-4 py-2 disabled:!opacity-50"
+              className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-white dark:!text-black px-4 py-2 disabled:!opacity-50"
             >
               {campusManager.isSavingCampus
                 ? t('dialog.saving')
@@ -236,7 +242,7 @@ export const CampusesTab = memo(function CampusesTab({
               onClick={() =>
                 campusManager.handleDeleteCampus(campuses, setCampuses, setError, setSuccess)
               }
-              className="!rounded-lg !border !border-red-600 !bg-red-600 hover:!bg-red-700 !text-black px-4 py-2"
+              className="!rounded-lg !border !border-red-600 !bg-red-600 hover:!bg-red-700 !text-white px-4 py-2"
             >
               {t('deleteDialog.confirm')}
             </AlertDialogAction>

@@ -30,7 +30,7 @@ export const PreferencesTab = memo(function PreferencesTab({
 }: PreferencesTabProps) {
   const t = useTranslations('settings.preferences')
   return (
-    <Card className="w-full md:min-w-[28rem]">
+    <Card className="w-full md:min-w-[28rem] border-0 shadow-none !ring-0">
       <CardHeader className="p-4 md:p-6">
         <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
           <Globe className="w-4 h-4 md:w-5 md:h-5" />
@@ -180,7 +180,7 @@ export const PreferencesTab = memo(function PreferencesTab({
           <Button
             onClick={() => preferencesManager.handleSavePreferences(setError, setSuccess)}
             disabled={preferencesManager.isSavingPreferences}
-            className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-black w-full sm:w-auto"
+            className="!rounded-lg !border !border-brand !bg-brand hover:!bg-brand/90 !text-white dark:!text-black w-full sm:w-auto"
           >
             {preferencesManager.isSavingPreferences ? t('saving') : t('savePreferences')}
           </Button>

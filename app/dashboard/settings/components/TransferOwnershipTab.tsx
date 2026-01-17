@@ -32,7 +32,7 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
 }: TransferOwnershipTabProps) {
   const t = useTranslations('settings.transfer')
   return (
-    <Card className="w-full md:min-w-[28rem] border-orange-200">
+    <Card className="w-full md:min-w-[28rem] border-0 shadow-none !ring-0">
       <CardHeader className="p-4 md:p-6">
         <CardTitle className="text-orange-700 text-lg md:text-xl">{t('title')}</CardTitle>
         <CardDescription className="text-sm">
@@ -113,7 +113,7 @@ export const TransferOwnershipTab = memo(function TransferOwnershipTab({
                       ownershipTransfer.handleTransferOwnership(setError, setSuccess, () => {})
                     }
                     disabled={ownershipTransfer.isTransferring}
-                    className="!rounded-lg !border !border-orange-600 !bg-orange-600 hover:!bg-orange-700 !text-black !px-4 !py-2 disabled:!opacity-50"
+                    className="!rounded-lg !border !border-orange-600 !bg-orange-600 hover:!bg-orange-700 !text-white !px-4 !py-2 disabled:!opacity-50"
                   >
                     {ownershipTransfer.isTransferring
                       ? t('dialog.transferring')

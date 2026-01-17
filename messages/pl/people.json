@@ -252,7 +252,15 @@
     "showByDefaultHint": "Gdy włączone, to pole będzie widoczne w tabeli dla wszystkich użytkowników.",
     "saving": "Zapisywanie...",
     "saveChanges": "Zapisz zmiany",
-    "createField": "Utwórz pole"
+    "createField": "Utwórz pole",
+    "fieldTypes": {
+      "text": "Tekst",
+      "date": "Data",
+      "select": "Wybór pojedynczy",
+      "multiselect": "Wybór wielokrotny",
+      "checkbox": "Pole wyboru",
+      "number": "Liczba"
+    }
   },
   "export": {
     "button": "Eksportuj",

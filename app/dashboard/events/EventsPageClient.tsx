@@ -291,7 +291,7 @@ export function EventsPageClient({ initialData }: EventsPageClientProps) {
               <EmptyState
                 icon={Calendar}
                 title={t('selectEventToViewDetails')}
-                size="lg"
+                size="sm"
               />
             }
           />

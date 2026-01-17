@@ -18,6 +18,12 @@ export interface CampusOption {
   is_default?: boolean
 }
 
+export interface CampusPickerTranslations {
+  allCampuses?: string
+  main?: string
+  noCampuses?: string
+}
+
 interface CampusPickerProps {
   campuses: CampusOption[]
   selectedCampusIds: string[]
@@ -26,6 +32,7 @@ interface CampusPickerProps {
   placeholder?: string
   disabled?: boolean
   className?: string
+  translations?: CampusPickerTranslations
 }
 
 export const CampusPicker = memo(function CampusPicker({
@@ -36,6 +43,7 @@ export const CampusPicker = memo(function CampusPicker({
   placeholder = 'Select campus...',
   disabled = false,
   className,
+  translations,
 }: CampusPickerProps) {
   const [open, setOpen] = useState(false)
 
@@ -108,7 +116,7 @@ export const CampusPicker = memo(function CampusPicker({
               </div>
               <Building2 className="w-3 h-3 text-muted-foreground flex-shrink-0" />
               <span className="text-sm font-medium flex-1 truncate">
-                All campuses
+                {translations?.allCampuses || 'All campuses'}
               </span>
             </button>
           )}
@@ -142,14 +150,14 @@ export const CampusPicker = memo(function CampusPicker({
                   {campus.name}
                 </span>
                 {campus.is_default && (
-                  <span className="text-xs text-muted-foreground">(Main)</span>
+                  <span className="text-xs text-muted-foreground">{translations?.main || '(Main)'}</span>
                 )}
               </button>
             )
           })}
           {campuses.length === 0 && (
             <p className="text-sm text-muted-foreground text-center py-4">
-              No campuses available
+              {translations?.noCampuses || 'No campuses available'}
             </p>
           )}
         </div>
@@ -166,6 +174,7 @@ interface SingleCampusPickerProps {
   placeholder?: string
   disabled?: boolean
   className?: string
+  translations?: CampusPickerTranslations
 }
 
 export const SingleCampusPicker = memo(function SingleCampusPicker({
@@ -175,6 +184,7 @@ export const SingleCampusPicker = memo(function SingleCampusPicker({
   placeholder = 'Select campus...',
   disabled = false,
   className,
+  translations,
 }: SingleCampusPickerProps) {
   const handleChange = (campusIds: string[]) => {
     onChange(campusIds[0] || null)
@@ -189,6 +199,7 @@ export const SingleCampusPicker = memo(function SingleCampusPicker({
       placeholder={placeholder}
       disabled={disabled}
       className={className}
+      translations={translations}
     />
   )
 })

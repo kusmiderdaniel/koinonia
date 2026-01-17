@@ -139,7 +139,7 @@ export function GoogleCalendarCard() {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="border border-black dark:border-white !ring-0">
         <CardContent className="flex items-center justify-center py-8">
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </CardContent>
@@ -150,8 +150,8 @@ export function GoogleCalendarCard() {
   return (
     <div className="space-y-4 border border-black dark:border-white rounded-lg p-4">
       {/* Connection Card */}
-      <Card>
-        <CardHeader className="pb-3">
+      <Card className="!border-0 !border-transparent shadow-none !ring-0 ring-transparent">
+        <CardHeader className="pb-3 pt-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <CardTitle className="text-lg">{t('title')}</CardTitle>
@@ -270,7 +270,7 @@ export function GoogleCalendarCard() {
 
       {/* Calendars Card - Only shown when connected */}
       {connection && !connection.requiresReauth && (
-        <Card>
+        <Card className="!border-0 !border-transparent shadow-none !ring-0 ring-transparent">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg">{t('calendars.title')}</CardTitle>
             <CardDescription>{t('calendars.description')}</CardDescription>

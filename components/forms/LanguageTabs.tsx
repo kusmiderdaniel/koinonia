@@ -36,7 +36,7 @@ export function LanguageTabs({
             className={cn(
               'relative px-3 py-1 text-sm font-medium rounded-md transition-colors',
               isActive
-                ? 'bg-brand text-black shadow-sm'
+                ? 'bg-brand text-white dark:text-black shadow-sm'
                 : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
             )}
           >

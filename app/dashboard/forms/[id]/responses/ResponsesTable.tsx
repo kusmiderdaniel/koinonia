@@ -193,7 +193,7 @@ export const ResponsesTable = memo(function ResponsesTable({
         <p className="text-sm text-muted-foreground">
           {t('list.responseCount', { count: submissions.length })}
         </p>
-        <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
+        <Button variant="outline" size="sm" onClick={handleExport} className="gap-2 !border !border-black/20 dark:!border-white/20">
           <Download className="h-4 w-4" />
           {t('responses.exportCsv')}
         </Button>

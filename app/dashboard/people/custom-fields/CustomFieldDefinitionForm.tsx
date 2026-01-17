@@ -55,14 +55,7 @@ import type {
   NumberSettings,
 } from '@/types/custom-fields'
 
-const FIELD_TYPES: { value: CustomFieldType; label: string }[] = [
-  { value: 'text', label: 'Text' },
-  { value: 'date', label: 'Date' },
-  { value: 'select', label: 'Single Select' },
-  { value: 'multiselect', label: 'Multi-select' },
-  { value: 'checkbox', label: 'Checkbox' },
-  { value: 'number', label: 'Number' },
-]
+const FIELD_TYPE_KEYS: CustomFieldType[] = ['text', 'date', 'select', 'multiselect', 'checkbox', 'number']
 
 const NUMBER_FORMATS: { value: NumberSettings['format']; label: string }[] = [
   { value: 'number', label: 'Number' },
@@ -355,10 +348,10 @@ export function CustomFieldDefinitionForm({
                 <SelectTrigger id="field-type">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="!border !border-black dark:!border-white bg-white dark:bg-zinc-950">
-                  {FIELD_TYPES.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
+                <SelectContent className="!border !border-black/20 dark:!border-white/20 bg-white dark:bg-zinc-950">
+                  {FIELD_TYPE_KEYS.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {t(`fieldTypes.${type}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -434,7 +427,7 @@ export function CustomFieldDefinitionForm({
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="!border !border-black dark:!border-white bg-white dark:bg-zinc-950">
+                    <SelectContent className="!border !border-black/20 dark:!border-white/20 bg-white dark:bg-zinc-950">
                       {NUMBER_FORMATS.map((format) => (
                         <SelectItem key={format.value} value={format.value!}>
                           {format.label}
@@ -523,13 +516,14 @@ export function CustomFieldDefinitionForm({
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
+              className="!border-0"
             >
               {tCommon('cancel')}
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className="!rounded-full !bg-brand hover:!bg-brand/90 !text-brand-foreground"
+              className="!rounded-lg !bg-brand hover:!bg-brand/90 !text-white dark:!text-black"
             >
               {isLoading ? t('saving') : isEditing ? t('saveChanges') : t('createField')}
             </Button>

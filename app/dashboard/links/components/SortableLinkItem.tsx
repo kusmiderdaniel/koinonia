@@ -203,7 +203,7 @@ export const SortableLinkItem = memo(function SortableLinkItem({
                 variant="ghost"
                 size="sm"
                 onClick={onEdit}
-                className="h-8 px-2 gap-1"
+                className="h-8 px-2 gap-1 text-blue-600 hover:text-blue-700"
               >
                 <Pencil className="h-3.5 w-3.5" />
                 <span className="text-xs">{t('linkItem.edit')}</span>
@@ -212,7 +212,7 @@ export const SortableLinkItem = memo(function SortableLinkItem({
                 variant="ghost"
                 size="icon"
                 onClick={onDelete}
-                className="h-8 w-8 text-destructive hover:text-destructive"
+                className="h-8 w-8 text-red-600 hover:text-red-700"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -287,7 +287,7 @@ export const SortableLinkItem = memo(function SortableLinkItem({
             variant="ghost"
             size="icon"
             onClick={onEdit}
-            className="h-8 w-8"
+            className="h-8 w-8 text-blue-600 hover:text-blue-700"
           >
             <Pencil className="h-4 w-4" />
           </Button>
@@ -296,7 +296,7 @@ export const SortableLinkItem = memo(function SortableLinkItem({
             variant="ghost"
             size="icon"
             onClick={onDelete}
-            className="h-8 w-8 text-destructive hover:text-destructive"
+            className="h-8 w-8 text-red-600 hover:text-red-700"
           >
             <Trash2 className="h-4 w-4" />
           </Button>

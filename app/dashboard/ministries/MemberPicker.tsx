@@ -226,7 +226,7 @@ export const MemberPicker = memo(function MemberPicker({
             <Button variant="ghost" onClick={handleCancel} disabled={isAdding} className="rounded-full">
               {t('actions.cancel')}
             </Button>
-            <Button variant="outline-pill" onClick={handleAdd} disabled={!selectedMemberId || isAdding} className="!bg-brand hover:!bg-brand/90 !text-black !border-0">
+            <Button variant="outline-pill" onClick={handleAdd} disabled={!selectedMemberId || isAdding} className="!bg-brand hover:!bg-brand/90 !text-white dark:!text-black !border-0">
               {isAdding ? t('actions.adding') : t('members.addMember')}
             </Button>
           </div>

@@ -319,7 +319,7 @@ export function ExportDialog({ members, customFields }: ExportDialogProps) {
             <Button
               onClick={handleExport}
               disabled={selectedColumns.size === 0 || isExporting}
-              className="!bg-brand hover:!bg-brand/90 !text-black"
+              className="!bg-brand hover:!bg-brand/90 !text-white dark:!text-black"
             >
               {isExporting ? t('export.exporting') : t('export.exportButton')}
             </Button>

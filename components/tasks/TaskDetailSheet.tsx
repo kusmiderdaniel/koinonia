@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getTaskComments } from '@/app/dashboard/tasks/actions'
@@ -23,6 +24,7 @@ export function TaskDetailSheet({
   weekStartsOn = 0,
   canDelete = true,
 }: TaskDetailSheetProps) {
+  const t = useTranslations('tasks.details')
   const isMobile = useIsMobile()
   const [comments, setComments] = useState<TaskComment[]>([])
   const [isLoadingComments, setIsLoadingComments] = useState(true)
@@ -90,10 +92,10 @@ export function TaskDetailSheet({
         <Tabs value={activeTab} onValueChange={setActiveTab} className="-mt-2">
           <TabsList className="grid w-full grid-cols-2 my-2 -mx-6 px-6" style={{ width: 'calc(100% + 3rem)' }}>
             <TabsTrigger value="details" className="data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground">
-              Details
+              {t('tabs.details')}
             </TabsTrigger>
             <TabsTrigger value="activity" className="data-[state=active]:bg-brand data-[state=active]:!text-brand-foreground">
-              Activity
+              {t('tabs.activity')}
             </TabsTrigger>
           </TabsList>
           <div className="border-b border-black/20 dark:border-white/20 -mx-6" />
