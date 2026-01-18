@@ -93,7 +93,7 @@ export function ConsentCheckbox({
                 <ExternalLink className="ml-1 h-3 w-3" />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-6xl w-[95vw] max-h-[90vh] !border !border-black dark:!border-white">
+            <DialogContent className="max-w-[95vw] sm:max-w-4xl lg:max-w-6xl max-h-[90vh] !border !border-black dark:!border-white">
               <DialogHeader>
                 <DialogTitle>{documentTitle}</DialogTitle>
               </DialogHeader>
