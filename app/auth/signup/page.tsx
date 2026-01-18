@@ -56,7 +56,7 @@ function SignUpContent() {
   }
 
   return (
-    <Card className="w-full max-w-md border-0 shadow-none sm:border sm:shadow-sm">
+    <Card className="w-full max-w-md border-0 shadow-none sm:border sm:border-black dark:sm:border-white sm:shadow-sm !ring-0 focus-visible:!ring-0">
       <CardHeader className="space-y-1 px-0 sm:px-6 sm:pt-6">
         <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
         <CardDescription>
@@ -237,7 +237,7 @@ export default function SignUpPage() {
 
   return (
     <div className="flex min-h-[100dvh] items-center justify-center p-4 sm:p-6">
-      <Suspense fallback={<Card className="w-full max-w-md border-0 shadow-none sm:border sm:shadow-sm"><CardContent className="p-6">{tCommon('loading.default')}</CardContent></Card>}>
+      <Suspense fallback={<Card className="w-full max-w-md border-0 shadow-none sm:border sm:border-black dark:sm:border-white sm:shadow-sm !ring-0 focus-visible:!ring-0"><CardContent className="p-6">{tCommon('loading.default')}</CardContent></Card>}>
         <SignUpContent />
       </Suspense>
     </div>
